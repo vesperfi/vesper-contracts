@@ -1,0 +1,20 @@
+# Node
+node_modules
+
+# Env
+.env
+
+# Eslint
+.eslintcache
+
+# Hard hat
+artifacts
+cache
+
+# Solidity coverage
+coverage
+coverage.json
+.coverage*
+
+# Typechain
+typechain-types

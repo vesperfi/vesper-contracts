@@ -1,0 +1,16 @@
+{
+  "printWidth": 120,
+  "overrides": [
+    {
+      "files": [
+        "*.js"
+      ],
+      "options": {
+        "semi": false,
+        "singleQuote": true
+      }
+    }
+  ],
+  "arrowParens": "avoid",
+  "trailingComma": "all"
+}

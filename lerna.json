@@ -1,0 +1,9 @@
+{
+  "packages": [
+    "vesper-pools",
+    "vesper-strategies",
+    "packages/*"
+  ],
+  "useNx": false,
+  "version": "independent"
+}
