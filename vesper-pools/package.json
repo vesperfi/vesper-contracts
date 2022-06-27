@@ -24,12 +24,8 @@
     "release": "hardhat create-release",
     "test": "hardhat test",
     "verify": "hardhat etherscan-verify",
-    "size-contract": "hardhat size-contracts",
-    "prepare": "husky install",
-    "postinstall": "patch-package",
-    "prettier": "prettier"
+    "size-contract": "hardhat size-contracts"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=14.16.1",
     "npm": ">=8.0.0"
