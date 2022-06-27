@@ -1,0 +1,37 @@
+{
+  "name": "vesper-pools",
+  "version": "5.0.1",
+  "description": "Vesper finance holding pools",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'",
+    "lint": "eslint --cache ./test/* ./tasks/* ./helper/*",
+    "lint:fix": "eslint --cache --fix ./test ./tasks/ ./helper/ --ext .js",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "npm run clean && npm run compile",
+    "coverage": "hardhat coverage",
+    "deploy": "hardhat deploy-core-contracts",
+    "deploy-buyback": "hardhat deploy-buyback",
+    "deploy-upgrader": "hardhat deploy-upgrader",
+    "upgrade-pool": "hardhat upgrade-pool",
+    "fork": "hardhat node --no-deploy",
+    "release": "hardhat create-release",
+    "test": "hardhat test",
+    "verify": "hardhat etherscan-verify",
+    "size-contract": "hardhat size-contracts",
+    "prepare": "husky install",
+    "postinstall": "patch-package",
+    "prettier": "prettier"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.16.1",
+    "npm": ">=8.0.0"
+  }
+}

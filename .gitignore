@@ -1,3 +1,6 @@
+# File system
+.DS_Store
+
 # Node
 node_modules
 

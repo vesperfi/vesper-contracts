@@ -3,4 +3,4 @@
 
 npx --no-install lint-staged -v
 echo "Compiling contracts..."
-npx hardhat compile
+npx lerna run compile
