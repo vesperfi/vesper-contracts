@@ -1,0 +1,5 @@
+{
+  "*.sol": [
+    "npm run solhint"
+  ]
+}
