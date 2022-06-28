@@ -2,9 +2,8 @@
 
 pragma solidity 0.8.9;
 
+import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 import "./CompoundXYStrategy.sol";
-import "../../interfaces/vesper/IVesperPool.sol";
-import "../../interfaces/vesper/IPoolRewards.sol";
 
 /// @title Deposit Collateral in Compound and earn interest by depositing borrowed token in a Vesper Pool.
 contract VesperCompoundXYStrategy is CompoundXYStrategy {

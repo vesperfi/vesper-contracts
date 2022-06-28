@@ -2,10 +2,9 @@
 
 pragma solidity 0.8.9;
 
+import "vesper-pools/contracts/interfaces/token/IToken.sol";
 import "./CompoundXYCore.sol";
 import "../../interfaces/compound/ICompound.sol";
-import "../../interfaces/oracle/IUniswapV3Oracle.sol";
-import "../../interfaces/token/IToken.sol";
 
 /// @title This strategy will deposit collateral token in Compound and based on position it will borrow
 /// another token. Supply X borrow Y and keep borrowed amount here. It does handle rewards and handle

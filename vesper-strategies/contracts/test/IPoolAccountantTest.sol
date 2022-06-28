@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.9;
 
-import "../interfaces/vesper/IPoolAccountant.sol";
+import "vesper-pools/contracts/interfaces/vesper/IPoolAccountant.sol";
 
 interface IPoolAccountantTest is IPoolAccountant {
     event EarningReported(

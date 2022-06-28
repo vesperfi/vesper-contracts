@@ -1,6 +1,6 @@
 'use strict'
 
-const Maker = require('../../helper/mainnet/address').Maker
+const Maker = require('../config/mainnet/address').Maker
 
 module.exports = [
   Maker.MCD_JOIN_ETH_A,

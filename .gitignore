@@ -21,3 +21,6 @@ coverage.json
 
 # Typechain
 typechain-types
+
+# Lerna
+lerna-debug*

@@ -4,8 +4,8 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { getStrategyToken, unlock } = require('../utils/setup')
 const { deposit } = require('../utils/poolOps')
-const { advanceBlock } = require('../utils/time')
-const { adjustBalance } = require('../utils/balance')
+const { advanceBlock } = require('vesper-commons/utils/time')
+const { adjustBalance } = require('vesper-commons/utils/balance')
 
 async function simulateVesperPoolProfit(strategy) {
   const vPool = await ethers.getContractAt('IVesperPool', await strategy.instance.vPool())

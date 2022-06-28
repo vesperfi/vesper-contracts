@@ -1,7 +1,7 @@
 'use strict'
 const fs = require('fs')
-const hre = require('hardhat')
 const path = require('path')
+const hre = require('hardhat')
 
 const CHAIN = {
   1: 'mainnet',
@@ -17,7 +17,8 @@ function getChain() {
   if (!chain) {
     throw new Error(`Please configure chainId: ${chainId} in /test/chains.js`)
   }
-  const supported = fs.readdirSync(path.join(__dirname, '../../helper'))
+
+  const supported = fs.readdirSync(path.join(__dirname, '../config'))
   if (!supported.includes(chain)) {
     throw Error(`Chain configuration data does not exist for "${chain}".`)
   }
@@ -46,9 +47,9 @@ function getChainData(chain) {
   if (!chain) {
     chain = getChain()
   }
-  const address = require(`../../helper/${chain}/address`)
-  const poolConfig = require(`../../helper/${chain}/poolConfig`)
-  const strategyConfig = require(`../../helper/${chain}/strategyConfig`)
+  const address = require(`../config/${chain}/address`)
+  const poolConfig = require(`../config/${chain}/poolConfig`)
+  const strategyConfig = require(`../config/${chain}/strategyConfig`)
   return { address, poolConfig, strategyConfig }
 }
 

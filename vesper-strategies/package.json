@@ -19,6 +19,7 @@
     "test": "hardhat test"
   },
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.6.0"
+    "vesper-commons": "^1.0.0",
+    "vesper-pools": "^5.0.1"
   }
 }

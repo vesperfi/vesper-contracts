@@ -1,7 +1,7 @@
 'use strict'
 
 const hre = require('hardhat')
-const Address = require('../../helper/mainnet/address')
+const Address = require('../config/mainnet/address')
 const ethers = hre.ethers
 const { BigNumber } = require('ethers')
 const { hexlify, solidityKeccak256, zeroPad, getAddress, hexStripZeros } = ethers.utils
@@ -41,10 +41,9 @@ const slots = {
  * @param {string} token  token address
  * @returns {number} slot number for provided token address
  */
-function getSlot(token) {
-  // only use checksum address
-  return slots[getAddress(token)]
-}
+const getSlot = (
+  token, // only use checksum address
+) => slots[getAddress(token)]
 
 /**
  * Update token balance for a given target address

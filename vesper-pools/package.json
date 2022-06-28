@@ -3,14 +3,11 @@
   "version": "5.0.1",
   "description": "Vesper finance holding pools",
   "license": "MIT",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "solhint": "solhint './contracts/**/*.sol'",
     "solhint:fix": "prettier --write 'contracts/**/*.sol'",
-    "lint": "eslint --cache ./test/* ./tasks/* ./helper/*",
-    "lint:fix": "eslint --cache --fix ./test ./tasks/ ./helper/ --ext .js",
+    "lint": "eslint --cache ./test/* ./tasks/*",
+    "lint:fix": "eslint --cache --fix ./test ./tasks/ --ext .js",
     "hardhat": "hardhat",
     "clean": "hardhat clean",
     "compile": "hardhat compile",
@@ -26,8 +23,7 @@
     "verify": "hardhat etherscan-verify",
     "size-contract": "hardhat size-contracts"
   },
-  "engines": {
-    "node": ">=14.16.1",
-    "npm": ">=8.0.0"
+  "devDependencies": {
+    "vesper-commons": "^1.0.0"
   }
 }

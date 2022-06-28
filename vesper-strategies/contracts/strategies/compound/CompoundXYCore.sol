@@ -2,10 +2,10 @@
 
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/utils/math/Math.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 import "../Strategy.sol";
 import "../../interfaces/compound/ICompound.sol";
-import "../../interfaces/oracle/IUniswapV3Oracle.sol";
+import "hardhat/console.sol";
 
 // solhint-disable no-empty-blocks
 
@@ -224,6 +224,8 @@ abstract contract CompoundXYCore is Strategy {
 
     /// @dev Deposit collateral aka X in Compound. Override to handle ETH
     function _mintX(uint256 _amount) internal virtual {
+        console.log("file: CompoundXYCore.sol ~ line 226 ~ _mintX ~ _amount", _amount);
+        console.log("file: CompoundXYCore.sol ~ line 229 ~ _mintX ~ supplyCToken", address(supplyCToken));
         if (_amount > 0) {
             require(supplyCToken.mint(_amount) == 0, "supply-failed");
         }

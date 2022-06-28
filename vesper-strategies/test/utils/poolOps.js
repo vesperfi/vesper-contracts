@@ -5,11 +5,11 @@ const hre = require('hardhat')
 const ethers = hre.ethers
 const { BigNumber } = require('ethers')
 const { depositTokenToAave, depositTokenToCompound } = require('./market')
-const { adjustBalance } = require('./balance')
-const { getChain } = require('../utils/chains')
+const { adjustBalance } = require('vesper-commons/utils/balance')
+const { getChain } = require('vesper-commons/utils/chains')
 const { unlock, getIfExist } = require('./setup')
-const { increase } = require('./time')
-const { NATIVE_TOKEN, DAI, Vesper } = require(`../../helper/${getChain()}/address`)
+const { increase } = require('vesper-commons/utils/time')
+const { NATIVE_TOKEN, DAI, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
 
 /**
  *  Swap given ETH for given token type and deposit tokens into Vesper pool
