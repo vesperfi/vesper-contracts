@@ -3,8 +3,8 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { BigNumber } = require('ethers')
-const { getChain } = require('../utils/chains')
-const { UNI2_ROUTER, NATIVE_TOKEN, SUSHI_ROUTER } = require(`../../helper/${getChain()}/address`)
+const { getChain } = require('vesper-commons/utils/chains')
+const { UNI2_ROUTER, NATIVE_TOKEN, SUSHI_ROUTER } = require(`vesper-commons/config/${getChain()}/address`)
 
 const DECIMAL = BigNumber.from('1000000000000000000')
 

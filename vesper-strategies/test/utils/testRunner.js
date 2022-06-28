@@ -3,7 +3,7 @@
 const { setupStrategy } = require('./setup')
 const { shouldBehaveLikeStrategy } = require('../behavior/strategy')
 // const { shouldMigrateStrategies } = require('../behavior/strategy-migration')
-const { getChain, getChainData } = require('../utils/chains')
+const { getChain, getChainData } = require('vesper-commons/utils/chains')
 const { ethers } = require('hardhat')
 const { poolConfig, strategyConfig } = getChainData()
 

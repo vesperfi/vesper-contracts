@@ -3,7 +3,7 @@
 const hre = require('hardhat')
 const ethers = hre.ethers
 const provider = hre.waffle.provider
-const { getChain, getChainData } = require('./chains')
+const { getChain, getChainData } = require('vesper-commons/utils/chains')
 const chain = getChain()
 const Address = getChainData().address
 hre.address = Address

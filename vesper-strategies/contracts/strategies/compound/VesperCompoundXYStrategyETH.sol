@@ -3,8 +3,6 @@
 pragma solidity 0.8.9;
 
 import "./VesperCompoundXYStrategy.sol";
-import "../../interfaces/vesper/IVesperPool.sol";
-import "../../interfaces/vesper/IPoolRewards.sol";
 
 // solhint-disable no-empty-blocks
 /// @title Deposit ETH in Compound and earn interest by depositing borrowed token in a Vesper Pool.

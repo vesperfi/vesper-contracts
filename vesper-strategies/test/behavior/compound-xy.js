@@ -4,14 +4,14 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { getStrategyToken } = require('../utils/setup')
 const { deposit } = require('../utils/poolOps')
-const { advanceBlock } = require('../utils/time')
-const { adjustBalance } = require('../utils/balance')
+const { advanceBlock } = require('vesper-commons/utils/time')
+const { adjustBalance } = require('vesper-commons/utils/balance')
 const { BigNumber } = require('ethers')
 
 // Read addresses of Compound in Address object
 const {
   address: { Compound: Address },
-} = require('../utils/chains').getChainData()
+} = require('vesper-commons/utils/chains').getChainData()
 
 // Compound XY strategy specific tests
 function shouldBehaveLikeCompoundXYStrategy() {

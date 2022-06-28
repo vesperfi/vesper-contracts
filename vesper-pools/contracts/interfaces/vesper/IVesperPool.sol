@@ -15,6 +15,8 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
 
     function excessDebt(address _strategy) external view returns (uint256);
 
+    function poolAccountant() external view returns (address);
+
     function poolRewards() external view returns (address);
 
     function reportEarning(

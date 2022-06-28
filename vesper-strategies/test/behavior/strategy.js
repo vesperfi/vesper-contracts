@@ -20,9 +20,9 @@ const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-
 // const { shouldBehaveLikeVesperAaveXYStrategy } = require('./vesper-aave-xy')
 
 const { deposit } = require('../utils/poolOps')
-const { advanceBlock } = require('../utils/time')
-const StrategyType = require('../utils/strategyTypes')
-const { adjustBalance } = require('../utils/balance')
+const { advanceBlock } = require('vesper-commons/utils/time')
+const StrategyType = require('vesper-commons/utils/strategyTypes')
+const { adjustBalance } = require('vesper-commons/utils/balance')
 const ZERO_ADDRESS = ethers.constants.AddressZero
 function shouldBehaveLikeStrategy(type, strategyName) {
   let strategy, pool, feeCollector, collateralToken, accountant

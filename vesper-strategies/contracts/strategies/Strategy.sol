@@ -2,12 +2,13 @@
 
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/utils/Context.sol";
-import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "vesper-pools/contracts/interfaces/vesper/IVesperPool.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/Context.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../interfaces/vesper/IStrategy.sol";
 import "../interfaces/swapper/IRoutedSwapper.sol";
-import "../interfaces/vesper/IVesperPool.sol";
 
 abstract contract Strategy is IStrategy, Context {
     using SafeERC20 for IERC20;
