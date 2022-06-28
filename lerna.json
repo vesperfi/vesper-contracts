@@ -1,8 +1,9 @@
 {
   "packages": [
+    "packages/*",
+    "vesper-commons",
     "vesper-pools",
-    "vesper-strategies",
-    "packages/*"
+    "vesper-strategies"
   ],
   "useNx": false,
   "version": "independent"
