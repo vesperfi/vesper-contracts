@@ -118,11 +118,12 @@ abstract contract CompoundXYCore is Strategy {
         uint256 _collateral = supplyCToken.balanceOfUnderlying(address(this));
         uint256 _collateralFactor = _getCollateralFactor(address(supplyCToken));
         // In case of withdraw, _amount can be greater than _supply
-        uint256 _hypotheticalCollateral = _depositAmount > 0
-            ? _collateral + _depositAmount
-            : _collateral > _withdrawAmount
-            ? _collateral - _withdrawAmount
-            : 0;
+        uint256 _hypotheticalCollateral;
+        if (_depositAmount > 0) {
+            _hypotheticalCollateral = _collateral + _depositAmount;
+        } else if (_collateral > _withdrawAmount) {
+            _hypotheticalCollateral = _collateral - _withdrawAmount;
+        }
 
         // Calculate max borrow based on collateral factor
         uint256 _maxCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor) / 1e18;
@@ -344,9 +345,10 @@ abstract contract CompoundXYCore is Strategy {
 
         if (_borrowBalanceHere > _borrowInCompound) {
             uint256 _extraBorrowBalance = _borrowBalanceHere - _borrowInCompound;
-            uint256 _recoveryAmount = (_amountToRecover > 0 && _extraBorrowBalance > _amountToRecover)
-                ? _amountToRecover
-                : _extraBorrowBalance;
+            uint256 _recoveryAmount =
+                (_amountToRecover > 0 && _extraBorrowBalance > _amountToRecover)
+                    ? _amountToRecover
+                    : _extraBorrowBalance;
             // Do swap and transfer
             uint256 _collateralBefore = collateralToken.balanceOf(address(this));
             _swapExactInput(borrowToken, address(collateralToken), _recoveryAmount);
