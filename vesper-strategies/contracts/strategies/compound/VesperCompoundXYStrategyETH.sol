@@ -11,7 +11,7 @@ contract VesperCompoundXYStrategyETH is VesperCompoundXYStrategy {
 
     constructor(
         address _pool,
-        address _swapManager,
+        address _swapper,
         address _comptroller,
         address _rewardToken,
         address _receiptToken,
@@ -22,7 +22,7 @@ contract VesperCompoundXYStrategyETH is VesperCompoundXYStrategy {
     )
         VesperCompoundXYStrategy(
             _pool,
-            _swapManager,
+            _swapper,
             _comptroller,
             _rewardToken,
             _receiptToken,
