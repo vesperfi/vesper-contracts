@@ -9,13 +9,13 @@ import "./CompoundXYStrategy.sol";
 contract CompoundXYStrategyETH is CompoundXYStrategy {
     constructor(
         address _pool,
-        address _swapManager,
+        address _swapper,
         address _comptroller,
         address _rewardToken,
         address _receiptToken,
         address _borrowCToken,
         string memory _name
-    ) CompoundXYStrategy(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {}
+    ) CompoundXYStrategy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {}
 
     /// @dev Unwrap ETH and supply in Compound
     function _mintX(uint256 _amount) internal override {

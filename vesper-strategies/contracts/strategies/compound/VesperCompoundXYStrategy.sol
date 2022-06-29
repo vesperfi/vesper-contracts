@@ -16,7 +16,7 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
 
     constructor(
         address _pool,
-        address _swapManager,
+        address _swapper,
         address _comptroller,
         address _rewardToken,
         address _receiptToken,
@@ -24,7 +24,7 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
         address _vPool,
         address _vsp,
         string memory _name
-    ) CompoundXYStrategy(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {
+    ) CompoundXYStrategy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {
         require(_vsp != address(0), "vsp-address-is-zero");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);

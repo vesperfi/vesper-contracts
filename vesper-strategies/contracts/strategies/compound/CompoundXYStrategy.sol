@@ -18,13 +18,13 @@ contract CompoundXYStrategy is CompoundXYCore {
 
     constructor(
         address _pool,
-        address _swapManager,
+        address _swapper,
         address _comptroller,
         address _rewardToken,
         address _receiptToken,
         address _borrowCToken,
         string memory _name
-    ) CompoundXYCore(_pool, _swapManager, _comptroller, _receiptToken, _borrowCToken, _name) {
+    ) CompoundXYCore(_pool, _swapper, _comptroller, _receiptToken, _borrowCToken, _name) {
         require(_rewardToken != address(0), "rewardToken-address-is-zero");
         rewardToken = _rewardToken;
     }
