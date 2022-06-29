@@ -6,8 +6,6 @@
   "scripts": {
     "solhint": "solhint './contracts/**/*.sol'",
     "solhint:fix": "prettier --write 'contracts/**/*.sol'",
-    "lint": "eslint --cache ./test/* ./tasks/*",
-    "lint:fix": "eslint --cache --fix ./test ./tasks/ --ext .js",
     "hardhat": "hardhat",
     "clean": "hardhat clean",
     "compile": "hardhat compile",

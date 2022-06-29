@@ -1,8 +1,5 @@
 {
   "*.js": [
-    "eslint"
-  ],
-  "*.sol": [
-    "solhint"
+    "eslint --cache --fix"
   ]
 }
