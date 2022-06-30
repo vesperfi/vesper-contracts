@@ -4,18 +4,19 @@ const hre = require('hardhat')
 const ethers = hre.ethers
 const { expect } = require('chai')
 const { getEvent } = require('../utils/setup')
-// const { shouldBehaveLikeAaveStrategy } = require('../behavior/aave-strategy')
-// const { shouldBehaveLikeCompoundStrategy } = require('../behavior/compound-strategy')
-// const { shouldBehaveLikeTraderJoeStrategy } = require('../behavior/traderjoe-strategy')
-const { shouldBehaveLikeCompoundXYStrategy } = require('../behavior/compound-xy')
-// const { shouldBehaveLikeCompoundLeverageStrategy } = require('../behavior/compound-leverage')
-// const { shouldBehaveLikeAaveLeverageStrategy } = require('../behavior/aave-leverage')
-// const { shouldBehaveLikeMakerStrategy } = require('../behavior/maker-strategy')
-// const { shouldBehaveLikeCrvStrategy } = require('../behavior/crv-strategy')
-// const { shouldBehaveLikeEarnMakerStrategy } = require('../behavior/earn-maker-strategy')
-// const { shouldBehaveLikeEarnVesperMakerStrategy } = require('../behavior/earn-vesper-maker-strategy')
+const { shouldMigrateStrategies } = require('./strategy-migration')
+// const { shouldBehaveLikeAaveStrategy } = require('./aave-strategy')
+// const { shouldBehaveLikeCompoundStrategy } = require('./compound-strategy')
+// const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
+const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
+// const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
+// const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
+// const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
+// const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
+// const { shouldBehaveLikeEarnMakerStrategy } = require('./earn-maker-strategy')
+// const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
 // const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
-// const { shouldBehaveLikeEarnVesperStrategy } = require('../behavior/earn-vesper-strategy')
+// const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
 const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-xy')
 // const { shouldBehaveLikeVesperAaveXYStrategy } = require('./vesper-aave-xy')
 
@@ -24,7 +25,7 @@ const { advanceBlock } = require('vesper-commons/utils/time')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const ZERO_ADDRESS = ethers.constants.AddressZero
-function shouldBehaveLikeStrategy(type, strategyName) {
+function shouldBehaveLikeStrategy(index, type, strategyName) {
   let strategy, pool, feeCollector, collateralToken, accountant
   let owner, user1, user2, user3, user4, user5
 
@@ -55,11 +56,11 @@ function shouldBehaveLikeStrategy(type, strategyName) {
     beforeEach(async function () {
       snapshotId = await ethers.provider.send('evm_snapshot', [])
       ;[owner, user1, user2, user3, user4, user5] = this.users
-      strategy = this.strategy.instance
+      strategy = this.strategies[index].instance
       pool = this.pool
       accountant = this.accountant
       collateralToken = this.collateralToken
-      feeCollector = this.strategy.feeCollector
+      feeCollector = this.strategies[index].feeCollector
     })
     afterEach(async function () {
       await ethers.provider.send('evm_revert', [snapshotId])
@@ -206,8 +207,9 @@ function shouldBehaveLikeStrategy(type, strategyName) {
 
   // Run strategy specific tets
   if (behaviors[type]) {
-    shouldBehaveLikeSpecificStrategy()
+    shouldBehaveLikeSpecificStrategy(index)
   }
+  shouldMigrateStrategies()
 }
 
 module.exports = { shouldBehaveLikeStrategy }

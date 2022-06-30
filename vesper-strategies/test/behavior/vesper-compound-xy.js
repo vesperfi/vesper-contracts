@@ -39,7 +39,7 @@ async function rebalance(strategy) {
 }
 
 // Vesper Compound XY strategy specific tests
-function shouldBehaveLikeVesperCompoundXYStrategy() {
+function shouldBehaveLikeVesperCompoundXYStrategy(index) {
   let strategy, pool, collateralToken, supplyCToken, comptroller, oracle
   let borrowCToken, borrowTokenPrice, supplyTokenPrice
   let user1, user2
@@ -67,9 +67,9 @@ function shouldBehaveLikeVesperCompoundXYStrategy() {
     beforeEach(async function () {
       ;[, user1, user2] = this.users
       pool = this.pool
-      strategy = this.strategy.instance
+      strategy = this.strategies[index].instance
       collateralToken = this.collateralToken
-      supplyCToken = await getStrategyToken(this.strategy)
+      supplyCToken = await getStrategyToken(this.strategies[index])
       borrowCToken = await ethers.getContractAt('CToken', await strategy.borrowCToken())
       const comptrollerAddress = await strategy.comptroller()
       comptroller = await ethers.getContractAt('Comptroller', comptrollerAddress)
@@ -106,7 +106,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy() {
     // TODO Using production pool and hence not possible to lower borrow balance in such test
     // Either update this test to run properly or just run it when we deploy pool for tests
     // eslint-disable-next-line mocha/no-skipped-tests
-    xit('Should adjust borrow to keep it within defined limits', async function () {
+    it('Should adjust borrow to keep it within defined limits', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.rebalance()
       await advanceBlock(100)
@@ -172,7 +172,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy() {
       await deposit(pool, collateralToken, 10, user1)
       await strategy.rebalance()
       const borrowBefore = await strategy.borrowBalance()
-      await simulateVesperPoolProfit(this.strategy)
+      await simulateVesperPoolProfit(this.strategies[index])
       expect(await strategy.borrowBalance()).to.be.gt(borrowBefore)
       const data = await strategy.callStatic.rebalance()
       expect(data._profit, 'Profit should be > 0').to.gt(0)

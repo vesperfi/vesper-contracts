@@ -3,6 +3,9 @@
 const hre = require('hardhat')
 const ethers = hre.ethers
 const provider = hre.waffle.provider
+const StrategyType = require('vesper-commons/utils/strategyTypes')
+const { adjustBalance } = require('vesper-commons/utils/balance')
+const gemJoins = require('vesper-commons/utils/gemJoins')
 const { getChain, getChainData } = require('vesper-commons/utils/chains')
 const chain = getChain()
 const Address = getChainData().address
@@ -10,6 +13,9 @@ hre.address = Address
 
 // Contract names
 const CToken = 'CToken'
+const TokenLike = 'TokenLikeTest'
+const CollateralManager = 'CollateralManager'
+const PoolAccountant = 'PoolAccountant'
 
 async function executeIfExist(fn, param) {
   if (typeof fn === 'function') {
@@ -55,7 +61,7 @@ async function unlock(_address) {
  * @param {any[]} [params] Constructor params
  * @returns {object} Contract instance
  */
-async function deployContract(name, params = [], signer = {}) {
+async function deployContract(name, params = []) {
   let contractName
   try {
     // Try to read artifact, if success then 'name' is valid input for deploy.
@@ -73,7 +79,7 @@ async function deployContract(name, params = [], signer = {}) {
     }
     contractName = artifactPath
   }
-  const contractFactory = await ethers.getContractFactory(contractName, signer)
+  const contractFactory = await ethers.getContractFactory(contractName)
   return contractFactory.deploy(...params)
 }
 
@@ -85,84 +91,205 @@ async function setDefaultRouting(swapper, caller, tokenIn, tokenOut, swapType = 
   await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.SUSHISWAP, path2)
 }
 
-async function configureSwapper(strategy, collateral) {
-  const strategyType = strategy.type.toLowerCase()
-  const swapperAddress = strategy.constructorArgs.swapper
-  const abi = [
-    'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
-    'function governor() external view returns(address)',
-    'function defaultRoutings(bytes memory) external view returns(bytes memory)',
-  ]
+async function configureSwapper(strategies, collateral) {
+  for (const strategy of strategies) {
+    const strategyType = strategy.type.toLowerCase()
+    const swapperAddress = strategy.constructorArgs.swapper
+    const abi = [
+      'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
+      'function governor() external view returns(address)',
+      'function defaultRoutings(bytes memory) external view returns(bytes memory)',
+    ]
 
-  const swapper = await ethers.getContractAt(abi, swapperAddress)
-  const governor = await unlock(await swapper.governor())
+    const swapper = await ethers.getContractAt(abi, swapperAddress)
+    const governor = await unlock(await swapper.governor())
 
-  const rewardToken = await strategy.instance.rewardToken()
-  // const path2 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[rewardToken, collateral]])
-  // await swapper.connect(governor).setDefaultRouting('0', rewardToken, collateral, '1', path2)
-  await setDefaultRouting(swapper, governor, rewardToken, collateral)
+    const rewardToken = await strategy.instance.rewardToken()
+    // const path2 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[rewardToken, collateral]])
+    // await swapper.connect(governor).setDefaultRouting('0', rewardToken, collateral, '1', path2)
+    await setDefaultRouting(swapper, governor, rewardToken, collateral)
 
-  if (strategyType.includes('vesper')) {
-    // const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[VSP, collateral]])
-    // await swapper.connect(governor).setDefaultRouting('0', VSP, collateral, '1', path)
-    await setDefaultRouting(swapper, governor, Address.Vesper.VSP, collateral)
-  }
+    if (strategyType.includes('vesper')) {
+      // const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[VSP, collateral]])
+      // await swapper.connect(governor).setDefaultRouting('0', VSP, collateral, '1', path)
+      await setDefaultRouting(swapper, governor, Address.Vesper.VSP, collateral)
+    }
 
-  if (strategyType.includes('xy')) {
-    const LINK = Address.LINK
-    // const path3 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[collateral, LINK]])
-    // await swapper.connect(governor).setDefaultRouting('1', collateral, LINK, '1', path3)
-    await setDefaultRouting(swapper, governor, collateral, LINK, '1') // EXACT_OUTPUT
-    // const path4 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[LINK, collateral]])
-    // await swapper.connect(governor).setDefaultRouting('0', LINK, collateral, '1', path4)
-    await setDefaultRouting(swapper, governor, LINK, collateral)
-  }
-}
-
-async function removeStrategies(accountant) {
-  // const accountant = obj.accountant
-  const strategyAbiV3 = ['function keepers() external view returns (address)', 'function rebalance() external']
-  const addressListAbi = ['function at(uint) external view returns (address)']
-  const strategies = await accountant.getStrategies()
-  for (const strategyAddress of strategies) {
-    const info = await accountant.strategy(strategyAddress)
-    // Check if debtRatio is > 1%
-    if (info._debtRatio > 100) {
-      // Updated debtRatio to be 1%
-      await accountant.updateDebtRatio(strategyAddress, 100)
-      let strategyContract = await ethers.getContractAt('IStrategy', strategyAddress)
-      const version = await strategyContract.VERSION()
-      let keeper
-      if (version.startsWith('3')) {
-        strategyContract = await ethers.getContractAt(strategyAbiV3, strategyAddress)
-        const keeperList = await ethers.getContractAt(addressListAbi, await strategyContract.keepers())
-        keeper = await unlock(await keeperList.at(0))
-        await strategyContract.connect(keeper).rebalance()
-      } else {
-        keeper = await unlock((await strategyContract.keepers())[0])
-      }
-      await strategyContract.connect(keeper).rebalance()
+    if (strategyType.includes('xy')) {
+      const LINK = Address.LINK
+      // const path3 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[collateral, LINK]])
+      // await swapper.connect(governor).setDefaultRouting('1', collateral, LINK, '1', path3)
+      await setDefaultRouting(swapper, governor, collateral, LINK, '1') // EXACT_OUTPUT
+      // const path4 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[LINK, collateral]])
+      // await swapper.connect(governor).setDefaultRouting('0', LINK, collateral, '1', path4)
+      await setDefaultRouting(swapper, governor, LINK, collateral)
     }
   }
 }
 
 /**
- * Add in pool
+ * Add all strategies in pool
  *
- * @param {object} accountant PoolAccountant instance
- * @param {object} strategy Strategy instance with config details
+ * @param {object} obj Updated test class object
  */
-async function addStrategy(accountant, strategy) {
-  await accountant.addStrategy(strategy.instance.address, ...Object.values(strategy.config))
+async function addStrategies(obj) {
+  for (const strategy of obj.strategies) {
+    await obj.accountant.addStrategy(strategy.instance.address, ...Object.values(strategy.config))
+  }
 }
 
-async function createStrategy(strategy, governor) {
-  const instance = await deployContract(strategy.contract, Object.values(strategy.constructorArgs), governor)
+/**
+ * Setups a local Vesper Pool for strategies that use it as underlying
+ *
+ * @param {string} collateralToken Address of collateralToken
+ * @returns {object} Pool Contract instance
+ */
+async function setupVesperPool(collateralToken = Address.DAI) {
+  const token = await ethers.getContractAt('IERC20Metadata', collateralToken)
+  const tokenName = await token.symbol()
+  const poolParams = [`v${tokenName} Pool`, `v${tokenName}`, collateralToken]
+  const vPool = await deployContract('VPool', poolParams)
+  const accountant = await deployContract(PoolAccountant)
+  await accountant.init(vPool.address)
+  await vPool.initialize(...poolParams, accountant.address)
+  return vPool
+}
+
+/**
+ * Setup Vesper Earn Drip Pool for testing
+ *
+ /**
+ * Create strategies instances and set it in test class object
+ *
+ * @param {object}  obj Test class object
+ * @param {object} options optional parameters
+ */
+async function setupEarnDrip(obj, options) {
+  for (const strategy of obj.strategies) {
+    if (strategy.type.toUpperCase().includes('EARN')) {
+      let growPool
+      if (strategy.type === 'earnVesperMaker') {
+        // For earn Vesper Maker growPool should be same as receiptToken
+        growPool = { address: strategy.constructorArgs.receiptToken }
+      } else {
+        growPool = options.growPool ? options.growPool : { address: ethers.constants.AddressZero }
+      }
+      const vesperEarnDrip = await deployContract('VesperEarnDrip', [])
+      const rewardTokens =
+        growPool.address === ethers.constants.AddressZero
+          ? [...('tokens' in options ? options.tokens : [])]
+          : [growPool.address]
+      if (rewardTokens.length > 0) {
+        await vesperEarnDrip.initialize(obj.pool.address, rewardTokens)
+        if (growPool.address !== ethers.constants.AddressZero) {
+          await vesperEarnDrip.updateGrowToken(growPool.address)
+        }
+        await obj.pool.updatePoolRewards(vesperEarnDrip.address)
+        break
+      }
+    }
+  }
+}
+
+/**
+ * Create and configure Maker strategy. Also update test class object with required data.
+ *
+ * @param {object} strategy  Strategy config object
+ * @param {object} poolAddress Pool address
+ * @param {object} options - optional parameters
+ * @returns {object} Strategy instance
+ */
+async function createMakerStrategy(strategy, poolAddress, options) {
+  const collateralManager = options.collateralManager
+    ? options.collateralManager
+    : await deployContract(CollateralManager)
+  const strategyInstance = await deployContract(strategy.contract, [
+    poolAddress,
+    collateralManager.address,
+    ...Object.values(strategy.constructorArgs),
+  ])
+  if (!options.skipVault) {
+    await strategyInstance.createVault()
+  }
+  strategyInstance.collateralManager = collateralManager
+  await Promise.all([strategyInstance.updateBalancingFactor(300, 250), collateralManager.addGemJoin(gemJoins)])
+  return strategyInstance
+}
+
+/**
+ * Create and configure a EarnVesper Strategy.
+ * Using an up-to-date underlying vPool and VSP rewards enabled
+ *
+ * @param {object} strategy  Strategy config object
+ * @param {object} poolAddress pool address
+ * @param {object} options extra params
+ * @returns {object} Strategy instance
+ */
+async function createEarnVesperStrategy(strategy, poolAddress, options) {
+  const underlyingVesperPool = await ethers.getContractAt('IVesperPool', strategy.constructorArgs.receiptToken)
+  const collateralToken = await underlyingVesperPool.token()
+
+  if (!options.vPool) {
+    options.vPool = await setupVesperPool(collateralToken)
+    const TOTAL_REWARD = ethers.utils.parseUnits('150000')
+    const REWARD_DURATION = 30 * 24 * 60 * 60
+
+    const vPoolRewards = await deployContract('PoolRewards', [])
+    const rewardTokens = [Address.Vesper.VSP]
+    await vPoolRewards.initialize(poolAddress, rewardTokens)
+    await options.vPool.updatePoolRewards(vPoolRewards.address)
+
+    const vsp = await ethers.getContractAt('IVSP', Address.Vesper.VSP)
+
+    await adjustBalance(Address.Vesper.VSP, vPoolRewards.address, TOTAL_REWARD)
+
+    const notifyMultiSignature = 'notifyRewardAmount(address[],uint256[],uint256[])'
+    await vPoolRewards[`${notifyMultiSignature}`]([vsp.address], [TOTAL_REWARD], [REWARD_DURATION])
+    strategy.constructorArgs.receiptToken = options.vPool.address
+  }
+
+  const strategyInstance = await deployContract(strategy.contract, [
+    poolAddress,
+    ...Object.values(strategy.constructorArgs),
+  ])
+
+  return strategyInstance
+}
+
+async function createStrategy(strategy, poolAddress, options = {}) {
+  const strategyType = strategy.type
+  let instance
+  if (
+    strategyType === StrategyType.EARN_MAKER ||
+    strategyType === StrategyType.AAVE_MAKER ||
+    strategyType === StrategyType.COMPOUND_MAKER ||
+    strategyType === StrategyType.VESPER_MAKER ||
+    strategyType === StrategyType.EARN_VESPER_MAKER
+  ) {
+    instance = await createMakerStrategy(strategy, poolAddress, options)
+  } else if (strategyType === StrategyType.EARN_VESPER) {
+    instance = await createEarnVesperStrategy(strategy, poolAddress, options)
+  } else {
+    instance = await deployContract(strategy.contract, [poolAddress, ...Object.values(strategy.constructorArgs)])
+  }
   await instance.approveToken()
   await instance.updateFeeCollector(strategy.feeCollector)
+
   // Earn strategies require call to approveGrowToken
   await executeIfExist(instance.approveGrowToken)
   return instance
+}
+/**
+ * Create strategies instances and set it in test class object
+ *
+ * @param {object} obj Test class object
+ * @param {object} options optional parameters
+ */
+async function createStrategies(obj, options) {
+  await setupEarnDrip(obj, options)
+  for (const strategy of obj.strategies) {
+    strategy.instance = await createStrategy(strategy, obj.pool.address, options)
+  }
 }
 
 /**
@@ -186,13 +313,20 @@ async function makeNewStrategy(oldStrategy, poolAddress, _options) {
 }
 
 /**
- * Setup strategy for testing
+ * @typedef {object} PoolData
+ * @property {object} poolConfig - Pool config
+ * @property {object []} strategies - Array of strategy configuration
+ */
+
+/**
+ * Setup Vesper pool for testing
  *
  * @param {object} obj Current calling object aka 'this'
- * @param {object} strategy Strategy config data
+ * @param {PoolData} poolData Data for pool setup
  * @param {object} options optional data
  */
-async function setupStrategy(obj, strategy, options = {}) {
+async function setupVPool(obj, poolData, options = {}) {
+  const { poolConfig, strategies } = poolData
   const isInCache = obj.snapshot === undefined ? false : await provider.send('evm_revert', [obj.snapshot])
   if (isInCache === true) {
     // Rollback manual changes to objects
@@ -200,22 +334,24 @@ async function setupStrategy(obj, strategy, options = {}) {
     // Recreate the snapshot after rollback, reverting deletes the previous snapshot
     obj.snapshot = await provider.send('evm_snapshot')
   } else {
-    obj.strategy = strategy
+    obj.strategies = strategies
+    obj.accountant = await deployContract(PoolAccountant)
+    obj.pool = await deployContract(poolConfig.contractName, poolConfig.poolParams)
 
-    const pool = await ethers.getContractAt('IVesperPool', strategy.constructorArgs.pool)
-    let governor = await pool.governor()
-    governor = await unlock(governor)
-    const accountant = await ethers.getContractAt('IPoolAccountantTest', await pool.poolAccountant(), governor)
-    const collateralToken = await ethers.getContractAt('IERC20Metadata', await pool.token())
-    obj.pool = pool
-    obj.governor = governor
-    obj.accountant = accountant
-    obj.collateralToken = collateralToken
+    await obj.accountant.init(obj.pool.address)
+    await obj.pool.initialize(...poolConfig.poolParams, obj.accountant.address)
+    await obj.pool.updateUniversalFee(poolConfig.setup.universalFee)
 
-    obj.strategy.instance = await createStrategy(strategy, governor, options)
-    await removeStrategies(accountant)
-    await addStrategy(accountant, obj.strategy)
-    await configureSwapper(obj.strategy, collateralToken.address)
+    await createStrategies(obj, options)
+    await addStrategies(obj)
+    const collateralTokenAddress = await obj.pool.token()
+    await configureSwapper(obj.strategies, collateralTokenAddress)
+    obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
+
+    // Must wait an hour for oracles to be effective, unless they were created before the strategy
+    await provider.send('evm_increaseTime', [3600])
+    await provider.send('evm_mine')
+
     // Save snapshot ID for reuse in consecutive tests
     obj.snapshot = await provider.send('evm_snapshot')
   }
@@ -262,7 +398,7 @@ async function getStrategyToken(strategy) {
 
 module.exports = {
   deployContract,
-  setupStrategy,
+  setupVPool,
   getEvent,
   makeNewStrategy,
   createStrategy,
