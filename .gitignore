@@ -10,9 +10,13 @@ node_modules
 # Eslint
 .eslintcache
 
-# Hard hat
+# Hardhat
 artifacts
 cache
+
+# Deployment
+**/deployments/localhost/*
+**/deployments/*/failed*
 
 # Solidity coverage
 coverage

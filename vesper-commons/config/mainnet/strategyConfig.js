@@ -492,7 +492,6 @@ const StrategyConfig = {
     contract: 'VesperCompoundXYStrategyETH',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
-      pool: Address.Vesper.vaETH,
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,

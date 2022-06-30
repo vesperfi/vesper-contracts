@@ -24,7 +24,7 @@ async function deposit(pool, token, amount, depositor) {
   const depositAmount = ethers.utils.parseUnits(amount.toString(), await token.decimals())
   await adjustBalance(token.address, depositor.address, depositAmount)
   await token.connect(depositor).approve(pool.address, depositAmount)
-  await pool.connect(depositor).deposit(depositAmount)
+  await pool.connect(depositor)['deposit(uint256)'](depositAmount)
   return depositAmount
 }
 
@@ -107,7 +107,7 @@ async function harvestVesperMaker(strategy) {
  * @param {object} strategy - strategy object
  */
 async function harvestVesperXY(strategy) {
-  const vPool = await ethers.getContractAt('IVesperPoolTest', await strategy.instance.vPool())
+  const vPool = await ethers.getContractAt('IVesperPool', await strategy.instance.vPool())
   const collateralTokenAddress = await vPool.token()
 
   const user = (await ethers.getSigners())[11]

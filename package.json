@@ -15,6 +15,7 @@
     "fork": "lerna run fork --stream",
     "test": "lerna run test --stream",
     "prepare": "husky install",
+    "postinstall": "patch-package",
     "lerna": "lerna"
   },
   "devDependencies": {
@@ -39,7 +40,7 @@
     "ethers": "^5.6.9",
     "hardhat": "^2.9.9",
     "hardhat-contract-sizer": "^2.5.1",
-    "hardhat-deploy": "^0.11.10",
+    "hardhat-deploy": "^0.11.11",
     "hardhat-gas-reporter": "^1.0.8",
     "hardhat-log-remover": "^2.0.2",
     "husky": "^8.0.1",
