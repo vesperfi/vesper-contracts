@@ -537,9 +537,9 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         // remaining debt is in other strategies hence rebalance other strategies to get fund back
         // and then rebalance first strategy.
         for (let i = 1; i < strategies.length; i++) {
-          await strategies[i].instance.rebalance()
+          await strategies[i].instance.rebalance(true)
         }
-        await strategies[0].instance.rebalance()
+        await strategies[0].instance.rebalance(true)
 
         // totalDebt of pool after rebalance, it should be close to maxTotalDebt
         totalDebtAfter = await pool.totalDebt()

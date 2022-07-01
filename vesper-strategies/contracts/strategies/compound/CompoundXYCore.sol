@@ -155,7 +155,7 @@ abstract contract CompoundXYCore is Strategy {
         }
     }
 
-    function _rebalance()
+    function _rebalance(bool _shouldHarvest)
         internal
         override
         returns (
@@ -165,6 +165,17 @@ abstract contract CompoundXYCore is Strategy {
         )
     {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
+        // No harvest. Just payback if excessDebt is non zero and return.
+        if (!_shouldHarvest) {
+            // In case of excessDebt, withdraw and report it.
+            if (_excessDebt > 0) {
+                _withdrawHere(_excessDebt);
+            }
+            IVesperPool(pool).reportEarning(0, 0, _excessDebt);
+            // There may be some collateral from pool to deposit into Compound
+            _deposit();
+            return (0, 0, _excessDebt);
+        }
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
         // Claim any reward we have.
         _claimRewardsAndConvertTo(address(collateralToken));
@@ -240,16 +251,17 @@ abstract contract CompoundXYCore is Strategy {
     /// @dev Deposit collateral in Compound and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
-
-        (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
-        if (_repayAmount > 0) {
-            // Repay to maintain safe position
-            _repay(_repayAmount, false);
-            _mintX(collateralToken.balanceOf(address(this)));
-        } else {
-            // Happy path, mint more borrow more
-            _mintX(_collateralBalance);
-            _borrowY(_borrowAmount);
+        if (_collateralBalance > 0) {
+            (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
+            if (_repayAmount > 0) {
+                // Repay to maintain safe position
+                _repay(_repayAmount, false);
+                _mintX(collateralToken.balanceOf(address(this)));
+            } else {
+                // Happy path, mint more borrow more
+                _mintX(_collateralBalance);
+                _borrowY(_borrowAmount);
+            }
         }
     }
 

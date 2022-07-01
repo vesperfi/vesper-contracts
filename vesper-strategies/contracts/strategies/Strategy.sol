@@ -94,11 +94,12 @@ abstract contract Strategy is IStrategy, Context {
      * @notice OnlyKeeper: Rebalance profit, loss and investment of this strategy.
      *  Calculate profit, loss and payback of this strategy and realize profit/loss and
      *  withdraw fund for payback, if any, and submit this report to pool.
+     * @param _shouldHarvest Flag indicating to harvest rewards or not.
      * @return _profit Realized profit in collateral.
      * @return _loss Realized loss, if any, in collateral.
      * @return _payback If strategy has any excess debt, we have to liquidate asset to payback excess debt.
      */
-    function rebalance()
+    function rebalance(bool _shouldHarvest)
         external
         onlyKeeper
         returns (
@@ -107,7 +108,7 @@ abstract contract Strategy is IStrategy, Context {
             uint256 _payback
         )
     {
-        return _rebalance();
+        return _rebalance(_shouldHarvest);
     }
 
     /**
@@ -173,7 +174,7 @@ abstract contract Strategy is IStrategy, Context {
     /* solhint-disable no-empty-blocks */
     function _claimRewardsAndConvertTo(address _toToken) internal virtual {}
 
-    function _rebalance()
+    function _rebalance(bool _shouldHarvest)
         internal
         virtual
         returns (
