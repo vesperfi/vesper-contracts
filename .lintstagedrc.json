@@ -1,4 +1,7 @@
 {
+  "*.sol": [
+    "solhint"
+  ],
   "*.js": [
     "eslint --cache --fix"
   ]
