@@ -15,7 +15,7 @@
     "fork": "lerna run fork --stream",
     "test": "lerna run test --stream",
     "prepare": "husky install",
-    "postinstall": "patch-package",
+    "postinstall": "patch-package && lerna bootstrap",
     "lerna": "lerna"
   },
   "devDependencies": {

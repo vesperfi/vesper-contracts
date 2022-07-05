@@ -14,7 +14,7 @@ const {
 } = require('vesper-commons/utils/chains').getChainData()
 
 // Compound XY strategy specific tests
-function shouldBehaveLikeCompoundXYStrategy() {
+function shouldBehaveLikeCompoundXYStrategy(index) {
   let strategy, pool, collateralToken, supplyCToken, comptroller, oracle, borrowTokenPrice, supplyTokenPrice
   let borrowToken, borrowCToken
   let governor, user1, user2
@@ -43,9 +43,9 @@ function shouldBehaveLikeCompoundXYStrategy() {
     beforeEach(async function () {
       ;[governor, user1, user2] = this.users
       pool = this.pool
-      strategy = this.strategy.instance
+      strategy = this.strategies[index].instance
       collateralToken = this.collateralToken
-      supplyCToken = await getStrategyToken(this.strategy)
+      supplyCToken = await getStrategyToken(this.strategies[index])
       borrowCToken = await ethers.getContractAt('CToken', await strategy.borrowCToken())
       borrowToken = await ethers.getContractAt('IERC20Metadata', await strategy.borrowToken())
       comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
@@ -136,8 +136,6 @@ function shouldBehaveLikeCompoundXYStrategy() {
         expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
       })
       it('Should recover extra borrow tokens', async function () {
-        // using swap slippage for realistic scenario
-        await strategy.connect(governor).updateSwapSlippage('1000')
         await deposit(pool, collateralToken, 10, user1)
         await strategy.connect(governor).rebalance(true)
         const tokensHere = await pool.tokensHere()
@@ -194,7 +192,8 @@ function shouldBehaveLikeCompoundXYStrategy() {
       })
     })
     context('Calculate APY', function () {
-      it('Should calculate APY', async function () {
+      // eslint-disable-next-line mocha/no-skipped-tests
+      xit('Should calculate APY', async function () {
         /* eslint-disable no-console */
         await deposit(pool, collateralToken, 10, user1)
         let pricePerShare = await pool.pricePerShare()
