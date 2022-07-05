@@ -3,7 +3,7 @@
 pragma solidity 0.8.9;
 
 interface IStrategy {
-    function rebalance()
+    function rebalance(bool _shouldHarvest)
         external
         returns (
             uint256 _profit,
