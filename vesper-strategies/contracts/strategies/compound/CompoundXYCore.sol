@@ -155,6 +155,45 @@ abstract contract CompoundXYCore is Strategy {
         }
     }
 
+    /// @dev Deposit collateral in Compound and adjust borrow position
+    function _deposit() internal {
+        uint256 _collateralBalance = collateralToken.balanceOf(address(this));
+        if (_collateralBalance > 0) {
+            (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
+            if (_repayAmount > 0) {
+                // Repay to maintain safe position
+                _repay(_repayAmount, false);
+                _mintX(collateralToken.balanceOf(address(this)));
+            } else {
+                // Happy path, mint more borrow more
+                _mintX(_collateralBalance);
+                _borrowY(_borrowAmount);
+            }
+        }
+    }
+
+    /// @dev Get the borrow balance strategy is holding. Override to handle vToken balance.
+    function _getBorrowBalance() internal view virtual returns (uint256) {
+        return IERC20(borrowToken).balanceOf(address(this));
+    }
+
+    /// @dev TraderJoe Compound fork has different markets API so allow this method to override.
+    function _getCollateralFactor(address _cToken) internal view virtual returns (uint256 _collateralFactor) {
+        (, _collateralFactor, ) = comptroller.markets(_cToken);
+    }
+
+    /// @dev Get underlying token. Compound handle ETH differently hence allow this method to override
+    function _getUnderlyingToken(address _cToken) internal view virtual returns (address) {
+        return CToken(_cToken).underlying();
+    }
+
+    /// @dev Deposit collateral aka X in Compound. Override to handle ETH
+    function _mintX(uint256 _amount) internal virtual {
+        if (_amount > 0) {
+            require(supplyCToken.mint(_amount) == 0, "supply-failed");
+        }
+    }
+
     function _rebalance()
         internal
         override
@@ -207,50 +246,12 @@ abstract contract CompoundXYCore is Strategy {
         _deposit();
     }
 
-    /// @dev Get the borrow balance strategy is holding. Override to handle vToken balance.
-    function _getBorrowBalance() internal view virtual returns (uint256) {
-        return IERC20(borrowToken).balanceOf(address(this));
-    }
-
-    /// @dev TraderJoe Compound fork has different markets API so allow this method to override.
-    function _getCollateralFactor(address _cToken) internal view virtual returns (uint256 _collateralFactor) {
-        (, _collateralFactor, ) = comptroller.markets(_cToken);
-    }
-
-    /// @dev Get underlying token. Compound handle ETH differently hence allow this method to override
-    function _getUnderlyingToken(address _cToken) internal view virtual returns (address) {
-        return CToken(_cToken).underlying();
-    }
-
-    /// @dev Deposit collateral aka X in Compound. Override to handle ETH
-    function _mintX(uint256 _amount) internal virtual {
-        if (_amount > 0) {
-            require(supplyCToken.mint(_amount) == 0, "supply-failed");
-        }
-    }
-
     /// @dev Hook to handle profit scenario i.e. actual borrowed balance > Compound borrow account.
     function _rebalanceBorrow(uint256 _excessBorrow) internal virtual {}
 
     /// @dev Withdraw collateral aka X from Compound. Override to handle ETH
     function _redeemX(uint256 _amount) internal virtual {
         require(supplyCToken.redeemUnderlying(_amount) == 0, "withdraw-failed");
-    }
-
-    /// @dev Deposit collateral in Compound and adjust borrow position
-    function _deposit() internal {
-        uint256 _collateralBalance = collateralToken.balanceOf(address(this));
-
-        (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
-        if (_repayAmount > 0) {
-            // Repay to maintain safe position
-            _repay(_repayAmount, false);
-            _mintX(collateralToken.balanceOf(address(this)));
-        } else {
-            // Happy path, mint more borrow more
-            _mintX(_collateralBalance);
-            _borrowY(_borrowAmount);
-        }
     }
 
     /**
