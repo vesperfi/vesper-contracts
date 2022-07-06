@@ -49,7 +49,7 @@ async function shouldMigrateStrategies() {
       // Rebalance will mint new shares equal to fee, to keep supply same as before set fee to 0
       const universalFee = await pool.universalFee()
       await pool.connect(gov).updateUniversalFee(0)
-      await newStrategy.instance.rebalance(true)
+      await newStrategy.instance.rebalance()
       // Reset universal fee
       await pool.connect(gov).updateUniversalFee(universalFee)
     }

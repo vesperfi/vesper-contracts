@@ -58,7 +58,7 @@ function shouldBehaveLikeCompoundXYStrategy() {
     context('Borrow tests', function () {
       it('Should borrow tokens at rebalance', async function () {
         await deposit(pool, collateralToken, 10, user1)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const cTokenBalance = await supplyCToken.balanceOf(strategy.address)
         const borrow = await borrowToken.balanceOf(strategy.address)
         const currentBorrow = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
@@ -69,15 +69,15 @@ function shouldBehaveLikeCompoundXYStrategy() {
 
       it('Should borrow within defined limits', async function () {
         await deposit(pool, collateralToken, 10, user2)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await borrowCToken.exchangeRateCurrent()
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await assertCurrentBorrow()
       })
 
       it('Should adjust borrow to keep it within defined limits', async function () {
         await deposit(pool, collateralToken, 100, user1)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await advanceBlock(100)
 
         await supplyCToken.exchangeRateCurrent()
@@ -98,7 +98,7 @@ function shouldBehaveLikeCompoundXYStrategy() {
     context('Governor function', function () {
       it('Should repayAll and reset minBorrowRatio via governor', async function () {
         await deposit(pool, collateralToken, 50, user2)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         let borrowBalance = await borrowToken.balanceOf(strategy.address)
         expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
 
@@ -111,11 +111,11 @@ function shouldBehaveLikeCompoundXYStrategy() {
       })
       it('Should update borrow limit', async function () {
         await deposit(pool, collateralToken, 100, user1)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await advanceBlock(100)
         await strategy.connect(governor).updateBorrowLimit(5000, 6000)
         const newMinBorrowLimit = await strategy.minBorrowLimit()
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         expect(newMinBorrowLimit).to.be.eq(5000, 'Min borrow limit is wrong')
         await assertCurrentBorrow()
         let tx = strategy.connect(governor).updateBorrowLimit(5000, ethers.constants.MaxUint256)
@@ -127,11 +127,11 @@ function shouldBehaveLikeCompoundXYStrategy() {
 
       it('Should repay borrow if borrow ratio set to 0', async function () {
         await deposit(pool, collateralToken, 100, user1)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const borrowBefore = await borrowToken.balanceOf(strategy.address)
         expect(borrowBefore).to.be.gt(0, 'Borrow amount should be > 0')
         await strategy.connect(governor).updateBorrowLimit(0, 0)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const borrowAfter = await borrowToken.balanceOf(strategy.address)
         expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
       })
@@ -139,7 +139,7 @@ function shouldBehaveLikeCompoundXYStrategy() {
         // using swap slippage for realistic scenario
         await strategy.connect(governor).updateSwapSlippage('1000')
         await deposit(pool, collateralToken, 10, user1)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const tokensHere = await pool.tokensHere()
         const borrowBalance = await borrowToken.balanceOf(strategy.address)
         await adjustBalance(borrowToken.address, strategy.address, borrowBalance.mul(11).div(10))
@@ -165,7 +165,7 @@ function shouldBehaveLikeCompoundXYStrategy() {
       it('Should claim COMP when rebalance is called', async function () {
         await deposit(pool, collateralToken, 10, user1)
         await deposit(pool, collateralToken, 2, user2)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await supplyCToken.exchangeRateCurrent()
         await advanceBlock(100)
 
@@ -174,7 +174,7 @@ function shouldBehaveLikeCompoundXYStrategy() {
         await pool.connect(user2).withdraw(withdrawAmount)
         const compAccruedBefore = await comptroller.compAccrued(strategy.address)
         expect(compAccruedBefore).to.be.gt(0, 'comp accrued should be > 0 before rebalance')
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const compAccruedAfter = await comptroller.compAccrued(strategy.address)
         expect(compAccruedAfter).to.be.equal(0, 'comp accrued should be 0 after rebalance')
       })
@@ -182,13 +182,13 @@ function shouldBehaveLikeCompoundXYStrategy() {
       it('Should liquidate COMP when claimed by external source', async function () {
         const comp = await ethers.getContractAt('ERC20', Address.COMP)
         await deposit(pool, collateralToken, 10, user2)
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         await advanceBlock(100)
         await comptroller.connect(user2).claimComp(strategy.address, [supplyCToken.address])
         const afterClaim = await comp.balanceOf(strategy.address)
         expect(afterClaim).to.be.gt('0', 'COMP balance should be > 0')
         await supplyCToken.exchangeRateCurrent()
-        await strategy.connect(governor).rebalance(true)
+        await strategy.connect(governor).rebalance()
         const compBalance = await comp.balanceOf(strategy.address)
         expect(compBalance).to.be.equal('0', 'COMP balance should be 0 on rebalance')
       })
@@ -200,15 +200,15 @@ function shouldBehaveLikeCompoundXYStrategy() {
         let pricePerShare = await pool.pricePerShare()
         /* eslint-disable no-console */
         console.log('PricePerShare before rebalance', pricePerShare)
-        await strategy.rebalance(true)
+        await strategy.rebalance()
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after rebalance', pricePerShare)
         await advanceBlock(100)
-        await strategy.rebalance(true)
+        await strategy.rebalance()
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after 100 blocks and rebalance', pricePerShare)
         await advanceBlock(100)
-        await strategy.rebalance(true)
+        await strategy.rebalance()
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after 200 blocks and rebalance', pricePerShare)
         /* eslint-enable no-console */
