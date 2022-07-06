@@ -146,65 +146,30 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
 
     describe('Rebalance', function () {
       it('Should revert if rebalance called from non keeper', async function () {
-        await expect(strategy.connect(user4).rebalance(true)).to.be.revertedWith('caller-is-not-a-keeper')
+        await expect(strategy.connect(user4).rebalance()).to.be.revertedWith('caller-is-not-a-keeper')
       })
 
       it('Should generate profit after rebalance', async function () {
         await deposit(pool, collateralToken, '1000', user1)
         const totalDebtBefore = await pool.totalDebtOf(strategy.address)
         expect(totalDebtBefore, 'Total debt should be zero').to.be.equal(0)
-        await strategy.rebalance(true)
+        await strategy.rebalance()
         await advanceBlock(50)
         // Send some collateral to strategy to generate profit.
         const amount = ethers.utils.parseUnits('1', await collateralToken.decimals())
         await adjustBalance(collateralToken.address, strategy.address, amount)
-        const data = await strategy.callStatic.rebalance(true)
+        const data = await strategy.callStatic.rebalance()
         expect(data._profit, 'Profit should be > 0').to.be.gt('0')
       })
 
       it('Should generate EarningReported event', async function () {
         await deposit(pool, collateralToken, '50', user2) // deposit 50 ETH to generate some profit
-        await strategy.rebalance(true)
+        await strategy.rebalance()
         await advanceBlock(50)
-        const txnObj = await strategy.rebalance(true)
+        const txnObj = await strategy.rebalance()
         const event = await getEvent(txnObj, accountant, 'EarningReported')
         // There may be more than 1 strategy, hence the gte. Bottom line we are testing event.
         expect(event.poolDebt, 'Should have same strategyDebt and poolDebt').to.gte(event.strategyDebt)
-      })
-
-      it('Should not harvest but payback on rebalance', async function () {
-        const deposited = await deposit(pool, collateralToken, '50', user2) // deposit 50 ETH to generate some profit
-        await strategy.rebalance(false)
-        await advanceBlock(50)
-        // Withdraw half balance, it should trigger withdraw from strategy
-        await pool.connect(user2).withdraw(deposited.div(2))
-        // Due to withdraw above, there should be non zero payback
-        const data = await strategy.callStatic.rebalance(false)
-        expect(data._profit, 'Profit should be 0').to.eq(0)
-        expect(data._loss, 'Loss should be 0').to.eq(0)
-        expect(data._payback, 'Payback should be > 0').to.gt(0)
-        // Do actual rebalance with no harvest flag and verify event
-        const txnObj = await strategy.rebalance(false)
-        const event = await getEvent(txnObj, accountant, 'EarningReported')
-        expect(event.profit, 'Profit should be 0').to.eq(0)
-        expect(event.loss, 'Loss should be 0').to.eq(0)
-        expect(event.payback, 'Payback should be > 0').to.gte(0)
-      })
-
-      it('Should not harvest and no payback on rebalance', async function () {
-        await deposit(pool, collateralToken, '50', user2) // deposit 50 ETH to generate some profit
-        await strategy.rebalance(false)
-        await advanceBlock(50)
-        const data = await strategy.callStatic.rebalance(false)
-        expect(data._profit, 'Profit should be 0').to.eq(0)
-        expect(data._loss, 'Loss should be 0').to.eq(0)
-        expect(data._payback, 'Payback should be 0').to.eq(0)
-        // Do actual rebalance with no harvest flag and verify event
-        const txnObj = await strategy.rebalance(false)
-        const event = await getEvent(txnObj, accountant, 'EarningReported')
-        expect(event.profit, 'Profit should be 0').to.eq(0)
-        expect(event.loss, 'Loss should be 0').to.eq(0)
-        expect(event.payback, 'Payback should be  0').to.eq(0)
       })
     })
 

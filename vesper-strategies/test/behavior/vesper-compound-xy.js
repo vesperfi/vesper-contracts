@@ -24,7 +24,7 @@ async function simulateVesperPoolProfit(strategy) {
 async function rebalance(strategy) {
   const keeper = (await strategy.keepers())[0]
   const keeperSigner = await unlock(keeper)
-  await strategy.connect(keeperSigner).rebalance(true)
+  await strategy.connect(keeperSigner).rebalance()
   const vPool = await ethers.getContractAt('VPool', await strategy.vPool())
   const strategyAddresses = await vPool.getStrategies()
   let authorized
@@ -33,9 +33,9 @@ async function rebalance(strategy) {
     const keepers = await instance.keepers()
     authorized = keepers[0] || (await vPool.governor())
     const signer = await unlock(authorized)
-    await instance.connect(signer).rebalance(true)
+    await instance.connect(signer).rebalance()
   }
-  await strategy.connect(keeperSigner).rebalance(true)
+  await strategy.connect(keeperSigner).rebalance()
 }
 
 // Vesper Compound XY strategy specific tests
@@ -84,7 +84,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
 
     it('Should borrow tokens at rebalance', async function () {
       await deposit(pool, collateralToken, 10, user1)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       const cTokenBalance = await supplyCToken.balanceOf(strategy.address)
       const borrow = await strategy.borrowBalance()
       const currentBorrow = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
@@ -95,11 +95,11 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
 
     it('Should borrow within defined limits', async function () {
       await deposit(pool, collateralToken, 10, user2)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       await advanceBlock(100)
       await supplyCToken.exchangeRateCurrent()
       await borrowCToken.exchangeRateCurrent()
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       await assertCurrentBorrow()
     })
 
@@ -108,7 +108,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     // eslint-disable-next-line mocha/no-skipped-tests
     it('Should adjust borrow to keep it within defined limits', async function () {
       await deposit(pool, collateralToken, 100, user1)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       await advanceBlock(100)
 
       await supplyCToken.exchangeRateCurrent()
@@ -126,7 +126,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
 
     it('Should repayAll and reset minBorrowLimit via governor', async function () {
       await deposit(pool, collateralToken, 50, user2)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       let borrowBalance = await strategy.borrowBalance()
       expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
 
@@ -140,11 +140,11 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
 
     it('Should update borrow limit', async function () {
       await deposit(pool, collateralToken, 100, user1)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       await advanceBlock(100)
       await strategy.updateBorrowLimit(5000, 6000)
       const newMinBorrowLimit = await strategy.minBorrowLimit()
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       await supplyCToken.exchangeRateCurrent()
       await borrowCToken.exchangeRateCurrent()
       await assertCurrentBorrow()
@@ -159,22 +159,22 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
 
     it('Should repay borrow if borrow limit set to 0', async function () {
       await deposit(pool, collateralToken, 100, user1)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       const borrowBefore = await strategy.borrowBalance()
       expect(borrowBefore).to.be.gt(0, 'Borrow amount should be > 0')
       await strategy.updateBorrowLimit(0, 0)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       const borrowAfter = await strategy.borrowBalance()
       expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
     })
 
     it('Underlying vPool should make profits and increase Y balance', async function () {
       await deposit(pool, collateralToken, 10, user1)
-      await strategy.rebalance(true)
+      await strategy.rebalance()
       const borrowBefore = await strategy.borrowBalance()
       await simulateVesperPoolProfit(this.strategies[index])
       expect(await strategy.borrowBalance()).to.be.gt(borrowBefore)
-      const data = await strategy.callStatic.rebalance(true)
+      const data = await strategy.callStatic.rebalance()
       expect(data._profit, 'Profit should be > 0').to.gt(0)
     })
 

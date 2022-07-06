@@ -189,13 +189,13 @@ async function rebalanceStrategy(strategy) {
       const cToken = await ethers.getContractAt('CToken', await strategy.instance.token())
       await cToken.accrueInterest()
     }
-    tx = await strategy.instance.rebalance(true)
+    tx = await strategy.instance.rebalance()
   } catch (error) {
     // eslint-disable-next-line no-console
     console.log(error)
     // ignore under water error and give one more try.
     await bringAboveWater(strategy, 50)
-    tx = await strategy.instance.rebalance(true)
+    tx = await strategy.instance.rebalance()
   }
   return tx
 }
@@ -225,7 +225,7 @@ async function rebalanceUnderlying(strategy) {
   for (const underlyingStrategy of strategies) {
     if ((await accountant.totalDebtOf(underlyingStrategy)).gt(0)) {
       const strategyObj = await ethers.getContractAt('IStrategy', underlyingStrategy)
-      promises.push(strategyObj.connect(keeper).rebalance(true))
+      promises.push(strategyObj.connect(keeper).rebalance())
     }
   }
   return Promise.all(promises)
