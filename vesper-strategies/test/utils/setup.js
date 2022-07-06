@@ -103,9 +103,10 @@ async function configureSwapper(strategies, collateral) {
 
     const swapper = await ethers.getContractAt(abi, swapperAddress)
     const governor = await unlock(await swapper.governor())
-
-    const rewardToken = await strategy.instance.rewardToken()
-    await setDefaultRouting(swapper, governor, rewardToken, collateral)
+    const rewardToken = await getIfExist(strategy.instance.rewardToken)
+    if (rewardToken) {
+      await setDefaultRouting(swapper, governor, rewardToken, collateral)
+    }
 
     if (strategyType.includes('vesper')) {
       await setDefaultRouting(swapper, governor, Address.Vesper.VSP, collateral)
@@ -122,6 +123,10 @@ async function configureSwapper(strategies, collateral) {
 
       await setDefaultRouting(swapper, governor, token1, token2, '1') // EXACT_OUTPUT
       await setDefaultRouting(swapper, governor, token2, token1)
+    }
+    if (strategyType.includes('maker')) {
+      await setDefaultRouting(swapper, governor, Address.DAI, collateral)
+      await setDefaultRouting(swapper, governor, collateral, Address.DAI, 1)
     }
   }
 }
@@ -199,19 +204,18 @@ async function setupEarnDrip(obj, options) {
  * @returns {object} Strategy instance
  */
 async function createMakerStrategy(strategy, poolAddress, options) {
-  const collateralManager = options.collateralManager
-    ? options.collateralManager
-    : await deployContract(CollateralManager)
+  if (!strategy.constructorArgs.cm) {
+    const cm = await deployContract(CollateralManager)
+    await cm.addGemJoin(gemJoins)
+    strategy.constructorArgs.cm = cm
+  }
   const strategyInstance = await deployContract(strategy.contract, [
     poolAddress,
-    collateralManager.address,
     ...Object.values(strategy.constructorArgs),
   ])
   if (!options.skipVault) {
     await strategyInstance.createVault()
   }
-  strategyInstance.collateralManager = collateralManager
-  await Promise.all([strategyInstance.updateBalancingFactor(300, 250), collateralManager.addGemJoin(gemJoins)])
   return strategyInstance
 }
 
@@ -299,12 +303,9 @@ async function createStrategies(obj, options) {
  * @param {object} _options - optional parameters
  * @returns {object} new strategy object
  */
-async function makeNewStrategy(oldStrategy, poolAddress, _options) {
-  const options = {
-    collateralManager: oldStrategy.instance.collateralManager,
-    ..._options,
-  }
-  const instance = await createStrategy(oldStrategy, poolAddress, options)
+async function makeNewStrategy(oldStrategy, poolAddress, options) {
+  const pool = await ethers.getContractAt('IVesperPool', poolAddress)
+  const instance = await createStrategy(oldStrategy, pool.address, options)
   // New is copy of old except that it has new instance
   const newStrategy = { ...oldStrategy }
   newStrategy.instance = instance

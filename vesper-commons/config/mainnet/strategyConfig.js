@@ -1108,6 +1108,7 @@ const StrategyConfig = {
     contract: 'CompoundMakerStrategy',
     type: StrategyTypes.COMPOUND_MAKER,
     constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
       swapper,
       receiptToken: Address.Compound.cDAI,
       collateralType: ethers.utils.formatBytes32String('ETH-C'),
@@ -1117,26 +1118,16 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
   },
 
-  CompoundMakerStrategyUNI: {
-    contract: 'CompoundMakerStrategy',
-    type: StrategyTypes.COMPOUND_MAKER,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Compound.cDAI,
-      collateralType: ethers.utils.formatBytes32String('UNI-A'),
-      strategyName: 'CompoundMakerStrategyUNI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_UNI_A, highWater: 275, lowWater: 250 } },
-  },
-
   VesperMakerStrategyETH: {
     contract: 'VesperMakerStrategy',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       collateralType: ethers.utils.formatBytes32String('ETH-C'),
+      highWater: 250,
+      lowWater: 225,
       strategyName: 'VesperMakerStrategyETH',
     },
     config: { ...config },
@@ -1147,9 +1138,12 @@ const StrategyConfig = {
     contract: 'VesperMakerStrategy',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       collateralType: ethers.utils.formatBytes32String('LINK-A'),
+      highWater: 250,
+      lowWater: 225,
       strategyName: 'VesperMakerStrategyLINK',
     },
     config: { ...config },
@@ -1160,9 +1154,12 @@ const StrategyConfig = {
     contract: 'VesperMakerStrategy',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       collateralType: ethers.utils.formatBytes32String('WBTC-C'),
+      highWater: 250,
+      lowWater: 225,
       strategyName: 'VesperMakerStrategyWBTC',
     },
     config: { ...config },

@@ -202,18 +202,19 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         }
         // reset universal fee to 0.
         await pool.updateUniversalFee('0')
-        depositAmount = await deposit(5, user2)
+        await deposit(15, user1)
+        depositAmount = await deposit(15, user2)
         await rebalance(strategies)
         // Some strategies can report a loss if they don't have time to earn anything
         // Time travel based on type of strategy. For compound strategy mine 500 blocks, else time travel
         await increase(60 * 24 * 60 * 60)
         await advanceBlock(500)
         await rebalance(strategies)
-        const user1Balance = await pool.balanceOf(user1.address)
+        let user2Balance = await pool.balanceOf(user2.address)
         // Earn pool leaves dust behind sometimes
-        const dust = user1Balance.div(1000000) // 0.0001 % dust
-        await pool.connect(user1).withdraw(user1Balance)
-        return Promise.all([pool.balanceOf(user1.address), collateralToken.balanceOf(user1.address)]).then(function ([
+        const dust = user2Balance.div(1000000) // 0.0001 % dust
+        await pool.connect(user2).withdraw(user2Balance)
+        return Promise.all([pool.balanceOf(user2.address), collateralToken.balanceOf(user2.address)]).then(function ([
           vPoolBalance,
           collateralBalance,
         ]) {
@@ -495,7 +496,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         }
         await Promise.all([deposit(50, user1), deposit(60, user2)])
         await rebalance(strategies)
-
         let [totalDebtRatio, totalValue, totalDebtBefore] = await Promise.all([
           pool.totalDebtRatio(),
           pool.totalValue(),
@@ -510,7 +510,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           }
         }
         let maxTotalDebt = totalValue.mul(totalDebtRatio).div(MAX_BPS)
-
         expect(Math.abs(maxTotalDebt.add(excessDebt).sub(totalDebtBefore))).to.almost.equal(
           1,
           `Total debt of ${poolName} is wrong after rebalance`,
@@ -532,7 +531,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         expect(totalDebtAfter).to.be.gte(maxTotalDebt, `Total debt of ${poolName} is wrong after withdraw`)
         // TotalDebt after withdraw will be less than it was before
         expect(totalDebtAfter).to.be.lt(totalDebtBefore, `Total debt of ${poolName} is wrong after withdraw`)
-
         // In case of multiple strategies, most withdraw will happen from first strategy and most of
         // remaining debt is in other strategies hence rebalance other strategies to get fund back
         // and then rebalance first strategy.
@@ -540,7 +538,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await strategies[i].instance.rebalance()
         }
         await strategies[0].instance.rebalance()
-
         // totalDebt of pool after rebalance, it should be close to maxTotalDebt
         totalDebtAfter = await pool.totalDebt()
 

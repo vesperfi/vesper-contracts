@@ -11,7 +11,7 @@ const { shouldMigrateStrategies } = require('./strategy-migration')
 const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
 // const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
 // const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
-// const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
+const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
 // const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
 // const { shouldBehaveLikeEarnMakerStrategy } = require('./earn-maker-strategy')
 // const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
@@ -33,6 +33,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     // [StrategyType.AAVE]: shouldBehaveLikeAaveStrategy,
     // [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
     // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
+    [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_COMPOUND_XY]: shouldBehaveLikeVesperCompoundXYStrategy,
     // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXYStrategy,
@@ -156,7 +157,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         await strategy.rebalance()
         await advanceBlock(50)
         // Send some collateral to strategy to generate profit.
-        const amount = ethers.utils.parseUnits('1', await collateralToken.decimals())
+        const amount = ethers.utils.parseUnits('1000', await collateralToken.decimals())
         await adjustBalance(collateralToken.address, strategy.address, amount)
         const data = await strategy.callStatic.rebalance()
         expect(data._profit, 'Profit should be > 0').to.be.gt('0')

@@ -190,6 +190,14 @@ abstract contract Strategy is IStrategy, Context {
         swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this));
     }
 
+    function _safeSwapExactInput(
+        address _tokenIn,
+        address _tokenOut,
+        uint256 _amountIn
+    ) internal {
+        try swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this)) {} catch {} //solhint-disable no-empty-blocks
+    }
+
     // These methods must be implemented by the inheriting strategy
     function _withdraw(uint256 _amount) internal virtual;
 }
