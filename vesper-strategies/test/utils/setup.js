@@ -105,24 +105,23 @@ async function configureSwapper(strategies, collateral) {
     const governor = await unlock(await swapper.governor())
 
     const rewardToken = await strategy.instance.rewardToken()
-    // const path2 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[rewardToken, collateral]])
-    // await swapper.connect(governor).setDefaultRouting('0', rewardToken, collateral, '1', path2)
     await setDefaultRouting(swapper, governor, rewardToken, collateral)
 
     if (strategyType.includes('vesper')) {
-      // const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[VSP, collateral]])
-      // await swapper.connect(governor).setDefaultRouting('0', VSP, collateral, '1', path)
       await setDefaultRouting(swapper, governor, Address.Vesper.VSP, collateral)
     }
 
     if (strategyType.includes('xy')) {
-      const LINK = Address.LINK
-      // const path3 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[collateral, LINK]])
-      // await swapper.connect(governor).setDefaultRouting('1', collateral, LINK, '1', path3)
-      await setDefaultRouting(swapper, governor, collateral, LINK, '1') // EXACT_OUTPUT
-      // const path4 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[LINK, collateral]])
-      // await swapper.connect(governor).setDefaultRouting('0', LINK, collateral, '1', path4)
-      await setDefaultRouting(swapper, governor, LINK, collateral)
+      const token1 = collateral
+      let token2
+      if (strategyType.includes('compound')) {
+        const tokenAbi = ['function underlying() external view returns(address)']
+        const token = await ethers.getContractAt(tokenAbi, await strategy.instance.borrowCToken())
+        token2 = await token.underlying()
+      }
+
+      await setDefaultRouting(swapper, governor, token1, token2, '1') // EXACT_OUTPUT
+      await setDefaultRouting(swapper, governor, token2, token1)
     }
   }
 }

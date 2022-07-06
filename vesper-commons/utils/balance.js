@@ -34,6 +34,7 @@ const slots = {
   [Address.Vesper.vaFEI]: 0,
   [Address.Vesper.vaFRAX]: 0,
   [Address.Vesper.vaLINK]: 0,
+  [Address.Vesper.vaWBTC]: 0,
 }
 
 /**
