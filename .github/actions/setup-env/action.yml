@@ -26,7 +26,7 @@ runs:
 
     - name: Compute hash of contracts directory
       id: compute-hash
-      run: echo "::set-output name=hash::$(find ./contracts -type f -print0 | xargs -0 sha256sum | sha256sum | awk '{print $1}')"
+      run: echo "::set-output name=hash::$(find **/contracts -type f -print0 | xargs -0 sha256sum | sha256sum | awk '{print $1}')"
       shell: bash
 
     - name: Restore compiled contracts from cache
