@@ -8,7 +8,6 @@ const { ethers } = require('hardhat')
 async function shouldMigrateStrategies() {
   let pool, strategies, collateralToken
   let user1, user2, user3, gov
-  const options = { skipVault: true }
 
   async function deposit(amount, depositor) {
     return _deposit(pool, collateralToken, amount, depositor)
@@ -42,7 +41,6 @@ async function shouldMigrateStrategies() {
         pool.totalDebtRatio(),
         getBalance(oldStrategy.instance, receiptToken),
       ])
-
     await pool.connect(gov).migrateStrategy(oldStrategy.instance.address, newStrategy.instance.address)
     // Leverage strategy perform deleverage during migration. To achieve same state new strategy needs to be rebalanced.
     if (newStrategy.type.includes('Leverage')) {
@@ -112,7 +110,7 @@ async function shouldMigrateStrategies() {
   }
 
   async function strategyMigration(strategy) {
-    const newStrategy = await makeNewStrategy(strategy, pool.address, options)
+    const newStrategy = await makeNewStrategy(strategy, pool.address, { skipVault: true })
     const receiptToken = await getStrategyToken(strategy)
     await migrateAndAssert(strategy, newStrategy, receiptToken)
     await assertDepositAndWithdraw(newStrategy)
