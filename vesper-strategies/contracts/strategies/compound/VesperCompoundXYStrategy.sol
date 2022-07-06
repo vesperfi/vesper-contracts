@@ -63,7 +63,7 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
             IPoolRewards(_poolRewards).claimReward(address(this));
             uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
             if (_vspAmount > 0) {
-                _swapExactInput(vsp, _toToken, _vspAmount);
+                _safeSwapExactInput(vsp, _toToken, _vspAmount);
             }
         }
     }
@@ -81,7 +81,7 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
             _withdrawFromPool(_excessBorrow);
             uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this)) - _borrowedHereBefore;
             if (_borrowedHere > 0) {
-                _swapExactInput(borrowToken, address(collateralToken), _borrowedHere);
+                _safeSwapExactInput(borrowToken, address(collateralToken), _borrowedHere);
             }
         }
     }

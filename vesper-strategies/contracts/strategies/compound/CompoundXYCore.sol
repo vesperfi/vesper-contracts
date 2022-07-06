@@ -349,7 +349,7 @@ abstract contract CompoundXYCore is Strategy {
                     : _extraBorrowBalance;
             // Do swap and transfer
             uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-            _swapExactInput(borrowToken, address(collateralToken), _recoveryAmount);
+            _safeSwapExactInput(borrowToken, address(collateralToken), _recoveryAmount);
             collateralToken.transfer(pool, collateralToken.balanceOf(address(this)) - _collateralBefore);
         }
     }
