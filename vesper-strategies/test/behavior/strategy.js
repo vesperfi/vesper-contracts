@@ -49,7 +49,6 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     // [StrategyType.TRADER_JOE]: shouldBehaveLikeTraderJoeStrategy,
   }
 
-  const ANY_ERC20 = hre.address.ANY_ERC20
   const shouldBehaveLikeSpecificStrategy = behaviors[type]
 
   describe(`${strategyName} Strategy common behavior tests`, function () {
@@ -141,7 +140,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
 
     describe('New strategy migration', function () {
       it('Should revert if caller is not vesper pool', async function () {
-        await expect(strategy.migrate(ANY_ERC20)).to.be.revertedWith('caller-is-not-vesper-pool')
+        const newStrategy = ethers.utils.getContractAddress({ from: user1.address, nonce: 100 })
+        await expect(strategy.migrate(newStrategy)).to.be.revertedWith('caller-is-not-vesper-pool')
       })
     })
 
@@ -185,7 +185,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         expect(await strategy.isReservedToken(strategy.token())).to.be.equal(true, 'Strategy token is reserved')
       })
       it('Should not get other tokens as reserve token', async function () {
-        expect(await strategy.isReservedToken(ANY_ERC20)).to.be.equal(false, 'Other token is not reserved')
+        const fakeToken = ethers.utils.getContractAddress({ from: user1.address, nonce: 200 })
+        expect(await strategy.isReservedToken(fakeToken)).to.be.equal(false, 'Other token is not reserved')
       })
     })
 
