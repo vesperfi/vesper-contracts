@@ -1,6 +1,5 @@
 'use strict'
 
-const swapper = require('../utils/tokenSwapper')
 const { getPermitData } = require('../utils/sign')
 const { getEvent, unlock, getIfExist } = require('../utils/setup')
 const {
@@ -19,7 +18,7 @@ const { ethers } = require('hardhat')
 const { advanceBlock, increase } = require('vesper-commons/utils/time')
 const { getChain } = require('vesper-commons/utils/chains')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
-const { ANY_ERC20, NATIVE_TOKEN, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
+const { NATIVE_TOKEN, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
 
 const MNEMONIC = 'test test test test test test test test test test test junk'
 const DECIMAL18 = ethers.utils.parseEther('1')
@@ -323,14 +322,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await deposit(20, user1)
           await rebalance(strategies)
           // some strategies are loss making so lets make strategy profitable by sending token
-          if (collateralToken.address === NATIVE_TOKEN) {
-            const weth = await ethers.getContractAt('TokenLike', collateralToken.address, user1)
-            const transferAmount = ethers.utils.parseEther('2')
-            await weth.deposit({ value: transferAmount })
-            await weth.transfer(strategies[0].instance.address, transferAmount)
-          } else {
-            await swapper.swapEthForToken(2, collateralToken.address, user1, strategies[0].instance.address)
-          }
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           const value1 = await pool.totalValue()
           // Time travel to generate earning
           await rebalance(strategies)
@@ -391,14 +383,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           // Increase time before doing another rebalance
           await increase(timeBetweenRebalance)
           const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
-          if (collateralToken.address === NATIVE_TOKEN) {
-            const weth = await ethers.getContractAt('TokenLike', collateralToken.address, user1)
-            const transferAmount = ethers.utils.parseEther('2')
-            await weth.deposit({ value: transferAmount })
-            await weth.transfer(strategies[0].instance.address, transferAmount)
-          } else {
-            await swapper.swapEthForToken(2, collateralToken.address, user1, strategies[0].instance.address)
-          }
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           const tx = await rebalanceStrategy(strategies[0])
           const profit = (await getEvent(tx, accountant, 'EarningReported')).profit
           let fee = universalFee.mul(timeBetweenRebalance).mul(totalDebt).div(secondsPerYear).div(MAX_BPS)
@@ -441,21 +426,22 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
     describe(`Sweep ERC20 token in ${poolName} pool`, function () {
       it(`Should sweep ERC20 for ${collateralName}`, async function () {
-        const ERC20Token = await ethers.getContractAt('ERC20', ANY_ERC20)
+        const token = await (await ethers.getContractFactory('MockToken')).deploy()
+        const tokenAmount = ethers.utils.parseEther('10')
         await deposit(60, user2)
-        await swapper.swapEthForToken(2, ANY_ERC20, user1, pool.address)
-        await pool.sweepERC20(ANY_ERC20)
+        await token.mint(pool.address, tokenAmount)
+        await pool.sweepERC20(token.address)
         const governor = await pool.governor()
         return Promise.all([
           pool.totalSupply(),
           pool.totalValue(),
-          ERC20Token.balanceOf(pool.address),
-          ERC20Token.balanceOf(governor),
-        ]).then(function ([totalSupply, totalValue, metBalance, metBalanceFC]) {
+          token.balanceOf(pool.address),
+          token.balanceOf(governor),
+        ]).then(function ([totalSupply, totalValue, tokenBalance, tokenBalanceFC]) {
           expect(totalSupply).to.be.gt(0, `Total supply of ${poolName} is wrong`)
           expect(totalValue).to.be.gt(0, `Total value of ${poolName} is wrong`)
-          expect(metBalance).to.be.eq(0, 'ERC20 token balance of pool is wrong')
-          expect(metBalanceFC).to.be.gt(0, 'ERC20 token balance of governor is wrong')
+          expect(tokenBalance).to.be.eq(0, 'ERC20 token balance of pool is wrong')
+          expect(tokenBalanceFC).to.be.eq(tokenAmount, 'ERC20 token balance of governor is wrong')
         })
       })
 
@@ -540,14 +526,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         await rebalance(strategies)
         await increase(60 * 60)
         await advanceBlock(100)
-        if (collateralToken.address === NATIVE_TOKEN) {
-          const weth = await ethers.getContractAt('TokenLike', collateralToken.address, user1)
-          const transferAmount = ethers.utils.parseEther('2')
-          await weth.deposit({ value: transferAmount })
-          await weth.transfer(strategies[0].instance.address, transferAmount)
-        } else {
-          await swapper.swapEthForToken(2, collateralToken.address, user1, strategies[0].instance.address)
-        }
+        await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
         const strategyParams = await pool.strategy(strategies[0].instance.address)
         const totalProfit = strategyParams._totalProfit
