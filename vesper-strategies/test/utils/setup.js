@@ -87,8 +87,8 @@ async function deployContract(name, params = []) {
 async function setDefaultRouting(swapper, caller, tokenIn, tokenOut, swapType = 0) {
   // const SwapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
   const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, UNISWAP_V3: 2 }
-  const path2 = ethers.utils.defaultAbiCoder.encode(['address[]'], [[tokenIn, tokenOut]])
-  await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.SUSHISWAP, path2)
+  const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[tokenIn, tokenOut]])
+  await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V2, path)
 }
 
 async function configureSwapper(strategies, collateral) {

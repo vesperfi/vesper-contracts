@@ -19,14 +19,12 @@ const { ethers } = require('hardhat')
 const { advanceBlock, increase } = require('vesper-commons/utils/time')
 const { getChain } = require('vesper-commons/utils/chains')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
-const { adjustBalance } = require('vesper-commons/utils/balance')
-const { ANY_ERC20, NATIVE_TOKEN, FRAX, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
+const { ANY_ERC20, NATIVE_TOKEN, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
 
 const MNEMONIC = 'test test test test test test test test test test test junk'
 const DECIMAL18 = ethers.utils.parseEther('1')
 const MAX_BPS = BN.from('10000')
-// Skipping some tests for collateral tokens due to low liquidity at forked block
-const SKIP_TEST_COLLATERAL_TOKENS = [FRAX]
+
 async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false) {
   let pool, strategies, collateralToken, collateralDecimal, accountant
   let user1, user2, user3, user4
@@ -197,9 +195,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       })
 
       it(`Should withdraw all ${collateralName} after rebalance`, async function () {
-        if (SKIP_TEST_COLLATERAL_TOKENS.includes(collateralToken.address)) {
-          return true
-        }
         // reset universal fee to 0.
         await pool.updateUniversalFee('0')
         await deposit(15, user1)
@@ -209,8 +204,9 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         // Time travel based on type of strategy. For compound strategy mine 500 blocks, else time travel
         await increase(60 * 24 * 60 * 60)
         await advanceBlock(500)
+        await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
-        let user2Balance = await pool.balanceOf(user2.address)
+        const user2Balance = await pool.balanceOf(user2.address)
         // Earn pool leaves dust behind sometimes
         const dust = user2Balance.div(1000000) // 0.0001 % dust
         await pool.connect(user2).withdraw(user2Balance)
@@ -351,16 +347,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       beforeEach(async function () {
         // Set external deposit fee to 0 for curve strategies
         await accountant.updateExternalDepositFee(strategies[0].instance.address, '0')
-
-        if (collateralToken.address === NATIVE_TOKEN) {
-          await deposit(30, user1)
-        } else {
-          // TODO this is temporary, update poolOps.js deposit to always use adjustBalance library
-          const depositAmount = ethers.utils.parseUnits('30', collateralDecimal)
-          await adjustBalance(collateralToken.address, user1.address, depositAmount)
-          await collateralToken.connect(user1).approve(pool.address, depositAmount)
-          await pool.connect(user1).deposit(depositAmount)
-        }
+        await deposit(30, user1)
         secondsPerYear = await pool.ONE_YEAR()
         universalFee = await pool.universalFee()
       })
@@ -489,11 +476,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         expect(totalDebtAfter).to.be.gt(totalDebtBefore, `Total debt of strategy in ${poolName} is wrong`)
       })
 
-      // eslint-disable-next-line consistent-return
       it('Strategy should not receive new amount if current debt of pool > max debt', async function () {
-        if (SKIP_TEST_COLLATERAL_TOKENS.includes(collateralToken.address)) {
-          return true
-        }
         await Promise.all([deposit(50, user1), deposit(60, user2)])
         await rebalance(strategies)
         let [totalDebtRatio, totalValue, totalDebtBefore] = await Promise.all([

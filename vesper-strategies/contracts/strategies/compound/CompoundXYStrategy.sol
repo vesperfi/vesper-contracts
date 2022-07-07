@@ -60,7 +60,7 @@ contract CompoundXYStrategy is CompoundXYCore {
         comptroller.claimComp(address(this), _markets);
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
-            _swapExactInput(rewardToken, _toToken, _rewardAmount);
+            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
         }
     }
 

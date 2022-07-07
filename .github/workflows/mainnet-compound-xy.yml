@@ -47,20 +47,20 @@ jobs:
       - name: Running Compound XY strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vaeth.spec.js
 
-  # vawbtc-test:
-  #   needs: [setup-job]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     NODE_URL: ${{ secrets.NODE_URL }}
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
+  vawbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: Setup env
-  #       uses: ./.github/actions/setup-env
+      - name: Setup env
+        uses: ./.github/actions/setup-env
 
-  #     - name: Running Compound XY strategy for VAWBTC pool
-  #       run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vawbtc.spec.js
+      - name: Running Compound XY strategy for VAWBTC pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vawbtc.spec.js
 
   vaeth-vesper-test:
     needs: [setup-job]
@@ -77,17 +77,17 @@ jobs:
       - name: Running Compound Vesper XY strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vesper/vaeth.spec.js
 
-  # vawbtc-vesper-test:
-  #   needs: [setup-job]
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     NODE_URL: ${{ secrets.NODE_URL }}
-  #   steps:
-  #     - name: Checkout repo
-  #       uses: actions/checkout@v3
+  vawbtc-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
-  #     - name: Setup env
-  #       uses: ./.github/actions/setup-env
+      - name: Setup env
+        uses: ./.github/actions/setup-env
 
-  #     - name: Running Compound Vesper XY strategy for VAWBTC pool
-  #       run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vesper/vawbtc.spec.js
+      - name: Running Compound Vesper XY strategy for VAWBTC pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound-xy/vesper/vawbtc.spec.js
