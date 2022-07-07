@@ -44,45 +44,12 @@ abstract contract MakerStrategy is Strategy {
         NAME = _name;
     }
 
-    /// @notice Create new Maker vault
-    function createVault() external onlyGovernor {
-        cm.createVault(collateralType);
-    }
-
-    /**
-     * @dev If pool is underwater this function will resolve underwater condition.
-     * If Debt in Maker is greater than Dai balance in lender then pool is underwater.
-     * Lowering DAI debt in Maker will resolve underwater condition.
-     * Resolve: Calculate required collateral token to lower DAI debt. Withdraw required
-     * collateral token from Maker and convert those to DAI via Uniswap.
-     * Finally payback debt in Maker using DAI.
-     * @dev Also report loss in pool.
-     */
-    function resurface() external onlyKeeper {
-        _resurface();
-    }
-
-    /**
-     * @notice Update balancing factors aka high water and low water values.
-     * Water mark values represent Collateral Ratio in Maker. For example 300 as high water
-     * means 300% collateral ratio.
-     * @param _highWater Value for high water mark.
-     * @param _lowWater Value for low water mark.
-     */
-    function updateBalancingFactor(uint256 _highWater, uint256 _lowWater) external onlyGovernor {
-        _updateBalancingFactor(_highWater, _lowWater);
-    }
-
-    /// @dev Convert from 18 decimals to token defined decimals.
+    /// @notice Convert from 18 decimals to token defined decimals.
     function convertFrom18(uint256 _amount) public view returns (uint256) {
         return _amount / decimalConversionFactor;
     }
 
-    function vaultNum() external view returns (uint256) {
-        return cm.vaultNum(address(this));
-    }
-
-    /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
+    /// @notice Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
     function isReservedToken(address _token) public view virtual override returns (bool) {
         return _token == receiptToken || _token == address(collateralToken);
     }
@@ -96,14 +63,8 @@ abstract contract MakerStrategy is Strategy {
         return cm.getVaultDebt(address(this)) > (_getDaiBalance() + IERC20(DAI).balanceOf(address(this)));
     }
 
-    /**
-     * @notice Before migration hook. It will be called during migration
-     * @dev Transfer Maker vault ownership to new strategy
-     * @param _newStrategy Address of new strategy.
-     */
-    function _beforeMigration(address _newStrategy) internal virtual override {
-        require(MakerStrategy(_newStrategy).collateralType() == collateralType, "collateral-type-must-be-the-same");
-        cm.transferVaultOwnership(_newStrategy);
+    function vaultNum() external view returns (uint256) {
+        return cm.vaultNum(address(this));
     }
 
     function _approveToken(uint256 _amount) internal virtual override {
@@ -113,6 +74,55 @@ abstract contract MakerStrategy is Strategy {
         collateralToken.safeApprove(address(swapper), _amount);
         IERC20(DAI).safeApprove(address(swapper), _amount);
     }
+
+    /**
+     * @dev It will be called during migration. Transfer Maker vault ownership to new strategy
+     * @param _newStrategy Address of new strategy.
+     */
+    function _beforeMigration(address _newStrategy) internal virtual override {
+        require(MakerStrategy(_newStrategy).collateralType() == collateralType, "collateral-type-must-be-the-same");
+        cm.transferVaultOwnership(_newStrategy);
+    }
+
+    function _calculateSafeBorrowPosition(uint256 _payback)
+        internal
+        view
+        returns (
+            uint256 _daiToRepay,
+            uint256 _daiToBorrow,
+            uint256 _currentDaiDebt
+        )
+    {
+        // 1. collateralUSDRate increase and excessDebt > 0. Even withdrawing some collateral, strategy can borrow more DAI due to high collateral USD rate
+        // 2. collateralUSDRate deceased and excessDebt = 0. Strategy may have to payback DAI if it is below low water
+        // 3. Not much change in collateralUSDRate but due to excessDebt, strategy may have to payback DAI.
+        // 4. Governor change highWater and lowWater. This impact DAI to repay or DAI to borrow
+        uint256 _collateralLocked;
+        uint256 _collateralUsdRate;
+        uint256 _minimumDebt;
+        (_collateralLocked, _currentDaiDebt, _collateralUsdRate, , _minimumDebt) = cm.whatWouldWithdrawDo(
+            address(this),
+            _payback
+        );
+        uint256 _safeDebt = (_collateralLocked * _collateralUsdRate) / highWater;
+        if (_safeDebt < _minimumDebt) {
+            _daiToRepay = _currentDaiDebt;
+        } else {
+            uint256 _unSafeDebt = (_collateralLocked * _collateralUsdRate) / lowWater;
+            if (_currentDaiDebt > _unSafeDebt) {
+                // Being below low water brings risk of liquidation in Maker.
+                // Withdraw DAI from Lender and deposit in Maker
+                // highWater > lowWater hence _safeDebt < unSafeDebt
+                _daiToRepay = _currentDaiDebt - _safeDebt;
+            } else if (_currentDaiDebt < _safeDebt) {
+                _daiToBorrow = _safeDebt - _currentDaiDebt;
+            }
+        }
+    }
+
+    function _depositDaiToLender(uint256 _amount) internal virtual;
+
+    function _getDaiBalance() internal view virtual returns (uint256);
 
     function _moveDaiToMaker(uint256 _amount) internal {
         if (_amount > 0) {
@@ -212,42 +222,6 @@ abstract contract MakerStrategy is Strategy {
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
     }
 
-    function _calculateSafeBorrowPosition(uint256 _payback)
-        internal
-        view
-        returns (
-            uint256 _daiToRepay,
-            uint256 _daiToBorrow,
-            uint256 _currentDaiDebt
-        )
-    {
-        // 1. collateralUSDRate increase and excessDebt > 0. Even withdrawing some collateral, strategy can borrow more DAI due to high collateral USD rate
-        // 2. collateralUSDRate deceased and excessDebt = 0. Strategy may have to payback DAI if it is below low water
-        // 3. Not much change in collateralUSDRate but due to excessDebt, strategy may have to payback DAI.
-        // 4. Governor change highWater and lowWater. This impact DAI to repay or DAI to borrow
-        uint256 _collateralLocked;
-        uint256 _collateralUsdRate;
-        uint256 _minimumDebt;
-        (_collateralLocked, _currentDaiDebt, _collateralUsdRate, , _minimumDebt) = cm.whatWouldWithdrawDo(
-            address(this),
-            _payback
-        );
-        uint256 _safeDebt = (_collateralLocked * _collateralUsdRate) / highWater;
-        if (_safeDebt < _minimumDebt) {
-            _daiToRepay = _currentDaiDebt;
-        } else {
-            uint256 _unSafeDebt = (_collateralLocked * _collateralUsdRate) / lowWater;
-            if (_currentDaiDebt > _unSafeDebt) {
-                // Being below low water brings risk of liquidation in Maker.
-                // Withdraw DAI from Lender and deposit in Maker
-                // highWater > lowWater hence _safeDebt < unSafeDebt
-                _daiToRepay = _currentDaiDebt - _safeDebt;
-            } else if (_currentDaiDebt < _safeDebt) {
-                _daiToBorrow = _safeDebt - _currentDaiDebt;
-            }
-        }
-    }
-
     function _resurface() internal virtual {
         require(isUnderwater(), "pool-is-above-water");
         uint256 _daiNeeded = cm.getVaultDebt(address(this)) - _getDaiBalance();
@@ -272,6 +246,8 @@ abstract contract MakerStrategy is Strategy {
         collateralToken.safeTransfer(pool, collateralToken.balanceOf(address(this)));
     }
 
+    function _withdrawDaiFromLender(uint256 _amount) internal virtual;
+
     function _withdrawHere(uint256 _amount) internal {
         (
             uint256 collateralLocked,
@@ -293,9 +269,36 @@ abstract contract MakerStrategy is Strategy {
         cm.withdrawCollateral(_amount);
     }
 
-    function _depositDaiToLender(uint256 _amount) internal virtual;
+    /******************************************************************************
+     *                            Admin functions                              *
+     *****************************************************************************/
 
-    function _withdrawDaiFromLender(uint256 _amount) internal virtual;
+    /// @notice Create new Maker vault
+    function createVault() external onlyGovernor {
+        cm.createVault(collateralType);
+    }
 
-    function _getDaiBalance() internal view virtual returns (uint256);
+    /**
+     * @dev If pool is underwater this function will resolve underwater condition.
+     * If Debt in Maker is greater than Dai balance in lender then pool is underwater.
+     * Lowering DAI debt in Maker will resolve underwater condition.
+     * Resolve: Calculate required collateral token to lower DAI debt. Withdraw required
+     * collateral token from Maker and convert those to DAI via Uniswap.
+     * Finally payback debt in Maker using DAI.
+     * @dev Also report loss in pool.
+     */
+    function resurface() external onlyKeeper {
+        _resurface();
+    }
+
+    /**
+     * @notice Update balancing factors aka high water and low water values.
+     * Water mark values represent Collateral Ratio in Maker. For example 300 as high water
+     * means 300% collateral ratio.
+     * @param _highWater Value for high water mark.
+     * @param _lowWater Value for low water mark.
+     */
+    function updateBalancingFactor(uint256 _highWater, uint256 _lowWater) external onlyGovernor {
+        _updateBalancingFactor(_highWater, _lowWater);
+    }
 }
