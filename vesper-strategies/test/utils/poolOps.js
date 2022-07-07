@@ -1,15 +1,14 @@
 /* eslint-disable complexity */
 'use strict'
-const swapper = require('./tokenSwapper')
+
 const hre = require('hardhat')
 const ethers = hre.ethers
 const { BigNumber } = require('ethers')
-const { depositTokenToAave, depositTokenToCompound } = require('./market')
+
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { getChain } = require('vesper-commons/utils/chains')
-const { unlock, getIfExist } = require('./setup')
-const { increase } = require('vesper-commons/utils/time')
-const { NATIVE_TOKEN, DAI, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
+const { unlock, executeIfExist, getStrategyToken } = require('./setup')
+const address = require(`vesper-commons/config/${getChain()}/address`)
 
 /**
  *  Swap given ETH for given token type and deposit tokens into Vesper pool
@@ -28,118 +27,13 @@ async function deposit(pool, token, amount, depositor) {
   return depositAmount
 }
 
-async function bringAboveWater(strategy, amount) {
-  if (await getIfExist(strategy.instance.isUnderwater)) {
-    // deposit some amount in aave/compound to bring it above water.
-    if (strategy.contract.includes('AaveMaker')) {
-      await depositTokenToAave(amount, DAI, strategy.instance.address)
-    } else if (strategy.contract.includes('CompoundMaker')) {
-      await depositTokenToCompound(amount, DAI, strategy.instance.address)
-    } else {
-      // Update vaDAI balance in VesperMakerStrategy
-      const token = await ethers.getContractAt('IERC20', Vesper.vaDAI)
-      const balance = await token.balanceOf(strategy.instance.address)
-      const increaseBalanceBy = ethers.utils.parseEther('1000')
-      await adjustBalance(token.address, strategy.instance.address, balance.add(increaseBalanceBy))
-    }
-    const lowWater = await strategy.instance.isUnderwater()
-    // if still low water do a resurface
-    if (lowWater) {
-      try {
-        await strategy.instance.resurface()
-      } catch (e) {
-        // ignore error
-      }
-    }
-  }
-}
-
 /**
- * Simulates harvesting in a Yearn Vault
- * Yearn vaults don't have a predictable profit outcome so here's what we do:
- * 1. Swaps some ethers for collateral into a vault
- * 2. This causes vault' pricePerShare to increase
+ * Make strategy profitable by increasing given token balance in given strategy.
  *
- * @param {object} strategy - strategy object
+ * @param {object} strategy Strategy instance
+ * @param {object} token Balance will be updated for this token
+ * @param {object``} token2 Optional token for balance update
  */
-async function harvestYearn(strategy) {
-  const collateralTokenAddress = await strategy.instance.collateralToken()
-  const vault = await strategy.instance.receiptToken()
-
-  const user = (await ethers.getSigners())[10]
-  if (collateralTokenAddress === NATIVE_TOKEN) {
-    const weth = await ethers.getContractAt('TokenLike', collateralTokenAddress, user)
-    const transferAmount = ethers.utils.parseEther('5')
-    await weth.deposit({ value: transferAmount })
-    await weth.transfer(vault, transferAmount)
-  } else {
-    await swapper.swapEthForToken(5, collateralTokenAddress, user, vault)
-  }
-}
-
-/**
- * Simulates harvesting in a VesperMaker strategy
- * 1. Swaps some ethers for collateral into the underlying vPool
- * 2. This causes vPool' pricePerShare to increase
- *
- * @param {object} strategy - strategy object
- */
-async function harvestVesperMaker(strategy) {
-  const vPool = await ethers.getContractAt('IVesperPoolTest', await strategy.instance.receiptToken())
-  const collateralTokenAddress = await vPool.token()
-
-  const user = (await ethers.getSigners())[11]
-  if (collateralTokenAddress === NATIVE_TOKEN) {
-    const weth = await ethers.getContractAt('TokenLike', collateralTokenAddress, user)
-    const transferAmount = ethers.utils.parseEther('5')
-    await weth.deposit({ value: transferAmount })
-    await weth.transfer(vPool.address, transferAmount)
-  } else {
-    await swapper.swapEthForToken(5, collateralTokenAddress, user, vPool.address)
-  }
-}
-
-/**
- * Simulates harvesting in a VesperCompoundXY/VesperAaveXY strategy
- * 1. Swaps some ethers for collateral into the underlying vPool
- * 2. This causes vPool' pricePerShare to increase
- *
- * @param {object} strategy - strategy object
- */
-async function harvestVesperXY(strategy) {
-  const vPool = await ethers.getContractAt('IVesperPool', await strategy.instance.vPool())
-  const collateralTokenAddress = await vPool.token()
-
-  const user = (await ethers.getSigners())[11]
-  if (collateralTokenAddress === NATIVE_TOKEN) {
-    const weth = await ethers.getContractAt('TokenLike', collateralTokenAddress, user)
-    const transferAmount = ethers.utils.parseEther('5')
-    await weth.deposit({ value: transferAmount })
-    await weth.transfer(vPool.address, transferAmount)
-  } else {
-    await swapper.swapEthForToken(5, collateralTokenAddress, user, vPool.address)
-  }
-}
-
-/**
- * Simulates profit in a Vesper Pool
- *
- * @param {object} strategy - strategy object
- */
-async function harvestVesper(strategy) {
-  if (strategy.type === 'earnVesperMaker') {
-    return harvestVesperMaker(strategy)
-  }
-  if (strategy.type.includes('earnVesper')) {
-    const dripToken = await strategy.instance.dripToken()
-    if (dripToken === ethers.utils.getAddress(Vesper.VSP)) {
-      // wait 24hrs between rebalance due to vVSP's lock period
-      await increase(3600 * 24)
-    }
-  }
-  return harvestYearn(strategy)
-}
-
 async function makeStrategyProfitable(strategy, token, token2 = {}) {
   const balance = await token.balanceOf(strategy.address)
   const increaseBalanceBy = ethers.utils.parseUnits('20', await token.decimals())
@@ -162,42 +56,14 @@ async function makeStrategyProfitable(strategy, token, token2 = {}) {
  * @param {object} strategy - strategy object
  */
 async function rebalanceStrategy(strategy) {
-  let tx
-  try {
-    if (strategy.type.includes('Maker')) {
-      await bringAboveWater(strategy, 10)
-    }
-    if (strategy.type.toUpperCase().includes('YEARN')) {
-      await harvestYearn(strategy)
-    }
-    if (strategy.type.includes('earnVesper') || strategy.type.includes('vesper')) {
-      if (strategy.type.includes('XY')) {
-        await harvestVesperXY(strategy)
-      } else {
-        await harvestVesper(strategy)
-      }
-    }
-    if (strategy.type.toUpperCase().includes('ALPHA')) {
-      // Alpha SafeBox has a cToken - this method calls exchangeRateCurrent on the cToken
-      await strategy.instance.updateTokenRate()
-    }
-    if (
-      strategy.type.includes('rariFuse') ||
-      strategy.type.includes('earnRariFuse') ||
-      strategy.type.includes('trader')
-    ) {
-      const cToken = await ethers.getContractAt('CToken', await strategy.instance.token())
-      await cToken.accrueInterest()
-    }
-    tx = await strategy.instance.rebalance()
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.log(error)
-    // ignore under water error and give one more try.
-    await bringAboveWater(strategy, 50)
-    tx = await strategy.instance.rebalance()
-  }
-  return tx
+  // Alpha SafeBox has a cToken - this method calls exchangeRateCurrent on the cToken
+  await executeIfExist(strategy.instance.updateTokenRate)
+
+  // For Compound related strategies
+  const token = await getStrategyToken(strategy)
+  await executeIfExist(token.accrueInterest)
+
+  return strategy.instance.rebalance()
 }
 
 /**
@@ -220,7 +86,7 @@ async function rebalanceUnderlying(strategy) {
   const accountant = await ethers.getContractAt('PoolAccountant', await vPool.poolAccountant())
   const strategies = await accountant.getStrategies()
 
-  const keeper = await unlock(Vesper.KEEPER)
+  const keeper = await unlock(address.Vesper.KEEPER)
   const promises = []
   for (const underlyingStrategy of strategies) {
     if ((await accountant.totalDebtOf(underlyingStrategy)).gt(0)) {
@@ -232,10 +98,10 @@ async function rebalanceUnderlying(strategy) {
 }
 
 /**
- *
- * @param {*} strategies .
- * @param {*} pool .
- * @returns {*} .
+ *  Calculate and return total debt of all strategies
+ * @param {object[]} strategies Array of strategy
+ * @param {object} pool Pool instance
+ * @returns {Promise<BigNumber>} totalDebt
  */
 async function totalDebtOfAllStrategy(strategies, pool) {
   let totalDebt = BigNumber.from(0)
