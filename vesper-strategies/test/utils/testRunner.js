@@ -1,6 +1,6 @@
 'use strict'
 
-const { setupVPool } = require('./setup')
+const { setupVPool } = require('vesper-commons/utils//setup')
 const { shouldBehaveLikePool } = require('../behavior/vesper-pool')
 const { shouldBehaveLikeStrategy } = require('../behavior/strategy')
 const { shouldBehaveLikeMultiStrategyPool } = require('../behavior/vesper-multi-strategy-pool')

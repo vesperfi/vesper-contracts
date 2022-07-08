@@ -2,7 +2,7 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { deposit } = require('../utils/poolOps')
+const { deposit } = require('vesper-commons/utils/poolOps')
 const { advanceBlock } = require('vesper-commons/utils/time')
 const { BigNumber } = require('ethers')
 // Read addresses of Compound in Address object

@@ -3,9 +3,9 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const time = require('vesper-commons/utils/time')
-const { deposit, rebalanceStrategy } = require('../utils/poolOps')
+const { deposit, rebalanceStrategy } = require('vesper-commons/utils/poolOps')
 const address = require('vesper-commons/config/mainnet/address')
-const { unlock } = require('../utils/setup')
+const { unlock } = require('vesper-commons/utils/setup')
 const AAVE_ADDRESS = address.Aave.AAVE
 const STAKED_AAVE_ADDRESS = address.Aave.stkAAVE
 const aaveWhale = '0xffc97d72e13e01096502cb8eb52dee56f74dad7b'

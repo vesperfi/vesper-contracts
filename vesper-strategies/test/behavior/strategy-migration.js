@@ -1,7 +1,7 @@
 'use strict'
 
-const { makeNewStrategy, getStrategyToken, getIfExist } = require('../utils/setup')
-const { deposit: _deposit, rebalanceStrategy, makeStrategyProfitable } = require('../utils/poolOps')
+const { makeNewStrategy, getStrategyToken, getIfExist } = require('vesper-commons/utils/setup')
+const { deposit: _deposit, rebalanceStrategy, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 
