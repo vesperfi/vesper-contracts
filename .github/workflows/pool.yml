@@ -1,0 +1,40 @@
+name: Pool Admin, Proxy, Rewards and Accountant test
+on:
+  pull_request:
+    paths:
+      - ".github/actions/setup-env/action.yml"
+      - ".github/workflows/pool.yml"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-pools/test/*.js"
+
+jobs:
+  vesper-pool-test:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Run npm install
+        run: npm install
+
+      - name: Running tests for Vesper Pool Admin
+        run: npm test -- --scope vesper-pools -- test/vesper-pool-admin.spec.js
+
+      - name: Running tests for Vesper Pool Proxy upgrade
+        run: npm test -- --scope vesper-pools -- test/vesper-pool-proxy.spec.js
+
+      - name: Running tests for Vesper PoolRewards
+        run: npm test -- --scope vesper-pools -- test/pool-rewards.spec.js
+
+      - name: Running tests for Vesper Pool Accountant Proxy upgrade
+        run: npm test -- --scope vesper-pools -- test/pool-accountant-proxy.spec.js
+
+      - name: Running tests for Vesper Pool Accountant
+        run: npm test -- --scope vesper-pools -- test/pool-accountant.spec.js
