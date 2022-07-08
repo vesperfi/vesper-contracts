@@ -7,7 +7,7 @@
     "solhint": "lerna run solhint",
     "solhint:fix": "lerna run solhint:fix",
     "lint": "eslint --cache .",
-    "hardhat": "hardhat",
+    "hardhat": "lerna run hardhat",
     "clean": "lerna run clean --stream",
     "compile": "lerna run compile --stream",
     "build": "npm run clean && npm run compile",
