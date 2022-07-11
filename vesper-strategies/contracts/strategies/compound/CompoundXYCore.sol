@@ -209,14 +209,12 @@ abstract contract CompoundXYCore is Strategy {
         _claimRewardsAndConvertTo(address(collateralToken));
         uint256 _borrow = borrowCToken.borrowBalanceCurrent(address(this));
         uint256 _borrowBalanceHere = _getBorrowBalance();
-        // _borrow increases every block. There can be a scenario when rewardToken are not
-        // enough to cover interest diff for borrow, reinvest function will handle
-        // collateral liquidation
+        // _borrow increases every block. Convert collateral to borrowToken.
         if (_borrow > _borrowBalanceHere) {
             _swapToBorrowToken(_borrow - _borrowBalanceHere);
         } else {
             // When _borrowBalanceHere exceeds _borrow balance from Compound
-            // Customize this hook to handle the excess profit
+            // Customize this hook to handle the excess borrowToken profit
             _rebalanceBorrow(_borrowBalanceHere - _borrow);
         }
 
