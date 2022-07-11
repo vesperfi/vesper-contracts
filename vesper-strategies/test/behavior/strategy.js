@@ -3,7 +3,7 @@
 const hre = require('hardhat')
 const ethers = hre.ethers
 const { expect } = require('chai')
-const { getEvent } = require('../utils/setup')
+const { getEvent } = require('vesper-commons/utils/setup')
 const { shouldMigrateStrategies } = require('./strategy-migration')
 // const { shouldBehaveLikeAaveStrategy } = require('./aave-strategy')
 // const { shouldBehaveLikeCompoundStrategy } = require('./compound-strategy')
@@ -20,7 +20,7 @@ const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
 const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-xy')
 // const { shouldBehaveLikeVesperAaveXYStrategy } = require('./vesper-aave-xy')
 
-const { deposit } = require('../utils/poolOps')
+const { deposit } = require('vesper-commons/utils/poolOps')
 const { advanceBlock } = require('vesper-commons/utils/time')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
 const { adjustBalance } = require('vesper-commons/utils/balance')

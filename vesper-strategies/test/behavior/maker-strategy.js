@@ -1,10 +1,10 @@
 'use strict'
 
-const { deposit } = require('../utils/poolOps')
+const { deposit } = require('vesper-commons/utils/poolOps')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const address = require('vesper-commons/config/mainnet/address')
-const { executeIfExist, getStrategyToken } = require('../utils/setup')
+const { executeIfExist, getStrategyToken } = require('vesper-commons/utils/setup')
 const { shouldValidateMakerCommonBehavior } = require('./maker-common')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { BigNumber } = require('ethers')

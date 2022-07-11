@@ -2,8 +2,8 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { getStrategyToken, unlock } = require('../utils/setup')
-const { deposit } = require('../utils/poolOps')
+const { getStrategyToken, unlock } = require('vesper-commons/utils/setup')
+const { deposit } = require('vesper-commons/utils/poolOps')
 const { advanceBlock } = require('vesper-commons/utils/time')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 

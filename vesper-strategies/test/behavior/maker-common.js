@@ -1,10 +1,16 @@
 'use strict'
 
-const { deposit } = require('../utils/poolOps')
+const { deposit } = require('vesper-commons/utils/poolOps')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { BigNumber: BN } = require('ethers')
-const { executeIfExist, deployContract, makeNewStrategy, getStrategyToken, unlock } = require('../utils/setup')
+const {
+  executeIfExist,
+  deployContract,
+  makeNewStrategy,
+  getStrategyToken,
+  unlock,
+} = require('vesper-commons/utils/setup')
 const DECIMAL18 = ethers.utils.parseUnits('1', 18)
 
 function shouldValidateMakerCommonBehavior(index) {

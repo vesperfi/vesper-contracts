@@ -87,7 +87,11 @@ async function deployContract(name, params = []) {
 async function setDefaultRouting(swapper, caller, tokenIn, tokenOut, swapType = 0) {
   // const SwapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
   const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, UNISWAP_V3: 2 }
-  const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[tokenIn, tokenOut]])
+  let tokens = [tokenIn, Address.NATIVE_TOKEN, tokenOut]
+  if (tokenIn === Address.NATIVE_TOKEN || tokenOut === Address.NATIVE_TOKEN) {
+    tokens = [tokenIn, tokenOut]
+  }
+  const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
   await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V2, path)
 }
 
@@ -114,13 +118,7 @@ async function configureSwapper(strategies, collateral) {
 
     if (strategyType.includes('xy')) {
       const token1 = collateral
-      let token2
-      if (strategyType.includes('compound')) {
-        const tokenAbi = ['function underlying() external view returns(address)']
-        const token = await ethers.getContractAt(tokenAbi, await strategy.instance.borrowCToken())
-        token2 = await token.underlying()
-      }
-
+      const token2 = await strategy.instance.borrowToken()
       await setDefaultRouting(swapper, governor, token1, token2, '1') // EXACT_OUTPUT
       await setDefaultRouting(swapper, governor, token2, token1)
     }

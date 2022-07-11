@@ -1,14 +1,14 @@
 'use strict'
 
 const { getPermitData } = require('../utils/sign')
-const { getEvent, unlock, getIfExist } = require('../utils/setup')
+const { getEvent, unlock, getIfExist } = require('vesper-commons/utils/setup')
 const {
   deposit: _deposit,
   rebalance,
   rebalanceStrategy,
   totalDebtOfAllStrategy,
   makeStrategyProfitable,
-} = require('../utils/poolOps')
+} = require('vesper-commons/utils/poolOps')
 const chaiAlmost = require('chai-almost')
 const chai = require('chai')
 chai.use(chaiAlmost(1))

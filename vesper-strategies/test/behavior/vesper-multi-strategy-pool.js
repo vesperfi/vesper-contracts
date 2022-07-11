@@ -1,9 +1,9 @@
 'use strict'
 
 const hre = require('hardhat')
-const { deposit: _deposit, rebalance, rebalanceStrategy } = require('../utils/poolOps')
+const { deposit: _deposit, rebalance, rebalanceStrategy } = require('vesper-commons/utils/poolOps')
 const { expect } = require('chai')
-const { makeNewStrategy } = require('../utils/setup')
+const { makeNewStrategy } = require('vesper-commons/utils/setup')
 const { BigNumber } = require('ethers')
 const DECIMAL = '1000000000000000000'
 async function shouldBehaveLikeMultiStrategyPool(poolName) {
