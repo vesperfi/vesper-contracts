@@ -25,6 +25,7 @@ abstract contract Strategy is IStrategy, Context {
     EnumerableSet.AddressSet private _keepers;
 
     event UpdatedFeeCollector(address indexed previousFeeCollector, address indexed newFeeCollector);
+    event UpdatedSwapper(IRoutedSwapper indexed oldSwapper, IRoutedSwapper indexed newSwapper);
 
     constructor(
         address _pool,
@@ -148,6 +149,17 @@ abstract contract Strategy is IStrategy, Context {
         require(_feeCollector != feeCollector, "fee-collector-is-same");
         emit UpdatedFeeCollector(feeCollector, _feeCollector);
         feeCollector = _feeCollector;
+    }
+
+    /**
+     * @notice Update swapper
+     * @param _swapper swapper address
+     */
+    function updateSwapper(IRoutedSwapper _swapper) external onlyGovernor {
+        require(address(_swapper) != address(0), "swapper-address-is-zero");
+        require(_swapper != swapper, "swapper-is-same");
+        emit UpdatedSwapper(swapper, _swapper);
+        swapper = _swapper;
     }
 
     /**
