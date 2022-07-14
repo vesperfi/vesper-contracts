@@ -310,19 +310,12 @@ abstract contract CompoundXYCore is Strategy {
         }
     }
 
-    /// @dev Withdraw collateral and transfer it to pool
-    function _withdraw(uint256 _amount) internal override {
-        collateralToken.safeTransfer(pool, _withdrawHere(_amount));
-    }
-
     /// @dev Withdraw collateral here. Do not transfer to pool
-    function _withdrawHere(uint256 _amount) internal returns (uint256) {
+    function _withdrawHere(uint256 _amount) internal override {
         (, uint256 _repayAmount) = _calculateBorrowPosition(0, _amount);
         _repay(_repayAmount, true);
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
         uint256 _supply = supplyCToken.balanceOfUnderlying(address(this));
         _redeemX(_supply > _amount ? _amount : _supply);
-        return collateralToken.balanceOf(address(this)) - _collateralBefore;
     }
 
     /************************************************************************************************

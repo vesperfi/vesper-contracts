@@ -6,7 +6,8 @@ const { unlock, deployContract } = require('vesper-commons/utils/setup')
 const { VADAI } = require('vesper-commons/config/mainnet/poolConfig')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 
-describe('Local to mainnet upgrade tests', function () {
+// eslint-disable-next-line mocha/no-skipped-tests
+xdescribe('Local to mainnet upgrade tests', function () {
   const proxyAdminAddress = '0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA'
   const poolProxyAddress = '0x0538C8bAc84E95A9dF8aC10Aad17DbE81b9E36ee' // vaDAI
   const accountantProxyAddress = '0x2337c59180357cE1d771Da2B2dF56A91e7c442c0'

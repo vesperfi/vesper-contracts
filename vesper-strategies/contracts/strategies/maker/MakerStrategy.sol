@@ -241,14 +241,9 @@ abstract contract MakerStrategy is Strategy {
         lowWater = _lowWater * WAT;
     }
 
-    function _withdraw(uint256 _amount) internal override {
-        _withdrawHere(_amount);
-        collateralToken.safeTransfer(pool, collateralToken.balanceOf(address(this)));
-    }
-
     function _withdrawDaiFromLender(uint256 _amount) internal virtual;
 
-    function _withdrawHere(uint256 _amount) internal {
+    function _withdrawHere(uint256 _amount) internal override {
         (
             uint256 collateralLocked,
             uint256 debt,
