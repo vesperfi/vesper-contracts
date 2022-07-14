@@ -7,6 +7,7 @@ import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/I
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/Context.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/structs/EnumerableSet.sol";
+import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 import "../interfaces/vesper/IStrategy.sol";
 import "../interfaces/swapper/IRoutedSwapper.sol";
 
@@ -167,7 +168,15 @@ abstract contract Strategy is IStrategy, Context {
      * @param _amount Amount of collateral token
      */
     function withdraw(uint256 _amount) external override onlyPool {
-        _withdraw(_amount);
+        uint256 _collateralHere = collateralToken.balanceOf(address(this));
+        if (_collateralHere >= _amount) {
+            collateralToken.safeTransfer(pool, _amount);
+        } else {
+            _withdrawHere(_amount - _collateralHere);
+            // Do not assume _withdrawHere() will withdraw exact amount. Check balance again and transfer to pool
+            _collateralHere = collateralToken.balanceOf(address(this));
+            collateralToken.safeTransfer(pool, Math.min(_amount, _collateralHere));
+        }
     }
 
     function _approveToken(uint256 _amount) internal virtual {
@@ -211,5 +220,5 @@ abstract contract Strategy is IStrategy, Context {
     }
 
     // These methods must be implemented by the inheriting strategy
-    function _withdraw(uint256 _amount) internal virtual;
+    function _withdrawHere(uint256 _amount) internal virtual;
 }

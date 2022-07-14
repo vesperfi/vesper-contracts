@@ -277,22 +277,13 @@ contract AaveXYStrategy is Strategy, AaveCore {
         }
     }
 
-    /// @dev Withdraw collateral and transfer it to pool
-    function _withdraw(uint256 _amount) internal override {
-        collateralToken.safeTransfer(pool, _withdrawHere(_amount));
-    }
-
     /// @dev Withdraw collateral here. Do not transfer to pool
-    function _withdrawHere(uint256 _amount) internal returns (uint256) {
+    function _withdrawHere(uint256 _amount) internal override {
         (, uint256 _repayAmount) = _calculateBorrowPosition(0, _amount);
         if (_repayAmount > 0) {
             _repayY(_repayAmount);
         }
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-
         _redeemX(_amount);
-
-        return collateralToken.balanceOf(address(this)) - _collateralBefore;
     }
 
     /************************************************************************************************
