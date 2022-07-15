@@ -1,0 +1,29 @@
+{
+  "name": "vesper-deployments",
+  "version": "1.0.0",
+  "description": "Script to deploy Vesper contracts",
+  "license": "MIT",
+  "scripts": {
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "npm run clean && npm run compile",
+    "coverage": "hardhat coverage",
+    "fork": "hardhat node --no-deploy",
+    "test": "hardhat test",
+    "deploy": "hardhat deploy-core-contracts",
+    "create-release": "hardhat create-release",
+    "verify": "hardhat etherscan-verify"
+  },
+  "devDependencies": {
+    "compare-versions": "^4.1.3",
+    "del": "^6.1.1",
+    "ethers-multisend": "^2.2.0",
+    "recursive-copy": "^2.0.14",
+    "vesper-commons": "^1.0.0",
+    "vesper-pools": "^5.0.1",
+    "vesper-strategies": "^5.0.0"
+  }
+}
