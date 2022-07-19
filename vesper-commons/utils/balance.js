@@ -5,7 +5,8 @@ const Address = require('../config/mainnet/address')
 const AvalancheAddress = require('../config/avalanche/address')
 const PolygonAddress = require('../config/polygon/address')
 const ethers = hre.ethers
-const { BigNumber } = require('ethers')
+const helpers = require('@nomicfoundation/hardhat-network-helpers')
+const BigNumber = ethers.BigNumber
 const { hexlify, solidityKeccak256, zeroPad, getAddress, hexStripZeros } = ethers.utils
 
 // Slot number mapping for a token. Prepared using utility https://github.com/kendricktan/slot20
@@ -84,17 +85,11 @@ async function adjustBalance(token, targetAddress, balance) {
   // reason: https://github.com/nomiclabs/hardhat/issues/1585 comments
   // Create solidity has for index, convert it into hex string and remove all the leading zeros
   const index = hexStripZeros(hexlify(solidityKeccak256(['uint256', 'uint256'], [targetAddress, slot])))
-
-  if (!BigNumber.isBigNumber(balance)) {
-    // eslint-disable-next-line no-param-reassign
-    balance = BigNumber.from(balance)
-  }
-
-  const value = hexlify(zeroPad(balance.toHexString(), 32))
+  const value = hexlify(zeroPad(BigNumber.from(balance).toHexString(), 32))
 
   // Hack the balance by directly setting the EVM storage
-  await ethers.provider.send('hardhat_setStorageAt', [token, index, value])
-  await ethers.provider.send('evm_mine', [])
+  helpers.setStorageAt(token, index, value)
+  helpers.mine(1)
 }
 
 module.exports = { adjustBalance }

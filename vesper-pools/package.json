@@ -22,6 +22,7 @@
     "size-contract": "hardhat size-contracts"
   },
   "devDependencies": {
+    "ethereum-waffle": "^3.4.4",
     "vesper-commons": "^1.0.0"
   }
 }

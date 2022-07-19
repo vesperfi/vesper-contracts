@@ -3,7 +3,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { advanceBlock } = require('vesper-commons/utils/time')
+const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { BigNumber } = require('ethers')
 // Read addresses of Compound in Address object
 const {
@@ -63,7 +63,7 @@ function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.connect(governor).rebalance()
       const accountDataBefore = await assertCurrentBorrow()
-      await advanceBlock(100)
+      await mine(100)
       // Withdraw will payback borrow
       const withdrawAmount = (await pool.balanceOf(user1.address)).div('3')
       await pool.connect(user1).withdraw(withdrawAmount)
@@ -91,7 +91,7 @@ function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
     it('Should update borrow limit', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.connect(governor).rebalance()
-      await advanceBlock(100)
+      await mine(100)
       await strategy.connect(governor).updateBorrowLimit(5000, 6000)
       const newMinBorrowLimit = await strategy.minBorrowLimit()
       await strategy.connect(governor).rebalance()
@@ -107,7 +107,7 @@ function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
     it('Should repay and borrow more based on updated borrow limit', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.connect(governor).rebalance()
-      await advanceBlock(100)
+      await mine(100)
       await strategy.connect(governor).updateBorrowLimit(8000, 9000)
       await strategy.connect(governor).rebalance()
       let accountDataBefore = await assertCurrentBorrow()

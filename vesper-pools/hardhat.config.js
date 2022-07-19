@@ -1,10 +1,7 @@
 'use strict'
-require('@nomiclabs/hardhat-waffle')
-require('@nomiclabs/hardhat-ethers')
-require('solidity-coverage')
+require('@nomicfoundation/hardhat-toolbox')
 require('hardhat-deploy')
 require('hardhat-log-remover')
-require('hardhat-gas-reporter')
 require('dotenv').config()
 
 const junk = 'test test test test test test test test test test test junk'

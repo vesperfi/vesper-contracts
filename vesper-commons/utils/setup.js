@@ -1,8 +1,8 @@
 'use strict'
 
 const hre = require('hardhat')
+const helpers = require('@nomicfoundation/hardhat-network-helpers')
 const ethers = hre.ethers
-const provider = hre.waffle.provider
 const StrategyType = require('./strategyTypes')
 const { adjustBalance } = require('./balance')
 const gemJoins = require('./gemJoins')
@@ -43,14 +43,8 @@ async function getIfExist(fn, param) {
  * @returns {object} - Unlocked Signer object
  */
 async function unlock(_address) {
-  await hre.network.provider.request({
-    method: 'hardhat_impersonateAccount',
-    params: [_address],
-  })
-  await hre.network.provider.request({
-    method: 'hardhat_setBalance',
-    params: [_address, ethers.utils.hexStripZeros(ethers.utils.parseEther('1').toHexString())],
-  })
+  await helpers.impersonateAccount(_address)
+  await helpers.setBalance(_address, ethers.utils.parseEther('1'))
   return ethers.getSigner(_address)
 }
 
@@ -325,12 +319,8 @@ async function makeNewStrategy(oldStrategy, poolAddress, options) {
  */
 async function setupVPool(obj, poolData, options = {}) {
   const { poolConfig, strategies } = poolData
-  const isInCache = obj.snapshot === undefined ? false : await provider.send('evm_revert', [obj.snapshot])
-  if (isInCache === true) {
-    // Rollback manual changes to objects
-    delete obj.pool.depositsCount
-    // Recreate the snapshot after rollback, reverting deletes the previous snapshot
-    obj.snapshot = await provider.send('evm_snapshot')
+  if (obj.snapshotRestorer) {
+    await obj.snapshotRestorer.restore()
   } else {
     obj.strategies = strategies
     obj.accountant = await deployContract(PoolAccountant)
@@ -346,12 +336,8 @@ async function setupVPool(obj, poolData, options = {}) {
     await configureSwapper(obj.strategies, collateralTokenAddress)
     obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
 
-    // Must wait an hour for oracles to be effective, unless they were created before the strategy
-    await provider.send('evm_increaseTime', [3600])
-    await provider.send('evm_mine')
-
-    // Save snapshot ID for reuse in consecutive tests
-    obj.snapshot = await provider.send('evm_snapshot')
+    // Save snapshot restorer to restore snapshot and take new one
+    obj.snapshotRestorer = await helpers.takeSnapshot()
   }
 }
 
