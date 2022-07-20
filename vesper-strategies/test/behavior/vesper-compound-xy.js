@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { getStrategyToken, unlock } = require('vesper-commons/utils/setup')
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { advanceBlock } = require('vesper-commons/utils/time')
+const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 
 async function simulateVesperPoolProfit(strategy) {
@@ -96,7 +96,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     it('Should borrow within defined limits', async function () {
       await deposit(pool, collateralToken, 10, user2)
       await strategy.rebalance()
-      await advanceBlock(100)
+      await mine(100)
       await supplyCToken.exchangeRateCurrent()
       await borrowCToken.exchangeRateCurrent()
       await strategy.rebalance()
@@ -109,7 +109,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     it('Should adjust borrow to keep it within defined limits', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.rebalance()
-      await advanceBlock(100)
+      await mine(100)
 
       await supplyCToken.exchangeRateCurrent()
       await borrowCToken.exchangeRateCurrent()
@@ -141,7 +141,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     it('Should update borrow limit', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.rebalance()
-      await advanceBlock(100)
+      await mine(100)
       await strategy.updateBorrowLimit(5000, 6000)
       const newMinBorrowLimit = await strategy.minBorrowLimit()
       await strategy.rebalance()
@@ -189,11 +189,11 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
         await rebalance(strategy)
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after rebalance', pricePerShare)
-        await advanceBlock(100)
+        await mine(100)
         await rebalance(strategy)
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after 100 blocks and rebalance', pricePerShare)
-        await advanceBlock(100)
+        await mine(100)
         await rebalance(strategy)
         pricePerShare = await pool.pricePerShare()
         console.log('PricePerShare after 200 blocks and rebalance', pricePerShare)

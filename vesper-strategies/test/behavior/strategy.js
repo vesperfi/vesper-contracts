@@ -21,7 +21,7 @@ const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-
 // const { shouldBehaveLikeVesperAaveXYStrategy } = require('./vesper-aave-xy')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { advanceBlock } = require('vesper-commons/utils/time')
+const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const ZERO_ADDRESS = ethers.constants.AddressZero
@@ -155,7 +155,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         const totalDebtBefore = await pool.totalDebtOf(strategy.address)
         expect(totalDebtBefore, 'Total debt should be zero').to.be.equal(0)
         await strategy.rebalance()
-        await advanceBlock(50)
+        await mine(50)
         // Send some collateral to strategy to generate profit.
         const amount = ethers.utils.parseUnits('1000', await collateralToken.decimals())
         await adjustBalance(collateralToken.address, strategy.address, amount)
@@ -166,7 +166,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
       it('Should generate EarningReported event', async function () {
         await deposit(pool, collateralToken, '50', user2) // deposit 50 ETH to generate some profit
         await strategy.rebalance()
-        await advanceBlock(50)
+        await mine(50)
         const txnObj = await strategy.rebalance()
         const event = await getEvent(txnObj, accountant, 'EarningReported')
         // There may be more than 1 strategy, hence the gte. Bottom line we are testing event.

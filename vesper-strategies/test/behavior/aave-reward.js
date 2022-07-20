@@ -2,7 +2,7 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const time = require('vesper-commons/utils/time')
+const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { deposit, rebalanceStrategy } = require('vesper-commons/utils/poolOps')
 const address = require('vesper-commons/config/mainnet/address')
 const { unlock } = require('vesper-commons/utils/setup')

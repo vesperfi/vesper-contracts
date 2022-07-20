@@ -15,7 +15,7 @@ chai.use(chaiAlmost(1))
 const expect = chai.expect
 const { BigNumber: BN } = require('ethers')
 const { ethers } = require('hardhat')
-const { advanceBlock, increase } = require('vesper-commons/utils/time')
+const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
 const { getChain } = require('vesper-commons/utils/chains')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
 const { NATIVE_TOKEN, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
@@ -201,8 +201,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         await rebalance(strategies)
         // Some strategies can report a loss if they don't have time to earn anything
         // Time travel based on type of strategy. For compound strategy mine 500 blocks, else time travel
-        await increase(60 * 24 * 60 * 60)
-        await advanceBlock(500)
+        await time.increase(60 * 24 * 60 * 60)
+        await mine(500)
         await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
         const user2Balance = await pool.balanceOf(user2.address)
@@ -260,14 +260,14 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         }
 
         // Time travel 6 hours
-        await increase(6 * 60 * 60)
-        await advanceBlock(100)
+        await time.increase(6 * 60 * 60)
+        await mine(100)
         await rebalance(strategies)
         totalValue = await pool.totalValue()
         totalDebtRatio = await pool.totalDebtRatio()
         maxDebt = totalValue.mul(totalDebtRatio).div(MAX_BPS)
         // Advance 1 block for proper available credit limit check
-        await advanceBlock(1)
+        await mine(1)
         let unusedCredit = BN.from('0')
         for (const strategy of strategies) {
           const credit = await pool.availableCreditLimit(strategy.instance.address)
@@ -292,8 +292,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const { _lastRebalance: lastRebalanceBefore } = await pool.strategy(strategyToRebalance.instance.address)
 
         // when
-        await increase(6 * 60 * 60)
-        await advanceBlock(100)
+        await time.increase(6 * 60 * 60)
+        await mine(100)
         await rebalance([strategyToRebalance])
 
         // then
@@ -310,8 +310,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           // Curve strategy takes a loss initially hence taking value after 1st rebalance
           const value1 = await pool.totalValue()
           // Time travel to generate earning
-          await increase(30 * 24 * 60 * 60)
-          await advanceBlock(500)
+          await time.increase(30 * 24 * 60 * 60)
+          await mine(500)
           await rebalance(strategies)
           await rebalance(strategies)
           const value2 = await pool.totalValue()
@@ -379,9 +379,9 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           const timeBetweenRebalance = 60 * 60
           await rebalanceStrategy(strategies[0])
           // Advance some block will help compound related strategy to earn some profit
-          await advanceBlock(300)
+          await mine(300)
           // Increase time before doing another rebalance
-          await increase(timeBetweenRebalance)
+          await time.increase(timeBetweenRebalance)
           const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
           await makeStrategyProfitable(strategies[0].instance, collateralToken)
           const tx = await rebalanceStrategy(strategies[0])
@@ -404,7 +404,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           // Manual and force report earning to get fund from pool
           await pool.connect(strategySigner).reportEarning(0, 0, 0)
           // Increase time
-          await increase(60 * 60)
+          await time.increase(60 * 60)
           // set universal fee super high.
           await pool.updateUniversalFee('5000')
           // Manual and force report earning with 1000 as profit
@@ -524,8 +524,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       it('Pool record correct value of profit and loss', async function () {
         await deposit(70, user2)
         await rebalance(strategies)
-        await increase(60 * 60)
-        await advanceBlock(100)
+        await time.increase(60 * 60)
+        await mine(100)
         await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
         const strategyParams = await pool.strategy(strategies[0].instance.address)
@@ -587,8 +587,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await deposit(20, user1)
           await rebalance(strategies)
           // Time travel to generate earning
-          await increase(30 * 24 * 60 * 60)
-          await advanceBlock(500)
+          await time.increase(30 * 24 * 60 * 60)
+          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
           await rebalance(strategies)
@@ -613,8 +613,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
           await rebalance(strategies)
           // Time travel to generate earning
-          await increase(30 * 24 * 60 * 60)
-          await advanceBlock(500)
+          await time.increase(30 * 24 * 60 * 60)
+          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
           await rebalance(strategies)
@@ -634,8 +634,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await deposit(50, user1)
           await rebalance(strategies)
           // Time travel to generate earning
-          await increase(30 * 24 * 60 * 60)
-          await advanceBlock(500)
+          await time.increase(30 * 24 * 60 * 60)
+          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
           await rebalance(strategies)
@@ -649,8 +649,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
               ? await ethers.provider.getBalance(user1.address)
               : await dripToken.balanceOf(user1.address)
 
-          await increase(7 * 24 * 60 * 60)
-          await advanceBlock(500)
+          await time.increase(7 * 24 * 60 * 60)
+          await mine(500)
 
           const withdrawTx = await (await pool.connect(user1).withdrawAndClaim(withdrawAmount)).wait()
 
