@@ -80,13 +80,21 @@ async function deployContract(name, params = []) {
 // eslint-disable-next-line max-params
 async function setDefaultRouting(swapper, caller, tokenIn, tokenOut, swapType = 0) {
   // const SwapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
-  const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, UNISWAP_V3: 2 }
+  const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, UNISWAP_V3: 5 }
   let tokens = [tokenIn, Address.NATIVE_TOKEN, tokenOut]
   if (tokenIn === Address.NATIVE_TOKEN || tokenOut === Address.NATIVE_TOKEN) {
     tokens = [tokenIn, tokenOut]
   }
-  const path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
-  await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V2, path)
+
+  let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
+  if (tokenIn === Address.Stargate.STG || tokenOut === Address.Stargate.STG) {
+    // uni3 has pair of USDC, WETH in 0.3 fee pool.
+    // TODO: modify logic to support more STG pairs
+    path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [tokenIn, 3000, tokenOut])
+    await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V3, path)
+  } else {
+    await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V2, path)
+  }
 }
 
 async function configureSwapper(strategies, collateral) {
@@ -272,6 +280,7 @@ async function createStrategy(strategy, poolAddress, options = {}) {
 
   // Earn strategies require call to approveGrowToken
   await executeIfExist(instance.approveGrowToken)
+
   return instance
 }
 /**

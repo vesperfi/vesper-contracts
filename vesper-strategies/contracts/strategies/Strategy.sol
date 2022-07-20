@@ -141,6 +141,9 @@ abstract contract Strategy is IStrategy, Context {
         return receiptToken;
     }
 
+    /// @notice Returns total collateral locked in the strategy
+    function tvl() external view virtual returns (uint256);
+
     /**
      * @notice Update fee collector
      * @param _feeCollector fee collector address

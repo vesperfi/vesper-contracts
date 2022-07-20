@@ -63,6 +63,11 @@ abstract contract MakerStrategy is Strategy {
         return cm.getVaultDebt(address(this)) > (_getDaiBalance() + IERC20(DAI).balanceOf(address(this)));
     }
 
+    /// @notice Returns total collateral locked in the strategy
+    function tvl() external view override returns (uint256) {
+        return convertFrom18(cm.getVaultBalance(address(this))) + collateralToken.balanceOf(address(this));
+    }
+
     function vaultNum() external view returns (uint256) {
         return cm.vaultNum(address(this));
     }
