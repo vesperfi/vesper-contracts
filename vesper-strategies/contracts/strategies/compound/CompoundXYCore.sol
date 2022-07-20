@@ -63,6 +63,13 @@ abstract contract CompoundXYCore is Strategy {
         return _token == address(supplyCToken) || _token == address(collateralToken) || _token == borrowToken;
     }
 
+    /// @notice Returns total collateral locked in the strategy
+    function tvl() external view override returns (uint256) {
+        uint256 _collateralInCompound =
+            (supplyCToken.balanceOf(address(this)) * supplyCToken.exchangeRateStored()) / 1e18;
+        return _collateralInCompound + collateralToken.balanceOf(address(this));
+    }
+
     /// @dev Hook that executes after collateral borrow.
     function _afterBorrowY(uint256 _amount) internal virtual {}
 

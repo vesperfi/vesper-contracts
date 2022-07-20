@@ -120,6 +120,11 @@ const Address = {
   Rari: {
     fusePoolDirectory: '0x835482FE0532f169024d5E9410199369aAD5C77E',
   },
+  Stargate: {
+    STG: '0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6',
+    router: '0x8731d54E9D02c286767d56ac03e8037C07e01e98',
+    lpStaking: '0xB0D502E938ed5f4df2E681fE6E419ff29631d62b',
+  },
 }
 
 module.exports = Object.freeze(Address)

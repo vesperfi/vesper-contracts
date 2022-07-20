@@ -52,6 +52,11 @@ contract AaveXYStrategy is Strategy, AaveCore {
         return _isReservedToken(_token) || address(vdToken) == _token || borrowToken == _token;
     }
 
+    /// @notice Returns total collateral locked in the strategy
+    function tvl() external view override returns (uint256) {
+        return aToken.balanceOf(address(this)) + collateralToken.balanceOf(address(this));
+    }
+
     /// @notice After borrowing Y Hook
     function _afterBorrowY(uint256 _amount) internal virtual {}
 

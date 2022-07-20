@@ -1413,6 +1413,21 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  StargateStrategyUSDC: {
+    contract: 'StargateStrategy',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 1, // USDC LP Pool ID
+      stargateLpStakingPoolId: 0, // Staking Contract pool ID
+      strategyName: 'Stargate-USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

@@ -1,7 +1,7 @@
 'use strict'
 
 const { getPermitData } = require('../utils/sign')
-const { getEvent, unlock, getIfExist } = require('vesper-commons/utils/setup')
+const { getEvent, unlock } = require('vesper-commons/utils/setup')
 const {
   deposit: _deposit,
   rebalance,
@@ -87,15 +87,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const totalValue = await pool.totalValue()
         for (const strategy of strategies) {
           await rebalanceStrategy(strategy)
-          const strategyParams = await pool.strategy(strategy.instance.address)
-          if (strategyParams._debtRatio.gt(0)) {
-            const receiptToken = await ethers.getContractAt('IERC20', await strategy.instance.token())
-            let receiptTokenBalance = await getIfExist(strategy.instance.totalLp)
-            if (!receiptTokenBalance) {
-              receiptTokenBalance = await receiptToken.balanceOf(strategy.instance.address)
-            }
-            expect(receiptTokenBalance).to.be.gt(0, 'receipt token balance of strategy is wrong')
-          }
         }
         const totalDebtOfStrategies = await totalDebtOfAllStrategy(strategies, pool)
         const totalDebt = await pool.totalDebt()
