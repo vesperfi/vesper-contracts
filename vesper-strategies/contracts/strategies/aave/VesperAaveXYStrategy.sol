@@ -48,16 +48,15 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
         _withdrawnAmount = IERC20(borrowToken).balanceOf(address(this));
     }
 
-    /// @notice Claim Aave and VSP rewards and convert to _toToken.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual override {
-        super._claimRewardsAndConvertTo(_toToken);
+    /// @notice Claim VSP and convert to collateral token
+    function harvestVSP() external {
         address _poolRewards = vPool.poolRewards();
         if (_poolRewards != address(0)) {
             IPoolRewards(_poolRewards).claimReward(address(this));
-            uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-            if (_vspAmount > 0) {
-                _safeSwapExactInput(vsp, _toToken, _vspAmount);
-            }
+        }
+        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _swapExactInput(vsp, address(collateralToken), _vspAmount);
         }
     }
 

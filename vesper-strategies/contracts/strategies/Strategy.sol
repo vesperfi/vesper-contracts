@@ -190,10 +190,6 @@ abstract contract Strategy is IStrategy, Context {
      */
     function _beforeMigration(address _newStrategy) internal virtual;
 
-    /// @dev Not all strategies has rewards hence empty implementation
-    /* solhint-disable no-empty-blocks */
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual {}
-
     function _rebalance()
         internal
         virtual

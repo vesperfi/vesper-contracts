@@ -24,16 +24,15 @@ contract VesperMakerStrategy is MakerStrategy {
         require(address(IVesperPool(_vPool).token()) == DAI, "not-a-valid-dai-pool");
     }
 
-    /// @notice Claim rewardToken from lender and convert it into DAI
-    // TODO: move this to parent
+    /// @notice Claim VSP and convert to DAI
     function harvestVSP() external {
         address _poolRewards = IVesperPool(receiptToken).poolRewards();
         if (_poolRewards != address(0)) {
             IPoolRewards(_poolRewards).claimReward(address(this));
-            uint256 _vspAmount = IERC20(VSP).balanceOf(address(this));
-            if (_vspAmount > 0) {
-                _swapExactInput(VSP, DAI, _vspAmount);
-            }
+        }
+        uint256 _vspAmount = IERC20(VSP).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _swapExactInput(VSP, DAI, _vspAmount);
         }
     }
 
