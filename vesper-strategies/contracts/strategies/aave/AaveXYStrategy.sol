@@ -152,14 +152,6 @@ contract AaveXYStrategy is Strategy, AaveCore {
         }
     }
 
-    /// @notice Claim Aave and VSP rewards and convert to _toToken.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual override {
-        uint256 _aaveAmount = _claimAave();
-        if (_aaveAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _aaveAmount);
-        }
-    }
-
     /// @notice Deposit collateral in Aave and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
@@ -205,8 +197,11 @@ contract AaveXYStrategy is Strategy, AaveCore {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
-        // Claim rewardToken and convert to collateral token
-        _claimRewardsAndConvertTo(address(collateralToken));
+        // Claim rewards and convert to collateral token
+        uint256 _aaveAmount = _claimAave();
+        if (_aaveAmount > 0) {
+            _safeSwapExactInput(rewardToken, address(collateralToken), _aaveAmount);
+        }
 
         uint256 _supply = aToken.balanceOf(address(this));
         uint256 _borrow = vdToken.balanceOf(address(this));

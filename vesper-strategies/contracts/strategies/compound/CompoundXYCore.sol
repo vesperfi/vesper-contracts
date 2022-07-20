@@ -155,6 +155,8 @@ abstract contract CompoundXYCore is Strategy {
         }
     }
 
+    function _claimRewardsAndConvertTo(address _toToken) internal virtual;
+
     /// @dev Deposit collateral in Compound and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
