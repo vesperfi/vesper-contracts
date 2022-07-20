@@ -12,7 +12,7 @@ import "../Governable.sol";
 import "../Pausable.sol";
 import "../interfaces/vesper/IPoolAccountant.sol";
 import "../interfaces/vesper/IPoolRewards.sol";
-import "../interfaces/vesper/IStrategy.sol";
+import "vesper-commons/contracts/interfaces/vesper/IStrategy.sol";
 
 /// @title Holding pool share token
 // solhint-disable no-empty-blocks

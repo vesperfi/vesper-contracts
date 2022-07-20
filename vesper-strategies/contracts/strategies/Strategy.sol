@@ -8,7 +8,7 @@ import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/u
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/Context.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
-import "../interfaces/vesper/IStrategy.sol";
+import "vesper-commons/contracts/interfaces/vesper/IStrategy.sol";
 import "../interfaces/swapper/IRoutedSwapper.sol";
 
 abstract contract Strategy is IStrategy, Context {
