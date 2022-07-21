@@ -12,11 +12,14 @@
     "compile": "lerna run compile --stream",
     "build": "npm run clean && npm run compile",
     "coverage": "lerna run coverage --stream",
+    "deploy": "lerna run deploy --stream",
+    "create-release": "lerna run create-release --stream",
     "fork": "lerna run fork --stream",
     "test": "lerna run test --stream",
     "prepare": "husky install",
     "postinstall": "patch-package && lerna bootstrap",
-    "lerna": "lerna"
+    "lerna": "lerna",
+    "verify": "lerna run verify --stream"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",

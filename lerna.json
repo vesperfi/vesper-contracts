@@ -3,7 +3,8 @@
     "packages/*",
     "vesper-commons",
     "vesper-pools",
-    "vesper-strategies"
+    "vesper-strategies",
+    "vesper-deployments"    
   ],
   "useNx": false,
   "version": "independent"
