@@ -4,7 +4,7 @@ on:
     paths:
       - ".github/workflows/mainnet-stargate.yml"
       - ".github/actions/setup-env/action.yml"
-      - "vesper-strategies/test/utils/setup.js"
+      - "vesper-commons/utils/setup.js"
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
