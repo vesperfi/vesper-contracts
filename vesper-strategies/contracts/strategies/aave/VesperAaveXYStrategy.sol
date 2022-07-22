@@ -43,9 +43,8 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
     }
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
-    function _beforeRepayY(uint256 _amount) internal virtual override returns (uint256 _withdrawnAmount) {
+    function _beforeRepayY(uint256 _amount) internal virtual override {
         _withdrawFromVesperPool(_amount);
-        _withdrawnAmount = IERC20(borrowToken).balanceOf(address(this));
     }
 
     /// @notice Claim VSP and convert to collateral token
@@ -84,10 +83,7 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
             uint256 _pricePerShare = vPool.pricePerShare();
             uint256 _shares = (_amount * 1e18) / _pricePerShare;
             _shares = _amount > ((_shares * _pricePerShare) / 1e18) ? _shares + 1 : _shares;
-
-            uint256 _maxShares = IERC20(vPool).balanceOf(address(this));
-
-            vPool.withdraw((_shares > _maxShares || _shares == 0) ? _maxShares : _shares);
+            vPool.withdraw(Math.min(_shares, vPool.balanceOf(address(this))));
         }
     }
 }

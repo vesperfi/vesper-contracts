@@ -81,9 +81,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
     }
 
     /// @notice Before repaying Y Hook
-    function _beforeRepayY(uint256 _amount) internal virtual returns (uint256 _withdrawnAmount) {
-        return _amount;
-    }
+    function _beforeRepayY(uint256 _amount) internal virtual {}
 
     function _borrowY(uint256 _amount) internal virtual {
         if (_amount > 0) {
@@ -258,10 +256,8 @@ contract AaveXYStrategy is Strategy, AaveCore {
     }
 
     function _repayY(uint256 _amount) internal virtual {
-        uint256 _repayAmount = _beforeRepayY(_amount);
-        if (_repayAmount > 0) {
-            aaveLendingPool.repay(borrowToken, _repayAmount, 2, address(this));
-        }
+        _beforeRepayY(_amount);
+        aaveLendingPool.repay(borrowToken, _amount, 2, address(this));
     }
 
     /**
