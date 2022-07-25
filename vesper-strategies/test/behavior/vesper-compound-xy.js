@@ -127,13 +127,13 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     it('Should repayAll and reset minBorrowLimit via governor', async function () {
       await deposit(pool, collateralToken, 50, user2)
       await strategy.rebalance()
-      let borrowBalance = await strategy.borrowBalance()
-      expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
+      let borrowDebtBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      expect(borrowDebtBalance).to.be.gt(0, 'Borrow debt should be > 0')
 
       await strategy.repayAll()
 
-      borrowBalance = await strategy.borrowBalance()
-      expect(borrowBalance).to.be.eq(0, 'Borrow token balance should be = 0')
+      borrowDebtBalance = await await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      expect(borrowDebtBalance).to.be.eq(0, 'Borrow debt should be = 0')
       const newMinBorrowLimit = await strategy.minBorrowLimit()
       expect(newMinBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
     })
@@ -160,12 +160,12 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     it('Should repay borrow if borrow limit set to 0', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.rebalance()
-      const borrowBefore = await strategy.borrowBalance()
-      expect(borrowBefore).to.be.gt(0, 'Borrow amount should be > 0')
+      const borrowDebtBefore = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      expect(borrowDebtBefore).to.be.gt(0, 'Borrow amount should be > 0')
       await strategy.updateBorrowLimit(0, 0)
       await strategy.rebalance()
-      const borrowAfter = await strategy.borrowBalance()
-      expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
+      const borrowDebtAfter = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      expect(borrowDebtAfter).to.be.eq(0, 'Borrow amount should be = 0')
     })
 
     it('Underlying vPool should make profits and increase Y balance', async function () {

@@ -96,15 +96,15 @@ function shouldBehaveLikeCompoundXYStrategy(index) {
     })
 
     context('Governor function', function () {
-      it('Should repayAll and reset minBorrowRatio via governor', async function () {
+      it('Should repayAll and reset maxBorrowLimit via governor', async function () {
         await deposit(pool, collateralToken, 50, user2)
         await strategy.connect(governor).rebalance()
-        let borrowBalance = await borrowToken.balanceOf(strategy.address)
+        let borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
         expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
 
         await strategy.connect(governor).repayAll()
 
-        borrowBalance = await borrowToken.balanceOf(strategy.address)
+        borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
         expect(borrowBalance).to.be.eq(0, 'Borrow token balance should be = 0')
         const newMaxBorrowLimit = await strategy.maxBorrowLimit()
         expect(newMaxBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
@@ -128,11 +128,11 @@ function shouldBehaveLikeCompoundXYStrategy(index) {
       it('Should repay borrow if borrow ratio set to 0', async function () {
         await deposit(pool, collateralToken, 100, user1)
         await strategy.connect(governor).rebalance()
-        const borrowBefore = await borrowToken.balanceOf(strategy.address)
+        const borrowBefore = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
         expect(borrowBefore).to.be.gt(0, 'Borrow amount should be > 0')
         await strategy.connect(governor).updateBorrowLimit(0, 0)
         await strategy.connect(governor).rebalance()
-        const borrowAfter = await borrowToken.balanceOf(strategy.address)
+        const borrowAfter = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
         expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
       })
       it('Should recover extra borrow tokens', async function () {
