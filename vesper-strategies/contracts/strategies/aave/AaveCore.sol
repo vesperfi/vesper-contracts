@@ -117,7 +117,13 @@ abstract contract AaveCore {
     /// @notice Deposit asset into Aave
     function _deposit(address _asset, uint256 _amount) internal {
         if (_amount > 0) {
-            aaveLendingPool.deposit(_asset, _amount, address(this), 0);
+            try aaveLendingPool.deposit(_asset, _amount, address(this), 0) {} catch Error(string memory _reason) {
+                // Aave uses liquidityIndex and some other indexes as needed to normalize input.
+                // If normalized input equals to 0 then error will be thrown with '56' error code.
+                // CT_INVALID_MINT_AMOUNT = '56'; //invalid amount to mint
+                // Hence discard error where error code is '56'
+                require(bytes32(bytes(_reason)) == "56", "deposit failed");
+            }
         }
     }
 

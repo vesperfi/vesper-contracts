@@ -20,8 +20,9 @@ const address = require(`../config/${getChain()}/address`)
  * @returns {Promise<BigNumber>} Promise of collateral amount which was deposited in Vesper pool
  */
 async function deposit(pool, token, amount, depositor) {
-  const depositAmount = ethers.utils.parseUnits(amount.toString(), await token.decimals())
-  await adjustBalance(token.address, depositor.address, depositAmount)
+  const parsedAmount = ethers.utils.parseUnits(amount.toString(), await token.decimals())
+  await adjustBalance(token.address, depositor.address, parsedAmount)
+  const depositAmount = await token.balanceOf(depositor.address)
   await token.connect(depositor).approve(pool.address, depositAmount)
   await pool.connect(depositor)['deposit(uint256)'](depositAmount)
   return depositAmount

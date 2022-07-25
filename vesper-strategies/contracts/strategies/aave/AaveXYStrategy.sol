@@ -15,7 +15,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "4.0.0";
+    string public constant VERSION = "5.0.0";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
@@ -81,9 +81,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
     }
 
     /// @notice Before repaying Y Hook
-    function _beforeRepayY(uint256 _amount) internal virtual returns (uint256 _withdrawnAmount) {
-        return _amount;
-    }
+    function _beforeRepayY(uint256 _amount) internal virtual {}
 
     function _borrowY(uint256 _amount) internal virtual {
         if (_amount > 0) {
@@ -154,6 +152,10 @@ contract AaveXYStrategy is Strategy, AaveCore {
             _repayAmount = _borrowed - _borrowLowerBound;
         } else if (_borrowLowerBound > _borrowed) {
             _borrowAmount = _borrowLowerBound - _borrowed;
+            (uint256 _availableLiquidity, , , , , , , , , ) = aaveProtocolDataProvider.getReserveData(borrowToken);
+            if (_borrowAmount > _availableLiquidity) {
+                _borrowAmount = _availableLiquidity;
+            }
         }
     }
 
@@ -166,7 +168,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
         if (_repayAmount > 0) {
             // Repay _borrowAmount to maintain safe position
             _repayY(_repayAmount);
-            _mint(collateralToken.balanceOf(address(this)));
+            _mint(_collateralBalance);
         } else {
             // Happy path, mint more borrow more
             _mint(_collateralBalance);
@@ -254,8 +256,8 @@ contract AaveXYStrategy is Strategy, AaveCore {
     }
 
     function _repayY(uint256 _amount) internal virtual {
-        uint256 _repayAmount = _beforeRepayY(_amount);
-        if (_repayAmount > 0) aaveLendingPool.repay(borrowToken, _repayAmount, 2, address(this));
+        _beforeRepayY(_amount);
+        aaveLendingPool.repay(borrowToken, _amount, 2, address(this));
     }
 
     /**
