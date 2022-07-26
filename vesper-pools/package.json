@@ -1,6 +1,6 @@
 {
   "name": "vesper-pools",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "Vesper finance holding pools",
   "license": "MIT",
   "scripts": {

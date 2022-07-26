@@ -14,7 +14,7 @@ import "./PoolAccountantStorage.sol";
 contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     using SafeERC20 for IERC20;
 
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.0.2";
     uint256 public constant MAX_BPS = 10_000;
 
     event EarningReported(
@@ -109,16 +109,6 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
         // Recalculate pool level externalDepositFee. This should be called at the end of function
         _recalculatePoolExternalDepositFee();
-    }
-
-    /**
-     * @notice OnlyPool:: Helper function for V5 upgrade
-     */
-    function setup() external onlyPool {
-        uint256 _len = strategies.length;
-        for (uint256 i = 0; i < _len; i++) {
-            strategy[strategies[i]].interestFee = 0;
-        }
     }
 
     /**

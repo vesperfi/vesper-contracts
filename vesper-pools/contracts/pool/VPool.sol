@@ -20,7 +20,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    string public constant VERSION = "5.0.1";
+    string public constant VERSION = "5.0.2";
 
     uint256 public constant MAX_BPS = 10_000;
     // For simplicity we are assuming 365 days as 1 year
@@ -504,16 +504,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         );
         IPoolAccountant(poolAccountant).migrateStrategy(_old, _new);
         IStrategy(_old).migrate(_new);
-    }
-
-    /**
-     * @notice OnlyGovernor:: Helper function for V5 upgrade
-     */
-    function setup() external onlyGovernor {
-        universalFee = 200; // 2%
-        maxProfitAsFee = 5_000; // 50%
-        minDepositLimit = 1;
-        IPoolAccountant(poolAccountant).setup();
     }
 
     /**
