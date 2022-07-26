@@ -50,7 +50,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
     }
 
     function isReservedToken(address _token) public view virtual override returns (bool) {
-        return _isReservedToken(_token) || address(vdToken) == _token || borrowToken == _token;
+        return _token == address(aToken) || address(vdToken) == _token || borrowToken == _token;
     }
 
     /// @notice Returns total collateral locked in the strategy

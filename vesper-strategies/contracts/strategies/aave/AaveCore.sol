@@ -189,11 +189,6 @@ abstract contract AaveCore {
         return block.timestamp > _cooldownEnd && block.timestamp <= _unstakeEnd;
     }
 
-    /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
-    function _isReservedToken(address _token) internal view returns (bool) {
-        return _token == address(aToken) || _token == AAVE || _token == address(stkAAVE);
-    }
-
     /**
      * @notice Return total AAVE incentive allocated to this address
      * @dev Aave and StakedAave are 1:1

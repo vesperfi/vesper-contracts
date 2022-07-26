@@ -32,10 +32,6 @@ contract CompoundXYStrategy is CompoundXYCore {
     //solhint-disable-next-line no-empty-blocks
     receive() external payable {}
 
-    function isReservedToken(address _token) public view virtual override returns (bool) {
-        return super.isReservedToken(_token) || _token == rewardToken;
-    }
-
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(rewardToken).safeApprove(address(swapper), _amount);
