@@ -78,57 +78,76 @@ async function deployContract(name, params = []) {
 }
 
 // eslint-disable-next-line max-params
-async function setDefaultRouting(swapper, caller, tokenIn, tokenOut, swapType = 0) {
-  // const SwapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
-  const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, UNISWAP_V3: 5 }
-  let tokens = [tokenIn, Address.NATIVE_TOKEN, tokenOut]
-  if (tokenIn === Address.NATIVE_TOKEN || tokenOut === Address.NATIVE_TOKEN) {
-    tokens = [tokenIn, tokenOut]
-  }
-
-  let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
-  if (tokenIn === Address.Stargate.STG || tokenOut === Address.Stargate.STG) {
-    // uni3 has pair of USDC, WETH in 0.3 fee pool.
-    // TODO: modify logic to support more STG pairs
-    path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [tokenIn, 3000, tokenOut])
-    await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V3, path)
-  } else {
-    await swapper.connect(caller).setDefaultRouting(swapType, tokenIn, tokenOut, ExchangeType.UNISWAP_V2, path)
+async function setDefaultRouting(swapperAddress, pairs) {
+  const abi = [
+    'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
+    'function governor() external view returns(address)',
+    'function defaultRoutings(bytes memory) external view returns(bytes memory)',
+  ]
+  const swapper = await ethers.getContractAt(abi, swapperAddress)
+  const caller = await unlock(await swapper.governor())
+  const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, TRADERJOE: 2, PANGOLIN: 3, QUICKSWAP: 4, UNISWAP_V3: 5 }
+  const defaultExchange = chain === 'avalanche' ? ExchangeType.TRADERJOE : ExchangeType.UNISWAP_V2
+  const swapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
+  for (let pair of pairs) {
+    let exchange = defaultExchange
+    let tokens = [pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]
+    if (pair.tokenIn === Address.NATIVE_TOKEN || pair.tokenOut === Address.NATIVE_TOKEN) {
+      tokens = [pair.tokenIn, pair.tokenOut]
+    }
+    let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
+    if (chain === 'eth' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
+      // uni3 has pair of USDC, WETH in 0.3 fee pool.
+      // TODO: modify logic to support more STG pairs
+      path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
+      exchange = ExchangeType.UNISWAP_V3
+    }
+    await swapper.connect(caller).setDefaultRouting(swapType.EXACT_INPUT, pair.tokenIn, pair.tokenOut, exchange, path)
+    await swapper.connect(caller).setDefaultRouting(swapType.EXACT_OUTPUT, pair.tokenIn, pair.tokenOut, exchange, path)
   }
 }
 
+// eslint-disable-next-line complexity
 async function configureSwapper(strategies, collateral) {
+  const pairs = []
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
-    const swapperAddress = strategy.constructorArgs.swapper
-    const abi = [
-      'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
-      'function governor() external view returns(address)',
-      'function defaultRoutings(bytes memory) external view returns(bytes memory)',
-    ]
-
-    const swapper = await ethers.getContractAt(abi, swapperAddress)
-    const governor = await unlock(await swapper.governor())
     const rewardToken = await getIfExist(strategy.instance.rewardToken)
     if (rewardToken) {
-      await setDefaultRouting(swapper, governor, rewardToken, collateral)
+      pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
     }
-
-    if (strategyType.includes('vesper')) {
-      await setDefaultRouting(swapper, governor, Address.Vesper.VSP, collateral)
+    const strategyName = await strategy.instance.NAME()
+    if (strategyName.includes('AaveV3')) {
+      // get reward token list from AaveIncentivesController
+      const aToken = await ethers.getContractAt(
+        ['function getIncentivesController() external view returns (address)'],
+        await strategy.instance.receiptToken(),
+      )
+      const incentiveController = await ethers.getContractAt(
+        ['function getRewardsList() external view override returns (address[] memory)'],
+        await aToken.getIncentivesController(),
+      )
+      const _rewardTokens = await getIfExist(incentiveController.getRewardsList)
+      for (let i = 0; i < _rewardTokens.length; i++) {
+        pairs.push({ tokenIn: _rewardTokens[i], tokenOut: collateral })
+      }
     }
-
     if (strategyType.includes('xy')) {
       const token1 = collateral
       const token2 = await strategy.instance.borrowToken()
-      await setDefaultRouting(swapper, governor, token1, token2, '1') // EXACT_OUTPUT
-      await setDefaultRouting(swapper, governor, token2, token1)
+      pairs.push({ tokenIn: token1, tokenOut: token2 })
+      pairs.push({ tokenIn: token2, tokenOut: token1 })
+    }
+    if (strategyType.includes('vesper')) {
+      pairs.push({ tokenIn: Address.Vesper.VSP, tokenOut: collateral })
     }
     if (strategyType.includes('maker')) {
-      await setDefaultRouting(swapper, governor, Address.DAI, collateral)
-      await setDefaultRouting(swapper, governor, collateral, Address.DAI, 1)
+      pairs.push({ tokenIn: Address.DAI, tokenOut: collateral })
+      pairs.push({ tokenIn: collateral, tokenOut: Address.DAI })
     }
   }
+  const swapperAddress = strategies[0].constructorArgs.swapper
+  await setDefaultRouting(swapperAddress, pairs)
 }
 
 /**
@@ -334,17 +353,14 @@ async function setupVPool(obj, poolData, options = {}) {
     obj.strategies = strategies
     obj.accountant = await deployContract(PoolAccountant)
     obj.pool = await deployContract(poolConfig.contractName, poolConfig.poolParams)
-
     await obj.accountant.init(obj.pool.address)
     await obj.pool.initialize(...poolConfig.poolParams, obj.accountant.address)
     await obj.pool.updateUniversalFee(poolConfig.setup.universalFee)
-
     await createStrategies(obj, options)
     await addStrategies(obj)
     const collateralTokenAddress = await obj.pool.token()
     await configureSwapper(obj.strategies, collateralTokenAddress)
     obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
-
     // Save snapshot restorer to restore snapshot and take new one
     obj.snapshotRestorer = await helpers.takeSnapshot()
   }

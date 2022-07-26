@@ -4,8 +4,14 @@ pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-interface AaveLendingPoolAddressesProvider {
+// @dev Interface support both Aave v2 and v3 methods
+interface PoolAddressesProvider {
+    function getPool() external view returns (address);
+
+    // Aave v2 method.
     function getLendingPool() external view returns (address);
+
+    function getPoolDataProvider() external view returns (address);
 
     function getAddress(bytes32 id) external view returns (address);
 
@@ -34,6 +40,9 @@ interface AToken is IERC20 {
         uint256 amount,
         uint256 index
     ) external;
+
+    //solhint-disable func-name-mixedcase
+    function UNDERLYING_ASSET_ADDRESS() external view returns (address);
 }
 
 interface AaveIncentivesController {
@@ -44,10 +53,23 @@ interface AaveIncentivesController {
         uint256 amount,
         address to
     ) external returns (uint256);
+
+    function claimAllRewards(address[] calldata assets, address to)
+        external
+        returns (address[] memory rewardsList, uint256[] memory claimedAmounts);
+
+    function getRewardsList() external view returns (address[] memory);
 }
 
 interface AaveLendingPool {
     function deposit(
+        address asset,
+        uint256 amount,
+        address onBehalfOf,
+        uint16 referralCode
+    ) external;
+
+    function supply(
         address asset,
         uint256 amount,
         address onBehalfOf,
@@ -64,7 +86,7 @@ interface AaveLendingPool {
         address receiverAddress,
         address[] calldata assets,
         uint256[] calldata amounts,
-        uint256[] calldata modes,
+        uint256[] calldata interestRateModes,
         address onBehalfOf,
         bytes calldata params,
         uint16 referralCode
@@ -81,7 +103,7 @@ interface AaveLendingPool {
     function repay(
         address asset,
         uint256 amount,
-        uint256 rateMode,
+        uint256 interestRateMode,
         address onBehalfOf
     ) external;
 
