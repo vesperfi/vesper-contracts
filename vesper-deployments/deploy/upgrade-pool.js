@@ -7,12 +7,6 @@ const { isDelegateOrOwner, proposeMultiTxn } = require('./gnosis-txn')
 const PoolAccountant = 'PoolAccountant'
 const VPoolUpgrader = 'VPoolUpgrader'
 const ADMIN_SLOT = '0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103'
-const newKeepers = ['0x1cbfae0367a9b1e4ac2c158e57b5f00ccb337271', '0xdf826ff6518e609e4cee86299d40611c148099d5']
-const newMaintainers = [
-  '0x1cbfae0367a9b1e4ac2c158e57b5f00ccb337271',
-  '0xdf826ff6518e609e4cee86299d40611c148099d5',
-  '0x76d266dfd3754f090488ae12f6bd115cd7e77ebd',
-]
 
 // eslint-disable-next-line consistent-return
 function sleep(network, ms) {
@@ -31,19 +25,6 @@ async function prepareTxn(contractName, address, method, methodArgs) {
     to: address,
     value: 0,
     data: encodedTxn.data,
-  }
-}
-
-// eslint-disable-next-line max-params
-async function addKeeperOrMaintainer(vPool, deployer, address, safe, canPropose, txnsToPropose, proxy, methodName) {
-  const governor = await vPool.governor()
-  if (governor === deployer) {
-    await vPool[methodName](address)
-  } else if (governor === safe && canPropose) {
-    const tx = await prepareTxn('VPool', proxy.address, methodName, [address])
-    txnsToPropose.push(tx)
-  } else {
-    console.log(`'\nSafe is not governor of pool, ${methodName} to be call manually\n'`)
   }
 }
 
@@ -138,57 +119,6 @@ async function safeUpgrade(hre, deployer, contract, params = []) {
     throw new Error('Deployer is neither owner nor a delegate')
   }
 
-  // This is temporary and for V5 upgrade only
-  await sleep(hre.network.name, 5000)
-  if (upgraderName === VPoolUpgrader) {
-    // If universal fee is zero then call setup
-    const vPool = await ethers.getContractAt(contract, proxy.address)
-    const universalFee = await vPool.universalFee().catch(() => 0)
-    if (universalFee.toString() === '0') {
-      const governor = await vPool.governor()
-      if (governor === deployer) {
-        await vPool.setup()
-      } else if (governor === safe && canPropose) {
-        txnsToPropose.push(await prepareTxn(contract, proxy.address, 'setup', []))
-      } else {
-        console.log('\nSafe is not governor of pool, setup needs to be call manually\n')
-      }
-    }
-
-    let keepers, maintainers
-    // Handle Keeper and maintainer
-    const version = await vPool.VERSION()
-    if (version.startsWith('4.0') || version.startsWith('5.0')) {
-      // Add maintainer, keeper which does not exists from new list for 4.0 and 5.0.
-      // Maintainer/keeper is not lost when upgraded from 4.x to 5.x but
-      // it's good to have new keepers/maintainer if not already exists.
-      keepers = await vPool.keepers()
-      maintainers = await vPool.maintainers()
-    }
-    for (let keeper of newKeepers) {
-      keeper = ethers.utils.getAddress(keeper)
-      if (version.startsWith('3.0') || !keepers.includes(keeper)) {
-        await addKeeperOrMaintainer(vPool, deployer, keeper, safe, canPropose, txnsToPropose, proxy, 'addKeeper')
-      }
-    }
-    // maintainer
-
-    for (let maintainer of newMaintainers) {
-      maintainer = ethers.utils.getAddress(maintainer)
-      if (version.startsWith('3.0') || !maintainers.includes(maintainer)) {
-        await addKeeperOrMaintainer(
-          vPool,
-          deployer,
-          maintainer,
-          safe,
-          canPropose,
-          txnsToPropose,
-          proxy,
-          'addMaintainer',
-        )
-      }
-    }
-  }
   return txnsToPropose
 }
 
