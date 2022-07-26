@@ -3,7 +3,7 @@
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
 
-const swapManager = Address.Vesper.SWAP_MANAGER
+const swapper = Address.Vesper.Swapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
 const setup = {
   feeCollector: Address.Vesper.FEE_COLLECTOR,
@@ -13,68 +13,14 @@ const setup = {
 // TODO update setup to remove strategy type, once done remove type from heres too
 /* eslint-disable camelcase */
 const StrategyConfig = {
-  AaveStrategyDAIe: {
-    contract: 'AaveStrategy',
+  AaveV3StrategyDAIe: {
+    contract: 'AaveV3Strategy',
     type: StrategyTypes.AAVE,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Aave.avDAI,
-      strategyName: 'AaveStrategyDAIe',
-    },
-    config: { ...config }, // Shallow copy
-    setup: { ...setup },
-  },
-  AaveStrategyWETHe: {
-    contract: 'AaveStrategy',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Aave.avWETH,
-      strategyName: 'AaveStrategyWETHe',
-    },
-    config: { ...config }, // Shallow copy
-    setup: { ...setup },
-  },
-  AaveStrategyWBTCe: {
-    contract: 'AaveStrategy',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Aave.avWBTC,
-      strategyName: 'AaveStrategyWBTCe',
-    },
-    config: { ...config }, // Shallow copy
-    setup: { ...setup },
-  },
-  AaveStrategyAVAX: {
-    contract: 'AaveStrategy',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Aave.avWAVAX,
-      strategyName: 'AaveStrategyAVAX',
-    },
-    config: { ...config }, // Shallow copy
-    setup: { ...setup },
-  },
-  AaveStrategyUSDCe: {
-    contract: 'AaveStrategy',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Aave.avUSDC,
-      strategyName: 'AaveStrategyUSDCe',
-    },
-    config: { ...config }, // Shallow copy
-    setup: { ...setup },
-  },
-  AaveLeverageStrategyAVAX: {
-    contract: 'AaveLeverageStrategy',
-    type: StrategyTypes.AAVE_LEVERAGE,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Aave.avWAVAX,
-      strategyName: 'AaveLeverageStrategyAVAX',
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      strategyName: 'AaveV3-DAIe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
@@ -83,7 +29,7 @@ const StrategyConfig = {
     contract: 'CrvA3PoolAvaxStrategy',
     type: StrategyTypes.CURVE,
     constructorArgs: {
-      swapManager,
+      swapper,
       collateralIdx: 0,
       strategyName: 'CrvA3PoolStrategyDAIe',
     },
@@ -94,7 +40,7 @@ const StrategyConfig = {
     contract: 'CrvA3PoolAvaxStrategy',
     type: StrategyTypes.CURVE,
     constructorArgs: {
-      swapManager,
+      swapper,
       collateralIdx: 1,
       strategyName: 'CrvA3PoolStrategyUSDCe',
     },
@@ -105,7 +51,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -120,7 +66,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -135,7 +81,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -150,7 +96,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -165,7 +111,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -180,7 +126,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -195,7 +141,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -209,7 +155,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -223,7 +169,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -238,7 +184,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -253,7 +199,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -268,7 +214,7 @@ const StrategyConfig = {
     contract: 'BenqiStrategyAVAX',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -283,7 +229,7 @@ const StrategyConfig = {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -298,7 +244,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -314,7 +260,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -330,7 +276,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -346,7 +292,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategyAVAX',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -362,7 +308,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -378,7 +324,7 @@ const StrategyConfig = {
     contract: 'BenqiLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -394,7 +340,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -410,7 +356,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -426,7 +372,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -442,7 +388,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -458,7 +404,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -474,7 +420,7 @@ const StrategyConfig = {
     contract: 'TraderJoeLeverageStrategy',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -490,7 +436,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategy',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibDAIev2,
       strategyName: 'AlphaLendStrategyDAIe',
     },
@@ -502,7 +448,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategy',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibWETHev2,
       strategyName: 'AlphaLendStrategyWETHe',
     },
@@ -514,7 +460,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategy',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibUSDCev2,
       strategyName: 'AlphaLendStrategyUSDCe',
     },
@@ -526,7 +472,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategy',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibUSDCv2,
       strategyName: 'AlphaLendStrategyUSDC',
     },
@@ -538,7 +484,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategy',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibWBTCev2,
       strategyName: 'AlphaLendStrategyWBTCe',
     },
@@ -550,7 +496,7 @@ const StrategyConfig = {
     contract: 'AlphaLendAvalancheStrategyAVAX',
     type: StrategyTypes.ALPHA_LEND,
     constructorArgs: {
-      swapManager,
+      swapper,
       receiptToken: Address.Alpha.ibAVAXv2,
       strategyName: 'AlphaLendStrategyAVAX',
     },
@@ -562,7 +508,7 @@ const StrategyConfig = {
     contract: 'VesperBenqiXYStrategy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.Benqi.COMPTROLLER,
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
@@ -580,7 +526,7 @@ const StrategyConfig = {
     contract: 'VesperTraderJoeXYStrategy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -597,7 +543,7 @@ const StrategyConfig = {
     contract: 'VesperTraderJoeXYStrategy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
@@ -614,7 +560,7 @@ const StrategyConfig = {
     contract: 'VesperTraderJoeXYStrategy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
-      swapManager,
+      swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
