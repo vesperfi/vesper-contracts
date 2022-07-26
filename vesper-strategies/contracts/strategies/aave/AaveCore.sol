@@ -151,7 +151,8 @@ abstract contract AaveCore {
         // In this case we might have more aToken compare to available liquidity in Aave and any
         // withdraw asking more than available liquidity will fail. To do safe withdraw, check
         // _amount against available liquidity.
-        (uint256 _availableLiquidity, , , , , , , , , ) = aaveProtocolDataProvider.getReserveData(_asset);
+        uint256 _availableLiquidity = IERC20(_asset).balanceOf(address(aToken));
+
         // Get minimum of _amount, _aTokenBalance and _availableLiquidity
         return _withdraw(_asset, _to, Math.min(_amount, Math.min(_aTokenBalance, _availableLiquidity)));
     }
