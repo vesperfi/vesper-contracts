@@ -467,21 +467,14 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           pool.totalValue(),
           pool.totalDebt(),
         ])
-        // Curve takes a loss initially, so we need to look for any excess debt to curve strategy
-        let excessDebt = ethers.BigNumber.from(0)
-        for (const strategy of strategies) {
-          if (strategy.type.toUpperCase().includes('CURVE')) {
-            const p = await pool.excessDebt(strategy.instance.address)
-            excessDebt = excessDebt.add(p)
-          }
-        }
+
         let maxTotalDebt = totalValue.mul(totalDebtRatio).div(MAX_BPS)
-        expect(Math.abs(maxTotalDebt.add(excessDebt).sub(totalDebtBefore))).to.almost.equal(
+        expect(Math.abs(maxTotalDebt.sub(totalDebtBefore))).to.almost.equal(
           1,
           `Total debt of ${poolName} is wrong after rebalance`,
         )
         const totalDebtOfStrategies = await totalDebtOfAllStrategy(strategies, pool)
-        expect(Math.abs(maxTotalDebt.add(excessDebt).sub(totalDebtOfStrategies))).to.almost.equal(
+        expect(Math.abs(maxTotalDebt.sub(totalDebtOfStrategies))).to.almost.equal(
           1,
           'Total debt of all strategies is wrong after rebalance',
         )

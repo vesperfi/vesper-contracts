@@ -5,7 +5,6 @@ const ethers = hre.ethers
 const { expect } = require('chai')
 const { getEvent } = require('vesper-commons/utils/setup')
 const { shouldMigrateStrategies } = require('./strategy-migration')
-// const { shouldBehaveLikeAaveStrategy } = require('./aave-strategy')
 // const { shouldBehaveLikeCompoundStrategy } = require('./compound-strategy')
 // const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
 const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
@@ -30,7 +29,6 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
   let owner, user1, user2, user3, user4, user5
 
   const behaviors = {
-    // [StrategyType.AAVE]: shouldBehaveLikeAaveStrategy,
     // [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
     // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
