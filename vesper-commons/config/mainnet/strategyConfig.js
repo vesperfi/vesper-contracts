@@ -147,7 +147,7 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  'Vesper-Aave-STETH-DAI': {
+  'Aave-Vesper-STETH-DAI': {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {

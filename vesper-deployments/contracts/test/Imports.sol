@@ -13,6 +13,7 @@ import "vesper-pools/contracts/upgraders/PoolAccountantUpgrader.sol";
 import "vesper-pools/contracts/upgraders/PoolRewardsUpgrader.sol";
 import "vesper-pools/contracts/upgraders/VPoolUpgrader.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundXYStrategy.sol";
+import "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
