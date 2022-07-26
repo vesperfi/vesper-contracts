@@ -25,7 +25,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
     address public rewardToken;
     address public borrowToken;
     AToken public vdToken; // Variable Debt Token
-
+    address internal aBorrowToken;
     event UpdatedBorrowLimit(
         uint256 previousMinBorrowLimit,
         uint256 newMinBorrowLimit,
@@ -43,13 +43,14 @@ contract AaveXYStrategy is Strategy, AaveCore {
     ) Strategy(_pool, _swapper, _receiptToken) AaveCore(_receiptToken) {
         NAME = _name;
         rewardToken = _rewardToken;
-        (, , address _vdToken) = aaveProtocolDataProvider.getReserveTokensAddresses(_borrowToken);
+        (address _aBorrowToken, , address _vdToken) = aaveProtocolDataProvider.getReserveTokensAddresses(_borrowToken);
         vdToken = AToken(_vdToken);
         borrowToken = _borrowToken;
+        aBorrowToken = _aBorrowToken;
     }
 
     function isReservedToken(address _token) public view virtual override returns (bool) {
-        return _isReservedToken(_token) || address(vdToken) == _token || borrowToken == _token;
+        return _token == address(aToken) || address(vdToken) == _token || borrowToken == _token;
     }
 
     /// @notice Returns total collateral locked in the strategy
@@ -152,7 +153,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
             _repayAmount = _borrowed - _borrowLowerBound;
         } else if (_borrowLowerBound > _borrowed) {
             _borrowAmount = _borrowLowerBound - _borrowed;
-            (uint256 _availableLiquidity, , , , , , , , , ) = aaveProtocolDataProvider.getReserveData(borrowToken);
+            uint256 _availableLiquidity = IERC20(borrowToken).balanceOf(aBorrowToken);
             if (_borrowAmount > _availableLiquidity) {
                 _borrowAmount = _availableLiquidity;
             }

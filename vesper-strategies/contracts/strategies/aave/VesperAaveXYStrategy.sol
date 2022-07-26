@@ -30,6 +30,18 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
         vsp = _vspAddress;
     }
 
+    /// @notice Claim VSP and convert to collateral token
+    function harvestVSP() external {
+        address _poolRewards = vPool.poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _swapExactInput(vsp, address(collateralToken), _vspAmount);
+        }
+    }
+
     /// @notice After borrowing Y, deposit to Vesper Pool
     function _afterBorrowY(uint256 _amount) internal virtual override {
         vPool.deposit(_amount);
@@ -45,18 +57,6 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 _amount) internal virtual override {
         _withdrawFromVesperPool(_amount);
-    }
-
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool

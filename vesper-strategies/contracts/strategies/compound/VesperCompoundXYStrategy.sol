@@ -36,6 +36,18 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
         return _getBorrowBalance();
     }
 
+    /// @notice Claim VSP and convert to collateral token
+    function harvestVSP() external {
+        address _poolRewards = vPool.poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _swapExactInput(vsp, address(collateralToken), _vspAmount);
+        }
+    }
+
     function isReservedToken(address _token) public view virtual override returns (bool) {
         return super.isReservedToken(_token) || _token == address(vPool);
     }
@@ -54,18 +66,6 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 _amount) internal override {
         _withdrawFromPool(_amount);
-    }
-
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool
