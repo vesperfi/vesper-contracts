@@ -3,14 +3,14 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
-import "../../interfaces/aave/IAave.sol";
-import "../Strategy.sol";
-import "./AaveCore.sol";
+import "../../../interfaces/aave/IAave.sol";
+import "../../Strategy.sol";
+import "./AaveV2Core.sol";
 
 // solhint-disable no-empty-blocks
 
 /// @title Deposit Collateral in Aave and earn interest by depositing borrowed token in a Vesper Pool.
-contract AaveXYStrategy is Strategy, AaveCore {
+contract AaveV2Xy is Strategy, AaveV2Core {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -40,7 +40,7 @@ contract AaveXYStrategy is Strategy, AaveCore {
         address _receiptToken,
         address _borrowToken,
         string memory _name
-    ) Strategy(_pool, _swapper, _receiptToken) AaveCore(_receiptToken) {
+    ) Strategy(_pool, _swapper, _receiptToken) AaveV2Core(_receiptToken) {
         NAME = _name;
         rewardToken = _rewardToken;
         (address _aBorrowToken, , address _vdToken) = aaveProtocolDataProvider.getReserveTokensAddresses(_borrowToken);

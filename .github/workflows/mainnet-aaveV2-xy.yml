@@ -2,17 +2,17 @@ name: Mainnet Aave XY Strategy
 on:
   pull_request:
     paths:
-      - ".github/workflows/mainnet-aave-xy.yml"
+      - ".github/workflows/mainnet-aaveV2-xy.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/utils/setup.js"
-      - "vesper-strategies/test/behavior/vesper-aave-xy.js"
+      - "vesper-strategies/test/behavior/aave-vesper-xy.js"
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
-      - "vesper-strategies/contracts/strategies/aave/AaveCore.sol"
-      - "vesper-strategies/contracts/strategies/aave/AaveXYStrategy.sol"
-      - "vesper-strategies/contracts/strategies/aave/VesperAaveXYStrategy.sol"
-      - "vesper-strategies/test/mainnet/aave-xy/**/*.js"
+      - "vesper-strategies/contracts/strategies/aave/v2/AaveV2Core.sol"
+      - "vesper-strategies/contracts/strategies/aave/v2/AaveV2Xy.sol"
+      - "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol"
+      - "vesper-strategies/test/mainnet/aave/v2/xy/**/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
@@ -44,7 +44,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave Vesper XY strategy for VAETH pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave-xy/vesper/vaeth.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/xy/vesper/vaeth.spec.js
 
   vasteth-vesper-test:
     needs: [setup-job]
@@ -59,7 +59,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave Vesper XY strategy for VASTETH pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave-xy/vesper/vasteth.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/xy/vesper/vasteth.spec.js
 
   vawbtc-vesper-test:
     needs: [setup-job]
@@ -74,4 +74,4 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave Vesper XY strategy for VAWBTC pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave-xy/vesper/vawbtc.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/xy/vesper/vawbtc.spec.js

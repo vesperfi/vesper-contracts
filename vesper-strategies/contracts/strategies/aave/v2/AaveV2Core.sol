@@ -4,10 +4,10 @@ pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 import "vesper-pools/contracts/Errors.sol";
-import "../../interfaces/aave/IAave.sol";
+import "../../../interfaces/aave/IAave.sol";
 
 /// @title This contract provide core operations for Aave
-abstract contract AaveCore {
+abstract contract AaveV2Core {
     //solhint-disable-next-line const-name-snakecase
     StakedAave public constant stkAAVE = StakedAave(0x4da27a545c0c5B758a6BA100e3a049001de870f5);
     address public constant AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;

@@ -10,7 +10,7 @@ const {
   address: { Aave: Address },
 } = require('vesper-commons/utils/chains').getChainData()
 // VesperAaveXY strategy specific tests
-function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
+function shouldBehaveLikeAaveVesperXY(strategyIndex) {
   let strategy, pool, collateralToken, borrowToken, vdToken
   let governor, user1, user2
   const maxBps = BigNumber.from('10000')
@@ -36,7 +36,7 @@ function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
     )
     return strategyAccountData
   }
-  describe('VesperAaveXYStrategy specific tests', function () {
+  describe('AaveV2VesperXy specific tests', function () {
     beforeEach(async function () {
       ;[governor, user1, user2] = this.users
       pool = this.pool
@@ -123,4 +123,4 @@ function shouldBehaveLikeVesperAaveXYStrategy(strategyIndex) {
     })
   })
 }
-module.exports = { shouldBehaveLikeVesperAaveXYStrategy }
+module.exports = { shouldBehaveLikeAaveVesperXY }
