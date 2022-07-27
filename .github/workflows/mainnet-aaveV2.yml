@@ -2,15 +2,14 @@ name: Mainnet Aave Strategy
 on:
   pull_request:
     paths:
-      - ".github/workflows/mainnet-aave.yml"
+      - ".github/workflows/mainnet-aaveV2.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/utils/setup.js"
-      - "vesper-strategies/test/behavior/aave-strategy.js"
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
-      - "vesper-strategies/contracts/strategies/aave/AaveCore.sol"
-      - "vesper-strategies/contracts/strategies/aave/AaveStrategy.sol"
+      - "vesper-strategies/contracts/strategies/aave/v2/AaveV2Core.sol"
+      - "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol"
       - "vesper-strategies/test/mainnet/aave/**"
 # Limit concurrency to one workflow per branch and one per pull_request.
 concurrency:
@@ -42,7 +41,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave strategy for VADAI pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/vadai.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/vadai.spec.js
 
   vauni-test:
     needs: [setup-job]
@@ -57,7 +56,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave strategy for VAUNI pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/vauni.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/vauni.spec.js
 
   vausdc-test:
     needs: [setup-job]
@@ -72,7 +71,7 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave strategy for VAUSDC pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/vausdc.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/vausdc.spec.js
 
   vausdt-test:
     needs: [setup-job]
@@ -87,4 +86,4 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Aave strategy for VAUSDT pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/vausdt.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v2/vausdt.spec.js

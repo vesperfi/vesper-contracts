@@ -2,11 +2,11 @@
 
 pragma solidity 0.8.9;
 
-import "./AaveCore.sol";
-import "../Strategy.sol";
+import "./AaveV2Core.sol";
+import "../../Strategy.sol";
 
 /// @dev This strategy will deposit collateral token in Aave and earn interest.
-contract AaveStrategy is Strategy, AaveCore {
+contract AaveV2 is Strategy, AaveV2Core {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -18,7 +18,7 @@ contract AaveStrategy is Strategy, AaveCore {
         address _swapManager,
         address _receiptToken,
         string memory _name
-    ) Strategy(_pool, _swapManager, _receiptToken) AaveCore(_receiptToken) {
+    ) Strategy(_pool, _swapManager, _receiptToken) AaveV2Core(_receiptToken) {
         NAME = _name;
     }
 
