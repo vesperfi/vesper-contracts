@@ -11,7 +11,7 @@ contract AaveStrategy is Strategy, AaveCore {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "4.0.0";
+    string public constant VERSION = "5.0.0";
 
     constructor(
         address _pool,
@@ -41,7 +41,7 @@ contract AaveStrategy is Strategy, AaveCore {
     }
 
     function isReservedToken(address _token) public view override returns (bool) {
-        return _isReservedToken(_token);
+        return _token == address(aToken) || _token == address(collateralToken);
     }
 
     /// @notice Large approval of token
