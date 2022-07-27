@@ -2,13 +2,13 @@
 
 pragma solidity 0.8.9;
 import "vesper-pools/contracts/Errors.sol";
-import "./AaveIncentive.sol";
-import "../Strategy.sol";
-import "../../interfaces/aave/IAave.sol";
+import "./AaveV3Incentive.sol";
+import "../../Strategy.sol";
+import "../../../interfaces/aave/IAave.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 
 /// @dev This strategy will deposit collateral token in Aave and earn interest.
-contract AaveV3Strategy is Strategy {
+contract AaveV3 is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
@@ -62,7 +62,7 @@ contract AaveV3Strategy is Strategy {
 
     /// @notice Claim all rewards and convert to _toToken.
     function _claimRewardsAndConvertTo(address _toToken) internal {
-        (address[] memory _tokens, uint256[] memory _amounts) = AaveIncentive._claimRewards(receiptToken);
+        (address[] memory _tokens, uint256[] memory _amounts) = AaveV3Incentive._claimRewards(receiptToken);
         uint256 _length = _tokens.length;
         for (uint256 i; i < _length; ++i) {
             if (_amounts[i] > 0) {

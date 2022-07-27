@@ -26,7 +26,7 @@ const StrategyType = {
   VESPER: 'vesper',
   VESPER_COMPOUND_XY: 'vesperCompoundXY',
   AAVE_LEVERAGE: 'aaveLeverage',
-  VESPER_AAVE_XY: 'vesperAaveXY',
+  AAVE_VESPER_XY: 'aaveVesperXY',
   STARGATE: 'stargate',
 }
 

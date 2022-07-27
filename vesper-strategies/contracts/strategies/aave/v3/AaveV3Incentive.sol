@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.8.9;
-import "../../interfaces/aave/IAave.sol";
+import "../../../interfaces/aave/IAave.sol";
 
 /// @title This contract provide core operations for Aave v3
-library AaveIncentive {
+library AaveV3Incentive {
     /**
      * @notice Claim rewards from Aave incentive controller
      */

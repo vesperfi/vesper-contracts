@@ -3,10 +3,10 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IVesperPool.sol";
-import "./AaveXYStrategy.sol";
+import "./AaveV2Xy.sol";
 
 /// @title Deposit Collateral in Aave and earn interest by depositing borrowed token in a Vesper Pool.
-contract VesperAaveXYStrategy is AaveXYStrategy {
+contract AaveV2VesperXy is AaveV2Xy {
     using SafeERC20 for IERC20;
 
     // Destination Grow Pool for borrowed Token
@@ -23,7 +23,7 @@ contract VesperAaveXYStrategy is AaveXYStrategy {
         address _vPool,
         address _vspAddress,
         string memory _name
-    ) AaveXYStrategy(_pool, _swapper, _rewardToken, _receiptToken, _borrowToken, _name) {
+    ) AaveV2Xy(_pool, _swapper, _rewardToken, _receiptToken, _borrowToken, _name) {
         require(_vspAddress != address(0), "invalid-vsp-address");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);

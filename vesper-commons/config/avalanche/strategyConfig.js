@@ -13,8 +13,8 @@ const setup = {
 // TODO update setup to remove strategy type, once done remove type from heres too
 /* eslint-disable camelcase */
 const StrategyConfig = {
-  AaveV3StrategyDAIe: {
-    contract: 'AaveV3Strategy',
+  AaveV3DAIe: {
+    contract: 'AaveV3',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
