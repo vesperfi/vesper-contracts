@@ -17,85 +17,85 @@ const setup = {
 // TODO update setup to remove strategy type, once done remove type from heres too
 /* eslint-disable camelcase */
 const StrategyConfig = {
-  AaveStrategyDAI: {
-    contract: 'AaveStrategy',
+  Aave_V2_DAI: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aDAI,
-      strategyName: 'AaveStrategyDAI',
+      strategyName: 'Aave_V2_DAI',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  AaveStrategyDPI: {
-    contract: 'AaveStrategy',
+  Aave_V2_DPI: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aDPI,
-      strategyName: 'AaveStrategyDPI',
+      strategyName: 'Aave_V2_DPI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveStrategyFEI: {
-    contract: 'AaveStrategy',
+  Aave_V2_FEI: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aFEI,
-      strategyName: 'AaveStrategyFEI',
+      strategyName: 'Aave_V2_FEI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveStrategyLINK: {
-    contract: 'AaveStrategy',
+  Aave_V2_LINK: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aLINK,
-      strategyName: 'AaveStrategyLINK',
+      strategyName: 'Aave_V2_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveStrategyUNI: {
-    contract: 'AaveStrategy',
+  Aave_V2_UNI: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aUNI,
-      strategyName: 'AaveStrategyUNI',
+      strategyName: 'Aave_V2_UNI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveStrategyUSDC: {
-    contract: 'AaveStrategy',
+  Aave_V2_USDC: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aUSDC,
-      strategyName: 'AaveStrategyUSDC',
+      strategyName: 'Aave_V2_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveStrategyUSDT: {
-    contract: 'AaveStrategy',
+  Aave_V2_USDT: {
+    contract: 'AaveV2',
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aUSDT,
-      strategyName: 'AaveStrategyUSDT',
+      strategyName: 'Aave_V2_USDT',
     },
     config: { ...config },
     setup: { ...setup },

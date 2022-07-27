@@ -2,23 +2,23 @@
 
 pragma solidity 0.8.9;
 
-import "./AaveCore.sol";
-import "../Strategy.sol";
+import "./AaveV2Core.sol";
+import "../../Strategy.sol";
 
 /// @dev This strategy will deposit collateral token in Aave and earn interest.
-contract AaveStrategy is Strategy, AaveCore {
+contract AaveV2 is Strategy, AaveV2Core {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "4.0.0";
+    string public constant VERSION = "5.0.0";
 
     constructor(
         address _pool,
         address _swapManager,
         address _receiptToken,
         string memory _name
-    ) Strategy(_pool, _swapManager, _receiptToken) AaveCore(_receiptToken) {
+    ) Strategy(_pool, _swapManager, _receiptToken) AaveV2Core(_receiptToken) {
         NAME = _name;
     }
 
@@ -41,7 +41,7 @@ contract AaveStrategy is Strategy, AaveCore {
     }
 
     function isReservedToken(address _token) public view override returns (bool) {
-        return _isReservedToken(_token);
+        return _token == address(aToken) || _token == address(collateralToken);
     }
 
     /// @notice Large approval of token
