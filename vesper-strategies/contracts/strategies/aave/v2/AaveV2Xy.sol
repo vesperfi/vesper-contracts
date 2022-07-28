@@ -281,12 +281,19 @@ contract AaveV2Xy is Strategy, AaveV2Core {
     }
 
     /// @dev Withdraw collateral here. Do not transfer to pool
-    function _withdrawHere(uint256 _amount) internal override {
-        (, uint256 _repayAmount) = _calculateBorrowPosition(0, _amount);
+    function _withdrawHere(uint256 _requireAmount) internal override {
+        (, uint256 _repayAmount) = _calculateBorrowPosition(0, _requireAmount);
         if (_repayAmount > 0) {
             _repayY(_repayAmount);
         }
-        _redeemX(_amount);
+        // withdraw asking more than available liquidity will fail. To do safe withdraw, check
+        // _requireAmount against available liquidity.
+        uint256 _possibleWithdraw =
+            Math.min(
+                _requireAmount,
+                Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
+            );
+        _redeemX(_possibleWithdraw);
     }
 
     /************************************************************************************************
