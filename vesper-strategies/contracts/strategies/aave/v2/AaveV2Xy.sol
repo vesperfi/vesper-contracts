@@ -242,9 +242,9 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             }
         }
 
-        if (_excessDebt > 0) {
-            _payback = Math.min(_collateralHere, _excessDebt);
-        }
+        // Make sure _collateralHere >= _payback + profit. set actual payback first and then profit
+        _payback = Math.min(_collateralHere, _excessDebt);
+        _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
     }
