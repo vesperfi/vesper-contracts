@@ -78,6 +78,7 @@ async function deployContract(name, params = []) {
 }
 
 // eslint-disable-next-line max-params
+// eslint-disable-next-line complexity
 async function setDefaultRouting(swapperAddress, pairs) {
   const abi = [
     'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
@@ -96,12 +97,29 @@ async function setDefaultRouting(swapperAddress, pairs) {
       tokens = [pair.tokenIn, pair.tokenOut]
     }
     let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
-    if (chain === 'eth' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
+
+    if (chain === 'mainnet' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
       // uni3 has pair of USDC, WETH in 0.3 fee pool.
       // TODO: modify logic to support more STG pairs
       path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
       exchange = ExchangeType.UNISWAP_V3
+    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
+      path = ethers.utils.solidityPack(
+        ['address', 'uint24', 'address', 'uint24', 'address'],
+        [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+      )
+      exchange = ExchangeType.UNISWAP_V3
+    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
+      path = ethers.utils.solidityPack(
+        ['address', 'uint24', 'address', 'uint24', 'address'],
+        [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+      )
+      exchange = ExchangeType.UNISWAP_V3
+    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
+      path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
+      exchange = ExchangeType.SUSHISWAP
     }
+
     await swapper.connect(caller).setDefaultRouting(swapType.EXACT_INPUT, pair.tokenIn, pair.tokenOut, exchange, path)
     await swapper.connect(caller).setDefaultRouting(swapType.EXACT_OUTPUT, pair.tokenIn, pair.tokenOut, exchange, path)
   }
@@ -112,10 +130,12 @@ async function configureSwapper(strategies, collateral) {
   const pairs = []
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
-    const rewardToken = await getIfExist(strategy.instance.rewardToken)
+    const rewardToken =
+      (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
     if (rewardToken) {
       pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
     }
+
     const strategyName = await strategy.instance.NAME()
     if (strategyName.includes('AaveV3')) {
       // get reward token list from AaveIncentivesController
@@ -146,8 +166,70 @@ async function configureSwapper(strategies, collateral) {
       pairs.push({ tokenIn: collateral, tokenOut: Address.DAI })
     }
   }
+
   const swapperAddress = strategies[0].constructorArgs.swapper
   await setDefaultRouting(swapperAddress, pairs)
+}
+
+async function configureOracles(strategies) {
+  for (const strategy of strategies) {
+    const strategyType = strategy.type.toLowerCase()
+
+    if (strategyType.includes('curve')) {
+      const masterOracleABI = [
+        'function defaultOracle() external view returns(address)',
+        'function oracles(address) external view returns (address)',
+      ]
+      const defaultOracleABI = [
+        'function governor() external view returns(address)',
+        'function updateStalePeriod(uint256) external',
+      ]
+      const btcPeggedOracleABI = [
+        'function governor() external view returns(address)',
+        'function updateStalePeriod(uint256) external',
+      ]
+      const stableCoinProviderABI = [
+        'function governor() external view returns(address)',
+        'function updateStalePeriod(uint256) external',
+      ]
+      const alUsdOracleABI = [
+        'function governor() external view returns(address)',
+        'function updateStalePeriod(uint256) external',
+        'function update() external',
+      ]
+
+      const masterOracle = await ethers.getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
+      const stableCoinProvider = await ethers.getContractAt(stableCoinProviderABI, Address.Vesper.StableCoinProvider)
+      const defaultOracle = await ethers.getContractAt(defaultOracleABI, await masterOracle.defaultOracle())
+      const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, await masterOracle.oracles(Address.renBTC))
+      const alUsdOracle = await ethers.getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD))
+
+      //
+      // Accepts outdated prices due to time travels
+      //
+      await defaultOracle
+        .connect(await unlock(await defaultOracle.governor()))
+        .updateStalePeriod(ethers.constants.MaxUint256)
+      await btcPeggedOracle
+        .connect(await unlock(await btcPeggedOracle.governor()))
+        .updateStalePeriod(ethers.constants.MaxUint256)
+      await stableCoinProvider
+        .connect(await unlock(await stableCoinProvider.governor()))
+        .updateStalePeriod(ethers.constants.MaxUint256)
+      await alUsdOracle
+        .connect(await unlock(await alUsdOracle.governor()))
+        .updateStalePeriod(ethers.constants.MaxUint256)
+
+      //
+      // Ensure alUSD oracle is updated
+      //
+      await helpers.time.increase(2 * 60 * 60) // 2h TWAP period
+      await alUsdOracle.update()
+
+      // Setup is needed just once
+      break
+    }
+  }
 }
 
 /**
@@ -360,6 +442,7 @@ async function setupVPool(obj, poolData, options = {}) {
     await addStrategies(obj)
     const collateralTokenAddress = await obj.pool.token()
     await configureSwapper(obj.strategies, collateralTokenAddress)
+    await configureOracles(obj.strategies)
     obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
     // Save snapshot restorer to restore snapshot and take new one
     obj.snapshotRestorer = await helpers.takeSnapshot()

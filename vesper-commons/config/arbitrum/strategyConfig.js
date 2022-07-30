@@ -12,14 +12,16 @@ const setup = {
 }
 
 // TODO update setup to remove strategy type, once done remove type from heres too
+/* eslint-disable camelcase */
 const StrategyConfig = {
-  Crv2PoolStrategyArbitrumUSDCUSDTPoolUSDC: {
-    contract: 'Crv2PoolStrategyArbitrumUSDCUSDTPool',
+  Curve_2pool_USDC: {
+    contract: 'Curve2PlainPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.USDCUSDT_POOL,
       swapManager,
       collateralIdx: 0,
-      strategyName: 'Crv2PoolStrategyArbitrumUSDCUSDTPoolUSDC',
+      strategyName: 'Curve_2pool_USDC',
     },
     config: { ...config },
     setup: { ...setup },

@@ -25,28 +25,46 @@ const StrategyConfig = {
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
-  CrvA3PoolStrategyDAIe: {
-    contract: 'CrvA3PoolAvaxStrategy',
+
+  Curve_aave_DAIe: {
+    contract: 'Curve3LendingPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.AAVE_POOL,
       swapper,
       collateralIdx: 0,
-      strategyName: 'CrvA3PoolStrategyDAIe',
+      strategyName: 'Curve_aave_DAIe',
     },
     config: { ...config, externalDepositFee: 0 },
     setup: { ...setup },
   },
-  CrvA3PoolStrategyUSDCe: {
-    contract: 'CrvA3PoolAvaxStrategy',
+
+  Curve_aave_USDCe: {
+    contract: 'Curve3LendingPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.AAVE_POOL,
       swapper,
       collateralIdx: 1,
-      strategyName: 'CrvA3PoolStrategyUSDCe',
+      strategyName: 'Curve_aave_USDCe',
     },
     config: { ...config, externalDepositFee: 0 },
     setup: { ...setup },
   },
+
+  Curve_ren_RenBTCe: {
+    contract: 'Curve2LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.AVWBTCRENBTC_POOL,
+      swapper,
+      collateralIdx: 1,
+      strategyName: 'Curve_ren_RenBTCe',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   TraderJoeStrategyUSDCe: {
     contract: 'CompoundLikeStrategy',
     type: StrategyTypes.TRADER_JOE,

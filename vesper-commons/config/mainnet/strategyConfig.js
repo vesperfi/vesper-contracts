@@ -4,6 +4,7 @@ const { ethers } = require('hardhat')
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
 
+const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
 
@@ -834,279 +835,349 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Convex2PoolStrategyMIMUSTPoolMIM: {
-    contract: 'Convex2PoolStrategyMIMUSTPool',
+  Convex_ren_WBTC: {
+    contract: 'Convex2PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Convex2PoolStrategyMIMUSTPoolMIM',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Convex3PoolStrategyDAI: {
-    contract: 'Convex3PoolStrategy',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Convex3PoolStrategyDAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  ConvexSBTCPoolStrategyWBTC: {
-    contract: 'ConvexSBTCPoolStrategy',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
+      crvPool: Address.Curve.REN_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'ConvexSBTCPoolStrategyWBTC',
+      convexPoolId: 6,
+      strategyName: 'Convex_ren_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  ConvexD3PoolStrategyFRAX: {
-    contract: 'ConvexD3PoolStrategy',
+  Convex_3pool_DAI: {
+    contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
+      crvPool: Address.Curve.THREE_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 0,
-      strategyName: 'ConvexD3PoolStrategyFRAX',
+      convexPoolId: 9,
+      strategyName: 'Convex_3pool_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  ConvexD3PoolStrategyFEI: {
-    contract: 'ConvexD3PoolStrategy',
+  Convex_sbtc_WBTC: {
+    contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
+      crvPool: Address.Curve.SBTC_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'ConvexD3PoolStrategyFEI',
+      convexPoolId: 7,
+      strategyName: 'Convex_sbtc_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  ConvexD3PoolStrategyAlUSD: {
-    contract: 'ConvexD3PoolStrategy',
+  Convex_d3pool_FRAX: {
+    contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
-      swapper,
-      collateralIdx: 2,
-      strategyName: 'ConvexD3PoolStrategyAlUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Convex4MetaPoolStrategyMIMPoolMIM: {
-    contract: 'Convex4MetaPoolStrategyMIMPool',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
+      crvPool: Address.Curve.D3_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 0,
-      strategyName: 'Convex4MetaPoolStrategyMIMPoolMIM',
+      convexPoolId: 58,
+      strategyName: 'Convex_d3pool_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Convex4PoolStrategyMUSDPoolMUSD: {
-    contract: 'Convex4PoolStrategyMUSDPool',
+  Convex_d3pool_FEI: {
+    contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Convex4PoolStrategyMUSDPoolMUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-  Convex4MetaPoolStrategyFRAXPoolFRAX: {
-    contract: 'Convex4MetaPoolStrategyFRAXPool',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Convex4MetaPoolStrategyFRAXPool',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Convex4MetaPoolStrategyFRAXPoolDAI: {
-    contract: 'Convex4MetaPoolStrategyFRAXPool',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
+      crvPool: Address.Curve.D3_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'Convex4MetaPoolStrategyFRAXPool',
+      convexPoolId: 58,
+      strategyName: 'Convex_d3pool_FEI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Convex4MetaPoolStrategyFRAXPoolUSDC: {
-    contract: 'Convex4MetaPoolStrategyFRAXPool',
+  Convex_d3pool_AlUSD: {
+    contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
+      crvPool: Address.Curve.D3_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 2,
-      strategyName: 'Convex4MetaPoolStrategyFRAXPool',
+      convexPoolId: 58,
+      strategyName: 'Convex_d3pool_AlUSD',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Convex4MetaPoolStrategyIBBTCPoolWBTC: {
-    contract: 'Convex4MetaPoolStrategyIBBTCPool',
+  Convex_mim_MIM: {
+    contract: 'Convex4FactoryMetaPool',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
+      crvPool: Address.Curve.MIM_3CRV_POOL,
+      masterOracle,
       swapper,
-      collateralIdx: 2,
-      strategyName: 'Convex4MetaPoolStrategyIBBTCPoolWBTC',
+      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 0,
+      convexPoolId: 40,
+      strategyName: 'Convex_mim_MIM',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Crv2PoolStrategyMIMUSTPoolMIM: {
-    contract: 'Crv2PoolStrategyMIMUSTPool',
+  Convex_musd_MUSD: {
+    contract: 'Convex4MetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.MUSD_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.MUSD_DEPOSIT,
+      collateralIdx: 0,
+      convexPoolId: 14,
+      strategyName: 'Convex_musd_MUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Convex_frax_FRAX: {
+    contract: 'Convex4FactoryMetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAX_3CRV_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 0,
+      convexPoolId: 32,
+      strategyName: 'Convex_frax_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Convex_frax_DAI: {
+    contract: 'Convex4FactoryMetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAX_3CRV_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 1,
+      convexPoolId: 32,
+      strategyName: 'Convex_frax_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Convex_frax_USDC: {
+    contract: 'Convex4FactoryMetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAX_3CRV_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 2,
+      convexPoolId: 32,
+      strategyName: 'Convex_frax_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Convex_ibBTC_WBTC: {
+    contract: 'Convex4FactoryMetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.IBBTC_SBTC_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.SBTC_DEPOSIT,
+      collateralIdx: 2,
+      convexPoolId: 53,
+      strategyName: 'Convex_ibBTC_WBTC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_ren_WBTC: {
+    contract: 'Curve2PlainPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.REN_POOL,
+      masterOracle,
       swapper,
-      collateralIdx: 0,
-      strategyName: 'Crv2PoolStrategyMIMUSTPoolMIM',
+      collateralIdx: 1,
+      strategyName: 'Curve_ren_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Crv3PoolStrategyDAI: {
-    contract: 'Crv3PoolStrategy',
+  Curve_3pool_DAI: {
+    contract: 'Curve3PlainPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.THREE_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 0,
-      strategyName: 'Crv3PoolStrategyDAI',
+      strategyName: 'Curve_3pool_DAI',
     },
     config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 
-  Crv3PoolStrategyUSDC: {
-    contract: 'Crv3PoolStrategy',
+  Curve_3pool_USDC: {
+    contract: 'Curve3PlainPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.THREE_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'Crv3PoolStrategyUSDC',
+      strategyName: 'Curve_3pool_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CrvSBTCPoolStrategyWBTC: {
-    contract: 'CrvSBTCPoolStrategy',
+  Curve_sbtc_WBTC: {
+    contract: 'Curve3PlainPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.SBTC_POOL,
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'CrvSBTCPoolStrategyWBTC',
+      strategyName: 'Curve_sbtc_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnCrvSBTCPoolStrategyWBTC_DAI: {
-    contract: 'EarnCrvSBTCPoolStrategy',
+  Earn_Curve_sbtc_WBTC_DAI: {
+    contract: 'EarnCurve3PlainPool',
     type: StrategyTypes.EARN_CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.SBTC_POOL,
+      masterOracle,
       swapper,
+      collateralIdx: 1,
       dripToken: Address.DAI,
-      strategyName: 'EarnCrvSBTCPoolStrategyWBTC_DAI',
+      strategyName: 'Earn_Curve_sbtc_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  Crv4MetaPoolStrategyMIMPoolDAI: {
-    contract: 'Crv4MetaPoolStrategyMIMPool',
+  Curve_mim_DAI: {
+    contract: 'Curve4FactoryMetaPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.MIM_3CRV_POOL,
+      masterOracle,
       swapper,
+      depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
       collateralIdx: 1,
-      strategyName: 'Crv4MetaPoolStrategyMIMPoolDAI',
+      strategyName: 'Curve_mim_DAI',
     },
     config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 
-  Crv4MetaPoolStrategyFRAXPoolDAI: {
-    contract: 'Crv4MetaPoolStrategyFRAXPool',
+  Curve_mim_MIM: {
+    contract: 'Curve4FactoryMetaPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.MIM_3CRV_POOL,
+      masterOracle,
       swapper,
+      depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 0,
+      strategyName: 'Curve_mim_MIM',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_GUSD_DAI: {
+    contract: 'Curve4PlainOr4MetaPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.GUSD_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.GUSD_DEPOSIT,
       collateralIdx: 1,
-      strategyName: 'Crv4MetaPoolStrategyFRAXPoolDAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Crv4MetaPoolStrategyMIMPoolMIM: {
-    contract: 'Crv4MetaPoolStrategyMIMPool',
-    type: StrategyTypes.CURVE,
-    constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Crv4MetaPoolStrategyMIMPoolMIM',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Crv4PoolStrategySUSDPoolDAI: {
-    contract: 'Crv4PoolStrategySUSDPool',
-    type: StrategyTypes.CURVE,
-    constructorArgs: {
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Crv4PoolStrategySUSDPoolDAI',
+      strategyName: 'Curve_GUSD_DAI',
     },
     config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 
-  CrvA3PoolStrategyDAI: {
-    contract: 'CrvA3PoolStrategy',
+  Curve_sUSD_DAI: {
+    contract: 'Curve4PlainOr4MetaPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.SUSD_POOL,
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.SUSD_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_sUSD_DAI',
+    },
+    config: { ...config, externalDepositFee: 100 },
+    setup: { ...setup },
+  },
+
+  Curve_aave_DAI: {
+    contract: 'Curve3LendingPoolAave',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      masterOracle,
       swapper,
       collateralIdx: 0,
-      strategyName: 'CrvA3PoolStrategyDAI',
+      strategyName: 'Curve_aave_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
-  CrvA3PoolStrategyUSDC: {
-    contract: 'CrvA3PoolStrategy',
+
+  Curve_aave_USDC: {
+    contract: 'Curve3LendingPoolAave',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      masterOracle,
       swapper,
       collateralIdx: 1,
-      strategyName: 'CrvA3PoolStrategyUSDC',
+      strategyName: 'Curve_aave_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
+
   AaveMakerStrategyETH: {
     contract: 'AaveMakerStrategy',
     type: StrategyTypes.AAVE_MAKER,

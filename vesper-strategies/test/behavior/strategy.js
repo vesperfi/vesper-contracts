@@ -10,8 +10,8 @@ const { shouldMigrateStrategies } = require('./strategy-migration')
 const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
 // const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
 // const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
+const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
 const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
-// const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
 // const { shouldBehaveLikeEarnMakerStrategy } = require('./earn-maker-strategy')
 // const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
 // const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
@@ -38,8 +38,9 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
     // [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
     // [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
-    // [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
-    // [StrategyType.CONVEX]: shouldBehaveLikeCrvStrategy,
+    [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
+    [StrategyType.CONVEX]: shouldBehaveLikeCrvStrategy,
+    // [StrategyType.VESPER_AAVE_XY]: shouldBehaveLikeVesperAaveXYStrategy,
     // [StrategyType.EARN_MAKER]: shouldBehaveLikeEarnMakerStrategy,
     // [StrategyType.EARN_VESPER_MAKER]: shouldBehaveLikeEarnVesperMakerStrategy,
     // [StrategyType.EARN_VESPER]: shouldBehaveLikeEarnVesperStrategy,

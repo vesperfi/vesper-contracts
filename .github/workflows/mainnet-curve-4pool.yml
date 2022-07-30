@@ -1,0 +1,91 @@
+name: Mainnet Curve 4pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-curve-4pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurvePoolBase.sol"
+      - "vesper-strategies/contracts/strategies/curve/4pool/*.sol"
+      - "vesper-strategies/test/mainnet/curve/4pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  mim-3crv-pool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VADAI pool using MIM+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/4pool/mim-3crv-pool-dai.spec.js
+
+  mim-3crv-pool-mim-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VMIM pool using MIM+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/4pool/mim-3crv-pool-mim.spec.js
+
+  susd-pool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VADAI pool using SUSD 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/4pool/susd-pool-dai.spec.js
+
+  gusd-pool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VADAI pool using GUSD 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/4pool/gusd-pool-dai.spec.js
