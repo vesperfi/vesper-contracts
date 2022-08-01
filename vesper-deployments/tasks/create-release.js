@@ -70,7 +70,7 @@ async function getPoolData(data) {
 
   const strategies = {}
   Object.entries(data).map(function ([key, value]) {
-    if (key.includes('Strategy')) {
+    if (!key.includes('Pool') && !key.includes('proxy') && !key.includes('implementation')) {
       strategies[key] = value
     }
   })
