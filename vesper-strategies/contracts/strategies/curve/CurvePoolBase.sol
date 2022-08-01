@@ -108,7 +108,7 @@ abstract contract CurvePoolBase is Strategy {
 
     /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
     function isReservedToken(address token_) public view override returns (bool) {
-        return token_ == address(crvLp);
+        return token_ == receiptToken || token_ == address(collateralToken);
     }
 
     // Gets LP value not staked in gauge
@@ -122,10 +122,6 @@ abstract contract CurvePoolBase is Strategy {
 
     function lpBalanceStaked() public view virtual returns (uint256 _lpStaked) {
         _lpStaked = crvGauge.balanceOf(address(this));
-    }
-
-    function setCheckpoint() public {
-        crvGauge.user_checkpoint(address(this));
     }
 
     /// @notice Returns collateral balance + collateral deposited to curve
@@ -151,9 +147,9 @@ abstract contract CurvePoolBase is Strategy {
     }
 
     /// @notice Unstake LP tokens in order to transfer to the new strategy
-    function _beforeMigration(
-        address /*_newStrategy*/
-    ) internal override {
+    function _beforeMigration(address newStrategy_) internal override {
+        require(IStrategy(newStrategy_).collateral() == address(collateralToken), "wrong-collateral-token");
+        require(IStrategy(newStrategy_).token() == address(crvLp), "wrong-receipt-token");
         _unstakeAllLp();
     }
 
@@ -215,8 +211,11 @@ abstract contract CurvePoolBase is Strategy {
 
         _claimRewardsAndConvertTo(address(collateralToken));
 
+        int128 _i = SafeCast.toInt128(int256(collateralIdx));
+        uint256 _lpHere = lpBalanceHere();
+        uint256 _totalLp = _lpHere + lpBalanceStaked();
+        uint256 _collateralInCurve = _quoteLpToCoin(_totalLp, _i);
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
-        uint256 _collateralInCurve = _quoteLpToCoin(lpBalanceHereAndStaked(), SafeCast.toInt128(int256(collateralIdx)));
         uint256 _totalCollateral = _collateralHere + _collateralInCurve;
 
         if (_totalCollateral > _strategyDebt) {
@@ -229,8 +228,21 @@ abstract contract CurvePoolBase is Strategy {
         if (_profitAndExcessDebt > _collateralHere) {
             uint256 _totalAmountToWithdraw = Math.min((_profitAndExcessDebt - _collateralHere), _collateralInCurve);
             if (_totalAmountToWithdraw > 0) {
-                _withdrawHere(_totalAmountToWithdraw);
-                _collateralHere = collateralToken.balanceOf(address(this));
+                uint256 _lpToBurn = Math.min((_totalAmountToWithdraw * _totalLp) / _collateralInCurve, _totalLp);
+
+                if (_lpToBurn > 0) {
+                    if (_lpToBurn > _lpHere) {
+                        _unstakeLp(_lpToBurn - _lpHere);
+                    }
+
+                    _withdrawFromCurve(
+                        _lpToBurn,
+                        _calculateAmountOutMin(receiptToken, address(collateralToken), _lpToBurn),
+                        _i
+                    );
+
+                    _collateralHere = collateralToken.balanceOf(address(this));
+                }
             }
         }
 
@@ -283,29 +295,25 @@ abstract contract CurvePoolBase is Strategy {
         uint256 minCoinAmountOut_,
         int128 coinIdx_
     ) internal virtual {
-        if (lpToBurn_ > 0) {
-            IStableSwap(crvPool).remove_liquidity_one_coin(lpToBurn_, coinIdx_, minCoinAmountOut_);
-        }
+        IStableSwap(crvPool).remove_liquidity_one_coin(lpToBurn_, coinIdx_, minCoinAmountOut_);
     }
 
     function _withdrawHere(uint256 coinAmountOut_) internal override {
-        if (coinAmountOut_ > 0) {
-            int128 _i = SafeCast.toInt128(int256(collateralIdx));
+        int128 _i = SafeCast.toInt128(int256(collateralIdx));
 
-            uint256 _lpHere = lpBalanceHere();
-            uint256 _totalLp = _lpHere + lpBalanceStaked();
+        uint256 _lpHere = lpBalanceHere();
+        uint256 _totalLp = _lpHere + lpBalanceStaked();
 
-            uint256 _lpToBurn = Math.min((coinAmountOut_ * _totalLp) / _quoteLpToCoin(_totalLp, _i), _totalLp);
+        uint256 _lpToBurn = Math.min((coinAmountOut_ * _totalLp) / _quoteLpToCoin(_totalLp, _i), _totalLp);
 
-            if (_lpToBurn == 0) return;
+        if (_lpToBurn == 0) return;
 
-            if (_lpToBurn > _lpHere) {
-                _unstakeLp(_lpToBurn - _lpHere);
-            }
-
-            uint256 _coinAmountOutMin = _calculateAmountOutMin(address(crvLp), address(collateralToken), _lpToBurn);
-            _withdrawFromCurve(_lpToBurn, _coinAmountOutMin, _i);
+        if (_lpToBurn > _lpHere) {
+            _unstakeLp(_lpToBurn - _lpHere);
         }
+
+        uint256 _coinAmountOutMin = _calculateAmountOutMin(address(crvLp), address(collateralToken), _lpToBurn);
+        _withdrawFromCurve(_lpToBurn, _coinAmountOutMin, _i);
     }
 
     /// @dev Rewards token in gauge can be updated any time. Governor can set reward tokens
