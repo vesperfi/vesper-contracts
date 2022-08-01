@@ -840,6 +840,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.REN_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -855,6 +856,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.THREE_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -870,6 +872,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
+      crvSlippage: 100, // 1%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -885,6 +888,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
+      crvSlippage: 100, // 1%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -900,6 +904,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
+      crvSlippage: 100, // 1%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -915,6 +920,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
+      crvSlippage: 100, // 1%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -930,6 +936,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.MIM_3CRV_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -946,6 +953,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.MUSD_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       deposit: Address.Curve.MUSD_DEPOSIT,
@@ -962,6 +970,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -978,6 +987,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -994,6 +1004,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -1010,6 +1021,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.IBBTC_SBTC_POOL,
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.SBTC_DEPOSIT,
@@ -1026,6 +1038,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.REN_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1040,6 +1053,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.THREE_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1054,6 +1068,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.THREE_POOL,
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1068,6 +1083,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
+      crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1082,6 +1098,7 @@ const StrategyConfig = {
     type: StrategyTypes.EARN_CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
+      crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1097,6 +1114,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.MIM_3CRV_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -1112,6 +1130,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.MIM_3CRV_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -1127,6 +1146,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.GUSD_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.GUSD_DEPOSIT,
@@ -1142,6 +1162,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SUSD_POOL,
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.SUSD_DEPOSIT,
@@ -1156,6 +1177,7 @@ const StrategyConfig = {
     contract: 'Curve3LendingPoolAave',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1169,6 +1191,7 @@ const StrategyConfig = {
     contract: 'Curve3LendingPoolAave',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 1,

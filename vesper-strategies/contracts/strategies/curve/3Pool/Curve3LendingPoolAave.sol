@@ -18,11 +18,12 @@ contract Curve3LendingPoolAave is Curve3LendingPool {
 
     constructor(
         address pool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         string memory name_
-    ) Curve3LendingPool(pool_, CRV_POOL, masterOracle_, swapper_, collateralIdx_, name_) {}
+    ) Curve3LendingPool(pool_, CRV_POOL, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) {}
 
     function canStartCooldown() external view returns (bool) {
         (uint256 _cooldownStart, , uint256 _unstakeEnd) = cooldownData();

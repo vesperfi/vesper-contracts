@@ -12,6 +12,7 @@ contract Convex4FactoryMetaPool is Curve4FactoryMetaPool, ConvexBase {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         address depositZap_,
@@ -19,7 +20,16 @@ contract Convex4FactoryMetaPool is Curve4FactoryMetaPool, ConvexBase {
         uint256 convexPoolId_,
         string memory name_
     )
-        Curve4FactoryMetaPool(pool_, crvPool_, masterOracle_, swapper_, depositZap_, collateralIdx_, name_)
+        Curve4FactoryMetaPool(
+            pool_,
+            crvPool_,
+            crvSlippage_,
+            masterOracle_,
+            swapper_,
+            depositZap_,
+            collateralIdx_,
+            name_
+        )
         ConvexBase(convexPoolId_)
     {
         (address _lp, , , , , ) = BOOSTER.poolInfo(convexPoolId_);

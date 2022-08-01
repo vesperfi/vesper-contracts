@@ -14,12 +14,16 @@ contract Convex3PlainPool is Curve3PlainPool, ConvexBase {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         uint256 convexPoolId_,
         string memory name_
-    ) Curve3PlainPool(pool_, crvPool_, masterOracle_, swapper_, collateralIdx_, name_) ConvexBase(convexPoolId_) {
+    )
+        Curve3PlainPool(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_)
+        ConvexBase(convexPoolId_)
+    {
         (address _lp, , , , , ) = BOOSTER.poolInfo(convexPoolId_);
         require(_lp == address(crvLp), "incorrect-lp-token");
     }

@@ -10,12 +10,13 @@ contract EarnCurve3PlainPool is Curve3PlainPool, Earn {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         address dripToken_,
         string memory name_
-    ) Curve3PlainPool(pool_, crvPool_, masterOracle_, swapper_, collateralIdx_, name_) Earn(dripToken_) {}
+    ) Curve3PlainPool(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) Earn(dripToken_) {}
 
     function _approveToken(uint256 _amount) internal virtual override(Strategy, CurvePoolBase) {
         CurvePoolBase._approveToken(_amount);

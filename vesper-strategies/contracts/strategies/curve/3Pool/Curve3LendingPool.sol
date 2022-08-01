@@ -15,11 +15,12 @@ abstract contract Curve3LendingPool is Curve3PlainPool {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         string memory name_
-    ) Curve3PlainPool(pool_, crvPool_, masterOracle_, swapper_, collateralIdx_, name_) {}
+    ) Curve3PlainPool(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) {}
 
     function _depositToCurve(uint256 coinAmountIn_) internal override {
         if (coinAmountIn_ > 0) {

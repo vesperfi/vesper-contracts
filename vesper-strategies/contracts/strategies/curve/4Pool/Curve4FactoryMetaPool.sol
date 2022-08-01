@@ -15,12 +15,13 @@ contract Curve4FactoryMetaPool is CurvePoolBase {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         address depositZap_,
         uint256 collateralIdx_,
         string memory name_
-    ) CurvePoolBase(pool_, crvPool_, masterOracle_, swapper_, collateralIdx_, name_) {
+    ) CurvePoolBase(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) {
         depositZap = IDepositZap4x(depositZap_);
     }
 

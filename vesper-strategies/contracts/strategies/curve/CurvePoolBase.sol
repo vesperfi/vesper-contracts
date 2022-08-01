@@ -27,8 +27,9 @@ abstract contract CurvePoolBase is Strategy {
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
 
-    address public immutable crvPool;
+    // Note: Same as `receiptToken` but using this in order to save gas since it's `immutable` and `receiptToken` isn't
     IERC20 public immutable crvLp;
+    address public immutable crvPool;
     ILiquidityGaugeV2 public immutable crvGauge;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -36,7 +37,7 @@ abstract contract CurvePoolBase is Strategy {
     string public NAME;
 
     uint256 public immutable collateralIdx;
-    uint256 public crvSlippage = 150; // 1.5%
+    uint256 public crvSlippage;
     IMasterOracle public masterOracle;
 
     address[] public rewardTokens;
@@ -47,6 +48,7 @@ abstract contract CurvePoolBase is Strategy {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
@@ -98,6 +100,7 @@ abstract contract CurvePoolBase is Strategy {
         crvPool = crvPool_;
         crvLp = IERC20(_crvLp);
         crvGauge = ILiquidityGaugeV2(_crvGauge);
+        crvSlippage = crvSlippage_;
         receiptToken = _crvLp;
         collateralIdx = collateralIdx_;
 

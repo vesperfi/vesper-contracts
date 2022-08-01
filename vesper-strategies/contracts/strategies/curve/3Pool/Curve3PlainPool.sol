@@ -13,11 +13,12 @@ contract Curve3PlainPool is CurvePoolBase {
     constructor(
         address pool_,
         address crvPool_,
+        uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         string memory name_
-    ) CurvePoolBase(pool_, crvPool_, masterOracle_, swapper_, collateralIdx_, name_) {}
+    ) CurvePoolBase(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) {}
 
     function _depositToCurve(uint256 coinAmountIn_) internal virtual override {
         if (coinAmountIn_ > 0) {
