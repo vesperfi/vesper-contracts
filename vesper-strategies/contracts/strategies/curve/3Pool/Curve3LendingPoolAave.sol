@@ -10,6 +10,7 @@ import "../../Strategy.sol";
 import "./Curve3LendingPool.sol";
 
 /// @title This strategy will deposit collateral token in Curve Aave 3Pool and earn interest.
+// solhint-disable no-empty-blocks
 contract Curve3LendingPoolAave is Curve3LendingPool {
     using SafeERC20 for IERC20;
     address private constant CRV_POOL = 0xDeBF20617708857ebe4F679508E7b7863a8A8EeE;
@@ -35,14 +36,6 @@ contract Curve3LendingPoolAave is Curve3LendingPool {
         return _canUnstake(_cooldownEnd, _unstakeEnd);
     }
 
-    function _canStartCooldown(uint256 cooldownStart_, uint256 unstakeEnd_) internal view returns (bool) {
-        return STKAAVE.balanceOf(address(this)) > 0 && (cooldownStart_ == 0 || block.timestamp > unstakeEnd_);
-    }
-
-    function _canUnstake(uint256 cooldownEnd_, uint256 unstakeEnd_) internal view returns (bool) {
-        return block.timestamp > cooldownEnd_ && block.timestamp <= unstakeEnd_;
-    }
-
     function cooldownData()
         public
         view
@@ -55,6 +48,14 @@ contract Curve3LendingPoolAave is Curve3LendingPool {
         _cooldownStart = STKAAVE.stakersCooldowns(address(this));
         _cooldownEnd = _cooldownStart + STKAAVE.COOLDOWN_SECONDS();
         _unstakeEnd = _cooldownEnd + STKAAVE.UNSTAKE_WINDOW();
+    }
+
+    function _canStartCooldown(uint256 cooldownStart_, uint256 unstakeEnd_) internal view returns (bool) {
+        return STKAAVE.balanceOf(address(this)) > 0 && (cooldownStart_ == 0 || block.timestamp > unstakeEnd_);
+    }
+
+    function _canUnstake(uint256 cooldownEnd_, uint256 unstakeEnd_) internal view returns (bool) {
+        return block.timestamp > cooldownEnd_ && block.timestamp <= unstakeEnd_;
     }
 
     function _claimAave() internal {

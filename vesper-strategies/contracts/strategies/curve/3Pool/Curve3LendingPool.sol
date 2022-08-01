@@ -9,6 +9,7 @@ import "../../Strategy.sol";
 import "./Curve3PlainPool.sol";
 
 /// @title This strategy will deposit collateral token in Curve Lending 3Pool and earn interest.
+// solhint-disable no-empty-blocks
 abstract contract Curve3LendingPool is Curve3PlainPool {
     using SafeERC20 for IERC20;
 

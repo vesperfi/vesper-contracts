@@ -16,6 +16,7 @@ import "../../interfaces/one-oracle/IMasterOracle.sol";
 import "../Strategy.sol";
 
 /// @title This strategy will deposit collateral token in a Curve Pool and earn interest.
+// solhint-disable no-empty-blocks
 abstract contract CurvePoolBase is Strategy {
     using SafeERC20 for IERC20;
 
@@ -34,6 +35,7 @@ abstract contract CurvePoolBase is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52; // Mainnet
+    // solhint-disable-next-line var-name-mixedcase
     string public NAME;
 
     uint256 public immutable collateralIdx;

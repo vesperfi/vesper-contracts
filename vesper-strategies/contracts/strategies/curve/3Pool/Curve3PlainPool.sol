@@ -9,6 +9,7 @@ import "../../Strategy.sol";
 import "../CurvePoolBase.sol";
 
 /// @title This strategy will deposit collateral token in Curve 3Pool and earn interest.
+// solhint-disable no-empty-blocks
 contract Curve3PlainPool is CurvePoolBase {
     constructor(
         address pool_,

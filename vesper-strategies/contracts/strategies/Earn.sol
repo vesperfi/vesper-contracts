@@ -23,22 +23,9 @@ abstract contract Earn is Strategy {
         dripToken = _dripToken;
     }
 
-    /// @dev Approves EarnDrip' Grow token to spend dripToken
-    function approveGrowToken() external onlyKeeper {
-        address _dripContract = IVesperPool(pool).poolRewards();
-        address _growPool = IEarnDrip(_dripContract).growToken();
-        // Checks that the Grow Pool supports dripToken as underlying
-        if (_growPool != address(0)) {
-            require(address(IVesperPool(_growPool).token()) == dripToken, "invalid-grow-pool");
-            IERC20(dripToken).safeApprove(_growPool, 0);
-            IERC20(dripToken).safeApprove(_growPool, MAX_UINT_VALUE);
-        }
-    }
-
     /// @dev Converts excess collateral earned to drip token
     function _convertCollateralToDrip(uint256 _collateralAmount) internal {
         if (_collateralAmount > 0) {
-            // TODO: Use oracle?
             _swapExactInput(address(collateralToken), dripToken, _collateralAmount);
         }
     }
@@ -82,6 +69,18 @@ abstract contract Earn is Strategy {
             }
             _convertCollateralToDrip(_profit);
             _forwardEarning();
+        }
+    }
+
+    /// @dev Approves EarnDrip' Grow token to spend dripToken
+    function approveGrowToken() external onlyKeeper {
+        address _dripContract = IVesperPool(pool).poolRewards();
+        address _growPool = IEarnDrip(_dripContract).growToken();
+        // Checks that the Grow Pool supports dripToken as underlying
+        if (_growPool != address(0)) {
+            require(address(IVesperPool(_growPool).token()) == dripToken, "invalid-grow-pool");
+            IERC20(dripToken).safeApprove(_growPool, 0);
+            IERC20(dripToken).safeApprove(_growPool, MAX_UINT_VALUE);
         }
     }
 

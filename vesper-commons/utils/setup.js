@@ -77,7 +77,6 @@ async function deployContract(name, params = []) {
   return contractFactory.deploy(...params)
 }
 
-// eslint-disable-next-line max-params
 // eslint-disable-next-line complexity
 async function setDefaultRouting(swapperAddress, pairs) {
   const abi = [
