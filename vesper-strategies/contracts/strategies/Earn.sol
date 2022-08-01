@@ -14,7 +14,7 @@ abstract contract Earn is Strategy {
     address public immutable dripToken;
 
     uint256 public dripPeriod = 48 hours;
-    uint256 public totalEarned; // accounting total stable coin earned after fee. This amount is not reported to pool.
+    uint256 public totalEarned; // accounting total coin earned after fee. This amount is not reported to pool.
 
     event DripPeriodUpdated(uint256 oldDripPeriod, uint256 newDripPeriod);
 
