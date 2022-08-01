@@ -9,7 +9,7 @@ import "../../interfaces/vesper/ICollateralManager.sol";
 
 /// @title This strategy will deposit collateral token in Maker, borrow Dai and
 /// deposit borrowed DAI in other lending pool to earn interest.
-abstract contract MakerStrategy is Strategy {
+abstract contract Maker is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -85,7 +85,7 @@ abstract contract MakerStrategy is Strategy {
      * @param _newStrategy Address of new strategy.
      */
     function _beforeMigration(address _newStrategy) internal virtual override {
-        require(MakerStrategy(_newStrategy).collateralType() == collateralType, "collateral-type-must-be-the-same");
+        require(Maker(_newStrategy).collateralType() == collateralType, "collateral-type-must-be-the-same");
         cm.transferVaultOwnership(_newStrategy);
     }
 

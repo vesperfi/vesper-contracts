@@ -3,5 +3,5 @@
 const testRunner = require('../../../utils/testRunner')
 
 describe('VAWBTC Pool', function () {
-  testRunner('VAWBTC', ['VesperMakerStrategyWBTC'], [{ debtRatio: 9000 }])
+  testRunner('VAWBTC', ['Maker_Vesper_WBTC'], [{ debtRatio: 9000 }])
 })
