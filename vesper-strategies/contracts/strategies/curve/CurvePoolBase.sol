@@ -187,9 +187,9 @@ abstract contract CurvePoolBase is Strategy {
             address _rewardToken = rewardTokens[i];
             uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
             if (_amountIn > 0) {
-                // Note: Avoiding swap to revert due to 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
-                if (swapper.getAmountOut(_rewardToken, tokenOut_, _amountIn) > 0) {
-                    _swapExactInput(_rewardToken, tokenOut_, _amountIn);
+                try swapper.swapExactInput(_rewardToken, tokenOut_, _amountIn, 1, address(this)) {} catch {
+                    // Note: It may fail under some conditions
+                    // For instance: 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
                 }
             }
         }
