@@ -222,113 +222,113 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  CompoundStrategyDAI: {
-    contract: 'CompoundStrategy',
+  Compound_DAI: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cDAI,
-      strategyName: 'CompoundStrategyDAI',
+      strategyName: 'Compound_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyLINK: {
-    contract: 'CompoundStrategy',
+  Compound_LINK: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cLINK,
-      strategyName: 'CompoundStrategyLINK',
+      strategyName: 'Compound_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
-      strategyName: 'CompoundStrategyETH',
+      strategyName: 'Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUNI: {
-    contract: 'CompoundStrategy',
+  Compound_UNI: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUNI,
-      strategyName: 'CompoundStrategyUNI',
+      strategyName: 'Compound_UNI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUSDC: {
-    contract: 'CompoundStrategy',
+  Compound_USDC: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUSDC,
-      strategyName: 'CompoundStrategyUSDC',
+      strategyName: 'Compound_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUSDT: {
-    contract: 'CompoundStrategy',
+  Compound_USDT: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUSDT,
-      strategyName: 'CompoundStrategyUSDT',
+      strategyName: 'Compound_USDT',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyWBTC: {
-    contract: 'CompoundStrategy',
+  Compound_WBTC: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
-      strategyName: 'CompoundStrategyWBTC',
+      strategyName: 'Compound_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  InverseCompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Inverse_Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Inverse.COMPTROLLER,
       rewardToken: Address.Inverse.INV,
       receiptToken: Address.Inverse.anETH,
-      strategyName: 'InverseCompoundStrategyETH',
+      strategyName: 'Inverse_Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
@@ -350,15 +350,15 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  DropsCompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Drops_Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Drops.COMPTROLLER,
       rewardToken: Address.Drops.DOP,
       receiptToken: Address.Drops.dETH,
-      strategyName: 'DropsCompoundStrategyETH',
+      strategyName: 'Drops_Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
@@ -458,8 +458,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  CompoundXYStrategyETH_DAI: {
-    contract: 'CompoundXYStrategyETH',
+  Compound_Xy_ETH_DAI: {
+    contract: 'CompoundXyETH',
     type: StrategyTypes.COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -467,14 +467,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       borrowCToken: Address.Compound.cDAI,
-      strategyName: 'CompoundXYStrategyETH_DAI',
+      strategyName: 'Compound_Xy_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundXYStrategyWBTC_DAI: {
-    contract: 'CompoundXYStrategy',
+  Compound_Xy_WBTC_DAI: {
+    contract: 'CompoundXy',
     type: StrategyTypes.COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -482,14 +482,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
       borrowCToken: Address.Compound.cDAI,
-      strategyName: 'CompoundXYStrategyWBTC_DAI',
+      strategyName: 'Compound_Xy_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyETH_WBTC: {
-    contract: 'VesperCompoundXYStrategyETH',
+  Compound_Vesper_Xy_ETH_WBTC: {
+    contract: 'CompoundVesperXyETH',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -499,14 +499,14 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cWBTC,
       vPool: Address.Vesper.vaWBTC,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyETH_WBTC',
+      strategyName: 'Compound_Vesper_Xy_ETH_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyETH_LINK: {
-    contract: 'VesperCompoundXYStrategyETH',
+  Compound_Vesper_Xy_ETH_LINK: {
+    contract: 'CompoundVesperXyETH',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -516,14 +516,14 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cLINK,
       vPool: Address.Vesper.vaLINK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyETH_LINK',
+      strategyName: 'Compound_Vesper_Xy_ETH_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_DAI: {
-    contract: 'VesperCompoundXYStrategy',
+  Compound_Vesper_Xy_WBTC_DAI: {
+    contract: 'CompoundVesperXy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -533,14 +533,14 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cDAI,
       vPool: Address.Vesper.vaDAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_DAI',
+      strategyName: 'Compound_Vesper_Xy_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_USDC: {
-    contract: 'VesperCompoundXYStrategy',
+  Compound_Vesper_Xy_WBTC_USDC: {
+    contract: 'CompoundVesperXy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -550,14 +550,14 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cUSDC,
       vPool: Address.Vesper.vaUSDC,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_USDC',
+      strategyName: 'Compound_Vesper_Xy_WBTC_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_LINK: {
-    contract: 'VesperCompoundXYStrategy',
+  Compound_Vesper_Xy_WBTC_LINK: {
+    contract: 'CompoundVesperXy',
     type: StrategyTypes.VESPER_COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -567,7 +567,7 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cLINK,
       vPool: Address.Vesper.vaLINK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_LINK',
+      strategyName: 'Compound_Vesper_Xy_WBTC_LINK',
     },
     config: { ...config },
     setup: { ...setup },

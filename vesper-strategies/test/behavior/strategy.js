@@ -7,7 +7,7 @@ const { getEvent } = require('vesper-commons/utils/setup')
 const { shouldMigrateStrategies } = require('./strategy-migration')
 const { shouldBehaveLikeCompoundStrategy } = require('./compound')
 // const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
-const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
+const { shouldBehaveLikeCompoundXyStrategy } = require('./compound-xy')
 // const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
 // const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
 const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
@@ -16,7 +16,7 @@ const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
 // const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
 // const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
 // const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
-const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-xy')
+const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
 // const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
@@ -32,9 +32,9 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
     // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
-    [StrategyType.VESPER_COMPOUND_XY]: shouldBehaveLikeVesperCompoundXYStrategy,
+    [StrategyType.VESPER_COMPOUND_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
     // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
-    [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXYStrategy,
+    [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
     // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
     // [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
     // [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,

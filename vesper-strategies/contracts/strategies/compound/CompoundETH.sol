@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.9;
 
-import "./CompoundStrategy.sol";
+import "./Compound.sol";
 import "vesper-pools/contracts/interfaces/token/IToken.sol";
 
 // solhint-disable no-empty-blocks
 /// @title Deposit ETH/WETH in Compound and earn interest.
-contract CompoundStrategyETH is CompoundStrategy {
+contract CompoundETH is Compound {
     // solhint-disable-next-line  var-name-mixedcase
     address internal WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
@@ -18,7 +18,7 @@ contract CompoundStrategyETH is CompoundStrategy {
         address _rewardToken,
         address _receiptToken,
         string memory _name
-    ) CompoundStrategy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _name) {}
+    ) Compound(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _name) {}
 
     /// @dev Only receive ETH from either cToken or WETH
     receive() external payable {
