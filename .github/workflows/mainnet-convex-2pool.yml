@@ -1,0 +1,47 @@
+name: Mainnet Convex 2pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-curve-2pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurvePoolBase.sol"
+      - "vesper-strategies/contracts/strategies/curve/2pool/*.sol"
+      - "vesper-strategies/contracts/strategies/convex/2pool/*.sol"
+      - "vesper-strategies/test/mainnet/convex/2pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  ren-pool-wbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAWBTC pool using ren 2pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/2pool/ren-wbtc.spec.js

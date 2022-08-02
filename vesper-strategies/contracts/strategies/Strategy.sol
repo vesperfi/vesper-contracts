@@ -136,9 +136,14 @@ abstract contract Strategy is IStrategy, Context {
         }
     }
 
-    /// @notice Returns address of token correspond to collateral token
+    /// @notice Returns address of token correspond to receipt token
     function token() external view override returns (address) {
         return receiptToken;
+    }
+
+    /// @notice Returns address of token correspond to collateral token
+    function collateral() external view override returns (address) {
+        return address(collateralToken);
     }
 
     /// @notice Returns total collateral locked in the strategy

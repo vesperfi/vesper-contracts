@@ -1,0 +1,122 @@
+name: Mainnet Convex 4pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-convex-4pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurvePoolBase.sol"
+      - "vesper-strategies/contracts/strategies/curve/4pool/*.sol"
+      - "vesper-strategies/contracts/strategies/convex/4pool/*.sol"
+      - "vesper-strategies/test/mainnet/convex/4pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  frax-pool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VADAI pool using FRAX+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/frax-pool-dai.spec.js
+
+  frax-pool-frax-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAFRAX pool using FRAX+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/frax-pool-frax.spec.js
+
+  frax-pool-usdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAUSDC pool using FRAX+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/frax-pool-usdc.spec.js
+
+  ibbtc-pool-wbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAWBTC pool using wibBTC+SBTC 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/ibbtc-pool-wbtc.spec.js
+
+  mim-pool-mim-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for vmim pool using MIM+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/mim-pool-mim.spec.js
+
+  musd-pool-musd-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAMUSD pool using mUSD+3Crv 4pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/musd-pool-musd.spec.js

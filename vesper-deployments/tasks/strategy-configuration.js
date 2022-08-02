@@ -26,7 +26,7 @@ function getConstructorArgKeys(strategyName) {
   // Separate conditions
   // Any combination of Earn strategies
   if (strategyName.includes('Earn')) {
-    if (strategyName === 'EarnCrvSBTCPoolStrategyWBTC_DAI') {
+    if (strategyName === 'Earn_Curve_sbtc_WBTC_DAI') {
       keys = ['swapper', 'dripToken', 'strategyName']
     } else {
       keys.push('dripToken')

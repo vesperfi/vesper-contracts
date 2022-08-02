@@ -29,4 +29,6 @@ interface IStrategy {
 
     // solhint-disable-next-line func-name-mixedcase
     function VERSION() external view returns (string memory);
+
+    function collateral() external view returns (address);
 }

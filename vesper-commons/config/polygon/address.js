@@ -9,7 +9,6 @@ const Address = {
   WETH: '0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619',
   WBTC: '0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6',
   WMATIC: '0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270',
-  CRV: '0x172370d5cd63279efa6d502dab29171933a610af',
   MultiCall: '0x11ce4B23bD875D7F5C6a31084f55fDe1e9A87507',
   Aave: {
     amDAI: '0x27F8D03b3a2196956ED754baDc28D73be8830A6e',
@@ -32,6 +31,9 @@ const Address = {
   },
   MultiSig: {
     safe: '0xbbeC498b8B8A403446E31777B7F906Fe451d7Ef1',
+  },
+  Curve: {
+    CRV: '0x172370d5cd63279efa6d502dab29171933a610af',
   },
 }
 

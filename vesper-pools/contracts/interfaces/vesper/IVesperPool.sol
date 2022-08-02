@@ -63,4 +63,6 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
     function totalDebtOf(address _strategy) external view returns (uint256);
 
     function totalValue() external view returns (uint256);
+
+    function totalDebt() external view returns (uint256);
 }

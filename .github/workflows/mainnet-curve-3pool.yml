@@ -1,0 +1,107 @@
+name: Mainnet Curve 3pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-curve-3pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurvePoolBase.sol"
+      - "vesper-strategies/contracts/strategies/curve/3pool/*.sol"
+      - "vesper-strategies/contracts/strategies/curve/3pool/**/*.sol"
+      - "vesper-strategies/test/mainnet/curve/3pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  aave-pool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VADAI pool using Aave 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/aave-pool-dai.spec.js
+
+  aave-pool-usdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAUSDC pool using Aave 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/aave-pool-usdc.spec.js
+
+  sbtc-pool-wbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAWBTC pool using SBTC 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/sbtc-pool-wbtc.spec.js
+
+  tripool-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VADAI pool using 3Crv 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/tripool-dai.spec.js
+
+  tripool-usdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAUSDC pool using 3Crv 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/tripool-usdc.spec.js
