@@ -245,9 +245,9 @@ abstract contract CompoundXYCore is Strategy {
             }
         }
 
-        if (_excessDebt > 0) {
-            _payback = Math.min(_collateralHere, _excessDebt);
-        }
+        // Set actual payback first and then profit. Make sure _collateralHere >= _payback + profit.
+        _payback = Math.min(_collateralHere, _excessDebt);
+        _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
 
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
