@@ -243,7 +243,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
     describe(`Rebalance ${poolName} pool`, function () {
       it('Should rebalance multiple times.', async function () {
-        const depositAmount = await deposit(10, user3)
+        let depositAmount = await deposit(10, user3)
         await rebalance(strategies)
         const totalDebtRatioBefore = await pool.totalDebtRatio()
         let totalValue = await pool.totalValue()
@@ -260,7 +260,12 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         // Time travel 6 hours
         await time.increase(6 * 60 * 60)
         await mine(100)
+        depositAmount = depositAmount.add(await deposit(10, user3))
+        await time.increase(6 * 60 * 60)
+        await mine(100)
         await rebalance(strategies)
+        await time.increase(6 * 60 * 60)
+        await mine(100)
         totalValue = await pool.totalValue()
         const totalDebtRatioAfter = await pool.totalDebtRatio()
         maxDebt = totalValue.mul(totalDebtRatioAfter).div(MAX_BPS)

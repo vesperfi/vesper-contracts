@@ -37,7 +37,7 @@ async function deposit(pool, token, amount, depositor) {
  */
 async function makeStrategyProfitable(strategy, token, token2 = {}) {
   const balance = await token.balanceOf(strategy.address)
-  const increaseBalanceBy = ethers.utils.parseUnits('20', await token.decimals())
+  const increaseBalanceBy = ethers.utils.parseUnits('200', await token.decimals())
   try {
     // Do not fail if adjust balance fails on first token.
     await adjustBalance(token.address, strategy.address, balance.add(increaseBalanceBy))

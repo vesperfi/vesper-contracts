@@ -116,7 +116,7 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveV2VesperXyETH_DAI: {
+  AaveV2_Vesper_Xy_ETH_DAI: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
@@ -132,7 +132,7 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveV2VesperXyETH_FEI: {
+  AaveV2_Vesper_Xy_ETH_FEI: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
@@ -148,7 +148,7 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  'Aave-Vesper-STETH-DAI': {
+  AaveV2_Vesper_Xy_stETH_DAI: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
@@ -158,13 +158,13 @@ const StrategyConfig = {
       borrowToken: Address.DAI,
       vPool: Address.Vesper.vaDAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'Aave_Vesper_Xy_stETH_DAI',
+      strategyName: 'AaveV2_Vesper_Xy_stETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AaveV2VesperXyWBTC_FEI: {
+  AaveV2_Vesper_Xy_WBTC_FEI: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
@@ -180,7 +180,7 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveV2VesperXyWBTC_FRAX: {
+  AaveV2_Vesper_Xy_WBTC_FRAX: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
