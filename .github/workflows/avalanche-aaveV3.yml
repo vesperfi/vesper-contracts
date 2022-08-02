@@ -5,12 +5,11 @@ on:
       - ".github/workflows/avalanche-aaveV3.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/utils/setup.js"
-      
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/aave/v3/AaveV3.sol"
-      - "vesper-strategies/test/avalanche/aave/v3/**/*.js"
+      - "vesper-strategies/test/avalanche/aave/v3/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
@@ -29,7 +28,7 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  vadai-vesper-test:
+  vadai-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
