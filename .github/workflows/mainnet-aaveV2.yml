@@ -10,7 +10,7 @@ on:
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/aave/v2/AaveV2Core.sol"
       - "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol"
-      - "vesper-strategies/test/mainnet/aave/**"
+      - "vesper-strategies/test/mainnet/aave/v2/*.js"
 # Limit concurrency to one workflow per branch and one per pull_request.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
