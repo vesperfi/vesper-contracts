@@ -334,8 +334,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  InverseCompoundLeverageStrategyETH: {
-    contract: 'CompoundLeverageStrategyETH',
+  Inverse_Leverage_ETH: {
+    contract: 'CompoundLeverageETH',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -344,7 +344,7 @@ const StrategyConfig = {
       rewardToken: Address.Inverse.INV,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Inverse.anETH,
-      strategyName: 'InverseCompoundLeverageStrategyETH',
+      strategyName: 'Inverse_Leverage_ETH',
     },
     config: { ...config },
     setup: { ...setup },
@@ -394,8 +394,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyETH: {
-    contract: 'CompoundLeverageStrategyETH',
+  Compound_Leverage_ETH: {
+    contract: 'CompoundLeverageETH',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -404,14 +404,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cETH,
-      strategyName: 'CompoundLeverageStrategyETH',
+      strategyName: 'Compound_Leverage_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyUNI: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_UNI: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -420,14 +420,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cUNI,
-      strategyName: 'CompoundLeverageStrategyUNI',
+      strategyName: 'Compound_Leverage_UNI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyLINK: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_LINK: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -436,14 +436,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cLINK,
-      strategyName: 'CompoundLeverageStrategyLINK',
+      strategyName: 'Compound_Leverage_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyWBTC: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_WBTC: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -452,7 +452,7 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cWBTC,
-      strategyName: 'CompoundLeverageStrategyWBTC',
+      strategyName: 'Compound_Leverage_WBTC',
     },
     config: { ...config },
     setup: { ...setup },

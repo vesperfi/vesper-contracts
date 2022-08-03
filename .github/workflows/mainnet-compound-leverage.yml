@@ -1,0 +1,76 @@
+name: Mainnet Compound Leverage Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-compound-leverage.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/compound-leverage.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/compound/CompoundLeverage*"
+      - "vesper-strategies/contracts/FlashLoanHelper.sol"
+      - "vesper-strategies/test/mainnet/compound/leverage/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vaeth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound leverage strategy for VAETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/leverage/vaeth.spec.js
+
+  vauni-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound leverage strategy for VAUNI pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/leverage/vauni.spec.js
+
+  vawbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound leverage strategy for VAWBTC pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/leverage/vawbtc.spec.js
