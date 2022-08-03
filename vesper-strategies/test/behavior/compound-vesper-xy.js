@@ -39,7 +39,7 @@ async function rebalance(strategy) {
 }
 
 // Vesper Compound XY strategy specific tests
-function shouldBehaveLikeVesperCompoundXYStrategy(index) {
+function shouldBehaveLikeCompoundVesperXyStrategy(index) {
   let strategy, pool, collateralToken, supplyCToken, comptroller, oracle
   let borrowCToken, borrowTokenPrice, supplyTokenPrice
   let user1, user2
@@ -63,7 +63,7 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
       'borrowed is too much deviated from minBorrowLimit',
     )
   }
-  describe('VesperCompoundXYStrategy specific tests', function () {
+  describe('CompoundVesperXyStrategy specific tests', function () {
     beforeEach(async function () {
       ;[, user1, user2] = this.users
       pool = this.pool
@@ -201,4 +201,4 @@ function shouldBehaveLikeVesperCompoundXYStrategy(index) {
     })
   })
 }
-module.exports = { shouldBehaveLikeVesperCompoundXYStrategy }
+module.exports = { shouldBehaveLikeCompoundVesperXyStrategy }

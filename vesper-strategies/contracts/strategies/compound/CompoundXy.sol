@@ -3,13 +3,13 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/token/IToken.sol";
-import "./CompoundXYCore.sol";
+import "./CompoundXyCore.sol";
 import "../../interfaces/compound/ICompound.sol";
 
 /// @title This strategy will deposit collateral token in Compound and based on position it will borrow
 /// another token. Supply X borrow Y and keep borrowed amount here. It does handle rewards and handle
 /// wrap/unwrap of WETH as ETH is required to interact with Compound.
-contract CompoundXYStrategy is CompoundXYCore {
+contract CompoundXy is CompoundXyCore {
     using SafeERC20 for IERC20;
 
     address public immutable rewardToken;
@@ -24,7 +24,7 @@ contract CompoundXYStrategy is CompoundXYCore {
         address _receiptToken,
         address _borrowCToken,
         string memory _name
-    ) CompoundXYCore(_pool, _swapper, _comptroller, _receiptToken, _borrowCToken, _name) {
+    ) CompoundXyCore(_pool, _swapper, _comptroller, _receiptToken, _borrowCToken, _name) {
         require(_rewardToken != address(0), "rewardToken-address-is-zero");
         rewardToken = _rewardToken;
     }

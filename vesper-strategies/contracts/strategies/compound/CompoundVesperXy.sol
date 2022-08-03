@@ -3,10 +3,10 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
-import "./CompoundXYStrategy.sol";
+import "./CompoundXy.sol";
 
 /// @title Deposit Collateral in Compound and earn interest by depositing borrowed token in a Vesper Pool.
-contract VesperCompoundXYStrategy is CompoundXYStrategy {
+contract CompoundVesperXy is CompoundXy {
     using SafeERC20 for IERC20;
 
     // Destination Grow Pool for borrowed Token
@@ -24,7 +24,7 @@ contract VesperCompoundXYStrategy is CompoundXYStrategy {
         address _vPool,
         address _vsp,
         string memory _name
-    ) CompoundXYStrategy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {
+    ) CompoundXy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {
         require(_vsp != address(0), "vsp-address-is-zero");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);

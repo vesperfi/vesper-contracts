@@ -11,7 +11,7 @@ import "../../interfaces/compound/ICompound.sol";
 /// @title This strategy will deposit collateral token in Compound and based on position it will
 /// borrow another token. Supply X borrow Y and keep borrowed amount here.
 /// It does not handle rewards and ETH as collateral
-abstract contract CompoundXYCore is Strategy {
+abstract contract CompoundXyCore is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;

@@ -3,5 +3,5 @@
 const testRunner = require('../../utils/testRunner')
 
 describe('VALINK Pool', function () {
-  testRunner('VALINK', ['CompoundStrategyLINK'])
+  testRunner('VALINK', ['Compound_LINK'])
 })

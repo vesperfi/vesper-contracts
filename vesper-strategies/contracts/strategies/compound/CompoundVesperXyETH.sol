@@ -2,11 +2,13 @@
 
 pragma solidity 0.8.9;
 
-import "./CompoundXYStrategy.sol";
+import "./CompoundVesperXy.sol";
 
 // solhint-disable no-empty-blocks
-/// @title Deposit ETH/WETH in Compound and earn interest.
-contract CompoundXYStrategyETH is CompoundXYStrategy {
+/// @title Deposit ETH in Compound and earn interest by depositing borrowed token in a Vesper Pool.
+contract CompoundVesperXyETH is CompoundVesperXy {
+    using SafeERC20 for IERC20;
+
     constructor(
         address _pool,
         address _swapper,
@@ -14,8 +16,22 @@ contract CompoundXYStrategyETH is CompoundXYStrategy {
         address _rewardToken,
         address _receiptToken,
         address _borrowCToken,
+        address _vPool,
+        address _vspAddress,
         string memory _name
-    ) CompoundXYStrategy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {}
+    )
+        CompoundVesperXy(
+            _pool,
+            _swapper,
+            _comptroller,
+            _rewardToken,
+            _receiptToken,
+            _borrowCToken,
+            _vPool,
+            _vspAddress,
+            _name
+        )
+    {}
 
     /// @dev Unwrap ETH and supply in Compound
     function _mintX(uint256 _amount) internal override {

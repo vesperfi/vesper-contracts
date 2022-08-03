@@ -6,7 +6,7 @@ import "../Strategy.sol";
 import "../../interfaces/compound/ICompound.sol";
 
 /// @title This strategy will deposit collateral token in Compound and earn interest.
-contract CompoundStrategy is Strategy {
+contract Compound is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
@@ -75,10 +75,6 @@ contract CompoundStrategy is Strategy {
                 _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
             }
         }
-    }
-
-    function _convertToCollateral(uint256 _cTokenAmount) internal view returns (uint256) {
-        return (_cTokenAmount * cToken.exchangeRateStored()) / 1e18;
     }
 
     /**
