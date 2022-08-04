@@ -17,7 +17,7 @@ const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
 // const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
 // const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
 const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
-// const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
+const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
@@ -37,7 +37,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
     // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
     // [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
-    // [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
+    [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
     [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
     [StrategyType.CONVEX]: shouldBehaveLikeCrvStrategy,
     // [StrategyType.VESPER_AAVE_XY]: shouldBehaveLikeVesperAaveXYStrategy,
