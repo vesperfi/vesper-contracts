@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GNU LGPLv3
+// SPDX-License-Identifier: MIT
 // Heavily inspired from CompoundLeverage strategy of Yearn. https://etherscan.io/address/0x4031afd3B0F71Bace9181E554A9E680Ee4AbE7dF#code
 
 pragma solidity 0.8.9;
@@ -22,7 +22,6 @@ contract CompoundLeverage is Strategy, FlashLoanHelper {
     uint256 internal constant COLLATERAL_FACTOR_LIMIT = 9_500; // 95%
     CToken internal cToken;
 
-    // Below can be address(0), for example in Rari Strategy
     Comptroller public immutable comptroller;
     address public rewardToken;
     address public rewardDistributor;
@@ -456,8 +455,8 @@ contract CompoundLeverage is Strategy, FlashLoanHelper {
      * @param _maxBorrowRatio Maximum % we want to borrow
      */
     function updateBorrowRatio(uint256 _minBorrowRatio, uint256 _maxBorrowRatio) external onlyGovernor {
-        uint256 _collateralFactor = _getCollateralFactor();
-        require(_maxBorrowRatio < (_collateralFactor / 1e14), "invalid-max-borrow-limit");
+        // CollateralFactor is 1e18 based and borrow ratio is 1e4 based. Hence using 1e14 for conversion.
+        require(_maxBorrowRatio < (_getCollateralFactor() / 1e14), "invalid-max-borrow-limit");
         require(_maxBorrowRatio > _minBorrowRatio, "max-should-be-higher-than-min");
         emit UpdatedBorrowRatio(minBorrowRatio, _minBorrowRatio, maxBorrowRatio, _maxBorrowRatio);
         minBorrowRatio = _minBorrowRatio;
