@@ -192,10 +192,12 @@ contract CompoundLeverage is Strategy, FlashLoanHelper {
         // During reinvest, _shouldRepay will be false which indicate that we will borrow more.
         _position -= _doFlashLoan(_position, _shouldRepay);
 
-        uint256 i = 0;
+        uint256 i;
         while (_position > 0 && i <= 6) {
-            _position -= _adjustPosition(_position, _shouldRepay);
-            i++;
+            unchecked {
+                _position -= _adjustPosition(_position, _shouldRepay);
+                i++;
+            }
         }
     }
 
@@ -409,10 +411,12 @@ contract CompoundLeverage is Strategy, FlashLoanHelper {
             _position -= _doFlashLoan(_position, _shouldRepay);
 
             // If we still have _position to deleverage do it via normal deleverage
-            uint256 i = 0;
+            uint256 i;
             while (_position > 0 && i <= 10) {
-                _position -= _adjustPosition(_position, true);
-                i++;
+                unchecked {
+                    _position -= _adjustPosition(_position, true);
+                    i++;
+                }
             }
 
             (uint256 _supply, uint256 _borrow) = getPosition();
