@@ -32,7 +32,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
     // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
-    [StrategyType.VESPER_COMPOUND_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
+    [StrategyType.COMPOUND_VESPER_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
     // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
     // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,

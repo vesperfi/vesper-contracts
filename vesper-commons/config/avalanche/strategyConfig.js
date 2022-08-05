@@ -540,7 +540,7 @@ const StrategyConfig = {
 
   VesperBenqiXYStrategyWBTCe_WETHe: {
     contract: 'VesperBenqiXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
@@ -558,7 +558,7 @@ const StrategyConfig = {
 
   VesperTraderJoeXYStrategyAVAX_WETHe: {
     contract: 'VesperTraderJoeXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
@@ -575,7 +575,7 @@ const StrategyConfig = {
   },
   VesperTraderJoeXYStrategyWBTCe_WETHe: {
     contract: 'VesperTraderJoeXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
@@ -592,7 +592,7 @@ const StrategyConfig = {
   },
   VesperTraderJoeXYStrategyWBTCe_USDCe: {
     contract: 'VesperTraderJoeXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
