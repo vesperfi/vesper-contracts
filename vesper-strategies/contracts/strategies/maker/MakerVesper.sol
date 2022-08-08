@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.9;
 
-import "./MakerStrategy.sol";
+import "./Maker.sol";
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 
 /// @title This strategy will deposit collateral token in Maker, borrow Dai and
 /// deposit borrowed DAI in Vesper DAI pool to earn interest.
-contract VesperMakerStrategy is MakerStrategy {
+contract MakerVesper is Maker {
     using SafeERC20 for IERC20;
     address internal constant VSP = 0x1b40183EFB4Dd766f11bDa7A7c3AD8982e998421;
 
@@ -20,7 +20,7 @@ contract VesperMakerStrategy is MakerStrategy {
         uint256 _highWater,
         uint256 _lowWater,
         string memory _name
-    ) MakerStrategy(_pool, _cm, _swapManager, _vPool, _collateralType, _highWater, _lowWater, _name) {
+    ) Maker(_pool, _cm, _swapManager, _vPool, _collateralType, _highWater, _lowWater, _name) {
         require(address(IVesperPool(_vPool).token()) == DAI, "not-a-valid-dai-pool");
     }
 

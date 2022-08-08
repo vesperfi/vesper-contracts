@@ -1245,8 +1245,8 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
   },
 
-  VesperMakerStrategyETH: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_ETH: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1255,14 +1255,14 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('ETH-C'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyETH',
+      strategyName: 'Maker_Vesper_ETH',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
   },
 
-  VesperMakerStrategyLINK: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_LINK: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1271,14 +1271,14 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('LINK-A'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyLINK',
+      strategyName: 'Maker_Vesper_LINK',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_LINK_A, highWater: 250, lowWater: 225 } },
   },
 
-  VesperMakerStrategyWBTC: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_WBTC: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1287,7 +1287,7 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('WBTC-C'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyWBTC',
+      strategyName: 'Maker_Vesper_WBTC',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_C, highWater: 250, lowWater: 225 } },
