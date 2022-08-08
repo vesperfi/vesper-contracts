@@ -46,7 +46,7 @@ contract VesperMakerStrategy is MakerStrategy {
         IVesperPool(receiptToken).deposit(_amount);
     }
 
-    function _getDaiBalance() internal view override returns (uint256) {
+    function _daiSupplied() internal view override returns (uint256) {
         return (IVesperPool(receiptToken).pricePerShare() * IVesperPool(receiptToken).balanceOf(address(this))) / 1e18;
     }
 
