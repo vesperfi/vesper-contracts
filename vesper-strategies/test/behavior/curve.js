@@ -13,7 +13,7 @@ const { CRV } = Address.Curve
 // crv strategy specific tests
 function shouldBehaveLikeCrvStrategy(strategyIndex) {
   let strategy, user1, pool, collateralToken, crv
-  describe('CurveStrategy specific tests', function () {
+  describe('Curve specific tests', function () {
     beforeEach(async function () {
       ;[user1] = this.users
       pool = this.pool

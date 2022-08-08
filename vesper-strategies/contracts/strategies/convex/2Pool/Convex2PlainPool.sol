@@ -46,10 +46,19 @@ contract Convex2PlainPool is Curve2PlainPool, ConvexBase {
         }
     }
 
+    /**
+     * @notice Unstake all LPs
+     * @dev This function is called by `_beforeMigration()` hook
+     * Should claim rewards that will be swept later
+     */
     function _unstakeAllLp() internal override {
-        cvxCrvRewards.withdrawAllAndUnwrap(isClaimRewards);
+        cvxCrvRewards.withdrawAllAndUnwrap(true);
     }
 
+    /**
+     * @notice Unstake LPs
+     * Don't claiming rewards because `_claimRewards()` already does that
+     */
     function _unstakeLp(uint256 amount_) internal override {
         if (amount_ > 0) {
             require(cvxCrvRewards.withdrawAndUnwrap(amount_, false), "withdraw-and-unwrap-failed");
@@ -65,9 +74,5 @@ contract Convex2PlainPool is Curve2PlainPool, ConvexBase {
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
-    }
-
-    function toggleClaimRewards() external onlyGovernor {
-        isClaimRewards = !isClaimRewards;
     }
 }
