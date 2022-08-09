@@ -91,4 +91,6 @@ interface Rewards {
     function getReward(address _account, bool _claimExtras) external returns (bool);
 
     function donate(uint256 _amount) external returns (bool);
+
+    function queuedRewards() external view returns (uint256);
 }

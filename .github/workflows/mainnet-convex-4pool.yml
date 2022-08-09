@@ -6,6 +6,7 @@ on:
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/utils/setup.js"
       - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-strategies/test/behavior/convex.js"
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"

@@ -1004,7 +1004,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
