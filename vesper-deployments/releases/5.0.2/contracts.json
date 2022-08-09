@@ -193,6 +193,34 @@
           "VesperIronBankXYStrategyETH_DAI": "0x79D198221D0BB53a1f03491aE902Eb0dac63828A",
           "VesperMakerStrategyETH": "0xc5cdf8cbe886fc5c1ef5cd4fdd599c975ec6bb54"
         }
+      },
+      "vawbtc": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x01e1d41C1159b745298724c5Fd3eAfF3da1C6efD",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xb2A27aC2E362c37030F3c703B02007CE2b43257A",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0x30D63c7651D7Ed798Af5385f4d5Fc9a3d966bB45",
+          "implementation": "0xe583A2e073b5CC3853fAda6E33fC2F6F4e29a0bB"
+        },
+        "strategies": {
+          "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
+          "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
+          "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
+          "CrvsBTCStrategyWBTC": "0x867FC11B40351451d1dc3114A4204B2444b94B32",
+          "RariFuseStrategy": "0x2962741a2aec7627F64E77a5808A025F49ea17DA",
+          "VesperAaveXYStrategyWBTC_FEI": "0xd30dC2DC7b25196eDd8b6DA0e92c00F762Ce71B5",
+          "VesperCompoundXYStrategyWBTC_LINK": "0x22D37D12EA1a3F18B8D4E2e3be844B6205590f1f",
+          "VesperCompoundXYStrategyWBTC_USDC": "0x0EE5F180868fb3a2c3A6D6b956d365879d826130",
+          "VesperMakerStrategyWBTC": "0x70900C53202297Bd7Cd4ED1635486D84E3982484"
+        }
       }
     }
   }
