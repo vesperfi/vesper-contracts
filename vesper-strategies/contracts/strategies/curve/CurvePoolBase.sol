@@ -80,6 +80,13 @@ abstract contract CurvePoolBase is Strategy {
             require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
             _collateral = _registry.get_underlying_coins(crvPool_)[collateralIdx_];
             _crvGauge = _registry.get_gauges(crvPool_)[0]; // TODO: Check other gauges?
+
+            // Note: The Curve's `Registry` is returning null when calling `get_gauges()` for the FRAX-USDC pool
+            // See more: https://github.com/curvefi/curve-pool-registry/issues/36
+            if (_crvGauge == address(0) && crvPool_ == 0xDcEF968d416a41Cdac0ED8702fAC8128A64241A2) {
+                // Address get from https://curve.fi/contracts page
+                _crvGauge = 0xCFc25170633581Bf896CB6CDeE170e3E3Aa59503;
+            }
         } else {
             IMetapoolFactory _factory = IMetapoolFactory(ADDRESS_PROVIDER.get_address(FACTORY_ADDRESS_ID));
 

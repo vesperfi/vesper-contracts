@@ -178,6 +178,8 @@ async function configureOracles(strategies) {
       const masterOracleABI = [
         'function defaultOracle() external view returns(address)',
         'function oracles(address) external view returns (address)',
+        'function updateTokenOracle(address,address) external',
+        'function governor() external view returns(address)',
       ]
       const defaultOracleABI = [
         'function governor() external view returns(address)',
@@ -196,12 +198,23 @@ async function configureOracles(strategies) {
         'function updateStalePeriod(uint256) external',
         'function update() external',
       ]
+      const curveLpTokenOracleABI = ['function registerPool(address)']
 
       const masterOracle = await ethers.getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
       const stableCoinProvider = await ethers.getContractAt(stableCoinProviderABI, Address.Vesper.StableCoinProvider)
       const defaultOracle = await ethers.getContractAt(defaultOracleABI, await masterOracle.defaultOracle())
       const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, await masterOracle.oracles(Address.renBTC))
       const alUsdOracle = await ethers.getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD))
+      const curveLpTokenOracle = await ethers.getContractAt(curveLpTokenOracleABI, Address.Vesper.CurveLpTokenOracle)
+
+      //
+      // Add missing oracles
+      //
+      // FRAX+USDC LP
+      await curveLpTokenOracle.registerPool(Address.Curve.FRAX_USDC_LP)
+      await masterOracle
+        .connect(await unlock(await masterOracle.governor()))
+        .updateTokenOracle(Address.Curve.FRAX_USDC_LP, curveLpTokenOracle.address)
 
       //
       // Accepts outdated prices due to time travels
@@ -222,7 +235,6 @@ async function configureOracles(strategies) {
       //
       // Ensure alUSD oracle is updated
       //
-      await helpers.time.increase(2 * 60 * 60) // 2h TWAP period
       await alUsdOracle.update()
 
       // Setup is needed just once
