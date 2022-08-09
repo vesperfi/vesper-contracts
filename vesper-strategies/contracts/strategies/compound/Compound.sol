@@ -67,7 +67,7 @@ contract Compound is Strategy {
     }
 
     /// @notice Claim COMP and convert COMP into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal {
+    function _claimRewardsAndConvertTo(address _toToken) internal virtual {
         if (rewardToken != address(0)) {
             _claimRewards();
             uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));

@@ -81,8 +81,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  TraderJoeStrategyUSDCe: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_USDCe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -90,14 +90,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jUSDC,
-      strategyName: 'TraderJoeStrategyUSDCe',
+      strategyName: 'TraderJoe_USDCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeStrategyUSDC: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_USDC: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -105,14 +105,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jUSDCNative,
-      strategyName: 'TraderJoeStrategyUSDC',
+      strategyName: 'TraderJoe_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeStrategyAVAX: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_AVAX: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -120,14 +120,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jAVAX,
-      strategyName: 'TraderJoeStrategyAVAX',
+      strategyName: 'TraderJoe_AVAX',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeStrategyWETHe: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_WETHe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -135,14 +135,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jWETH,
-      strategyName: 'TraderJoeStrategyWETHe',
+      strategyName: 'TraderJoe_WETHe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeStrategyDAIe: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_DAIe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -150,14 +150,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jDAI,
-      strategyName: 'TraderJoeStrategyDAIe',
+      strategyName: 'TraderJoe_DAIe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeStrategyWBTCe: {
-    contract: 'CompoundLikeStrategy',
+  TraderJoe_WBTCe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.TRADER_JOE,
     constructorArgs: {
       swapper,
@@ -165,14 +165,14 @@ const StrategyConfig = {
       rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jWBTC,
-      strategyName: 'TraderJoeStrategyWBTCe',
+      strategyName: 'TraderJoe_WBTCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiStrategyUSDCe: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_USDCe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -180,13 +180,13 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiUSDC,
-      strategyName: 'BenqiStrategyUSDCe',
+      strategyName: 'Benqi_USDCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
-  BenqiStrategyDAIe: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_DAIe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -194,13 +194,13 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiDAI,
-      strategyName: 'BenqiStrategyDAIe',
+      strategyName: 'Benqi_DAIe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
-  BenqiStrategyWETHe: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_WETHe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -208,14 +208,14 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiETH,
-      strategyName: 'BenqiStrategyWETHe',
+      strategyName: 'Benqi_WETHe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiStrategyWBTCe: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_WBTCe: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -223,14 +223,14 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiBTC,
-      strategyName: 'BenqiStrategyWBTCe',
+      strategyName: 'Benqi_WBTCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiStrategyUSDC: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_USDC: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -238,14 +238,14 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiUSDCn,
-      strategyName: 'BenqiStrategyUSDC',
+      strategyName: 'Benqi_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiStrategyAVAX: {
-    contract: 'BenqiStrategyAVAX',
+  Benqi_AVAX: {
+    contract: 'BenqiAVAX',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -253,14 +253,14 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiAVAX,
-      strategyName: 'BenqiStrategyAVAX',
+      strategyName: 'Benqi_AVAX',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiStrategyQI: {
-    contract: 'CompoundLikeStrategy',
+  Benqi_QI: {
+    contract: 'CompoundLike',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
@@ -268,7 +268,7 @@ const StrategyConfig = {
       rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiQI,
-      strategyName: 'BenqiStrategyQI',
+      strategyName: 'Benqi_QI',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },

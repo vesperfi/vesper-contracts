@@ -1,0 +1,137 @@
+name: Avalanche Benqi Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/avalanche-benqi.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/compound/avalanche/CompoundLike.sol"
+      - "vesper-strategies/contracts/strategies/compound/avalanche/BenqiAVAX.sol"
+      - "vesper-strategies/contracts/strategies/compound/Compound.sol"
+      - "vesper-strategies/test/behavior/compound.js"
+      - "vesper-strategies/test/avalanche/benqi/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vaavax-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAAVAX pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vaavax.spec.js
+
+  vadaie-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VADAIe pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vadaie.spec.js
+
+  vaqi-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAQI pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vaqi.spec.js
+
+  vausdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAUSDC pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vausdc.spec.js
+
+  vausdce-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAUSDCe pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vausdce.spec.js
+
+  vawbtce-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAWBTCe pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vawbtce.spec.js
+
+  vawethe-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Benqi strategy for VAWETHe pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/benqi/vawethe.spec.js
