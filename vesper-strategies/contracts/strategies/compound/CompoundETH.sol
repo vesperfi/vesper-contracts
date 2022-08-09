@@ -9,7 +9,7 @@ import "vesper-pools/contracts/interfaces/token/IToken.sol";
 /// @title Deposit ETH/WETH in Compound and earn interest.
 contract CompoundETH is Compound {
     // solhint-disable-next-line  var-name-mixedcase
-    address internal WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address internal constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     constructor(
         address _pool,
