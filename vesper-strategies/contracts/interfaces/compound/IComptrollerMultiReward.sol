@@ -6,6 +6,12 @@ import "./ICompound.sol";
 interface ComptrollerMultiReward {
     function claimReward(uint8 rewardType, address holder) external;
 
+    function claimReward(
+        uint8 rewardType,
+        address holder,
+        address[] memory markets
+    ) external;
+
     function rewardDistributor() external view returns (address);
 }
 

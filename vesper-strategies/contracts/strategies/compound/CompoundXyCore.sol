@@ -167,17 +167,15 @@ abstract contract CompoundXyCore is Strategy {
     /// @dev Deposit collateral in Compound and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
-        if (_collateralBalance > 0) {
-            (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
-            if (_repayAmount > 0) {
-                // Repay to maintain safe position
-                _repay(_repayAmount, false);
-                _mintX(collateralToken.balanceOf(address(this)));
-            } else {
-                // Happy path, mint more borrow more
-                _mintX(_collateralBalance);
-                _borrowY(_borrowAmount);
-            }
+        (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
+        if (_repayAmount > 0) {
+            // Repay to maintain safe position
+            _repay(_repayAmount, false);
+            _mintX(collateralToken.balanceOf(address(this)));
+        } else {
+            // Happy path, mint more borrow more
+            _mintX(_collateralBalance);
+            _borrowY(_borrowAmount);
         }
     }
 

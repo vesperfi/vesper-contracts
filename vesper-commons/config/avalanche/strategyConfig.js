@@ -538,71 +538,69 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  VesperBenqiXYStrategyWBTCe_WETHe: {
-    contract: 'VesperBenqiXYStrategy',
+  Benqi_Vesper_Xy_WBTCe_WETHe: {
+    contract: 'BenqiVesperXy',
     type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       receiptToken: Address.Benqi.qiBTC,
       borrowCToken: Address.Benqi.qiETH,
       vPool: Address.Vesper.vaWETHe,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperBenqiXYStrategyWBTCe_WETHe',
+      strategyName: 'Benqi_Vesper_Xy_WBTCe_WETHe',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperTraderJoeXYStrategyAVAX_WETHe: {
-    contract: 'VesperTraderJoeXYStrategy',
+  TraderJoe_Vesper_Xy_AVAX_WETHe: {
+    contract: 'TraderJoeVesperXy',
     type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jAVAX,
       borrowCToken: Address.TraderJoe.jWETH,
       vPool: Address.Vesper.vaWETHe,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperTraderJoeXYStrategyAVAX_WETHe',
+      strategyName: 'TraderJoe_Vesper_Xy_AVAX_WETHe',
     },
     config: { ...config },
     setup: { ...setup },
   },
-  VesperTraderJoeXYStrategyWBTCe_WETHe: {
-    contract: 'VesperTraderJoeXYStrategy',
+
+  TraderJoe_Vesper_Xy_WBTCe_WETHe: {
+    contract: 'TraderJoeVesperXy',
     type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jWBTC,
       borrowCToken: Address.TraderJoe.jWETH,
       vPool: Address.Vesper.vaWETHe,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperTraderJoeXYStrategyWBTCe_WETHe',
+      strategyName: 'TraderJoe_Vesper_Xy_WBTCe_WETHe',
     },
     config: { ...config },
     setup: { ...setup },
   },
-  VesperTraderJoeXYStrategyWBTCe_USDCe: {
-    contract: 'VesperTraderJoeXYStrategy',
+
+  TraderJoe_Vesper_Xy_WBTCe_USDCe: {
+    contract: 'TraderJoeVesperXy',
     type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       receiptToken: Address.TraderJoe.jWBTC,
       borrowCToken: Address.TraderJoe.jUSDC,
       vPool: Address.Vesper.vaUSDCe,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperTraderJoeXYStrategyWBTCe_USDCe',
+      strategyName: 'TraderJoe_Vesper_Xy_WBTCe_USDCe',
     },
     config: { ...config },
     setup: { ...setup },

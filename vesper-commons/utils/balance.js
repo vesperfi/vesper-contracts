@@ -100,7 +100,7 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
  *
  * @param {string} token  token address
  * @param {string} targetAddress address at which token balance to be updated.
- * @param {BigNumber|string|number} balance balance amount to be set
+ * @param {BigNumber|string|number} balance balance amount to be set, in wei
  * @returns {Promise<BigNumber>} Actual balance after balance adjustment
  */
 
@@ -116,8 +116,8 @@ async function adjustBalance(token, targetAddress, balance) {
   const value = hexlify(zeroPad(BigNumber.from(balance).toHexString(), 32))
 
   // Hack the balance by directly setting the EVM storage
-  helpers.setStorageAt(token, index, value)
-  helpers.mine(1)
+  await helpers.setStorageAt(token, index, value)
+  await helpers.mine(1)
   return balance
 }
 
