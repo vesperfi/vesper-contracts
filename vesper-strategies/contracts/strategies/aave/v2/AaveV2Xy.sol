@@ -211,9 +211,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             _safeSwapExactInput(rewardToken, address(collateralToken), _aaveAmount);
         }
 
-        uint256 _supply = aToken.balanceOf(address(this));
         uint256 _borrow = vdToken.balanceOf(address(this));
-
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
 
         // _borrow increases every block. Convert collateral to borrowToken.
@@ -225,6 +223,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             _rebalanceBorrow(_investedBorrowBalance - _borrow);
         }
 
+        uint256 _supply = aToken.balanceOf(address(this));
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _supply + _collateralHere;
 
