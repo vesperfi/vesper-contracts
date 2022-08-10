@@ -159,6 +159,10 @@ abstract contract CompoundXyCore is Strategy {
             _repayAmount = _borrowed - _borrowLowerBound;
         } else if (_borrowLowerBound > _borrowed) {
             _borrowAmount = _borrowLowerBound - _borrowed;
+            uint256 _availableLiquidity = borrowCToken.getCash();
+            if (_borrowAmount > _availableLiquidity) {
+                _borrowAmount = _availableLiquidity;
+            }
         }
     }
 
