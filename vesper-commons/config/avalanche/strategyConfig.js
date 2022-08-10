@@ -274,193 +274,181 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyUSDC: {
-    contract: 'BenqiLeverageStrategy',
+  Benqi_Leverage_USDC: {
+    contract: 'CompoundLikeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiUSDCn,
-      strategyName: 'BenqiLeverageStrategyUSDC',
+      strategyName: 'Benqi_Leverage_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyUSDCe: {
-    contract: 'BenqiLeverageStrategy',
+  Benqi_Leverage_USDCe: {
+    contract: 'CompoundLikeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiUSDC,
-      strategyName: 'BenqiLeverageStrategyUSDCe',
+      strategyName: 'Benqi_Leverage_USDCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyDAIe: {
-    contract: 'BenqiLeverageStrategy',
+  Benqi_Leverage_DAIe: {
+    contract: 'CompoundLikeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiDAI,
-      strategyName: 'BenqiLeverageStrategyDAIe',
+      strategyName: 'Benqi_Leverage_DAIe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyAVAX: {
-    contract: 'BenqiLeverageStrategyAVAX',
+  Benqi_Leverage_AVAX: {
+    contract: 'BenqiLeverageAVAX',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiAVAX,
-      strategyName: 'BenqiLeverageStrategyAVAX',
+      strategyName: 'Benqi_Leverage_AVAX',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyWBTCe: {
-    contract: 'BenqiLeverageStrategy',
+  Benqi_Leverage_WBTCe: {
+    contract: 'CompoundLikeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiBTC,
-      strategyName: 'BenqiLeverageStrategyWBTCe',
+      strategyName: 'Benqi_Leverage_WBTCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  BenqiLeverageStrategyWETHe: {
-    contract: 'BenqiLeverageStrategy',
+  Benqi_Leverage_WETHe: {
+    contract: 'CompoundLikeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Benqi.COMPTROLLER,
-      rewardDistributor: Address.Benqi.REWARD_DISTRIBUTOR,
       rewardToken: Address.Benqi.QI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Benqi.qiETH,
-      strategyName: 'BenqiLeverageStrategyWETHe',
+      strategyName: 'Benqi_Leverage_WETHe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyWETHe: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_WETHe: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jWETH,
-      strategyName: 'TraderJoeLeverageStrategyWETHe',
+      strategyName: 'TraderJoe_Leverage_WETHe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyAVAX: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_AVAX: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jAVAX,
-      strategyName: 'TraderJoeLeverageStrategyAVAX',
+      strategyName: 'TraderJoe_Leverage_AVAX',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyDAIe: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_DAIe: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jDAI,
-      strategyName: 'TraderJoeLeverageStrategyDAIe',
+      strategyName: 'TraderJoe_Leverage_DAIe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyUSDCe: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_USDCe: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jUSDC,
-      strategyName: 'TraderJoeLeverageStrategyUSDCe',
+      strategyName: 'TraderJoe_Leverage_USDCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyUSDC: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_USDC: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jUSDCNative,
-      strategyName: 'TraderJoeLeverageStrategyUSDC',
+      strategyName: 'TraderJoe_Leverage_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
 
-  TraderJoeLeverageStrategyWBTCe: {
-    contract: 'TraderJoeLeverageStrategy',
+  TraderJoe_Leverage_WBTCe: {
+    contract: 'TraderJoeLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.TraderJoe.COMPTROLLER,
-      rewardDistributor: Address.TraderJoe.REWARD_DISTRIBUTOR,
       rewardToken: Address.TraderJoe.JOE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.TraderJoe.jWBTC,
-      strategyName: 'TraderJoeLeverageStrategyWBTCe',
+      strategyName: 'TraderJoe_Leverage_WBTCe',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
