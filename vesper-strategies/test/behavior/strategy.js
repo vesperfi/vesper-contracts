@@ -8,7 +8,7 @@ const { shouldMigrateStrategies } = require('./strategy-migration')
 const { shouldBehaveLikeCompoundStrategy } = require('./compound')
 // const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
 const { shouldBehaveLikeCompoundXyStrategy } = require('./compound-xy')
-// const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
+const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
 // const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
 const { shouldBehaveLikeCrvStrategy } = require('./curve')
 const { shouldBehaveLikeCvxStrategy } = require('./convex')
@@ -36,7 +36,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.COMPOUND_VESPER_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
     // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
-    // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
+    [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
     // [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
     [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
     [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
