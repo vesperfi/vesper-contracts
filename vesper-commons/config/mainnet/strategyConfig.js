@@ -868,6 +868,22 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Convex_fraxusdc_FRAX: {
+    contract: 'Convex2PlainPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAX_USDC_POOL,
+      crvSlippage: 50, // 0.5%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      convexPoolId: 100,
+      strategyName: 'Convex_fraxusdc_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Convex_3pool_DAI: {
     contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
@@ -937,7 +953,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
-      crvSlippage: 100, // 1%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1021,7 +1037,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
