@@ -103,9 +103,6 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       await assertCurrentBorrow()
     })
 
-    // TODO Using production pool and hence not possible to lower borrow balance in such test
-    // Either update this test to run properly or just run it when we deploy pool for tests
-    // eslint-disable-next-line mocha/no-skipped-tests
     it('Should adjust borrow to keep it within defined limits', async function () {
       await deposit(pool, collateralToken, 100, user1)
       await strategy.rebalance()
