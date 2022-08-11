@@ -6,13 +6,13 @@ pragma solidity 0.8.9;
 import "../../interfaces/compound/ICompound.sol";
 import "../Strategy.sol";
 import "../FlashLoanHelper.sol";
-import "./LeverageBase.sol";
+import "./CompoundLeverageBase.sol";
 
 // solhint-disable no-empty-blocks
 
 /// @title This strategy will deposit collateral token in Compound and based on position
 /// it will borrow same collateral token. It will use borrowed asset as supply and borrow again.
-contract CompoundLeverage is LeverageBase, FlashLoanHelper {
+contract CompoundLeverage is CompoundLeverageBase, FlashLoanHelper {
     using SafeERC20 for IERC20;
 
     constructor(
@@ -24,7 +24,7 @@ contract CompoundLeverage is LeverageBase, FlashLoanHelper {
         address _receiptToken,
         string memory _name
     )
-        LeverageBase(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _name)
+        CompoundLeverageBase(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _name)
         FlashLoanHelper(_aaveAddressesProvider)
     {}
 

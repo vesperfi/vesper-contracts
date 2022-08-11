@@ -3,13 +3,13 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/token/IToken.sol";
-import "../LeverageBase.sol";
+import "../CompoundLeverageBase.sol";
 import "../../../interfaces/compound/IComptrollerMultiReward.sol";
 import "../../AvalancheFlashLoanHelper.sol";
 
 // solhint-disable no-empty-blocks
 
-contract CompoundLikeLeverage is LeverageBase, AvalancheFlashLoanHelper {
+contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper {
     using SafeERC20 for IERC20;
 
     address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -23,7 +23,7 @@ contract CompoundLikeLeverage is LeverageBase, AvalancheFlashLoanHelper {
         address _receiptToken,
         string memory _name
     )
-        LeverageBase(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _name)
+        CompoundLeverageBase(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _name)
         AvalancheFlashLoanHelper(_aaveAddressesProvider)
     {}
 

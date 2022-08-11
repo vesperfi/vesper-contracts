@@ -9,7 +9,6 @@ on:
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/compound/CompoundXyCore.sol"
-      - "vesper-strategies/contracts/strategies/compound/CompoundXy.sol"
       - "vesper-strategies/contracts/strategies/compound/avalanche/BenqiXy.sol"
       - "vesper-strategies/contracts/strategies/compound/avalanche/BenqiVesperXy.sol"
       - "vesper-strategies/test/behavior/vesper-compound-xy.js"
