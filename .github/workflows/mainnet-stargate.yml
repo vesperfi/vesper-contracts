@@ -8,7 +8,7 @@ on:
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
-      - "vesper-strategies/contracts/strategies/stargate/StargateStrategy.sol"
+      - "vesper-strategies/contracts/strategies/stargate/Stargate.sol"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
