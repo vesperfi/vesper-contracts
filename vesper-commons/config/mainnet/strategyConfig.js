@@ -399,7 +399,6 @@ const StrategyConfig = {
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
@@ -416,7 +415,6 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cUNI,
@@ -431,7 +429,6 @@ const StrategyConfig = {
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
@@ -447,7 +444,6 @@ const StrategyConfig = {
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
