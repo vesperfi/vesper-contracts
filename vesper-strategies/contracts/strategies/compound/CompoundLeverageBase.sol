@@ -8,7 +8,7 @@ import "../Strategy.sol";
 
 /// @title This strategy will deposit collateral token in Compound and based on position
 /// it will borrow same collateral token. It will use borrowed asset as supply and borrow again.
-abstract contract LeverageBase is Strategy {
+abstract contract CompoundLeverageBase is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase

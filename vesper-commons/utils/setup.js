@@ -444,8 +444,8 @@ async function setupVPool(obj, poolData, options = {}) {
     await obj.snapshotRestorer.restore()
   } else {
     obj.strategies = strategies
-    obj.accountant = await deployContract(PoolAccountant)
     obj.pool = await deployContract(poolConfig.contractName, poolConfig.poolParams)
+    obj.accountant = await deployContract(PoolAccountant)
     await obj.accountant.init(obj.pool.address)
     await obj.pool.initialize(...poolConfig.poolParams, obj.accountant.address)
     await obj.pool.updateUniversalFee(poolConfig.setup.universalFee)

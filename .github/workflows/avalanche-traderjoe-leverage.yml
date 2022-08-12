@@ -9,9 +9,9 @@ on:
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/compound/avalanche/TraderJoeLeverage.sol"
-      - "vesper-strategies/contracts/strategies/compound/avalanche/LeverageCore.sol"
-      - "vesper-strategies/contracts/strategies/compound/CompoundLeverage.sol"
-      - "vesper-strategies/contracts/FlashLoanHelper.sol"
+      - "vesper-strategies/contracts/strategies/compound/avalanche/CompoundLikeLeverage.sol"
+      - "vesper-strategies/contracts/strategies/compound/CompoundLeverageBase.sol"
+      - "vesper-strategies/contracts/AvalancheFlashLoanHelper.sol"
       - "vesper-strategies/test/behavior/compound-leverage.js"
       - "vesper-strategies/test/avalanche/traderjoe/leverage/*.js"
 
