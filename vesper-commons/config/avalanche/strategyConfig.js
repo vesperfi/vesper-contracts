@@ -3,6 +3,7 @@
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
 
+const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
 const setup = {
@@ -18,7 +19,7 @@ const StrategyConfig = {
     type: StrategyTypes.AAVE,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Aave.avDAI,
+      receiptToken: Address.Aave.aAvaDAI,
       aaveAddressProvider: Address.Aave.AddressProvider,
       strategyName: 'AaveV3-DAIe',
     },
@@ -31,7 +32,7 @@ const StrategyConfig = {
     type: StrategyTypes.AAVE_VESPER_XY,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Aave.avWETH,
+      receiptToken: Address.Aave.aAvaWETH,
       borrowToken: Address.DAIe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaDAIe,
@@ -47,11 +48,13 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      crvSlippage: 100, // 1.0%
+      masterOracle,
       swapper,
       collateralIdx: 0,
       strategyName: 'Curve_aave_DAIe',
     },
-    config: { ...config, externalDepositFee: 0 },
+    config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 
@@ -60,24 +63,28 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      crvSlippage: 100, // 1.0%
+      masterOracle,
       swapper,
       collateralIdx: 1,
       strategyName: 'Curve_aave_USDCe',
     },
-    config: { ...config, externalDepositFee: 0 },
+    config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 
-  Curve_ren_RenBTCe: {
+  Curve_ren_WBTCe: {
     contract: 'Curve2LendingPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AVWBTCRENBTC_POOL,
+      crvSlippage: 200, // 2.0%
+      masterOracle,
       swapper,
-      collateralIdx: 1,
-      strategyName: 'Curve_ren_RenBTCe',
+      collateralIdx: 0,
+      strategyName: 'Curve_ren_WBTCe',
     },
-    config: { ...config },
+    config: { ...config, externalDepositFee: 100 },
     setup: { ...setup },
   },
 

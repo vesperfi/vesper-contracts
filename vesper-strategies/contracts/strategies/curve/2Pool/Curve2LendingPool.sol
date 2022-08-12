@@ -6,7 +6,7 @@ import "./Curve2PlainPool.sol";
 
 // solhint-disable no-empty-blocks
 
-abstract contract Curve2LendingPool is Curve2PlainPool {
+contract Curve2LendingPool is Curve2PlainPool {
     constructor(
         address pool_,
         address crvPool_,
