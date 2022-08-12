@@ -65,18 +65,6 @@ abstract contract Vesper is Strategy {
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address _newStrategy) internal override {}
 
-    /// @notice Claim VSP rewards in underlying Grow Pool, if any
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {
-        address _poolRewards = vToken.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-            uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-            if (_vspAmount > 0) {
-                _swapExactInput(vsp, toToken_, _vspAmount);
-            }
-        }
-    }
-
     /// @dev Converts a share amount in its relative collateral for Vesper Grow Pool
     function _convertToAssets(uint256 shares_) internal view returns (uint256 _assets) {
         if (shares_ > 0) {

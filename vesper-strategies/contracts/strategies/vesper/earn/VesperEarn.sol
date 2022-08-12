@@ -36,8 +36,4 @@ contract VesperEarn is Vesper, Earn {
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
     }
-
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual override(Vesper) {
-        Vesper._claimRewardsAndConvertTo(_toToken);
-    }
 }
