@@ -1122,17 +1122,17 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Earn_Curve_sbtc_WBTC_DAI: {
+  Curve_Earn_sbtc_WBTC_DAI: {
     contract: 'EarnCurve3PlainPool',
     type: StrategyTypes.EARN_CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
-      crvSlippage: 100, // 1.0%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
       dripToken: Address.DAI,
-      strategyName: 'Earn_Curve_sbtc_WBTC_DAI',
+      strategyName: 'Curve_Earn_sbtc_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
