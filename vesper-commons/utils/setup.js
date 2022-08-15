@@ -274,13 +274,11 @@ async function setupVesperPool(collateralToken = Address.DAI) {
 /**
  * Setup Vesper Earn Drip Pool for testing
  *
- /**
- * Create strategies instances and set it in test class object
- *
- * @param {object}  obj Test class object
+ * @param {object} obj Test class object
  * @param {object} options optional parameters
  */
 async function setupEarnDrip(obj, options) {
+  const { AddressZero } = ethers.constants
   for (const strategy of obj.strategies) {
     if (strategy.type.toUpperCase().includes('EARN')) {
       let growPool
@@ -288,16 +286,13 @@ async function setupEarnDrip(obj, options) {
         // For earn Vesper Maker growPool should be same as receiptToken
         growPool = { address: strategy.constructorArgs.receiptToken }
       } else {
-        growPool = options.growPool ? options.growPool : { address: ethers.constants.AddressZero }
+        growPool = options.growPool ? options.growPool : { address: AddressZero }
       }
-      const vesperEarnDrip = await deployContract('VesperEarnDrip', [])
-      const rewardTokens =
-        growPool.address === ethers.constants.AddressZero
-          ? [...('tokens' in options ? options.tokens : [])]
-          : [growPool.address]
+      const rewardTokens = growPool.address === AddressZero ? options.rewardTokens || [] : [growPool.address]
       if (rewardTokens.length > 0) {
+        const vesperEarnDrip = await deployContract('VesperEarnDrip', [])
         await vesperEarnDrip.initialize(obj.pool.address, rewardTokens)
-        if (growPool.address !== ethers.constants.AddressZero) {
+        if (growPool.address !== AddressZero) {
           await vesperEarnDrip.updateGrowToken(growPool.address)
         }
         await obj.pool.updatePoolRewards(vesperEarnDrip.address)
@@ -332,7 +327,7 @@ async function createMakerStrategy(strategy, poolAddress, options) {
 }
 
 /**
- * Create and configure a EarnVesper Strategy.
+ * Create and configure a VesperEarn Strategy.
  * Using an up-to-date underlying vPool and VSP rewards enabled
  *
  * @param {object} strategy  Strategy config object

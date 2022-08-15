@@ -120,7 +120,7 @@ abstract contract CurvePoolBase is Strategy {
 
     /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
     function isReservedToken(address token_) public view override returns (bool) {
-        return token_ == receiptToken || token_ == address(collateralToken);
+        return token_ == address(crvLp) || token_ == address(collateralToken);
     }
 
     // Gets LP value not staked in gauge

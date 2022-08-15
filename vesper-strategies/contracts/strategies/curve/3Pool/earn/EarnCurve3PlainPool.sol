@@ -27,14 +27,14 @@ contract EarnCurve3PlainPool is Curve3PlainPool, Earn {
         override(Strategy, CurvePoolBase)
         returns (
             uint256 _profit,
-            uint256, /*_loss*/
+            uint256 _loss,
             uint256 _payback
         )
     {
         (_profit, , _payback) = _generateReport();
         _handleProfit(_profit);
         _profit = 0;
-        IVesperPool(pool).reportEarning(0, 0, _payback);
+        IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
     }
 }
