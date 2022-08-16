@@ -246,6 +246,26 @@
           "RariFuseStrategy#6": "0x463C835f2959c52F99D65b5E712F3806c7E6A46F",
           "RariFuseStrategy#7": "0xf95fb643c7b26afe64a6daf7e2b84d9eda6559bb"
         }
+      },
+      "vefrax_fraxbp": {
+        "pool": {
+          "proxyAdmin": "0xA1d7046fDda8ec7758B687b88B6803ef7A9Aa3EE",
+          "proxy": "0xecd7790FD35e5f529a63cf3E058b555F2Ff23234",
+          "implementation": "0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8",
+          "poolAccountant": {
+            "proxyAdmin": "0x4889f992220345DC3E4375C933AB441e5513F9C1",
+            "proxy": "0xbF2e3F32422F8F770F04663FB56A957130940c1B",
+            "implementation": "0x6218F149C5BbCc719E4Fddc60c9E8F0D97e633Da"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xC2228B31ED970e9eaF8acd40e3DADE805937Cc7b",
+          "proxy": "0x285a45c29a738DbC5Bc092DAED3efa5c579F6DBb",
+          "implementation": "0x311B514E369EAC678d25a6b54BDcdF621f8CeE4d"
+        },
+        "strategies": {
+          "Vesper_Earn_FRAX_FRAXBP": "0x15911b4B6fBDb83967919E2e2CD6259d7E703F8A"
+        }
       }
     }
   }

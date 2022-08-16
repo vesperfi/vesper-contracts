@@ -75,7 +75,8 @@ async function getPoolData(data) {
       !key.includes('Proxy') &&
       !key.includes('implementation') &&
       !key.includes(data.VPool) &&
-      !key.includes('VETH')
+      !key.includes('VETH') &&
+      !key.includes('Drip')
     ) {
       strategies[key] = value
     }

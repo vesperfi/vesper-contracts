@@ -112,7 +112,7 @@ const PoolConfig = {
     contractName: 'VPool',
     poolParams: ['veFRAX-FRAXBP Earn Pool', 'veFRAX-FRAXBP', Address.FRAX],
     setup: { ...setup },
-    rewards: { contract: 'VesperEarnDrip', tokens: [Address.Vesper.FRAXBP_LP, Address.Vesper.VSP] },
+    rewards: { contract: 'VesperEarnDrip', tokens: [Address.Saddle.FRAXBP_LP, Address.Vesper.VSP] },
   },
   VLINK: {
     contractName: 'VPool',
