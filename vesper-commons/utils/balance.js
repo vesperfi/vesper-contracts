@@ -63,6 +63,10 @@ const slots = {
 const whales = {
   [Address.stETH]: '0x1982b2F5814301d4e9a8b0201555376e62F82428',
   [Address.Saddle.FRAXBP_LP]: '0xfb516cf3710fc6901f2266aaeb8834cf5e4e9558',
+  [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
+
+  // Avalanche
+  [AvalancheAddress.Curve.CRV]: '0x59227430ac7bfd9ff9fd34e8085d4327bc2e3b24',
 }
 
 /**
