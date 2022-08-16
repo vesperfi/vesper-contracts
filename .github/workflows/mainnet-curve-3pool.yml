@@ -105,3 +105,18 @@ jobs:
 
       - name: Running Curve strategy for VAUSDC pool using 3Crv 3pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/tripool-usdc.spec.js
+
+  earn-sbtc-wbtc-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve Earn strategy for VEWBTC_DAI pool using SBTC 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/curve/3pool/earn/sbtc-wbtc-dai.spec.js
