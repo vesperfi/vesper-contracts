@@ -10,7 +10,7 @@ import "../Strategy.sol";
 
 /// @title This Strategy will deposit collateral token in a Stargate Pool
 /// Stake LP Token and accrue swap rewards
-contract StargateStrategy is Strategy {
+contract Stargate is Strategy {
     using SafeERC20 for IERC20;
     using SafeERC20 for IStargatePool;
 

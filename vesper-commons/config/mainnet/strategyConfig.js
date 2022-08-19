@@ -1553,8 +1553,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  StargateStrategyUSDC: {
-    contract: 'StargateStrategy',
+  Stargate_USDC: {
+    contract: 'Stargate',
     type: StrategyTypes.STARGATE,
     constructorArgs: {
       swapper,
@@ -1562,7 +1562,7 @@ const StrategyConfig = {
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 1, // USDC LP Pool ID
       stargateLpStakingPoolId: 0, // Staking Contract pool ID
-      strategyName: 'Stargate-USDC',
+      strategyName: 'Stargate_USDC',
     },
     config: { ...config },
     setup: { ...setup },
