@@ -221,11 +221,6 @@ contract AaveV3Xy is Strategy {
         uint256 _borrowed = vdToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
         AaveLendingPool _aaveLendingPool = AaveLendingPool(aaveAddressProvider.getPool());
-
-        if (_excessDebt == 0) {
-            // If strategy is suppose to get more fund from pool, this method get fund.
-            IVesperPool(pool).reportEarning(0, 0, 0);
-        }
         // Claim rewards and convert to collateral token
         _claimRewardsAndConvertTo(address(collateralToken));
 
