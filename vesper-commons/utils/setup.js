@@ -308,6 +308,13 @@ async function createMakerStrategy(strategy, poolAddress, options) {
     const cm = await deployContract(CollateralManager)
     await cm.addGemJoin(gemJoins)
     strategy.constructorArgs.cm = cm
+  } else {
+    const cm = await ethers.getContractAt('ICollateralManager', strategy.constructorArgs.cm)
+    const gemJoin = await cm.mcdGemJoin(strategy.constructorArgs.collateralType)
+    if (gemJoin === ethers.constants.AddressZero) {
+      const governor = await unlock(await cm.governor())
+      await cm.connect(governor).addGemJoin([strategy.setup.maker.gemJoin])
+    }
   }
   const strategyInstance = await deployContract(strategy.contract, [
     poolAddress,

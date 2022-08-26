@@ -36,7 +36,7 @@ contract VesperMakerStrategy is MakerStrategy {
         }
     }
 
-    function _approveToken(uint256 _amount) internal override {
+    function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(DAI).safeApprove(address(receiptToken), _amount);
         IERC20(VSP).safeApprove(address(swapper), _amount);
