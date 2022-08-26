@@ -364,8 +364,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  EarnCompoundStrategyETH_DAI: {
-    contract: 'EarnCompoundStrategyETH',
+  Compound_Earn_ETH_DAI: {
+    contract: 'CompoundEarnETH',
     type: StrategyTypes.EARN_COMPOUND,
     constructorArgs: {
       swapper,
@@ -373,14 +373,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       dripToken: Address.DAI,
-      strategyName: 'EarnCompoundStrategyETH_DAI',
+      strategyName: 'Compound_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnCompoundStrategyWBTC_DAI: {
-    contract: 'EarnCompoundStrategy',
+  Compound_Earn_WBTC_DAI: {
+    contract: 'CompoundEarn',
     type: StrategyTypes.EARN_COMPOUND,
     constructorArgs: {
       swapper,
@@ -388,7 +388,7 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
       dripToken: Address.DAI,
-      strategyName: 'EarnCompoundStrategyWBTC_DAI',
+      strategyName: 'Compound_Earn_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },

@@ -2,12 +2,12 @@
 
 pragma solidity 0.8.9;
 
-import "./Compound.sol";
+import "./CompoundEarn.sol";
 import "vesper-pools/contracts/interfaces/token/IToken.sol";
 
 // solhint-disable no-empty-blocks
-/// @title Deposit ETH/WETH in Compound and earn interest.
-contract CompoundETH is Compound {
+/// @title Deposit ETH/WETH in Compound and earn interest in DAI.
+contract CompoundEarnETH is CompoundEarn {
     address internal constant WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
 
     constructor(
@@ -16,8 +16,9 @@ contract CompoundETH is Compound {
         address _comptroller,
         address _rewardToken,
         address _receiptToken,
+        address _dripToken,
         string memory _name
-    ) Compound(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _name) {}
+    ) CompoundEarn(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _dripToken, _name) {}
 
     /// @dev Only receive ETH from either cToken or WETH
     receive() external payable {
