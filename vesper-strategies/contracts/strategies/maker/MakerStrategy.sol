@@ -116,6 +116,14 @@ abstract contract MakerStrategy is Strategy {
         }
     }
 
+    /**
+     * @notice Convert amount to wrapped (i.e. asset to shares)
+     * @dev Only used when dealing with wrapped token as collateral (e.g. wstETH)
+     */
+    function _convertToWrapped(uint256 _amount) internal virtual returns (uint256 _wrappedAmount) {
+        _wrappedAmount = _amount;
+    }
+
     function _depositDaiToLender(uint256 _amount) internal virtual;
 
     // Dai supplied to other protocol to generate yield in DAI.
@@ -130,6 +138,7 @@ abstract contract MakerStrategy is Strategy {
 
     function _rebalance()
         internal
+        virtual
         override
         returns (
             uint256 _profit,
@@ -137,26 +146,35 @@ abstract contract MakerStrategy is Strategy {
             uint256 _payback
         )
     {
-        uint256 _collateralUsdRate;
-        uint256 _minimumDaiDebt;
-        uint256 _currentDaiDebt;
-        uint256 _collateralInVault;
-
-        (_collateralInVault, _currentDaiDebt, _collateralUsdRate, , _minimumDaiDebt) = cm.getVaultInfo(address(this));
+        (uint256 _collateralInVault, uint256 _currentDaiDebt, uint256 _collateralUsdRate, , uint256 _minimumDaiDebt) =
+            cm.getVaultInfo(address(this));
 
         _payback = IVesperPool(pool).excessDebt(address(this));
+        uint256 _paybackInWrapped;
+        if (_payback > 0) {
+            _paybackInWrapped = _convertToWrapped(_payback);
+        }
+
+        // Assets in maker is always in 18 decimal.
+        {
+            uint256 _collateralInVault18 = convertFrom18(_collateralInVault);
+            if (_paybackInWrapped > _collateralInVault18) {
+                _paybackInWrapped = _collateralInVault18;
+            }
+        }
 
         // _collateralInVault after payback
-        _collateralInVault -= convertTo18(_payback); // Collateral in Maker vault is always 18 decimal.
+        _collateralInVault -= convertTo18(_paybackInWrapped); // Collateral in Maker vault is always 18 decimal.
+
         // Calculate daiToRepay or daiToBorrow considering current collateral in Vault, payback, collateralUsdRate
         (uint256 _daiToRepay, uint256 _daiToBorrow) =
             _calculateSafeBorrowPosition(_collateralInVault, _currentDaiDebt, _collateralUsdRate, _minimumDaiDebt);
         uint256 _daiToWithdraw = _daiToRepay;
 
-        uint256 _daiBalance = _daiSupplied();
-        if (_daiBalance > _currentDaiDebt) {
+        uint256 _daiInLender = _daiSupplied();
+        if (_daiInLender > _currentDaiDebt) {
             // Yield generated in DAI. Withdraw these yield to convert to collateral.
-            _daiToWithdraw += _daiBalance - _currentDaiDebt;
+            _daiToWithdraw += _daiInLender - _currentDaiDebt;
         }
         if (_daiToWithdraw > 0) {
             // This can withdraw less than requested amount.  This is not problem as long as Dai here >= _daiToRepay. Profit earned in DAI can be reused for _daiToRepay.
@@ -168,8 +186,9 @@ abstract contract MakerStrategy is Strategy {
             _currentDaiDebt -= _daiToRepay;
         }
         // Dai paid back by now. Good to withdraw excessDebt in collateral.
-        if (_payback > 0) {
-            cm.withdrawCollateral(_payback);
+        if (_paybackInWrapped > 0) {
+            cm.withdrawCollateral(_paybackInWrapped);
+            _unwrap(_paybackInWrapped);
         }
 
         // All remaining dai here is profit.
@@ -180,17 +199,20 @@ abstract contract MakerStrategy is Strategy {
         }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
+        _payback = Math.min(_payback, _collateralHere);
         if (_collateralHere > _payback) {
             _profit = _collateralHere - _payback;
         }
 
         // Pool expect this contract has _profit + _payback in the contract. This method would revert if collateral.balanceOf(strategy) < (_profit + _excessDebt);
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
+
         // Pool may send some collateral after reporting earning.
         _collateralHere = collateralToken.balanceOf(address(this));
         if (_collateralHere > 0) {
-            cm.depositCollateral(_collateralHere);
-            _collateralInVault += convertTo18(_collateralHere);
+            uint256 _wrappedHere = _wrap(_collateralHere);
+            cm.depositCollateral(_wrappedHere);
+            _collateralInVault += convertTo18(_wrappedHere);
             (, _daiToBorrow) = _calculateSafeBorrowPosition(
                 _collateralInVault,
                 _currentDaiDebt,
@@ -214,11 +236,23 @@ abstract contract MakerStrategy is Strategy {
         uint256 _collateralNeeded = swapper.getAmountIn(address(collateralToken), DAI, _daiNeeded);
         require(_collateralNeeded <= _maximumCollateralForDaiSwap, "collateral-require-too-high");
         if (_collateralNeeded > 0) {
-            cm.withdrawCollateral(_collateralNeeded);
-            swapper.swapExactOutput(address(collateralToken), DAI, _daiNeeded, _collateralNeeded, address(this));
-            cm.payback(IERC20(DAI).balanceOf(address(this)));
-            IVesperPool(pool).reportLoss(_collateralNeeded);
+            uint256 _wrappedNeeded = _convertToWrapped(_collateralNeeded);
+            if (_wrappedNeeded > 0) {
+                cm.withdrawCollateral(_wrappedNeeded);
+                _collateralNeeded = _unwrap(_wrappedNeeded);
+                swapper.swapExactOutput(address(collateralToken), DAI, _daiNeeded, _collateralNeeded, address(this));
+                cm.payback(IERC20(DAI).balanceOf(address(this)));
+                IVesperPool(pool).reportLoss(_collateralNeeded);
+            }
         }
+    }
+
+    /**
+     * @notice Unwraps collateral token
+     * @dev Only used when dealing with wrapped token as collateral (e.g. wstETH)
+     */
+    function _unwrap(uint256 _amount) internal virtual returns (uint256 _unwrappedAmount) {
+        _unwrappedAmount = _amount;
     }
 
     function _updateBalancingFactor(uint256 _highWater, uint256 _lowWater) internal {
@@ -230,7 +264,17 @@ abstract contract MakerStrategy is Strategy {
 
     function _withdrawDaiFromLender(uint256 _amount) internal virtual;
 
-    function _withdrawHere(uint256 _amount) internal override {
+    /**
+     * @notice Wraps collateral token
+     * @dev Only used when dealing with wrapped token as collateral (e.g. wstETH)
+     */
+    function _wrap(uint256 _amount) internal virtual returns (uint256 _wrappedAmount) {
+        _wrappedAmount = _amount;
+    }
+
+    function _withdrawHere(uint256 _amount) internal virtual override {
+        _amount = _convertToWrapped(_amount);
+
         (
             uint256 collateralLocked,
             uint256 debt,
@@ -249,6 +293,7 @@ abstract contract MakerStrategy is Strategy {
             }
         }
         cm.withdrawCollateral(_amount);
+        _unwrap(_amount);
     }
 
     /******************************************************************************
