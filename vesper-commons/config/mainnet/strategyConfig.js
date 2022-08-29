@@ -209,14 +209,14 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  EarnAaveStrategyETH_DAI: {
-    contract: 'EarnAaveStrategy',
+  Aave_Earn_ETH_DAI: {
+    contract: 'AaveEarn',
     type: StrategyTypes.EARN_AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aWETH,
       dripToken: Address.DAI,
-      strategyName: 'EarnAaveStrategyETH_DAI',
+      strategyName: 'Aave_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
