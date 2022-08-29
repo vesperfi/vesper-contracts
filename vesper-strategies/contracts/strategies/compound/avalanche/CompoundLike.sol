@@ -61,11 +61,6 @@ contract CompoundLike is Compound {
         }
     }
 
-    /// @notice Get main Rewards accrued
-    function _getRewardAccrued() internal view virtual override returns (uint256 _rewardAccrued) {
-        _rewardAccrued = IRewardDistributor(rewardDistributor).rewardAccrued(0, address(this));
-    }
-
     // Updates rewardDistributor of the Compound fork, in case it changes over time
     function updateRewardDistributor(address _newRewardDistributor) external onlyKeeper {
         require(_newRewardDistributor != address(0), "invalid-reward-distributor-addr");
