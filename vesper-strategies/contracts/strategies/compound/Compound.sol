@@ -123,10 +123,6 @@ contract Compound is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
-    function _getRewardAccrued() internal view virtual returns (uint256 _rewardAccrued) {
-        _rewardAccrued = COMPTROLLER.compAccrued(address(this));
-    }
-
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */

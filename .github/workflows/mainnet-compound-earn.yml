@@ -1,8 +1,8 @@
-name: Mainnet Earn Compound Strategy
+name: Mainnet Compound Earn Strategy
 on:
   pull_request:
     paths:
-      - ".github/workflows/mainnet-earn-compound.yml"
+      - ".github/workflows/mainnet-compound-earn.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/test/utils/setup.js"
       - "vesper-strategies/test/behavior/compound.js"
