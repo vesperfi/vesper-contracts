@@ -87,17 +87,12 @@ contract Compound is Strategy {
         }
     }
 
-    function _getRewardAccrued() internal view virtual returns (uint256 _rewardAccrued) {
-        _rewardAccrued = COMPTROLLER.compAccrued(address(this));
-    }
-
     /**
-     * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Generate profit, loss and payback statement. Also claim rewards.
      */
-    function _rebalance()
+    function _generateReport()
         internal
-        override
+        virtual
         returns (
             uint256 _profit,
             uint256 _loss,
@@ -126,7 +121,26 @@ contract Compound is Strategy {
         // Make sure _collateralHere >= _payback + profit. set actual payback first and then profit
         _payback = Math.min(_collateralHere, _excessDebt);
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
+    }
 
+    function _getRewardAccrued() internal view virtual returns (uint256 _rewardAccrued) {
+        _rewardAccrued = COMPTROLLER.compAccrued(address(this));
+    }
+
+    /**
+     * @dev Generate report for pools accounting and also send profit and any payback to pool.
+     */
+    function _rebalance()
+        internal
+        virtual
+        override
+        returns (
+            uint256 _profit,
+            uint256 _loss,
+            uint256 _payback
+        )
+    {
+        (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         // After reportEarning strategy may get more collateral from pool. Deposit those in Compound.
         _deposit(collateralToken.balanceOf(address(this)));
@@ -138,8 +152,10 @@ contract Compound is Strategy {
         uint256 _expectedCToken = (_amount * 1e18) / cToken.exchangeRateStored();
         if (_expectedCToken > 0) {
             // Get minimum of _amount and _available collateral and _availableLiquidity
-            uint256 _withdrawAmount =
-                Math.min(_amount, Math.min(cToken.balanceOfUnderlying(address(this)), cToken.getCash()));
+            uint256 _withdrawAmount = Math.min(
+                _amount,
+                Math.min(cToken.balanceOfUnderlying(address(this)), cToken.getCash())
+            );
             require(cToken.redeemUnderlying(_withdrawAmount) == 0, "withdraw-from-compound-failed");
             _afterRedeem();
         }
