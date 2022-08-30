@@ -161,7 +161,8 @@
           "implementation": "0x10fde8c254A100674439D707628569686c8580Fa"
         },
         "strategies": {
-          "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A"
+          "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "Maker_Vesper_STETH": "0xc2dDA4d6CA0e2728BDC7b0A738D4664bF58698e1"
         }
       }
     }
