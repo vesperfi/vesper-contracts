@@ -117,6 +117,21 @@ contract Stargate is Strategy {
         return stargateLp.amountLPtoLD(lpAmountStaked() + stargateLp.balanceOf(address(this)));
     }
 
+    function _getLpForCollateral(uint256 _collateralAmount) internal returns (uint256) {
+        uint256 _lpRequired = _convertToLpShares(_collateralAmount);
+        uint256 _lpHere = stargateLp.balanceOf(address(this));
+        if (_lpRequired > _lpHere) {
+            uint256 _lpAmountStaked = lpAmountStaked();
+            uint256 _lpToUnstake = _lpRequired - _lpHere;
+            if (_lpToUnstake > _lpAmountStaked) {
+                _lpToUnstake = _lpAmountStaked;
+            }
+            stargateLpStaking.withdraw(stargateLpStakingPoolId, _lpToUnstake);
+            return stargateLp.balanceOf(address(this));
+        }
+        return _lpRequired;
+    }
+
     function _rebalance()
         internal
         override
@@ -164,21 +179,36 @@ contract Stargate is Strategy {
     /// @dev Withdraw collateral here. Do not transfer to pool.
     /// @dev This method may withdraw less than requested amount. Caller may need to check balance before and after
     function _withdrawHere(uint256 _amount) internal override {
-        uint256 _lpRequired = _convertToLpShares(_amount);
-        uint256 _lpHere = stargateLp.balanceOf(address(this));
-        if (_lpHere > _lpRequired) {
-            stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _lpRequired, address(this));
-        } else {
-            uint256 _lpAmountStaked = lpAmountStaked();
-            uint256 _lpToUnstake = _lpRequired - _lpHere;
-            if (_lpToUnstake > _lpAmountStaked) {
-                _lpToUnstake = _lpAmountStaked;
-            }
-            stargateLpStaking.withdraw(stargateLpStakingPoolId, _lpToUnstake);
-            stargateRouter.instantRedeemLocal(
-                uint16(stargatePoolId),
-                stargateLp.balanceOf(address(this)),
-                address(this)
+        stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _getLpForCollateral(_amount), address(this));
+    }
+
+    /************************************************************************************************
+     *                                       keeper function                                        *
+     ***********************************************************************************************/
+
+    function withdrawForRebalance(uint16 _dstChainId) external payable onlyKeeper {
+        // amountToWithdraw is excessDebt of strategy
+        uint256 _amountToWithdraw = IVesperPool(pool).excessDebt(address(this));
+        uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
+        uint256 _totalCollateral = _getCollateralInStargate();
+
+        if (_totalCollateral > _totalDebt) {
+            // If we have profit then amountToWithdraw = excessDebt + profit
+            _amountToWithdraw += (_totalCollateral - _totalDebt);
+        }
+
+        uint256 _lpToRedeem = _getLpForCollateral(_amountToWithdraw);
+        if (_lpToRedeem > 0) {
+            // RedeemLocal will redeem asset from dstChain to this chain and at this address.
+            // Also srcPoolId and dstPoolId will be same in this case
+            stargateRouter.redeemLocal{value: msg.value}(
+                _dstChainId,
+                stargatePoolId,
+                stargatePoolId,
+                payable(msg.sender),
+                _lpToRedeem,
+                abi.encodePacked(address(this)), // Address which will receive asset
+                IStargateRouter.lzTxObj(0, 0, "0x") // Basically empty layer zero tx object
             );
         }
     }
