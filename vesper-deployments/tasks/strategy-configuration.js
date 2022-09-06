@@ -67,7 +67,7 @@ function validateStrategyConfig(strategyName, strategyConfig) {
   validateObject(strategyConfig.setup, setupKeys)
   // Validate Maker config
   if (strategyName.includes('Maker')) {
-    const makerKeys = ['gemJoin', 'highWater', 'lowWater']
+    const makerKeys = ['gemJoin']
     validateObject(strategyConfig.setup.maker, makerKeys)
   }
 }
