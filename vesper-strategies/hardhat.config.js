@@ -71,6 +71,9 @@ module.exports = {
       accounts,
     },
   },
+  paths: {
+    sources: process.env.SOURCES_DIR || './contracts',
+  },
   contractSizer: {
     alphaSort: true,
     runOnCompile: true,
