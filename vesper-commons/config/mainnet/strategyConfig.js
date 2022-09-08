@@ -1582,6 +1582,30 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Euler_ETH: {
+    contract: 'Euler',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      markets: Address.Euler.Markets,
+      protocol: Address.Euler.EulerProtocol,
+      strategyName: 'Euler_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Euler_USDC: {
+    contract: 'Euler',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      markets: Address.Euler.Markets,
+      protocol: Address.Euler.EulerProtocol,
+      strategyName: 'Euler_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
