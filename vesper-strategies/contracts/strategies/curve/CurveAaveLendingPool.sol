@@ -5,13 +5,13 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "vesper-pools/contracts/interfaces/vesper/IVesperPool.sol";
-import "../../../interfaces/aave/IAave.sol";
-import "../../Strategy.sol";
-import "./Curve3LendingPool.sol";
+import "../../interfaces/aave/IAave.sol";
+import "../Strategy.sol";
+import "./Curve.sol";
 
 /// @title This strategy will deposit collateral token in Curve Aave 3Pool and earn interest.
 // solhint-disable no-empty-blocks
-contract Curve3LendingPoolAave is Curve3LendingPool {
+contract CurveAaveLendingPool is Curve {
     using SafeERC20 for IERC20;
     address private constant CRV_POOL = 0xDeBF20617708857ebe4F679508E7b7863a8A8EeE;
     StakedAave private constant STKAAVE = StakedAave(0x4da27a545c0c5B758a6BA100e3a049001de870f5);
@@ -19,12 +19,26 @@ contract Curve3LendingPoolAave is Curve3LendingPool {
 
     constructor(
         address pool_,
+        PoolType curvePoolType_,
+        address depositZap_,
         uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         string memory name_
-    ) Curve3LendingPool(pool_, CRV_POOL, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) {}
+    )
+        Curve(
+            pool_,
+            CRV_POOL,
+            curvePoolType_,
+            depositZap_,
+            crvSlippage_,
+            masterOracle_,
+            swapper_,
+            collateralIdx_,
+            name_
+        )
+    {}
 
     function canStartCooldown() external view returns (bool) {
         (uint256 _cooldownStart, , uint256 _unstakeEnd) = cooldownData();
@@ -69,7 +83,7 @@ contract Curve3LendingPoolAave is Curve3LendingPool {
     }
 
     function _claimRewards() internal virtual override {
-        CurvePoolBase._claimRewards();
+        Curve._claimRewards();
         _claimAave();
     }
 }

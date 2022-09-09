@@ -66,7 +66,7 @@ const whales = {
   [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
 
   // Avalanche
-  [AvalancheAddress.Curve.CRV]: '0x59227430ac7bfd9ff9fd34e8085d4327bc2e3b24',
+  [AvalancheAddress.Curve.CRV]: '0xb67b891a1dcb86b7933924ebb0e120d229423594',
 }
 
 /**
