@@ -38,8 +38,8 @@ contract Curve is Strategy {
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
 
-    // Note: Same as `receiptToken` but using this in order to save gas since it's `immutable` and `receiptToken` isn't
-    IERC20 public immutable crvLp;
+    address public immutable CRV;
+    IERC20 public immutable crvLp; // Note: Same as `receiptToken` but using this in order to save gas since it's `immutable` and `receiptToken` isn't
     address public immutable crvPool;
     ILiquidityGaugeV2 public immutable crvGauge;
     uint256 public immutable collateralIdx;
@@ -48,7 +48,6 @@ contract Curve is Strategy {
     bool private immutable isFactoryPool;
 
     string public NAME;
-    address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52; // Mainnet
     uint256 public crvSlippage;
     IMasterOracle public masterOracle;
     address[] public rewardTokens;
@@ -61,19 +60,14 @@ contract Curve is Strategy {
         address crvPool_,
         PoolType curvePoolType_,
         address depositZap_,
+        address crvToken_,
         uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         string memory name_
     ) Strategy(pool_, swapper_, address(0)) {
-        if (block.chainid == 43114) {
-            // Avalanche
-            CRV = 0x47536F17F4fF30e64A96a7555826b8f9e66ec468;
-        } else if (block.chainid == 137) {
-            // Polygon
-            CRV = 0x172370d5Cd63279eFa6d502DAB29171933a610AF;
-        }
+        require(crvToken_ != address(0), "crv-token-is-null");
 
         address _crvGauge;
         IRegistry _registry = IRegistry(ADDRESS_PROVIDER.get_registry());
@@ -119,6 +113,7 @@ contract Curve is Strategy {
         require(_crvLp != address(0), "lp-is-null");
         require(_crvGauge != address(0), "gauge-is-null");
 
+        CRV = crvToken_;
         crvPool = crvPool_;
         crvLp = IERC20(_crvLp);
         crvGauge = ILiquidityGaugeV2(_crvGauge);
@@ -129,7 +124,7 @@ contract Curve is Strategy {
         isFactoryPool = _crvLp == crvPool_;
         depositZap = depositZap_;
         masterOracle = IMasterOracle(masterOracle_);
-        rewardTokens.push(CRV);
+        rewardTokens.push(crvToken_);
         NAME = name_;
     }
 
