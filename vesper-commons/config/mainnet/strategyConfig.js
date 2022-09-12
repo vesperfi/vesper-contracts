@@ -148,6 +148,22 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV2_Vesper_Xy_LINK_USDC: {
+    contract: 'AaveV2VesperXy',
+    type: StrategyTypes.AAVE_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      rewardToken: Address.Aave.AAVE,
+      receiptToken: Address.Aave.aLINK,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'AaveV2_Vesper_Xy_LINK_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   AaveV2_Vesper_Xy_stETH_DAI: {
     contract: 'AaveV2VesperXy',
     type: StrategyTypes.AAVE_VESPER_XY,
