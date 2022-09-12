@@ -2,8 +2,7 @@
 
 pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "../../interfaces/convex/IConvex.sol";
-import "../../interfaces/convex/IConvexToken.sol";
+import "../../interfaces/convex/IConvexForCurve.sol";
 import "../../strategies/curve/Curve.sol";
 
 // Convex Strategies common variables and helper functions
@@ -49,6 +48,7 @@ contract Convex is Curve {
         require(_lp == address(crvLp), "incorrect-lp-token");
         cvxCrvRewards = Rewards(_reward);
         convexPoolId = convexPoolId_;
+        rewardTokens = _getRewardTokens();
     }
 
     function lpBalanceStaked() public view override returns (uint256 _total) {
@@ -70,7 +70,7 @@ contract Convex is Curve {
      * In some cases, CVX is also added as extra reward, reason why we have to ensure to not add it twice
      * @return _rewardTokens The array of reward tokens (both base and extra rewards)
      */
-    function _getRewardTokens() internal view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
         uint256 _extraRewardCount;
         uint256 _length = cvxCrvRewards.extraRewardsLength();
 

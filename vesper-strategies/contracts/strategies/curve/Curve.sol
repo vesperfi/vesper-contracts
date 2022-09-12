@@ -5,7 +5,6 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/SafeCast.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
-import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "../../interfaces/curve/IDeposit.sol";
 import "../../interfaces/curve/IDepositZap.sol";
 import "../../interfaces/curve/IStableSwap.sol";
@@ -74,21 +73,19 @@ contract Curve is Strategy {
         } else if (block.chainid == 137) {
             // Polygon
             CRV = 0x172370d5Cd63279eFa6d502DAB29171933a610AF;
-        } else if (block.chainid == 42161) {
-            // Arbitrum
-            CRV = 0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978;
         }
 
         address _crvGauge;
-        address _collateral;
-
         IRegistry _registry = IRegistry(ADDRESS_PROVIDER.get_registry());
         address _crvLp = _registry.get_lp_token(crvPool_);
 
         if (_crvLp != address(0)) {
             // Get data from Registry contract
             require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
-            _collateral = _registry.get_underlying_coins(crvPool_)[collateralIdx_];
+            require(
+                _registry.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
+                "collateral-mismatch"
+            );
             _crvGauge = _registry.get_gauges(crvPool_)[0]; // TODO: Check other gauges?
 
             // Note: The Curve's `Registry` is returning null when calling `get_gauges()` for the FRAX-USDC pool
@@ -103,16 +100,21 @@ contract Curve is Strategy {
 
             if (_factory.is_meta(crvPool_)) {
                 require(collateralIdx_ < _factory.get_meta_n_coins(crvPool_)[1], "invalid-collateral");
-                _collateral = _factory.get_underlying_coins(crvPool_)[collateralIdx_];
+                require(
+                    _factory.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
+                    "collateral-mismatch"
+                );
             } else {
                 require(collateralIdx_ < _factory.get_n_coins(crvPool_), "invalid-collateral");
-                _collateral = _factory.get_coins(crvPool_)[collateralIdx_];
+                require(
+                    _factory.get_coins(crvPool_)[collateralIdx_] == address(collateralToken),
+                    "collateral-mismatch"
+                );
             }
             _crvLp = crvPool_;
             _crvGauge = _factory.get_gauge(crvPool_);
         }
 
-        require(_collateral == address(IVesperPool(pool_).token()), "collateral-mismatch");
         require(crvPool_ != address(0), "pool-is-null");
         require(_crvLp != address(0), "lp-is-null");
         require(_crvGauge != address(0), "gauge-is-null");
@@ -181,13 +183,14 @@ contract Curve is Strategy {
         require(IStrategy(newStrategy_).collateral() == address(collateralToken), "wrong-collateral-token");
         require(IStrategy(newStrategy_).token() == address(crvLp), "wrong-receipt-token");
         _unstakeAllLp();
+        _claimRewards();
     }
 
     function _calculateAmountOutMin(
         address tokenIn_,
         address tokenOut_,
         uint256 amountIn_
-    ) internal view returns (uint256 _amountOutMin) {
+    ) private view returns (uint256 _amountOutMin) {
         _amountOutMin = (masterOracle.quote(tokenIn_, tokenOut_, amountIn_) * (MAX_BPS - crvSlippage)) / MAX_BPS;
     }
 
@@ -225,46 +228,46 @@ contract Curve is Strategy {
         _stakeAllLp();
     }
 
-    function _depositTo2PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+    function _depositTo2PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[2] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         IStableSwap2x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo2LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+    function _depositTo2LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[2] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: Using use_underlying = true to deposit underlying instead of IB token
         IStableSwap2xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
     }
 
-    function _depositTo3PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+    function _depositTo3PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[3] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         IStableSwap3x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo3LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+    function _depositTo3LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[3] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: Using use_underlying = true to deposit underlying instead of IB token
         IStableSwap3xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
     }
 
-    function _depositTo4PlainOrMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+    function _depositTo4PlainOrMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[4] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         IDeposit4x(depositZap).add_liquidity(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+    function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[4] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap4x(depositZap).add_liquidity(address(crvPool), _depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositToCurve(uint256 coinAmountIn_) internal {
+    function _depositToCurve(uint256 coinAmountIn_) private {
         if (coinAmountIn_ == 0) {
             return;
         }
@@ -346,7 +349,7 @@ contract Curve is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
-    function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) internal view virtual returns (uint256 _amountOut) {
+    function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) private view returns (uint256 _amountOut) {
         if (amountIn_ == 0) {
             return 0;
         }
@@ -401,7 +404,7 @@ contract Curve is Strategy {
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
-    ) internal {
+    ) private {
         IStableSwap(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
@@ -409,7 +412,7 @@ contract Curve is Strategy {
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
-    ) internal {
+    ) private {
         // Note: Using use_underlying = true to withdraw underlying instead of IB token
         IStableSwap2xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
     }
@@ -418,7 +421,7 @@ contract Curve is Strategy {
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
-    ) internal {
+    ) private {
         // Note: Using use_underlying = true to withdraw underlying instead of IB token
         IStableSwap3xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
     }
@@ -427,7 +430,7 @@ contract Curve is Strategy {
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
-    ) internal {
+    ) private {
         IDeposit4x(depositZap).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
@@ -435,7 +438,7 @@ contract Curve is Strategy {
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
-    ) internal virtual {
+    ) private {
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap4x(depositZap).remove_liquidity_one_coin(address(crvLp), lpAmount_, i_, minAmountOut_);
     }
@@ -474,7 +477,6 @@ contract Curve is Strategy {
 
         uint256 _lpHere = lpBalanceHere();
         uint256 _totalLp = _lpHere + lpBalanceStaked();
-
         uint256 _lpToBurn = Math.min((coinAmountOut_ * _totalLp) / _quoteLpToCoin(_totalLp, _i), _totalLp);
 
         if (_lpToBurn == 0) return;

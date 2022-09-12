@@ -64,15 +64,15 @@ contract CurveAaveLendingPool is Curve {
         _unstakeEnd = _cooldownEnd + STKAAVE.UNSTAKE_WINDOW();
     }
 
-    function _canStartCooldown(uint256 cooldownStart_, uint256 unstakeEnd_) internal view returns (bool) {
+    function _canStartCooldown(uint256 cooldownStart_, uint256 unstakeEnd_) private view returns (bool) {
         return STKAAVE.balanceOf(address(this)) > 0 && (cooldownStart_ == 0 || block.timestamp > unstakeEnd_);
     }
 
-    function _canUnstake(uint256 cooldownEnd_, uint256 unstakeEnd_) internal view returns (bool) {
+    function _canUnstake(uint256 cooldownEnd_, uint256 unstakeEnd_) private view returns (bool) {
         return block.timestamp > cooldownEnd_ && block.timestamp <= unstakeEnd_;
     }
 
-    function _claimAave() internal {
+    function _claimAave() private {
         (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) = cooldownData();
         if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
             STKAAVE.redeem(address(this), MAX_UINT_VALUE);

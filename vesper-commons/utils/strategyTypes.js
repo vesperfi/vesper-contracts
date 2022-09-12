@@ -11,6 +11,7 @@ const StrategyType = {
   EARN_VESPER_MAKER: 'earnVesperMaker',
   CURVE: 'curve',
   CONVEX: 'curveConvex',
+  CONVEX_FOR_FRAX: 'fraxConvex',
   YEARN: 'yearn',
   EARN_MAKER: 'earnMaker',
   EARN_COMPOUND: 'earnCompound',

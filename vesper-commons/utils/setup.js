@@ -180,7 +180,7 @@ async function configureOracles(strategies) {
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
 
-    if (strategyType.includes('curve')) {
+    if (strategyType.includes('curve') || strategyType.includes('convex')) {
       const masterOracleABI = [
         'function governor() view returns(address)',
         'function defaultOracle() view returns(address)',
