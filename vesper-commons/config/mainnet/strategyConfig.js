@@ -42,6 +42,18 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Aave_V2_ETH: {
+    contract: 'AaveV2',
+    type: StrategyTypes.AAVE,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aWETH,
+      strategyName: 'Aave_V2_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Aave_V2_FEI: {
     contract: 'AaveV2',
     type: StrategyTypes.AAVE,
