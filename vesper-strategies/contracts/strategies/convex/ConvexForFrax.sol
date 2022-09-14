@@ -73,6 +73,8 @@ contract ConvexForFrax is Curve {
     }
 
     function lpBalanceStaked() public view override returns (uint256 _total) {
+        // Note: No need to specify which position here because we'll always have one open position at the same time
+        // because a position is deleted when `vault.withdrawLockedAndUnwrap(kekId)` is called
         _total = fraxStaking.lockedLiquidityOf(address(vault));
     }
 
@@ -89,7 +91,6 @@ contract ConvexForFrax is Curve {
             // See more: https://github.com/convex-eth/frax-cvx-platform/blob/01855f4f82729b49cbed0b5fab37bdefe9fdb736/contracts/contracts/StakingProxyConvex.sol#L222-L225
             vault.getReward(false);
         }
-        // vault.getReward();
     }
 
     /// @notice Get reward tokens
@@ -144,7 +145,6 @@ contract ConvexForFrax is Curve {
      * Should claim rewards that will be swept later
      */
     function _unstakeAllLp() internal override {
-        require(block.timestamp >= unlockTime, "lock-period-did-not-pass");
         vault.withdrawLockedAndUnwrap(kekId);
     }
 
@@ -170,8 +170,9 @@ contract ConvexForFrax is Curve {
     }
 
     /// @notice Update `lockPeriod` param
-    /// @dev To be used if the `lock_time_min` value changes
+    /// @dev To be used if the `lock_time_min` value changes or we want to increase it
     function updateLockPeriod(uint256 newLockPeriod_) external onlyGovernor {
+        require(newLockPeriod_ >= fraxStaking.lock_time_min(), "period-lt-min");
         lockPeriod = newLockPeriod_;
     }
 }
