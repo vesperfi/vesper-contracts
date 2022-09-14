@@ -1178,6 +1178,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      crvDeposit: ethers.constants.AddressZero,
       crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
@@ -1193,11 +1194,92 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      crvDeposit: ethers.constants.AddressZero,
       crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
       collateralIdx: 1,
       strategyName: 'Curve_aave_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_compound_DAI: {
+    contract: 'Curve2LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.COMPOUND_POOL,
+      crvDeposit: Address.Curve.COMPOUND_DEPOSIT,
+      crvSlippage: 200, // 2.0%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'Curve_compound_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_usdt_DAI: {
+    contract: 'Curve3LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.USDT_POOL,
+      crvDeposit: Address.Curve.USDT_DEPOSIT,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'Curve_usdt_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_busd_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.BUSD_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.BUSD_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_busd_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_pax_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.PAX_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.PAX_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_pax_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_y_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.Y_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.Y_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_y_DAI',
     },
     config: { ...config },
     setup: { ...setup },

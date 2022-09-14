@@ -167,9 +167,9 @@ abstract contract CurvePoolBase is Strategy {
     }
 
     function _claimRewards() internal virtual {
-        try CRV_MINTER.mint(address(crvGauge)) {} catch {
-            // This call may fail in some scenarios
-            // e.g. Side-chains don't have minter contract
+        if (block.chainid == 1) {
+            // Side-chains don't have minter contract
+            CRV_MINTER.mint(address(crvGauge));
         }
         try crvGauge.claim_rewards() {} catch {
             // This call may fail in some scenarios
