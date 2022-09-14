@@ -708,6 +708,28 @@
         "strategies": {
           "RariFuseStrategyAPE#127": "0xb436d8a2e3e23aF57040B2dA8E01463c818e0999"
         }
+      },
+      "valink": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xef4F4604106de23CDadfEAE08fcC34602cB475C1",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x85B6944d2b0A69E781777833b3964a911EeC6167",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x68E031E6C68786cc25F0941a2F37E21BbCcBB4CB",
+          "implementation": "0x53D885224789AdBB56dC93071A878bac7FB80fAB"
+        },
+        "strategies": {
+          "AaveV2_Vesper_Xy_LINK_USDC": "0xc2262671A154cc29A0cf6783DaDB130F2cD80fb9",
+          "CompoundLeverageStrategyLINK": "0x4634826b13A6f4edED44539a9AAE119438c1517b",
+          "VesperMakerStrategyLINK": "0x0827F18a1fAD688C5C720FC27Ef0cC00D6DAd19a"
+        }
       }
     },
     "avalanche": {
