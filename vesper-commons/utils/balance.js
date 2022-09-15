@@ -84,11 +84,7 @@ const getWhale = token => whales[getAddress(token)]
  */
 const getSlot = token => slots[getAddress(token)]
 
-async function getBalanceFromWhale(token, targetAddress, balance) {
-  const whale = getWhale(token)
-  if (whale === undefined) {
-    throw new Error(`Missing slot and whale, both, configuration for token ${token}. At least one is required`)
-  }
+async function getBalanceFromWhale(whale, token, targetAddress, balance) {
   const tokenObj = await ethers.getContractAt('ERC20', token)
   const whaleBalance = await tokenObj.balanceOf(whale)
   if (whaleBalance.lt(balance)) {
@@ -110,9 +106,12 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
  */
 
 async function adjustBalance(token, targetAddress, balance) {
-  const slot = getSlot(token)
-  if (slot === undefined) {
-    return getBalanceFromWhale(token, targetAddress, balance)
+  let slot = getSlot(token)
+  const whale = getWhale(token)
+  if (slot === undefined && whale) {
+    return getBalanceFromWhale(whale, token, targetAddress, balance)
+  } else if (slot === undefined && whale === undefined) {
+    slot = 0 // use default slot as 0 when slot and whale is not defined
   }
 
   // reason: https://github.com/nomiclabs/hardhat/issues/1585 comments
