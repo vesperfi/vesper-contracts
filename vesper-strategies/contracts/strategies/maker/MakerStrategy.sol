@@ -21,7 +21,7 @@ abstract contract MakerStrategy is Strategy {
     bytes32 public immutable collateralType;
     uint256 public highWater;
     uint256 public lowWater;
-    uint256 public decimalConversionFactor;
+    uint256 public immutable decimalConversionFactor;
     uint256 private constant WAT = 10**16;
 
     constructor(
@@ -146,8 +146,13 @@ abstract contract MakerStrategy is Strategy {
             uint256 _payback
         )
     {
-        (uint256 _collateralInVault, uint256 _currentDaiDebt, uint256 _collateralUsdRate, , uint256 _minimumDaiDebt) =
-            cm.getVaultInfo(address(this));
+        (
+            uint256 _collateralInVault,
+            uint256 _currentDaiDebt,
+            uint256 _collateralUsdRate,
+            ,
+            uint256 _minimumDaiDebt
+        ) = cm.getVaultInfo(address(this));
 
         _payback = IVesperPool(pool).excessDebt(address(this));
         uint256 _paybackInWrapped;
@@ -167,8 +172,12 @@ abstract contract MakerStrategy is Strategy {
         _collateralInVault -= convertTo18(_paybackInWrapped); // Collateral in Maker vault is always 18 decimal.
 
         // Calculate daiToRepay or daiToBorrow considering current collateral in Vault, payback, collateralUsdRate
-        (uint256 _daiToRepay, uint256 _daiToBorrow) =
-            _calculateSafeBorrowPosition(_collateralInVault, _currentDaiDebt, _collateralUsdRate, _minimumDaiDebt);
+        (uint256 _daiToRepay, uint256 _daiToBorrow) = _calculateSafeBorrowPosition(
+            _collateralInVault,
+            _currentDaiDebt,
+            _collateralUsdRate,
+            _minimumDaiDebt
+        );
         uint256 _daiToWithdraw = _daiToRepay;
 
         uint256 _daiInLender = _daiSupplied();

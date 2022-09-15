@@ -109,7 +109,7 @@ contract AaveV3 is Strategy {
         // strategy may get new fund. deposit to generate yield
         _collateralHere = collateralToken.balanceOf(address(this));
         if (_collateralHere > 0) {
-            AaveLendingPool(aaveAddressProvider.getPool()).deposit(
+            AaveLendingPool(aaveAddressProvider.getPool()).supply(
                 address(collateralToken),
                 _collateralHere,
                 address(this),
@@ -122,11 +122,10 @@ contract AaveV3 is Strategy {
     function _withdrawHere(uint256 _requireAmount) internal override {
         // withdraw asking more than available liquidity will fail. To do safe withdraw, check
         // _requireAmount against available liquidity.
-        uint256 _possibleWithdraw =
-            Math.min(
-                _requireAmount,
-                Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
-            );
+        uint256 _possibleWithdraw = Math.min(
+            _requireAmount,
+            Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
+        );
         if (_possibleWithdraw > 0) {
             require(
                 AaveLendingPool(aaveAddressProvider.getPool()).withdraw(

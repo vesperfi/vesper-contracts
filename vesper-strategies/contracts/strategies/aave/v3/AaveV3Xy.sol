@@ -47,9 +47,9 @@ contract AaveV3Xy is Strategy {
             AToken(_receiptToken).UNDERLYING_ASSET_ADDRESS() == address(IVesperPool(_pool).token()),
             "invalid-receipt-token"
         );
-        (address _aBorrowToken, , address _vdToken) =
-            AaveProtocolDataProvider(PoolAddressesProvider(_aaveAddressProvider).getPoolDataProvider())
-                .getReserveTokensAddresses(_borrowToken);
+        (address _aBorrowToken, , address _vdToken) = AaveProtocolDataProvider(
+            PoolAddressesProvider(_aaveAddressProvider).getPoolDataProvider()
+        ).getReserveTokensAddresses(_borrowToken);
         vdToken = AToken(_vdToken);
         borrowToken = _borrowToken;
         aBorrowToken = _aBorrowToken;
@@ -121,15 +121,14 @@ contract AaveV3Xy is Strategy {
             return (0, _borrowed);
         }
         // In case of withdraw, _amount can be greater than _supply
-        uint256 _hypotheticalCollateral =
-            _depositAmount > 0 ? _supplied + _depositAmount : _supplied > _withdrawAmount
-                ? _supplied - _withdrawAmount
-                : 0;
+        uint256 _hypotheticalCollateral = _depositAmount > 0 ? _supplied + _depositAmount : _supplied > _withdrawAmount
+            ? _supplied - _withdrawAmount
+            : 0;
         if (_hypotheticalCollateral == 0) {
             return (0, _borrowed);
         }
         AaveOracle _aaveOracle = AaveOracle(aaveAddressProvider.getPriceOracle());
-        // Oracle prices are in 18 decimal
+
         uint256 _borrowTokenPrice = _aaveOracle.getAssetPrice(borrowToken);
         uint256 _collateralTokenPrice = _aaveOracle.getAssetPrice(address(collateralToken));
         if (_borrowTokenPrice == 0 || _collateralTokenPrice == 0) {
@@ -137,18 +136,16 @@ contract AaveV3Xy is Strategy {
             return (0, _borrowed);
         }
         // _collateralFactor in 4 decimal. 10_000 = 100%
-        (, uint256 _collateralFactor, , , , , , , , ) =
-            AaveProtocolDataProvider(aaveAddressProvider.getPoolDataProvider()).getReserveConfigurationData(
-                address(collateralToken)
-            );
+        (, uint256 _collateralFactor, , , , , , , , ) = AaveProtocolDataProvider(
+            aaveAddressProvider.getPoolDataProvider()
+        ).getReserveConfigurationData(address(collateralToken));
 
         // Collateral in base currency based on oracle price and cf;
-        uint256 _actualCollateralForBorrow =
-            (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-                (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
+        uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
+            (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
         // Calculate max borrow possible in borrow token number
-        uint256 _maxBorrowPossible =
-            (_actualCollateralForBorrow * (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+        uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
+            (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }
@@ -187,7 +184,7 @@ contract AaveV3Xy is Strategy {
      */
     function _depositToAave(uint256 _amount, AaveLendingPool _aaveLendingPool) internal virtual {
         if (_amount > 0) {
-            try _aaveLendingPool.deposit(address(collateralToken), _amount, address(this), 0) {} catch Error(
+            try _aaveLendingPool.supply(address(collateralToken), _amount, address(this), 0) {} catch Error(
                 string memory _reason
             ) {
                 // Aave uses liquidityIndex and some other indexes as needed to normalize input.
@@ -264,8 +261,12 @@ contract AaveV3Xy is Strategy {
         // borrow position may be affected in following scenario.
         // 1. Collateral or borrow token price changes.
         // 2.  More collateral received from pool.
-        (uint256 _borrowAmount, uint256 _repayAmount) =
-            _calculateBorrowPosition(0, 0, _borrowed, _supplied + _newSupply);
+        (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(
+            0,
+            0,
+            _borrowed,
+            _supplied + _newSupply
+        );
         if (_repayAmount > 0) {
             // Repay _borrowAmount to maintain safe position
             _repayY(_repayAmount, _aaveLendingPool);
@@ -330,11 +331,10 @@ contract AaveV3Xy is Strategy {
         }
         // withdraw asking more than available liquidity will fail. To do safe withdraw, check
         // _requireAmount against available liquidity.
-        uint256 _possibleWithdraw =
-            Math.min(
-                _requireAmount,
-                Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
-            );
+        uint256 _possibleWithdraw = Math.min(
+            _requireAmount,
+            Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
+        );
         require(
             _aaveLendingPool.withdraw(address(collateralToken), _possibleWithdraw, address(this)) == _possibleWithdraw,
             Errors.INCORRECT_WITHDRAW_AMOUNT
