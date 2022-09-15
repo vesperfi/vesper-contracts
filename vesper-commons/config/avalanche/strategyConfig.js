@@ -1,7 +1,9 @@
 'use strict'
 
+const { ethers } = require('hardhat')
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
+const CurvePoolTypes = require('../../utils/curvePoolTypes')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
@@ -44,10 +46,12 @@ const StrategyConfig = {
   },
 
   Curve_aave_DAIe: {
-    contract: 'Curve3LendingPool',
+    contract: 'Curve',
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      curvePoolType: CurvePoolTypes.LENDING_3_POOL,
+      depositZap: ethers.constants.AddressZero,
       crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
@@ -59,10 +63,12 @@ const StrategyConfig = {
   },
 
   Curve_aave_USDCe: {
-    contract: 'Curve3LendingPool',
+    contract: 'Curve',
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      curvePoolType: CurvePoolTypes.LENDING_3_POOL,
+      depositZap: ethers.constants.AddressZero,
       crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
@@ -74,10 +80,12 @@ const StrategyConfig = {
   },
 
   Curve_ren_WBTCe: {
-    contract: 'Curve2LendingPool',
+    contract: 'Curve',
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AVWBTCRENBTC_POOL,
+      curvePoolType: CurvePoolTypes.LENDING_2_POOL,
+      depositZap: ethers.constants.AddressZero,
       crvSlippage: 200, // 2.0%
       masterOracle,
       swapper,

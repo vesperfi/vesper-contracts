@@ -6,6 +6,8 @@ import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/u
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/SafeCast.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "../../interfaces/curve/IDeposit.sol";
+import "../../interfaces/curve/IDepositZap.sol";
 import "../../interfaces/curve/IStableSwap.sol";
 import "../../interfaces/curve/ILiquidityGauge.sol";
 import "../../interfaces/curve/ITokenMinter.sol";
@@ -17,13 +19,22 @@ import "../Strategy.sol";
 
 /// @title This strategy will deposit collateral token in a Curve Pool and earn interest.
 // solhint-disable no-empty-blocks
-abstract contract CurvePoolBase is Strategy {
+contract Curve is Strategy {
     using SafeERC20 for IERC20;
 
+    enum PoolType {
+        PLAIN_2_POOL,
+        PLAIN_3_POOL,
+        PLAIN_4_POOL,
+        LENDING_2_POOL,
+        LENDING_3_POOL,
+        LENDING_4_POOL,
+        META_3_POOL,
+        META_4_POOL
+    }
+
     string public constant VERSION = "5.0.0";
-
     uint256 internal constant MAX_BPS = 10_000;
-
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
@@ -32,16 +43,15 @@ abstract contract CurvePoolBase is Strategy {
     IERC20 public immutable crvLp;
     address public immutable crvPool;
     ILiquidityGaugeV2 public immutable crvGauge;
-
-    // solhint-disable-next-line var-name-mixedcase
-    address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52; // Mainnet
-    // solhint-disable-next-line var-name-mixedcase
-    string public NAME;
-
     uint256 public immutable collateralIdx;
+    address internal immutable depositZap;
+    PoolType public immutable curvePoolType;
+    bool private immutable isFactoryPool;
+
+    string public NAME;
+    address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52; // Mainnet
     uint256 public crvSlippage;
     IMasterOracle public masterOracle;
-
     address[] public rewardTokens;
 
     event CrvSlippageUpdated(uint256 oldCrvSlippage, uint256 newCrvSlippage);
@@ -50,6 +60,8 @@ abstract contract CurvePoolBase is Strategy {
     constructor(
         address pool_,
         address crvPool_,
+        PoolType curvePoolType_,
+        address depositZap_,
         uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
@@ -67,16 +79,14 @@ abstract contract CurvePoolBase is Strategy {
             CRV = 0x11cDb42B0EB46D95f990BeDD4695A6e3fA034978;
         }
 
-        address _crvLp;
         address _crvGauge;
         address _collateral;
 
         IRegistry _registry = IRegistry(ADDRESS_PROVIDER.get_registry());
-        _crvLp = _registry.get_lp_token(crvPool_);
+        address _crvLp = _registry.get_lp_token(crvPool_);
 
-        bool _isFactoryPool = _crvLp == address(0);
-
-        if (!_isFactoryPool) {
+        if (_crvLp != address(0)) {
+            // Get data from Registry contract
             require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
             _collateral = _registry.get_underlying_coins(crvPool_)[collateralIdx_];
             _crvGauge = _registry.get_gauges(crvPool_)[0]; // TODO: Check other gauges?
@@ -88,6 +98,7 @@ abstract contract CurvePoolBase is Strategy {
                 _crvGauge = 0xCFc25170633581Bf896CB6CDeE170e3E3Aa59503;
             }
         } else {
+            // Get data from Factory contract
             IMetapoolFactory _factory = IMetapoolFactory(ADDRESS_PROVIDER.get_address(FACTORY_ADDRESS_ID));
 
             if (_factory.is_meta(crvPool_)) {
@@ -112,10 +123,12 @@ abstract contract CurvePoolBase is Strategy {
         crvSlippage = crvSlippage_;
         receiptToken = _crvLp;
         collateralIdx = collateralIdx_;
-
-        NAME = name_;
+        curvePoolType = curvePoolType_;
+        isFactoryPool = _crvLp == crvPool_;
+        depositZap = depositZap_;
         masterOracle = IMasterOracle(masterOracle_);
         rewardTokens.push(CRV);
+        NAME = name_;
     }
 
     /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
@@ -156,6 +169,11 @@ abstract contract CurvePoolBase is Strategy {
             IERC20(rewardTokens[i]).safeApprove(_swapper, amount_);
         }
         crvLp.safeApprove(address(crvGauge), amount_);
+
+        if (depositZap != address(0)) {
+            collateralToken.safeApprove(depositZap, amount_);
+            crvLp.safeApprove(depositZap, amount_);
+        }
     }
 
     /// @notice Unstake LP tokens in order to transfer to the new strategy
@@ -207,7 +225,76 @@ abstract contract CurvePoolBase is Strategy {
         _stakeAllLp();
     }
 
-    function _depositToCurve(uint256 amount_) internal virtual;
+    function _depositTo2PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+        uint256[2] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        IStableSwap2x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
+    }
+
+    function _depositTo2LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+        uint256[2] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        // Note: Using use_underlying = true to deposit underlying instead of IB token
+        IStableSwap2xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
+    }
+
+    function _depositTo3PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+        uint256[3] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        IStableSwap3x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
+    }
+
+    function _depositTo3LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal {
+        uint256[3] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        // Note: Using use_underlying = true to deposit underlying instead of IB token
+        IStableSwap3xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
+    }
+
+    function _depositTo4PlainOrMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+        uint256[4] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        IDeposit4x(depositZap).add_liquidity(_depositAmounts, lpAmountOutMin_);
+    }
+
+    function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) internal virtual {
+        uint256[4] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        // Note: The function below won't return a reason when reverting due to slippage
+        IDepositZap4x(depositZap).add_liquidity(address(crvPool), _depositAmounts, lpAmountOutMin_);
+    }
+
+    function _depositToCurve(uint256 coinAmountIn_) internal {
+        if (coinAmountIn_ == 0) {
+            return;
+        }
+
+        uint256 _lpAmountOutMin = _calculateAmountOutMin(address(collateralToken), address(crvLp), coinAmountIn_);
+
+        if (curvePoolType == PoolType.PLAIN_2_POOL) {
+            return _depositTo2PlainPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.LENDING_2_POOL) {
+            return _depositTo2LendingPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.PLAIN_3_POOL) {
+            return _depositTo3PlainPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.LENDING_3_POOL) {
+            return _depositTo3LendingPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.PLAIN_4_POOL) {
+            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.META_4_POOL) {
+            if (isFactoryPool) {
+                return _depositTo4FactoryMetaPool(coinAmountIn_, _lpAmountOutMin);
+            }
+            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin);
+        }
+
+        revert("deposit-to-curve-failed");
+    }
 
     function _generateReport()
         internal
@@ -247,11 +334,7 @@ abstract contract CurvePoolBase is Strategy {
                         _unstakeLp(_lpToBurn - _lpHere);
                     }
 
-                    _withdrawFromCurve(
-                        _lpToBurn,
-                        _calculateAmountOutMin(receiptToken, address(collateralToken), _lpToBurn),
-                        _i
-                    );
+                    _withdrawFromCurve(_lpToBurn, _i);
 
                     _collateralHere = collateralToken.balanceOf(address(this));
                 }
@@ -263,10 +346,22 @@ abstract contract CurvePoolBase is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
-    function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) internal view virtual returns (uint256 amountOut) {
-        if (amountIn_ > 0) {
-            amountOut = IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
+    function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) internal view virtual returns (uint256 _amountOut) {
+        if (amountIn_ == 0) {
+            return 0;
         }
+
+        if (curvePoolType == PoolType.PLAIN_4_POOL) {
+            return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
+        }
+        if (curvePoolType == PoolType.META_4_POOL) {
+            if (isFactoryPool) {
+                return IDepositZap4x(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
+            }
+            return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
+        }
+
+        return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
     }
 
     function _rebalance()
@@ -302,12 +397,76 @@ abstract contract CurvePoolBase is Strategy {
         }
     }
 
-    function _withdrawFromCurve(
-        uint256 lpToBurn_,
-        uint256 minCoinAmountOut_,
-        int128 coinIdx_
+    function _withdrawFromPlainPool(
+        uint256 lpAmount_,
+        uint256 minAmountOut_,
+        int128 i_
+    ) internal {
+        IStableSwap(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
+    }
+
+    function _withdrawFrom2LendingPool(
+        uint256 lpAmount_,
+        uint256 minAmountOut_,
+        int128 i_
+    ) internal {
+        // Note: Using use_underlying = true to withdraw underlying instead of IB token
+        IStableSwap2xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
+    }
+
+    function _withdrawFrom3LendingPool(
+        uint256 lpAmount_,
+        uint256 minAmountOut_,
+        int128 i_
+    ) internal {
+        // Note: Using use_underlying = true to withdraw underlying instead of IB token
+        IStableSwap3xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
+    }
+
+    function _withdrawFrom4PlainOrMetaPool(
+        uint256 lpAmount_,
+        uint256 minAmountOut_,
+        int128 i_
+    ) internal {
+        IDeposit4x(depositZap).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
+    }
+
+    function _withdrawFrom4FactoryMetaPool(
+        uint256 lpAmount_,
+        uint256 minAmountOut_,
+        int128 i_
     ) internal virtual {
-        IStableSwap(crvPool).remove_liquidity_one_coin(lpToBurn_, coinIdx_, minCoinAmountOut_);
+        // Note: The function below won't return a reason when reverting due to slippage
+        IDepositZap4x(depositZap).remove_liquidity_one_coin(address(crvLp), lpAmount_, i_, minAmountOut_);
+    }
+
+    function _withdrawFromCurve(uint256 lpToBurn_, int128 coinIdx_) internal {
+        if (lpToBurn_ == 0) {
+            return;
+        }
+
+        uint256 _minCoinAmountOut = _calculateAmountOutMin(address(crvLp), address(collateralToken), lpToBurn_);
+
+        if (curvePoolType == PoolType.PLAIN_2_POOL || curvePoolType == PoolType.PLAIN_3_POOL) {
+            return _withdrawFromPlainPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
+        if (curvePoolType == PoolType.LENDING_2_POOL) {
+            return _withdrawFrom2LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
+        if (curvePoolType == PoolType.LENDING_3_POOL) {
+            return _withdrawFrom3LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
+        if (curvePoolType == PoolType.PLAIN_4_POOL) {
+            return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
+        if (curvePoolType == PoolType.META_4_POOL) {
+            if (isFactoryPool) {
+                return _withdrawFrom4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+            }
+            return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
+
+        revert("withdraw-from-curve-failed");
     }
 
     function _withdrawHere(uint256 coinAmountOut_) internal override {
@@ -324,8 +483,7 @@ abstract contract CurvePoolBase is Strategy {
             _unstakeLp(_lpToBurn - _lpHere);
         }
 
-        uint256 _coinAmountOutMin = _calculateAmountOutMin(address(crvLp), address(collateralToken), _lpToBurn);
-        _withdrawFromCurve(_lpToBurn, _coinAmountOutMin, _i);
+        _withdrawFromCurve(_lpToBurn, _i);
     }
 
     /// @dev Rewards token in gauge can be updated any time. Governor can set reward tokens

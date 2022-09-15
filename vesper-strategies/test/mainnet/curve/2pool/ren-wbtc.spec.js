@@ -2,6 +2,6 @@
 
 const testRunner = require('../../../utils/testRunner')
 
-describe('VAWBTC Pool', function () {
+describe('ren-wbtc VAWBTC Pool', function () {
   testRunner('VAWBTC', ['Curve_ren_WBTC'], [{ debtRatio: 10000 }])
 })

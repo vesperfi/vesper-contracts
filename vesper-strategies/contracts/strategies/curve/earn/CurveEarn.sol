@@ -2,29 +2,44 @@
 
 pragma solidity 0.8.9;
 
-import "../Curve3PlainPool.sol";
-import "../../../Earn.sol";
+import "../Curve.sol";
+import "../../Earn.sol";
 
 //solhint-disable no-empty-blocks
-contract EarnCurve3PlainPool is Curve3PlainPool, Earn {
+contract CurveEarn is Curve, Earn {
     constructor(
         address pool_,
         address crvPool_,
+        PoolType curvePoolType_,
+        address depositZap_,
         uint256 crvSlippage_,
         address masterOracle_,
         address swapper_,
         uint256 collateralIdx_,
         address dripToken_,
         string memory name_
-    ) Curve3PlainPool(pool_, crvPool_, crvSlippage_, masterOracle_, swapper_, collateralIdx_, name_) Earn(dripToken_) {}
+    )
+        Curve(
+            pool_,
+            crvPool_,
+            curvePoolType_,
+            depositZap_,
+            crvSlippage_,
+            masterOracle_,
+            swapper_,
+            collateralIdx_,
+            name_
+        )
+        Earn(dripToken_)
+    {}
 
-    function _approveToken(uint256 _amount) internal virtual override(Strategy, CurvePoolBase) {
-        CurvePoolBase._approveToken(_amount);
+    function _approveToken(uint256 _amount) internal virtual override(Strategy, Curve) {
+        Curve._approveToken(_amount);
     }
 
     function _rebalance()
         internal
-        override(Strategy, CurvePoolBase)
+        override(Strategy, Curve)
         returns (
             uint256 _profit,
             uint256 _loss,
