@@ -63,7 +63,7 @@ abstract contract ConvexBase {
         uint256 _extraRewardCount;
         uint256 _length = cvxCrvRewards.extraRewardsLength();
 
-        for (uint256 i; i < _length; i++) {
+        for (uint256 i; i < _length; ++i) {
             address _rewardToken = Rewards(cvxCrvRewards.extraRewards(i)).rewardToken();
             // Some pool has CVX as extra rewards but other do not. CVX still reward token
             if (_rewardToken != CRV && _rewardToken != CVX) {
@@ -77,7 +77,7 @@ abstract contract ConvexBase {
 
         uint256 _index = 2;
 
-        for (uint256 i; i < _length; i++) {
+        for (uint256 i; i < _length; ++i) {
             address _rewardToken = Rewards(cvxCrvRewards.extraRewards(i)).rewardToken();
             // CRV and CVX already added in array
             if (_rewardToken != CRV && _rewardToken != CVX) {
