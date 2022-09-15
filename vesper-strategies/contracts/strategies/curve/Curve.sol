@@ -178,7 +178,6 @@ contract Curve is Strategy {
         require(IStrategy(newStrategy_).collateral() == address(collateralToken), "wrong-collateral-token");
         require(IStrategy(newStrategy_).token() == address(crvLp), "wrong-receipt-token");
         _unstakeAllLp();
-        _claimRewards();
     }
 
     function _calculateAmountOutMin(

@@ -37,6 +37,9 @@ contract ConvexForFrax is Curve {
     /// @notice Next time where the withdraw will be available
     uint256 public unlockTime;
 
+    /// @notice Emitted when `unlockTime` is updated
+    event UnlockTimeUpdated(uint256 oldUnlockTime, uint256 newUnlockTime);
+
     constructor(
         address pool_,
         address crvPool_,
@@ -173,6 +176,7 @@ contract ConvexForFrax is Curve {
     /// @dev To be used if the `lock_time_min` value changes or we want to increase it
     function updateLockPeriod(uint256 newLockPeriod_) external onlyGovernor {
         require(newLockPeriod_ >= fraxStaking.lock_time_min(), "period-lt-min");
+        emit UnlockTimeUpdated(lockPeriod, newLockPeriod_);
         lockPeriod = newLockPeriod_;
     }
 }
