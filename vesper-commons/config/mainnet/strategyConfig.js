@@ -1174,9 +1174,10 @@ const StrategyConfig = {
   },
 
   Curve_aave_DAI: {
-    contract: 'Curve3LendingPoolAave',
+    contract: 'Curve3LendingPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.AAVE_POOL,
       crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
@@ -1188,9 +1189,10 @@ const StrategyConfig = {
   },
 
   Curve_aave_USDC: {
-    contract: 'Curve3LendingPoolAave',
+    contract: 'Curve3LendingPool',
     type: StrategyTypes.CURVE,
     constructorArgs: {
+      crvPool: Address.Curve.AAVE_POOL,
       crvSlippage: 10, // 0.1%
       masterOracle,
       swapper,
