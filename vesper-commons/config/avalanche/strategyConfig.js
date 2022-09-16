@@ -52,6 +52,7 @@ const StrategyConfig = {
       crvPool: Address.Curve.AAVE_POOL,
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
+      crvToken: Address.Curve.CRV,
       crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
@@ -69,6 +70,7 @@ const StrategyConfig = {
       crvPool: Address.Curve.AAVE_POOL,
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
+      crvToken: Address.Curve.CRV,
       crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
@@ -86,6 +88,7 @@ const StrategyConfig = {
       crvPool: Address.Curve.AVWBTCRENBTC_POOL,
       curvePoolType: CurvePoolTypes.LENDING_2_POOL,
       depositZap: ethers.constants.AddressZero,
+      crvToken: Address.Curve.CRV,
       crvSlippage: 200, // 2.0%
       masterOracle,
       swapper,

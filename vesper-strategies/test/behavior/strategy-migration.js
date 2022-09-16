@@ -1,7 +1,12 @@
 'use strict'
 
 const { makeNewStrategy, getStrategyToken } = require('vesper-commons/utils/setup')
-const { deposit: _deposit, rebalanceStrategy, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
+const {
+  deposit: _deposit,
+  rebalanceStrategy,
+  makeStrategyProfitable,
+  increaseTimeIfNeeded,
+} = require('vesper-commons/utils/poolOps')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 
@@ -15,6 +20,7 @@ async function shouldMigrateStrategies() {
 
   async function migrateAndAssert(oldStrategy, newStrategy) {
     await Promise.all([deposit(50, user2), deposit(30, user1)])
+    await increaseTimeIfNeeded(oldStrategy)
     await rebalanceStrategy(oldStrategy)
     const tvlBefore = await oldStrategy.instance.tvl()
     const strategyConfigBefore = await pool.strategy(oldStrategy.instance.address)
@@ -23,6 +29,7 @@ async function shouldMigrateStrategies() {
       const borrowToken = await ethers.getContractAt('ERC20', await oldStrategy.instance.borrowToken())
       await makeStrategyProfitable(oldStrategy.instance, borrowToken)
     }
+    await increaseTimeIfNeeded(oldStrategy)
     await pool.connect(gov).migrateStrategy(oldStrategy.instance.address, newStrategy.instance.address)
     const tvlAfter = await newStrategy.instance.tvl()
     const strategyConfigAfter = await pool.strategy(newStrategy.instance.address)

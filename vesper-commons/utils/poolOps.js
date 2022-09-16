@@ -4,7 +4,7 @@
 const hre = require('hardhat')
 const ethers = hre.ethers
 const { BigNumber } = require('ethers')
-
+const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('./balance')
 const { getChain } = require('./chains')
 const { unlock, executeIfExist, getStrategyToken } = require('./setup')
@@ -99,7 +99,7 @@ async function rebalanceUnderlying(strategy) {
 }
 
 /**
- *  Calculate and return total debt of all strategies
+ * Calculate and return total debt of all strategies
  * @param {object[]} strategies Array of strategy
  * @param {object} pool Pool instance
  * @returns {Promise<BigNumber>} totalDebt
@@ -113,6 +113,27 @@ async function totalDebtOfAllStrategy(strategies, pool) {
   return totalDebt
 }
 
+/**
+ * Increase block.time to the point where withdraw is allowed
+ * It's used for strategies that funds are locked for some period of time (e.g. ConvexForFrax)
+ * @param {object} strategy - strategy object
+ */
+async function increaseTimeIfNeeded(strategy) {
+  const c = new ethers.Contract(
+    strategy.instance.address,
+    ['function unlockTime() view returns (uint256)'],
+    ethers.provider,
+  )
+  try {
+    const unlockTime = await c.unlockTime()
+    if (unlockTime > 0) {
+      await time.increaseTo(unlockTime)
+    }
+  } catch (e) {
+    // fail silently because not all strategies have such function
+  }
+}
+
 module.exports = {
   deposit,
   rebalance,
@@ -120,4 +141,5 @@ module.exports = {
   rebalanceUnderlying,
   totalDebtOfAllStrategy,
   makeStrategyProfitable,
+  increaseTimeIfNeeded,
 }
