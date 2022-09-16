@@ -175,8 +175,6 @@ async function configureSwapper(strategies, collateral) {
 }
 
 async function configureOracles(strategies) {
-  const { getContractAt } = ethers
-
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
 
@@ -190,10 +188,8 @@ async function configureOracles(strategies) {
       ]
       const defaultOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
       const btcPeggedOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
-      const curveLpTokenOracleABI = ['function registerPool(address)', 'function governor() view returns(address)']
 
       const masterOracle = await ethers.getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
-      const curveLpTokenOracle = await getContractAt(curveLpTokenOracleABI, Address.Vesper.CurveLpTokenOracle)
       const defaultOracle = await ethers.getContractAt(defaultOracleABI, await masterOracle.defaultOracle())
       const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
 
@@ -235,19 +231,6 @@ async function configureOracles(strategies) {
         // Accepts outdated prices due to time travels
         await defaultOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
         await btcPeggedOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
-
-        // ren (avWBTC + renBTC.e)
-        await curveLpTokenOracle.registerPool(Address.Curve.REN_POOL_LP)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Curve.REN_POOL_LP, curveLpTokenOracle.address)
-        await masterOracle.connect(governor).updateTokenOracle(Address.renBTC, btcPeggedOracle.address)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Aave.avWBTC, Address.Vesper.aTokenOracle)
-
-        // aave (aDAI.e + aUSDC.e + aUSDT.e)
-        await curveLpTokenOracle.registerPool(Address.Curve.AAVE_POOL_LP)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Curve.AAVE_POOL_LP, curveLpTokenOracle.address)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Aave.avDAI, Address.Vesper.aTokenOracle)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Aave.avUSDC, Address.Vesper.aTokenOracle)
-        await masterOracle.connect(governor).updateTokenOracle(Address.Aave.avUSDT, Address.Vesper.aTokenOracle)
       }
 
       // Setup is needed just once
