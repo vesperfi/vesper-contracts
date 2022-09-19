@@ -2,13 +2,12 @@
 
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./Governable.sol";
 import "./interfaces/chainlink/IAggregatorV3.sol";
 import "./interfaces/vesper/IVesperPool.sol";
 
@@ -25,13 +24,14 @@ import "./interfaces/vesper/IVesperPool.sol";
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release} or {releaseEther}
  * function.
  */
-contract RevenueSplitter is Ownable {
+contract RevenueSplitter is Governable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
 
     // events
     event PayeeAdded(address indexed payee, uint256 share);
     event PaymentReleased(address indexed payee, address indexed asset, uint256 tokens);
+    event PartnerPaymentTransferred(address indexed partner, address indexed asset, uint256 amount);
     event VTokenAdded(address indexed vToken, address indexed oracle);
     event VTokenRemoved(address indexed vToken, address indexed oracle);
 
@@ -75,44 +75,6 @@ contract RevenueSplitter is Ownable {
         }
     }
 
-    /**
-     * @dev Add vToken for vesper deployer top-up
-     * @param _vToken - Vesper token
-     * @param _oracle - Chainlink oracle address used for collateral token to ETH estimation
-     * Find chainlink oracle details here https://docs.chain.link/docs/ethereum-addresses/
-     * For pool with WETH as collateral token, we do not need _oracle and _oracle can have ZERO address.
-     */
-    function addVToken(address _vToken, address _oracle) external onlyOwner {
-        require(_vToken != address(0), "vToken-is-zero-address");
-        require(!isVToken[_vToken], "duplicate-vToken");
-        if (address(IVesperPool(_vToken).token()) != WETH) {
-            require(_oracle != address(0), "oracle-is-zero-address");
-            oracles[_vToken] = _oracle;
-        }
-        vTokens.push(_vToken);
-        isVToken[_vToken] = true;
-        emit VTokenAdded(_vToken, _oracle);
-    }
-
-    /**
-     * @dev Remove vToken for vesper deployer top-up
-     * @param _vToken - Vesper token
-     */
-    function removeVToken(address _vToken) external onlyOwner {
-        require(_vToken != address(0), "vToken-is-zero-address");
-        require(isVToken[_vToken], "vToken-not-found");
-        for (uint256 i = 0; i < vTokens.length; i++) {
-            if (vTokens[i] == _vToken) {
-                vTokens[i] = vTokens[vTokens.length - 1];
-                vTokens.pop();
-                delete isVToken[_vToken];
-                emit VTokenRemoved(_vToken, oracles[_vToken]);
-                delete oracles[_vToken];
-                break;
-            }
-        }
-    }
-
     //solhint-disable no-empty-blocks
     receive() external payable {}
 
@@ -144,32 +106,6 @@ contract RevenueSplitter is Ownable {
         // Transfer Ether to Payee.
         Address.sendValue(_payee, amount);
         emit PaymentReleased(_payee, ETH, amount);
-    }
-
-    /**
-     * @notice Toggle auto top-up
-     * @dev Toggle auto top-up to true will enable top-up too.
-     */
-    function toggleAutoTopUp() external onlyOwner {
-        if (isAutoTopUpEnabled) {
-            isAutoTopUpEnabled = false;
-        } else {
-            isAutoTopUpEnabled = true;
-            isTopUpEnabled = true;
-        }
-    }
-
-    /**
-     * @notice Toggle top-up status
-     * @dev Toggle top-up status to false will disable auto top-up too.
-     */
-    function toggleTopUpStatus() external onlyOwner {
-        if (isTopUpEnabled) {
-            isTopUpEnabled = false;
-            isAutoTopUpEnabled = false;
-        } else {
-            isTopUpEnabled = true;
-        }
     }
 
     /// @notice top-up Vesper deployer address
@@ -260,5 +196,83 @@ contract RevenueSplitter is Ownable {
         share[_payee] = _share;
         totalShare = totalShare.add(_share);
         emit PayeeAdded(_payee, _share);
+    }
+
+    ///////////////////////////// Only governor ///////////////////////////////
+
+    /**
+     * @dev Add vToken for vesper deployer top-up
+     * @param _vToken - Vesper token
+     * @param _oracle - Chainlink oracle address used for collateral token to ETH estimation
+     * Find chainlink oracle details here https://docs.chain.link/docs/ethereum-addresses/
+     * For pool with WETH as collateral token, we do not need _oracle and _oracle can have ZERO address.
+     */
+    function addVToken(address _vToken, address _oracle) external onlyGovernor {
+        require(_vToken != address(0), "vToken-is-zero-address");
+        require(!isVToken[_vToken], "duplicate-vToken");
+        if (address(IVesperPool(_vToken).token()) != WETH) {
+            require(_oracle != address(0), "oracle-is-zero-address");
+            oracles[_vToken] = _oracle;
+        }
+        vTokens.push(_vToken);
+        isVToken[_vToken] = true;
+        emit VTokenAdded(_vToken, _oracle);
+    }
+
+    /**
+     * @dev Remove vToken for vesper deployer top-up
+     * @param _vToken - Vesper token
+     */
+    function removeVToken(address _vToken) external onlyGovernor {
+        require(_vToken != address(0), "vToken-is-zero-address");
+        require(isVToken[_vToken], "vToken-not-found");
+        for (uint256 i = 0; i < vTokens.length; i++) {
+            if (vTokens[i] == _vToken) {
+                vTokens[i] = vTokens[vTokens.length - 1];
+                vTokens.pop();
+                delete isVToken[_vToken];
+                emit VTokenRemoved(_vToken, oracles[_vToken]);
+                delete oracles[_vToken];
+                break;
+            }
+        }
+    }
+
+    /**
+     * @notice Toggle auto top-up
+     * @dev Toggle auto top-up to true will enable top-up too.
+     */
+    function toggleAutoTopUp() external onlyGovernor {
+        if (isAutoTopUpEnabled) {
+            isAutoTopUpEnabled = false;
+        } else {
+            isAutoTopUpEnabled = true;
+            isTopUpEnabled = true;
+        }
+    }
+
+    /**
+     * @notice Toggle top-up status
+     * @dev Toggle top-up status to false will disable auto top-up too.
+     */
+    function toggleTopUpStatus() external onlyGovernor {
+        if (isTopUpEnabled) {
+            isTopUpEnabled = false;
+            isAutoTopUpEnabled = false;
+        } else {
+            isTopUpEnabled = true;
+        }
+    }
+
+    /// @notice Transfer _asset to _partner address
+    function transfer(
+        address _asset,
+        address _partner,
+        uint256 _amount
+    ) public onlyGovernor {
+        require(_partner != address(0), "partner-is-zero-address");
+        require(_amount > 0, "incorrect-amount");
+        IERC20(_asset).safeTransfer(_partner, _amount);
+        emit PartnerPaymentTransferred(_partner, _asset, _amount);
     }
 }
