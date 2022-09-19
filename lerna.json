@@ -4,8 +4,7 @@
     "vesper-commons",
     "vesper-pools",
     "vesper-strategies",
-    "vesper-deployments",
-    "vesper-contracts"
+    "vesper-deployments"
   ],
   "useNx": false,
   "version": "independent"

@@ -5,8 +5,8 @@ on:
       - ".github/workflows/mainnet-revenue-splitter.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/test/utils/setup.js"
-      - "vesper-contracts/contracts/RevenueSplitter.sol"
-      - "vesper-contracts/test/revenue-splitter.js"
+      - "packages/misc/contracts/RevenueSplitter.sol"
+      - "packages/misc/test/revenue-splitter.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
@@ -38,4 +38,4 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Revenue Splitter Tests
-        run: npm test -- --scope vesper-contracts -- test/revenue-splitter.js
+        run: npm test -- --scope misc -- test/revenue-splitter.js

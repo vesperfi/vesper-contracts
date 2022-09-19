@@ -3,7 +3,7 @@
 const { deployContract, unlock } = require('vesper-commons/utils/setup')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { adjustBalance } = require('vesper-commons/utils/balance')
-const { getEthQuote, send } = require('../utils/tokenSwapper')
+const { getEthQuote, sendEth } = require('../utils/util')
 const { ethers } = require('hardhat')
 const { BigNumber: BN } = require('ethers')
 const { getChainData } = require('vesper-commons/utils/chains')
@@ -19,6 +19,7 @@ const ZERO_ADDRESS = address.ZERO
 describe('RevenueSplitter', function () {
   describe('Revenue Splitter Contract deployed', function () {
     let payee1, payee2, payee3, payer1, nonpayee1, user6
+    const slot = 0
     context('General validations', function () {
       beforeEach(async function () {
         ;[payee1, payee2, payee3, payer1, nonpayee1, user6] = await ethers.getSigners()
@@ -151,7 +152,7 @@ describe('RevenueSplitter', function () {
       })
 
       it('accepts revenue', async function () {
-        await send(payer1.address, psContract.address, amount)
+        await sendEth(payer1.address, psContract.address, amount)
         expect(await ethers.provider.getBalance(psContract.address)).to.be.equal(amount)
       })
 
@@ -170,13 +171,13 @@ describe('RevenueSplitter', function () {
           await expect(psContract.releaseEther(payee1.address)).to.be.revertedWith('payee-is-not-due-for-tokens')
         })
         it('reverts if non-payee want to claim', async function () {
-          await send(payer1.address, psContract.address, amount)
+          await sendEth(payer1.address, psContract.address, amount)
           await expect(psContract.releaseEther(nonpayee1.address)).to.be.revertedWith('payee-does-not-have-share')
         })
 
         it('release ether to payee1.address', async function () {
           // receive funds
-          await send(payer1.address, psContract.address, amount)
+          await sendEth(payer1.address, psContract.address, amount)
           const initBalance = await ethers.provider.getBalance(psContract.address)
           expect(initBalance).to.be.equal(amount)
 
@@ -189,7 +190,7 @@ describe('RevenueSplitter', function () {
 
         it('release ether to payee2.address', async function () {
           // receive funds
-          await send(payer1.address, psContract.address, amount)
+          await sendEth(payer1.address, psContract.address, amount)
           const initBalance = await ethers.provider.getBalance(psContract.address)
           expect(initBalance).to.be.equal(amount)
 
@@ -216,7 +217,7 @@ describe('RevenueSplitter', function () {
           psContract = await deployContract('RevenueSplitter', [payees, shares])
           await psContract.addVToken(vaETH.address, ZERO_ADDRESS)
 
-          await adjustBalance(asset1.address, psContract.address, mintAmount)
+          await adjustBalance(asset1.address, psContract.address, mintAmount, slot)
 
           const token = await vaETH.token()
           const weth = await ethers.getContractAt('TokenLike', token)
@@ -285,7 +286,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee1Balance, '500000000000000', 'releasing-tokens-failed-for-payee1.address.')
 
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await psContract.release(payee1.address, asset1.address)
           payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -298,7 +299,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee2Balance, '9500000000000000', 'releasing-tokens-failed-for-payee2.address.')
 
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await psContract.release(payee2.address, asset1.address)
           payee2Balance = (await asset1.balanceOf(payee2.address)).toString()
@@ -311,7 +312,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee2Balance, '9500000000000000', 'releasing-tokens-failed-for-payee2.address.')
           // Add more tokens multiple times.
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(BN.from(mintAmount).mul(3)))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(BN.from(mintAmount).mul(3)), slot)
 
           await psContract.release(payee2.address, asset1.address)
           payee2Balance = (await asset1.balanceOf(payee2.address)).toString()
@@ -324,7 +325,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee2Balance, '9500000000000000', 'releasing-tokens-failed-for-payee2.address.')
           // Add more tokens multiple times.
           let currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(BN.from(mintAmount).mul(2)))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(BN.from(mintAmount).mul(2)), slot)
 
           await psContract.release(payee2.address, asset1.address)
           payee2Balance = (await asset1.balanceOf(payee2.address)).toString()
@@ -332,7 +333,7 @@ describe('RevenueSplitter', function () {
 
           // Add more tokens again
           currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await psContract.release(payee1.address, asset1.address)
           let payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -340,7 +341,7 @@ describe('RevenueSplitter', function () {
 
           // Add more tokens again
           currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await psContract.release(payee1.address, asset1.address)
           payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -369,7 +370,7 @@ describe('RevenueSplitter', function () {
           const weth = await ethers.getContractAt('TokenLike', token)
           await deposit(vaETH, weth, 1, user6)
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(amount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(amount), slot)
         })
         it('payee1.address', async function () {
           await psContract.release(payee1.address, asset1.address)
@@ -408,8 +409,8 @@ describe('RevenueSplitter', function () {
         psContract = await deployContract('RevenueSplitter', [payees, shares])
         await psContract.addVToken(vaETH.address, ZERO_ADDRESS)
 
-        await adjustBalance(asset1.address, psContract.address, mintAmount)
-        await adjustBalance(asset2.address, psContract.address, asset2MintAmount)
+        await adjustBalance(asset1.address, psContract.address, mintAmount, slot)
+        await adjustBalance(asset2.address, psContract.address, asset2MintAmount, slot)
         const token = await vaETH.token()
         const weth = await ethers.getContractAt('TokenLike', token)
         await deposit(vaETH, weth, 5, user6)
@@ -444,7 +445,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee1Balance, '500000000000000', 'releasing-tokens-failed-for-payee1.address.')
 
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(amount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(amount), slot)
 
           await psContract.release(payee1.address, asset1.address)
           payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -493,7 +494,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee1Balance, '500000000000000', 'releasing-tokens-failed-for-payee1.address.')
 
           const currentBal = await asset2.balanceOf(psContract.address)
-          await adjustBalance(asset2.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset2.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await expect(psContract.release(payee1.address, asset1.address)).to.be.revertedWith(
             'payee-is-not-due-for-tokens',
@@ -506,7 +507,7 @@ describe('RevenueSplitter', function () {
           assert.equal(payee1Balance, '5000000000', 'releasing-tokens-failed-for-payee1.address.')
 
           const currentBal = await asset1.balanceOf(psContract.address)
-          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount))
+          await adjustBalance(asset1.address, psContract.address, currentBal.add(mintAmount), slot)
 
           await expect(psContract.release(payee1.address, asset2.address)).to.be.revertedWith(
             'payee-is-not-due-for-tokens',
@@ -520,9 +521,9 @@ describe('RevenueSplitter', function () {
         assert.equal(payee2Balance, '9500000000000000', 'releasing-tokens-failed-for-payee2.address.')
         // Add more tokens multiple times for both assets
         let currentBal1 = await asset1.balanceOf(psContract.address)
-        await adjustBalance(asset1.address, psContract.address, currentBal1.add(BN.from(mintAmount).mul(2)))
+        await adjustBalance(asset1.address, psContract.address, currentBal1.add(BN.from(mintAmount).mul(2)), slot)
         let currentBal2 = await asset2.balanceOf(psContract.address)
-        await adjustBalance(asset2.address, psContract.address, currentBal2.add(BN.from(asset2MintAmount).mul(2)))
+        await adjustBalance(asset2.address, psContract.address, currentBal2.add(BN.from(asset2MintAmount).mul(2)), slot)
 
         await psContract.release(payee2.address, asset1.address)
         payee2Balance = (await asset1.balanceOf(payee2.address)).toString()
@@ -534,9 +535,9 @@ describe('RevenueSplitter', function () {
 
         // Add more tokens again
         currentBal1 = await asset1.balanceOf(psContract.address)
-        await adjustBalance(asset1.address, psContract.address, currentBal1.add(mintAmount))
+        await adjustBalance(asset1.address, psContract.address, currentBal1.add(mintAmount), slot)
         currentBal2 = await asset2.balanceOf(psContract.address)
-        await adjustBalance(asset2.address, psContract.address, currentBal2.add(asset2MintAmount))
+        await adjustBalance(asset2.address, psContract.address, currentBal2.add(asset2MintAmount), slot)
 
         await psContract.release(payee1.address, asset1.address)
         let payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -548,9 +549,9 @@ describe('RevenueSplitter', function () {
 
         // Add more tokens again
         currentBal1 = await asset1.balanceOf(psContract.address)
-        await adjustBalance(asset1.address, psContract.address, currentBal1.add(mintAmount))
+        await adjustBalance(asset1.address, psContract.address, currentBal1.add(mintAmount), slot)
         currentBal2 = await asset2.balanceOf(psContract.address)
-        await adjustBalance(asset2.address, psContract.address, currentBal2.add(asset2MintAmount))
+        await adjustBalance(asset2.address, psContract.address, currentBal2.add(asset2MintAmount), slot)
 
         await psContract.release(payee1.address, asset1.address)
         payee1Balance = (await asset1.balanceOf(payee1.address)).toString()
@@ -583,9 +584,9 @@ describe('RevenueSplitter', function () {
         asset1 = await deployContract('ERC20', ['test', 't1'])
         const amount = '10000000000000000'
         const mintAmount = BN.from(amount).toString()
-        await adjustBalance(asset1.address, psContract.address, mintAmount)
+        await adjustBalance(asset1.address, psContract.address, mintAmount, slot)
         vaETH = await ethers.getContractAt('IVesperPool', address.Vesper.vaETH)
-        await adjustBalance(vaETH.address, VESPER_DEPLOYER, 0)
+        await adjustBalance(vaETH.address, VESPER_DEPLOYER, 0, slot)
         await psContract.addVToken(vaETH.address, ZERO_ADDRESS)
         const token = await vaETH.token()
         const weth = await ethers.getContractAt('TokenLike', token)
@@ -604,7 +605,7 @@ describe('RevenueSplitter', function () {
         // Keep 10 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
         await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('8').mul(DECIMAL18).toString() })
@@ -633,7 +634,7 @@ describe('RevenueSplitter', function () {
         // Keep 10 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
         await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('8').mul(DECIMAL18).toString() })
@@ -660,8 +661,8 @@ describe('RevenueSplitter', function () {
         // Keep 23 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
         await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('13').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('13').mul(DECIMAL18))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('22').mul(DECIMAL18).toString() })
@@ -696,8 +697,8 @@ describe('RevenueSplitter', function () {
         // Keep 25 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
         await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('23').mul(DECIMAL18).toString() })
@@ -733,8 +734,8 @@ describe('RevenueSplitter', function () {
       it('should not top-up vesper deployer when balance is greater than low level', async function () {
         // Transfer 25 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await send(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
 
         // add some vaETH at revenue splitter contract address
         await vaETH.connect(signer)['deposit()']({ value: BN.from('15').mul(DECIMAL18).toString() })
@@ -772,8 +773,8 @@ describe('RevenueSplitter', function () {
         // Keep 25 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
         await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await send(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
         const token = await vaUSDC.token()
         const usdc = await ethers.getContractAt('ERC20', token)
 

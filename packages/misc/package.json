@@ -1,7 +1,7 @@
 {
-  "name": "vesper-contracts",
+  "name": "misc",
   "version": "5.0.0",
-  "description": "Vesper contracts excluding pools or strategies",
+  "description": "Vesper miscellaneous contracts excluding pools or strategies",
   "license": "MIT",
   "directories": {
     "test": "test"
