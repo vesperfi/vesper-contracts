@@ -822,8 +822,8 @@ describe('RevenueSplitter', function () {
       })
     })
 
-    context('Only owner', function () {
-      let payees, shares, psContract, vaUSDC, vaWBTC, vaETH
+    context('Only governor', function () {
+      let payees, shares, psContract, vaUSDC, vaWBTC, vaETH, asset1Amount, asset2Amount
       const chainLinkUsdc2EthOracle = '0x986b5e1e1755e3c2440e960477f25201b0a8bbd4'
       const chainLinkBtc2EthOracle = '0xF7904a295A029a3aBDFFB6F12755974a958C7C25'
       beforeEach(async function () {
@@ -834,6 +834,13 @@ describe('RevenueSplitter', function () {
         vaWBTC = await ethers.getContractAt('IVesperPool', address.Vesper.vaWBTC)
         vaUSDC = await ethers.getContractAt('IVesperPool', address.Vesper.vaUSDC)
         psContract = await deployContract('RevenueSplitter', [payees, shares])
+
+        asset1Amount = '10000000000000000'
+        asset2Amount = '100000000000'
+        await adjustBalance(vaETH.address, psContract.address, asset1Amount, slot)
+        await adjustBalance(vaWBTC.address, psContract.address, asset2Amount, slot)
+        await adjustBalance(vaETH.address, VESPER_DEPLOYER, 0, slot)
+        await adjustBalance(vaWBTC.address, VESPER_DEPLOYER, 0, slot)
       })
 
       it('should allow to add vToken by owner', async function () {
@@ -869,7 +876,7 @@ describe('RevenueSplitter', function () {
 
       it('should not allow to add vToken using non owner', async function () {
         await expect(psContract.connect(user6).addVToken(vaETH.address, ZERO_ADDRESS)).to.be.revertedWith(
-          'Ownable: caller is not the owner',
+          'not-governor',
         )
       })
 
@@ -910,9 +917,7 @@ describe('RevenueSplitter', function () {
       })
 
       it('should not allow to remove vToken using non owner', async function () {
-        await expect(psContract.connect(user6).removeVToken(vaETH.address)).to.be.revertedWith(
-          'Ownable: caller is not the owner',
-        )
+        await expect(psContract.connect(user6).removeVToken(vaETH.address)).to.be.revertedWith('not-governor')
       })
 
       it('should toggle auto top-up to true', async function () {
@@ -937,7 +942,7 @@ describe('RevenueSplitter', function () {
       })
 
       it('should not allow auto top-up toggle via non owner', async function () {
-        await expect(psContract.connect(user6).toggleAutoTopUp()).to.be.revertedWith('Ownable: caller is not the owner')
+        await expect(psContract.connect(user6).toggleAutoTopUp()).to.be.revertedWith('not-governor')
       })
 
       it('should toggle top-up status to true', async function () {
@@ -961,6 +966,50 @@ describe('RevenueSplitter', function () {
         expect(await psContract.isAutoTopUpEnabled()).to.be.equal(false)
         // Disable top-up
         expect(await psContract.isTopUpEnabled()).to.be.equal(false)
+      })
+
+      it('should transfer partial payment to partner address', async function () {
+        const transferAmount = BN.from(asset1Amount).div(2)
+        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)
+        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount, 'partial payment to partner failed')
+      })
+
+      it('should transfer full payment to partner address', async function () {
+        const transferAmount = BN.from(asset1Amount)
+        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)
+        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount, 'full payment to partner failed')
+      })
+
+      it('should be able to transfer multiple vesper tokens', async function () {
+        const transferAmount1 = BN.from(asset1Amount).div(3)
+        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount1)
+        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount1, 'vaETH payment to partner failed')
+
+        const transferAmount2 = BN.from(asset2Amount).div(3)
+        await psContract.transfer(vaWBTC.address, VESPER_DEPLOYER, transferAmount2)
+        expect(await vaWBTC.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount2, 'vaWBTC payment to partner failed')
+      })
+
+      it('should not transfer zero amount', async function () {
+        await expect(psContract.transfer(vaETH.address, VESPER_DEPLOYER, 0)).to.be.revertedWith('incorrect-amount')
+      })
+
+      it('should not transfer to zero address', async function () {
+        await expect(psContract.transfer(vaETH.address, ZERO_ADDRESS, 0)).to.be.revertedWith('partner-is-zero-address')
+      })
+
+      it('should not allow transfer using non-governor', async function () {
+        const transferAmount = BN.from(asset1Amount).div(2)
+        await expect(
+          psContract.connect(user6).transfer(vaETH.address, VESPER_DEPLOYER, transferAmount),
+        ).to.be.revertedWith('not-governor')
+      })
+
+      it('should not transfer more than available balance', async function () {
+        const transferAmount = BN.from(asset1Amount).mul(2)
+        await expect(psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)).to.be.revertedWith(
+          'ERC20: transfer amount exceeds balance',
+        )
       })
     })
   })
