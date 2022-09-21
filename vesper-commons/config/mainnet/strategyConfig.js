@@ -437,6 +437,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Compound_Leverage_DAI: {
+    contract: 'CompoundLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Compound.cDAI,
+      strategyName: 'Compound_Leverage_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Compound_Leverage_UNI: {
     contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,

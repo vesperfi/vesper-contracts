@@ -320,6 +320,7 @@
           "implementation": "0xE244881025f8F5005985D60757CC95c8D667e493"
         },
         "strategies": {
+          "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
