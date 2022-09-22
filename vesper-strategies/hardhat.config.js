@@ -12,6 +12,20 @@ if (process.env.RUN_CONTRACT_SIZER === 'true') {
   require('hardhat-contract-sizer')
 }
 
+// Hardhat do not support adding chainId at runtime. Only way to set it in hardhat-config.js
+// More info https://github.com/NomicFoundation/hardhat/issues/2167
+// To avoid creating a new ENV VAR to store chainId, this function resolves it based on provider url
+function resolveChainId() {
+  const { NODE_URL } = process.env
+  if (NODE_URL.includes('eth.connect')) {
+    return 1
+  }
+  if (NODE_URL.includes('avax')) {
+    return 43114
+  }
+  return 31337
+}
+
 module.exports = {
   defaultNetwork: 'hardhat',
   networks: {
@@ -22,6 +36,7 @@ module.exports = {
     },
     hardhat: {
       initialBaseFeePerGas: 0,
+      chainId: resolveChainId(),
       forking: {
         url: process.env.NODE_URL,
         blockNumber: process.env.BLOCK_NUMBER ? parseInt(process.env.BLOCK_NUMBER) : undefined,
