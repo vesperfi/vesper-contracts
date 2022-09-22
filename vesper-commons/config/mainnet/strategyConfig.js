@@ -872,7 +872,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
-      crvSlippage: 100, // 1%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -888,7 +888,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
-      crvSlippage: 100, // 1%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -920,7 +920,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
-      crvSlippage: 100, // 1%
+      crvSlippage: 250, // 2.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1083,7 +1083,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
-      crvSlippage: 100, // 1.0%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
