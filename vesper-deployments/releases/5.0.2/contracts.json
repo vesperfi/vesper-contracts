@@ -605,7 +605,8 @@
         },
         "strategies": {
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
-          "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65"
+          "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
+          "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
         }
       },
       "vafei": {

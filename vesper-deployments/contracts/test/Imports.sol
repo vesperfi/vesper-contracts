@@ -21,6 +21,7 @@ import "vesper-strategies/contracts/strategies/convex/2Pool/Convex2PlainPool.sol
 import "vesper-strategies/contracts/strategies/vesper/earn/VesperEarnSaddleLp.sol";
 import "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundLeverage.sol";
+import "vesper-strategies/contracts/strategies/stargate/Stargate.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
