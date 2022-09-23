@@ -21,6 +21,15 @@ function getConstructorArgKeys(strategyName) {
   } else if (strategyName.includes('CompoundXY')) {
     // Has borrowCToken but no strategy name
     keys = ['swapper', 'receiptToken', 'borrowCToken']
+  } else if (strategyName.includes('Stargate')) {
+    keys = [
+      'swapper',
+      'stargateRouter',
+      'stargateLpStaking',
+      'stargatePoolId',
+      'stargateLpStakingPoolId',
+      'strategyName',
+    ]
   }
 
   // Separate conditions
