@@ -1697,8 +1697,8 @@ const StrategyConfig = {
     type: StrategyTypes.EULER,
     constructorArgs: {
       swapper,
-      markets: Address.Euler.Markets,
-      protocol: Address.Euler.Euler,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
       strategyName: 'Euler_ETH',
     },
     config: { ...config },
@@ -1709,8 +1709,8 @@ const StrategyConfig = {
     type: StrategyTypes.EULER,
     constructorArgs: {
       swapper,
-      markets: Address.Euler.Markets,
-      protocol: Address.Euler.Euler,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
       strategyName: 'Euler_USDC',
     },
     config: { ...config },
