@@ -3,5 +3,5 @@
 const testRunner = require('../../utils/testRunner')
 
 describe('VAUSDC Pool', function () {
-  testRunner('VAUSDC', ['StargateStrategyUSDC'], [{ debtRatio: 9000 }])
+  testRunner('VAUSDC', ['Stargate_USDC'], [{ debtRatio: 9000 }])
 })

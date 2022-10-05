@@ -42,6 +42,18 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Aave_V2_ETH: {
+    contract: 'AaveV2',
+    type: StrategyTypes.AAVE,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aWETH,
+      strategyName: 'Aave_V2_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Aave_V2_FEI: {
     contract: 'AaveV2',
     type: StrategyTypes.AAVE,
@@ -102,15 +114,15 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveLeverageStrategyDAI: {
-    contract: 'AaveLeverageStrategy',
+  Aave_V2_Leverage_DAI: {
+    contract: 'AaveV2Leverage',
     type: StrategyTypes.AAVE_LEVERAGE,
     constructorArgs: {
       swapper,
       rewardToken: Address.Aave.AAVE,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Aave.aDAI,
-      strategyName: 'AaveLeverageStrategyDAI',
+      strategyName: 'Aave_V2_Leverage_DAI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -143,6 +155,22 @@ const StrategyConfig = {
       vPool: Address.Vesper.vaFEI,
       vsp: Address.Vesper.VSP,
       strategyName: 'AaveV2_Vesper_Xy_ETH_FEI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  AaveV2_Vesper_Xy_LINK_USDC: {
+    contract: 'AaveV2VesperXy',
+    type: StrategyTypes.AAVE_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      rewardToken: Address.Aave.AAVE,
+      receiptToken: Address.Aave.aLINK,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'AaveV2_Vesper_Xy_LINK_USDC',
     },
     config: { ...config },
     setup: { ...setup },
@@ -209,133 +237,133 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  EarnAaveStrategyETH_DAI: {
-    contract: 'EarnAaveStrategy',
+  Aave_Earn_ETH_DAI: {
+    contract: 'AaveEarn',
     type: StrategyTypes.EARN_AAVE,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aWETH,
       dripToken: Address.DAI,
-      strategyName: 'EarnAaveStrategyETH_DAI',
+      strategyName: 'Aave_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyDAI: {
-    contract: 'CompoundStrategy',
+  Compound_DAI: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cDAI,
-      strategyName: 'CompoundStrategyDAI',
+      strategyName: 'Compound_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyLINK: {
-    contract: 'CompoundStrategy',
+  Compound_LINK: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cLINK,
-      strategyName: 'CompoundStrategyLINK',
+      strategyName: 'Compound_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
-      strategyName: 'CompoundStrategyETH',
+      strategyName: 'Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUNI: {
-    contract: 'CompoundStrategy',
+  Compound_UNI: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUNI,
-      strategyName: 'CompoundStrategyUNI',
+      strategyName: 'Compound_UNI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUSDC: {
-    contract: 'CompoundStrategy',
+  Compound_USDC: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUSDC,
-      strategyName: 'CompoundStrategyUSDC',
+      strategyName: 'Compound_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyUSDT: {
-    contract: 'CompoundStrategy',
+  Compound_USDT: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cUSDT,
-      strategyName: 'CompoundStrategyUSDT',
+      strategyName: 'Compound_USDT',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundStrategyWBTC: {
-    contract: 'CompoundStrategy',
+  Compound_WBTC: {
+    contract: 'Compound',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
-      strategyName: 'CompoundStrategyWBTC',
+      strategyName: 'Compound_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  InverseCompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Inverse_Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Inverse.COMPTROLLER,
       rewardToken: Address.Inverse.INV,
       receiptToken: Address.Inverse.anETH,
-      strategyName: 'InverseCompoundStrategyETH',
+      strategyName: 'Inverse_Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  InverseCompoundLeverageStrategyETH: {
-    contract: 'CompoundLeverageStrategyETH',
+  Inverse_Leverage_ETH: {
+    contract: 'CompoundLeverageETH',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
@@ -344,28 +372,28 @@ const StrategyConfig = {
       rewardToken: Address.Inverse.INV,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Inverse.anETH,
-      strategyName: 'InverseCompoundLeverageStrategyETH',
+      strategyName: 'Inverse_Leverage_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  DropsCompoundStrategyETH: {
-    contract: 'CompoundStrategyETH',
+  Drops_Compound_ETH: {
+    contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
     constructorArgs: {
       swapper,
       comptroller: Address.Drops.COMPTROLLER,
       rewardToken: Address.Drops.DOP,
       receiptToken: Address.Drops.dETH,
-      strategyName: 'DropsCompoundStrategyETH',
+      strategyName: 'Drops_Compound_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnCompoundStrategyETH_DAI: {
-    contract: 'EarnCompoundStrategyETH',
+  Compound_Earn_ETH_DAI: {
+    contract: 'CompoundEarnETH',
     type: StrategyTypes.EARN_COMPOUND,
     constructorArgs: {
       swapper,
@@ -373,14 +401,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       dripToken: Address.DAI,
-      strategyName: 'EarnCompoundStrategyETH_DAI',
+      strategyName: 'Compound_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnCompoundStrategyWBTC_DAI: {
-    contract: 'EarnCompoundStrategy',
+  Compound_Earn_WBTC_DAI: {
+    contract: 'CompoundEarn',
     type: StrategyTypes.EARN_COMPOUND,
     constructorArgs: {
       swapper,
@@ -388,78 +416,89 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
       dripToken: Address.DAI,
-      strategyName: 'EarnCompoundStrategyWBTC_DAI',
+      strategyName: 'Compound_Earn_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyETH: {
-    contract: 'CompoundLeverageStrategyETH',
+  Compound_Leverage_ETH: {
+    contract: 'CompoundLeverageETH',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cETH,
-      strategyName: 'CompoundLeverageStrategyETH',
+      strategyName: 'Compound_Leverage_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyUNI: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_DAI: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'CompoundLeverageStrategyUNI',
+      receiptToken: Address.Compound.cDAI,
+      strategyName: 'Compound_Leverage_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyLINK: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_UNI: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Compound.cUNI,
+      strategyName: 'Compound_Leverage_UNI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Compound_Leverage_LINK: {
+    contract: 'CompoundLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cLINK,
-      strategyName: 'CompoundLeverageStrategyLINK',
+      strategyName: 'Compound_Leverage_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundLeverageStrategyWBTC: {
-    contract: 'CompoundLeverageStrategy',
+  Compound_Leverage_WBTC: {
+    contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
     constructorArgs: {
       swapper,
-      rewardDistributor: Address.Compound.COMPTROLLER,
       comptroller: Address.Compound.COMPTROLLER,
       rewardToken: Address.Compound.COMP,
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cWBTC,
-      strategyName: 'CompoundLeverageStrategyWBTC',
+      strategyName: 'Compound_Leverage_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundXYStrategyETH_DAI: {
-    contract: 'CompoundXYStrategyETH',
+  Compound_Xy_ETH_DAI: {
+    contract: 'CompoundXyETH',
     type: StrategyTypes.COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -467,14 +506,14 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       borrowCToken: Address.Compound.cDAI,
-      strategyName: 'CompoundXYStrategyETH_DAI',
+      strategyName: 'Compound_Xy_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  CompoundXYStrategyWBTC_DAI: {
-    contract: 'CompoundXYStrategy',
+  Compound_Xy_WBTC_DAI: {
+    contract: 'CompoundXy',
     type: StrategyTypes.COMPOUND_XY,
     constructorArgs: {
       swapper,
@@ -482,15 +521,15 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cWBTC,
       borrowCToken: Address.Compound.cDAI,
-      strategyName: 'CompoundXYStrategyWBTC_DAI',
+      strategyName: 'Compound_Xy_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyETH_WBTC: {
-    contract: 'VesperCompoundXYStrategyETH',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+  Compound_Vesper_Xy_ETH_WBTC: {
+    contract: 'CompoundVesperXyETH',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
@@ -499,15 +538,32 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cWBTC,
       vPool: Address.Vesper.vaWBTC,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyETH_WBTC',
+      strategyName: 'Compound_Vesper_Xy_ETH_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyETH_LINK: {
-    contract: 'VesperCompoundXYStrategyETH',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+  Compound_Vesper_Xy_ETH_DAI: {
+    contract: 'CompoundVesperXyETH',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      receiptToken: Address.Compound.cETH,
+      borrowCToken: Address.Compound.cDAI,
+      vPool: Address.Vesper.vaDAI,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Compound_Vesper_Xy_ETH_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Compound_Vesper_Xy_ETH_LINK: {
+    contract: 'CompoundVesperXyETH',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
@@ -516,15 +572,15 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cLINK,
       vPool: Address.Vesper.vaLINK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyETH_LINK',
+      strategyName: 'Compound_Vesper_Xy_ETH_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_DAI: {
-    contract: 'VesperCompoundXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+  Compound_Vesper_Xy_WBTC_DAI: {
+    contract: 'CompoundVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
@@ -533,15 +589,15 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cDAI,
       vPool: Address.Vesper.vaDAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_DAI',
+      strategyName: 'Compound_Vesper_Xy_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_USDC: {
-    contract: 'VesperCompoundXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+  Compound_Vesper_Xy_WBTC_USDC: {
+    contract: 'CompoundVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
@@ -550,15 +606,15 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cUSDC,
       vPool: Address.Vesper.vaUSDC,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_USDC',
+      strategyName: 'Compound_Vesper_Xy_WBTC_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  VesperCompoundXYStrategyWBTC_LINK: {
-    contract: 'VesperCompoundXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+  Compound_Vesper_Xy_WBTC_LINK: {
+    contract: 'CompoundVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.Compound.COMPTROLLER,
@@ -567,7 +623,7 @@ const StrategyConfig = {
       borrowCToken: Address.Compound.cLINK,
       vPool: Address.Vesper.vaLINK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'VesperCompoundXYStrategyWBTC_LINK',
+      strategyName: 'Compound_Vesper_Xy_WBTC_LINK',
     },
     config: { ...config },
     setup: { ...setup },
@@ -603,7 +659,7 @@ const StrategyConfig = {
 
   VesperIronBankXYStrategyETH_DAI: {
     contract: 'VesperIronBankXYStrategy',
-    type: StrategyTypes.VESPER_COMPOUND_XY,
+    type: StrategyTypes.COMPOUND_VESPER_XY,
     constructorArgs: {
       swapper,
       comptroller: Address.IronBank.Unitroller,
@@ -851,6 +907,22 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Convex_fraxusdc_FRAX: {
+    contract: 'Convex2PlainPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAX_USDC_POOL,
+      crvSlippage: 50, // 0.5%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      convexPoolId: 100,
+      strategyName: 'Convex_fraxusdc_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Convex_3pool_DAI: {
     contract: 'Convex3PlainPool',
     type: StrategyTypes.CONVEX,
@@ -872,7 +944,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2.0%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -987,7 +1059,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -1004,7 +1076,7 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.FRAX_3CRV_POOL,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
@@ -1093,17 +1165,17 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Earn_Curve_sbtc_WBTC_DAI: {
+  Curve_Earn_sbtc_WBTC_DAI: {
     contract: 'EarnCurve3PlainPool',
     type: StrategyTypes.EARN_CURVE,
     constructorArgs: {
       crvPool: Address.Curve.SBTC_POOL,
-      crvSlippage: 100, // 1.0%
+      crvSlippage: 150, // 1.5%
       masterOracle,
       swapper,
       collateralIdx: 1,
       dripToken: Address.DAI,
-      strategyName: 'Earn_Curve_sbtc_WBTC_DAI',
+      strategyName: 'Curve_Earn_sbtc_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1312,8 +1384,8 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
   },
 
-  VesperMakerStrategyETH: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_ETH: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1322,7 +1394,7 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('ETH-C'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyETH',
+      strategyName: 'Maker_Vesper_ETH',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
@@ -1344,8 +1416,8 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
   },
 
-  VesperMakerStrategyLINK: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_LINK: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1354,14 +1426,14 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('LINK-A'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyLINK',
+      strategyName: 'Maker_Vesper_LINK',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_LINK_A, highWater: 250, lowWater: 225 } },
   },
 
-  VesperMakerStrategyWBTC: {
-    contract: 'VesperMakerStrategy',
+  Maker_Vesper_WBTC: {
+    contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
     constructorArgs: {
       cm: Address.Vesper.COLLATERAL_MANAGER,
@@ -1370,7 +1442,7 @@ const StrategyConfig = {
       collateralType: ethers.utils.formatBytes32String('WBTC-C'),
       highWater: 250,
       lowWater: 225,
-      strategyName: 'VesperMakerStrategyWBTC',
+      strategyName: 'Maker_Vesper_WBTC',
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_C, highWater: 250, lowWater: 225 } },
@@ -1446,155 +1518,155 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_A, highWater: 250, lowWater: 225 } },
   },
 
-  EarnVesperStrategyDAI_DPI: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_DPI: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.DPI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_DPI',
+      strategyName: 'Vesper_Earn_DAI_DPI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_LINK: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_LINK: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.LINK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_LINK',
+      strategyName: 'Vesper_Earn_DAI_LINK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyLINK_DAI: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_LINK_DAI: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaLINK,
       dripToken: Address.DAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyLINK_DAI',
+      strategyName: 'Vesper_Earn_LINK_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_SHIB: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_SHIB: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.SHIB,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_SHIB',
+      strategyName: 'Vesper_Earn_DAI_SHIB',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_PUNK: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_PUNK: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.PUNK,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_PUNK',
+      strategyName: 'Vesper_Earn_DAI_PUNK',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyUSDC_LMR: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_USDC_LMR: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaUSDC,
       dripToken: Address.LMR,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyUSDC_LMR',
+      strategyName: 'Vesper_Earn_USDC_LMR',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_VSP: {
-    contract: 'EarnVesperStrategyVSPDrip',
+  Vesper_Earn_DAI_VSP: {
+    contract: 'Vesper_Earn_VSPDrip',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.Vesper.VSP,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_VSP',
+      strategyName: 'Vesper_Earn_DAI_VSP',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_WBTC: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_WBTC: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.WBTC,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_WBTC',
+      strategyName: 'Vesper_Earn_DAI_WBTC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyDAI_WETH: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_DAI_WETH: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaDAI,
       dripToken: Address.WETH,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyDAI_WETH',
+      strategyName: 'Vesper_Earn_DAI_WETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyETH_DAI: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_ETH_DAI: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaETH,
       dripToken: Address.DAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyETH_DAI',
+      strategyName: 'Vesper_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  EarnVesperStrategyWBTC_DAI: {
-    contract: 'EarnVesperStrategy',
+  Vesper_Earn_WBTC_DAI: {
+    contract: 'VesperEarn',
     type: StrategyTypes.EARN_VESPER,
     constructorArgs: {
       swapper,
       receiptToken: Address.Vesper.vaWBTC,
       dripToken: Address.DAI,
       vsp: Address.Vesper.VSP,
-      strategyName: 'EarnVesperStrategyWBTC_DAI',
+      strategyName: 'Vesper_Earn_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1624,8 +1696,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  StargateStrategyUSDC: {
-    contract: 'StargateStrategy',
+  Stargate_USDC: {
+    contract: 'Stargate',
     type: StrategyTypes.STARGATE,
     constructorArgs: {
       swapper,
@@ -1633,7 +1705,46 @@ const StrategyConfig = {
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 1, // USDC LP Pool ID
       stargateLpStakingPoolId: 0, // Staking Contract pool ID
-      strategyName: 'Stargate-USDC',
+      strategyName: 'Stargate_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Vesper_Earn_FRAX_FRAXBP: {
+    contract: 'VesperEarnSaddleLp',
+    type: StrategyTypes.EARN_VESPER,
+    constructorArgs: {
+      saddlePool: Address.Saddle.FRAXBP_POOL,
+      swapper,
+      receiptToken: Address.Vesper.vaFRAX,
+      dripToken: Address.Saddle.FRAXBP_LP,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Vesper_Earn_FRAX_FRAXBP',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Euler_ETH: {
+    contract: 'Euler',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      markets: Address.Euler.Markets,
+      protocol: Address.Euler.EulerProtocol,
+      strategyName: 'Euler_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Euler_USDC: {
+    contract: 'Euler',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      markets: Address.Euler.Markets,
+      protocol: Address.Euler.EulerProtocol,
+      strategyName: 'Euler_USDC',
     },
     config: { ...config },
     setup: { ...setup },

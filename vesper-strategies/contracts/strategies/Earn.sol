@@ -2,7 +2,6 @@
 
 pragma solidity 0.8.9;
 
-import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/Context.sol";
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "vesper-pools/contracts/interfaces/vesper/IEarnDrip.sol";
 import "vesper-pools/contracts/interfaces/vesper/IVesperPool.sol";
@@ -18,36 +17,36 @@ abstract contract Earn is Strategy {
 
     event DripPeriodUpdated(uint256 oldDripPeriod, uint256 newDripPeriod);
 
-    constructor(address _dripToken) {
-        require(_dripToken != address(0), "dripToken-zero");
-        dripToken = _dripToken;
+    constructor(address dripToken_) {
+        require(dripToken_ != address(0), "dripToken-zero");
+        dripToken = dripToken_;
     }
 
     /// @dev Converts excess collateral earned to drip token
-    function _convertCollateralToDrip(uint256 _collateralAmount) internal {
+    function _convertCollateralToDrip(uint256 _collateralAmount) internal virtual returns (uint256 _amountOut) {
         if (_collateralAmount > 0) {
-            _swapExactInput(address(collateralToken), dripToken, _collateralAmount);
+            _amountOut = _swapExactInput(address(collateralToken), dripToken, _collateralAmount);
         }
     }
 
     /// @dev Send earning to drip contract.
-    function _forwardEarning() internal virtual {
-        uint256 _earned = IERC20(dripToken).balanceOf(address(this));
-        if (_earned > 0) {
+    function _forwardEarning(uint256 earned_) internal virtual {
+        if (earned_ > 0) {
+            totalEarned += earned_;
+
             address _dripContract = IVesperPool(pool).poolRewards();
             // Fetches which rewardToken collects the drip
             address _growPool = IEarnDrip(_dripContract).growToken();
-            totalEarned += _earned;
             // Checks that the Grow Pool supports dripToken as underlying
             if (_growPool != address(0) && address(IVesperPool(_growPool).token()) == dripToken) {
                 uint256 _growPoolBalanceBefore = IERC20(_growPool).balanceOf(address(this));
-                IVesperPool(_growPool).deposit(_earned);
+                IVesperPool(_growPool).deposit(earned_);
                 uint256 _growPoolShares = IERC20(_growPool).balanceOf(address(this)) - _growPoolBalanceBefore;
                 IERC20(_growPool).safeTransfer(_dripContract, _growPoolShares);
                 IEarnDrip(_dripContract).notifyRewardAmount(_growPool, _growPoolShares, dripPeriod);
             } else {
-                IERC20(dripToken).safeTransfer(_dripContract, _earned);
-                IEarnDrip(_dripContract).notifyRewardAmount(dripToken, _earned, dripPeriod);
+                IERC20(dripToken).safeTransfer(_dripContract, earned_);
+                IEarnDrip(_dripContract).notifyRewardAmount(dripToken, earned_, dripPeriod);
             }
         }
     }
@@ -57,25 +56,23 @@ abstract contract Earn is Strategy {
      *      Transfer fee to feeCollector
      *      Convert remaining profit into drip token
      *      Forward drip token earning to EarnDrip
-     * @param _profit Profit in collateral
+     * @param profit_ Profit in collateral
      */
-    function _handleProfit(uint256 _profit) internal virtual {
-        if (_profit > 0) {
-            uint256 _fee = IVesperPool(pool).calculateUniversalFee(_profit);
+    function _handleProfit(uint256 profit_) internal virtual {
+        if (profit_ > 0) {
+            uint256 _fee = IVesperPool(pool).calculateUniversalFee(profit_);
             if (_fee > 0) {
                 collateralToken.safeTransfer(feeCollector, _fee);
                 // Calculated fee will always be less than _profit
-                _profit -= _fee;
+                profit_ -= _fee;
             }
-            _convertCollateralToDrip(_profit);
-            _forwardEarning();
+            _forwardEarning(_convertCollateralToDrip(profit_));
         }
     }
 
     /// @dev Approves EarnDrip' Grow token to spend dripToken
     function approveGrowToken() external onlyKeeper {
-        address _dripContract = IVesperPool(pool).poolRewards();
-        address _growPool = IEarnDrip(_dripContract).growToken();
+        address _growPool = IEarnDrip(IVesperPool(pool).poolRewards()).growToken();
         // Checks that the Grow Pool supports dripToken as underlying
         if (_growPool != address(0)) {
             require(address(IVesperPool(_growPool).token()) == dripToken, "invalid-grow-pool");
@@ -88,10 +85,10 @@ abstract contract Earn is Strategy {
      * @notice Update update period of distribution of earning done in one rebalance
      * @dev _dripPeriod in seconds
      */
-    function updateDripPeriod(uint256 _dripPeriod) external onlyGovernor {
-        require(_dripPeriod > 0, "dripPeriod-zero");
-        require(_dripPeriod != dripPeriod, "same-dripPeriod");
-        emit DripPeriodUpdated(dripPeriod, _dripPeriod);
-        dripPeriod = _dripPeriod;
+    function updateDripPeriod(uint256 dripPeriod_) external onlyGovernor {
+        require(dripPeriod_ > 0, "zero-drip-period");
+        require(dripPeriod_ != dripPeriod, "same-drip-period");
+        emit DripPeriodUpdated(dripPeriod, dripPeriod_);
+        dripPeriod = dripPeriod_;
     }
 }

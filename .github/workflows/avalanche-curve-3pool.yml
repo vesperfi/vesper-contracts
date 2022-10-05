@@ -1,0 +1,62 @@
+name: Avalanche Curve 3pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/avalanche-curve-3pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurvePoolBase.sol"
+      - "vesper-strategies/contracts/strategies/curve/3pool/*.sol"
+      - "vesper-strategies/contracts/strategies/curve/3pool/**/*.sol"
+      - "vesper-strategies/test/avalanche/curve/3pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  aave-pool-daie-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VDAIe pool using Aave 3pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/curve/3pool/aave-pool-daie.spec.js
+
+  aave-pool-usdce-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.AVALANCHE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAUSDCe pool using Aave 3pool
+        run: npm test -- --scope vesper-strategies -- test/avalanche/curve/3pool/aave-pool-usdce.spec.js

@@ -3,11 +3,11 @@
 pragma solidity 0.8.9;
 
 import "../../interfaces/external/lido/IWstETH.sol";
-import "./VesperMakerStrategy.sol";
+import "./MakerVesper.sol";
 
 /// @title This strategy will receive stETH, wraps it and deposit wstETH token in Maker, borrow Dai and
 /// deposit borrowed DAI in Vesper DAI pool to earn interest.
-contract MakerVesperStETH is VesperMakerStrategy {
+contract MakerVesperStETH is MakerVesper {
     using SafeERC20 for IERC20;
 
     address internal constant STETH = 0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84;
@@ -22,7 +22,7 @@ contract MakerVesperStETH is VesperMakerStrategy {
         uint256 _highWater,
         uint256 _lowWater,
         string memory _name
-    ) VesperMakerStrategy(_pool, _cm, _swapManager, _vPool, _collateralType, _highWater, _lowWater, _name) {
+    ) MakerVesper(_pool, _cm, _swapManager, _vPool, _collateralType, _highWater, _lowWater, _name) {
         require(address(IVesperPool(_pool).token()) == STETH, "not-a-valid-steth-pool");
     }
 

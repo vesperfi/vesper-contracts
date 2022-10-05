@@ -24,10 +24,11 @@ const StrategyType = {
   COMPOUND_XY: 'compoundXY',
   COMPOUND_LEVERAGE: 'compoundLeverage',
   VESPER: 'vesper',
-  VESPER_COMPOUND_XY: 'vesperCompoundXY',
+  COMPOUND_VESPER_XY: 'compoundVesperXY',
   AAVE_LEVERAGE: 'aaveLeverage',
   AAVE_VESPER_XY: 'aaveVesperXY',
   STARGATE: 'stargate',
+  EULER: 'euler',
 }
 
 module.exports = Object.freeze(StrategyType)

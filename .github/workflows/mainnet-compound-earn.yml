@@ -1,0 +1,62 @@
+name: Mainnet Compound Earn Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-compound-earn.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-strategies/test/behavior/compound.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/Earn.sol"
+      - "vesper-strategies/contracts/strategies/compound/Compound.sol"
+      - "vesper-strategies/contracts/strategies/compound/earn/**"
+      - "vesper-strategies/test/mainnet/compound/earn/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  veeth-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound Earn strategy for VEETH_DAI pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/earn/veeth-dai.spec.js
+
+  vewbtc-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound Earn strategy for VEWBTC_DAI pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/earn/vewbtc-dai.spec.js

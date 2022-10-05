@@ -15,7 +15,7 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
   let governor, user1, user2
   const maxBps = BigNumber.from('10000')
   async function assertCurrentBorrow() {
-    const aaveAddressProvider = await ethers.getContractAt('AaveLendingPoolAddressesProvider', Address.AddressProvider)
+    const aaveAddressProvider = await ethers.getContractAt('PoolAddressesProvider', Address.AddressProvider)
     const aaveLendingPool = await ethers.getContractAt('AaveLendingPool', await strategy.aaveLendingPool())
     const aaveOracle = await ethers.getContractAt('AaveOracle', await aaveAddressProvider.getPriceOracle())
     const strategyAccountData = await aaveLendingPool.getUserAccountData(strategy.address)

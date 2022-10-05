@@ -10,6 +10,8 @@
     "hardhat": "lerna run hardhat",
     "clean": "lerna run clean --stream",
     "compile": "lerna run compile --stream",
+    "compile:pools": "lerna run --stream --scope vesper-pools compile",
+    "compile:strategies": "lerna run --stream --scope vesper-strategies compile",
     "build": "npm run clean && npm run compile",
     "coverage": "lerna run coverage --stream",
     "deploy": "lerna run deploy --stream",
@@ -45,7 +47,7 @@
     "lerna": "^5.1.4",
     "lint-staged": "^13.0.1",
     "patch-package": "^6.4.7",
-    "prettier-plugin-solidity": "1.0.0-beta.10",
+    "prettier-plugin-solidity": "1.0.0-beta.24",
     "solc": "0.8.9",
     "solhint": "^3.3.7",
     "solhint-plugin-prettier": "0.0.5"

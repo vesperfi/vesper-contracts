@@ -14,7 +14,7 @@ const {
 } = require('vesper-commons/utils/chains').getChainData()
 
 // Compound XY strategy specific tests
-function shouldBehaveLikeCompoundXYStrategy(index) {
+function shouldBehaveLikeCompoundXyStrategy(index) {
   let strategy, pool, collateralToken, supplyCToken, comptroller, oracle, borrowTokenPrice, supplyTokenPrice
   let borrowToken, borrowCToken
   let governor, user1, user2
@@ -39,7 +39,7 @@ function shouldBehaveLikeCompoundXYStrategy(index) {
     )
   }
 
-  describe('CompoundXYStrategy specific tests', function () {
+  describe('CompoundXyStrategy specific tests', function () {
     beforeEach(async function () {
       ;[governor, user1, user2] = this.users
       pool = this.pool
@@ -215,4 +215,4 @@ function shouldBehaveLikeCompoundXYStrategy(index) {
     })
   })
 }
-module.exports = { shouldBehaveLikeCompoundXYStrategy }
+module.exports = { shouldBehaveLikeCompoundXyStrategy }

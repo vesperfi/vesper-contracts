@@ -27,8 +27,8 @@ async function shouldMigrateStrategies() {
     const tvlAfter = await newStrategy.instance.tvl()
     const strategyConfigAfter = await pool.strategy(newStrategy.instance.address)
     // Some strategies like curve, XY may bear loss on migrate. Lets assume maximum acceptable loss is 0.5%
-    const expectedDelta = tvlBefore.mul(5).div(1000)
-    expect(tvlAfter).to.be.closeTo(tvlBefore, expectedDelta, 'TVL of new strategy is wrong')
+    const acceptableLoss = tvlBefore.mul(5).div(1000)
+    expect(tvlAfter).to.be.gte(tvlBefore.sub(acceptableLoss), 'TVL of new strategy is wrong')
     expect(strategyConfigAfter._totalDebt).to.be.eq(strategyConfigBefore._totalDebt, 'Debt of new strategy is wrong')
   }
 
@@ -53,7 +53,11 @@ async function shouldMigrateStrategies() {
   }
 
   async function strategyMigration(strategy) {
-    const newStrategy = await makeNewStrategy(strategy, pool.address, { skipVault: true })
+    let options = { skipVault: true }
+    if (strategy.type.toLowerCase().includes('earn')) {
+      options = { ...options, vPool: await strategy.instance.pool() }
+    }
+    const newStrategy = await makeNewStrategy(strategy, pool.address, options)
     const receiptToken = await getStrategyToken(strategy)
     await migrateAndAssert(strategy, newStrategy, receiptToken)
     await assertDepositAndWithdraw(newStrategy)

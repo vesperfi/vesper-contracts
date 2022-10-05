@@ -5,19 +5,20 @@ const ethers = hre.ethers
 const { expect } = require('chai')
 const { getEvent } = require('vesper-commons/utils/setup')
 const { shouldMigrateStrategies } = require('./strategy-migration')
-// const { shouldBehaveLikeCompoundStrategy } = require('./compound-strategy')
+const { shouldBehaveLikeCompoundStrategy } = require('./compound')
 // const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
-const { shouldBehaveLikeCompoundXYStrategy } = require('./compound-xy')
-// const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
-// const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
-const { shouldBehaveLikeCrvStrategy } = require('./crv-strategy')
+const { shouldBehaveLikeCompoundXyStrategy } = require('./compound-xy')
+const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
+const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
+const { shouldBehaveLikeCrvStrategy } = require('./curve')
+const { shouldBehaveLikeCvxStrategy } = require('./convex')
 const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
 // const { shouldBehaveLikeEarnMakerStrategy } = require('./earn-maker-strategy')
 // const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
 // const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
-// const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
-const { shouldBehaveLikeVesperCompoundXYStrategy } = require('./vesper-compound-xy')
-// const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
+const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
+const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
+const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
@@ -29,21 +30,21 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
   let owner, user1, user2, user3, user4, user5
 
   const behaviors = {
-    // [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
+    [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
     // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
-    [StrategyType.VESPER_COMPOUND_XY]: shouldBehaveLikeVesperCompoundXYStrategy,
+    [StrategyType.COMPOUND_VESPER_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
     // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
-    [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXYStrategy,
-    // [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
-    // [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
-    // [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
+    [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
+    [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
+    [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
+    [StrategyType.AAVE_VESPER_XY]: shouldBehaveLikeAaveVesperXY,
     [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
-    [StrategyType.CONVEX]: shouldBehaveLikeCrvStrategy,
+    [StrategyType.CONVEX]: shouldBehaveLikeCvxStrategy,
     // [StrategyType.VESPER_AAVE_XY]: shouldBehaveLikeVesperAaveXYStrategy,
     // [StrategyType.EARN_MAKER]: shouldBehaveLikeEarnMakerStrategy,
     // [StrategyType.EARN_VESPER_MAKER]: shouldBehaveLikeEarnVesperMakerStrategy,
-    // [StrategyType.EARN_VESPER]: shouldBehaveLikeEarnVesperStrategy,
+    [StrategyType.EARN_VESPER]: shouldBehaveLikeEarnVesperStrategy,
     // [StrategyType.RARI_FUSE]: shouldBehaveLikeRariFuseStrategy,
     // [StrategyType.TRADER_JOE]: shouldBehaveLikeTraderJoeStrategy,
   }
@@ -159,7 +160,12 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         const amount = ethers.utils.parseUnits('1000', await collateralToken.decimals())
         await adjustBalance(collateralToken.address, strategy.address, amount)
         const data = await strategy.callStatic.rebalance()
-        expect(data._profit, 'Profit should be > 0').to.be.gt('0')
+        if ((await pool.name()).includes('Earn')) {
+          // Earn strategies don't generate profit
+          expect(data._profit, 'Profit should be == 0').to.be.eq('0')
+        } else {
+          expect(data._profit, 'Profit should be > 0').to.be.gt('0')
+        }
       })
 
       it('Should generate EarningReported event', async function () {

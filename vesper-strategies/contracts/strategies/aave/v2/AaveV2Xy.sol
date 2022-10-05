@@ -112,10 +112,11 @@ contract AaveV2Xy is Strategy, AaveV2Core {
         }
         uint256 _collateral = aToken.balanceOf(address(this));
         // In case of withdraw, _amount can be greater than _supply
-        uint256 _hypotheticalCollateral =
-            _depositAmount > 0 ? _collateral + _depositAmount : _collateral > _withdrawAmount
-                ? _collateral - _withdrawAmount
-                : 0;
+        uint256 _hypotheticalCollateral = _depositAmount > 0
+            ? _collateral + _depositAmount
+            : _collateral > _withdrawAmount
+            ? _collateral - _withdrawAmount
+            : 0;
         if (_hypotheticalCollateral == 0) {
             return (0, _borrowed);
         }
@@ -128,16 +129,16 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             return (0, _borrowed);
         }
         // _collateralFactor in 4 decimal. 10_000 = 100%
-        (, uint256 _collateralFactor, , , , , , , , ) =
-            aaveProtocolDataProvider.getReserveConfigurationData(address(collateralToken));
+        (, uint256 _collateralFactor, , , , , , , , ) = aaveProtocolDataProvider.getReserveConfigurationData(
+            address(collateralToken)
+        );
 
         // Collateral in base currency based on oracle price and cf;
-        uint256 _actualCollateralForBorrow =
-            (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-                (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
+        uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
+            (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
         // Calculate max borrow possible in borrow token number
-        uint256 _maxBorrowPossible =
-            (_actualCollateralForBorrow * (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+        uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
+            (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }
@@ -211,9 +212,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             _safeSwapExactInput(rewardToken, address(collateralToken), _aaveAmount);
         }
 
-        uint256 _supply = aToken.balanceOf(address(this));
         uint256 _borrow = vdToken.balanceOf(address(this));
-
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
 
         // _borrow increases every block. Convert collateral to borrowToken.
@@ -225,6 +224,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             _rebalanceBorrow(_investedBorrowBalance - _borrow);
         }
 
+        uint256 _supply = aToken.balanceOf(address(this));
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _supply + _collateralHere;
 
@@ -253,7 +253,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
     function _rebalanceBorrow(uint256 _excessBorrow) internal virtual {}
 
     function _redeemX(uint256 _amount) internal virtual {
-        _withdraw(address(collateralToken), address(this), _amount);
+        _safeWithdraw(address(collateralToken), address(this), _amount);
     }
 
     function _repayY(uint256 _amount) internal virtual {
@@ -262,7 +262,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
     }
 
     /**
-     * @notice Swap given token to borrowToken
+     * @dev Swap collateral token to borrowToken
      * @param _shortOnBorrow Expected output of this swap
      */
     function _swapToBorrowToken(uint256 _shortOnBorrow) internal {
@@ -270,8 +270,6 @@ contract AaveV2Xy is Strategy, AaveV2Core {
         uint256 _amountIn = swapper.getAmountIn(address(collateralToken), borrowToken, _shortOnBorrow);
         if (_amountIn > 0) {
             uint256 _collateralHere = collateralToken.balanceOf(address(this));
-            // If we do not have enough _from token to get expected output, either get
-            // some _from token or adjust expected output.
             if (_amountIn > _collateralHere) {
                 // Redeem some collateral, so that we have enough collateral to get expected output
                 _redeemX(_amountIn - _collateralHere);
@@ -286,14 +284,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
         if (_repayAmount > 0) {
             _repayY(_repayAmount);
         }
-        // withdraw asking more than available liquidity will fail. To do safe withdraw, check
-        // _requireAmount against available liquidity.
-        uint256 _possibleWithdraw =
-            Math.min(
-                _requireAmount,
-                Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
-            );
-        _redeemX(_possibleWithdraw);
+        _redeemX(_requireAmount);
     }
 
     /************************************************************************************************

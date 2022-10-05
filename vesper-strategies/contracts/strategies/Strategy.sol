@@ -211,8 +211,8 @@ abstract contract Strategy is IStrategy, Context {
         address _tokenIn,
         address _tokenOut,
         uint256 _amountIn
-    ) internal {
-        swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this));
+    ) internal returns (uint256 _amountOut) {
+        _amountOut = swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this));
     }
 
     function _safeSwapExactInput(

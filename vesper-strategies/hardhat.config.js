@@ -1,12 +1,11 @@
 'use strict'
+
 require('@nomicfoundation/hardhat-toolbox')
 require('hardhat-deploy')
 require('hardhat-log-remover')
 require('dotenv').config()
 
 require('./tasks/hardhat-hook')
-
-const junk = 'test test test test test test test test test test test junk'
 
 if (process.env.RUN_CONTRACT_SIZER === 'true') {
   require('hardhat-contract-sizer')
@@ -26,47 +25,54 @@ function resolveChainId() {
   return 31337
 }
 
+const url = process.env.NODE_URL
+const mnemonic = process.env.MNEMONIC || 'test test test test test test test test test test test junk'
+const accounts = { mnemonic }
+
 module.exports = {
   defaultNetwork: 'hardhat',
   networks: {
     localhost: {
       saveDeployments: true,
       timeout: 1000000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
+      accounts,
     },
     hardhat: {
       initialBaseFeePerGas: 0,
       chainId: resolveChainId(),
       forking: {
-        url: process.env.NODE_URL,
+        url,
         blockNumber: process.env.BLOCK_NUMBER ? parseInt(process.env.BLOCK_NUMBER) : undefined,
       },
       saveDeployments: true,
     },
     mainnet: {
-      url: process.env.NODE_URL,
+      url,
       chainId: 1,
       gas: 6700000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
+      accounts,
     },
     goerli: {
-      url: process.env.NODE_URL,
+      url,
       chainId: 5,
       gas: 12000000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
+      accounts,
     },
     polygon: {
-      url: process.env.NODE_URL,
+      url,
       chainId: 137,
       gas: 11700000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
+      accounts,
     },
     avalanche: {
-      url: process.env.NODE_URL,
+      url,
       chainId: 43114,
       gas: 8000000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
+      accounts,
     },
+  },
+  paths: {
+    sources: process.env.SOURCES_DIR || './contracts',
   },
   contractSizer: {
     alphaSort: true,

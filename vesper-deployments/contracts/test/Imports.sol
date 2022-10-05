@@ -12,8 +12,16 @@ import "vesper-pools/contracts/pool/earn/VesperEarnDrip.sol";
 import "vesper-pools/contracts/upgraders/PoolAccountantUpgrader.sol";
 import "vesper-pools/contracts/upgraders/PoolRewardsUpgrader.sol";
 import "vesper-pools/contracts/upgraders/VPoolUpgrader.sol";
-import "vesper-strategies/contracts/strategies/compound/CompoundXYStrategy.sol";
+import "vesper-strategies/contracts/strategies/compound/CompoundXy.sol";
 import "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol";
+import "vesper-strategies/contracts/strategies/compound/CompoundXyETH.sol";
+import "vesper-strategies/contracts/strategies/compound/CompoundVesperXyETH.sol";
+import "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol";
+import "vesper-strategies/contracts/strategies/convex/2Pool/Convex2PlainPool.sol";
+import "vesper-strategies/contracts/strategies/vesper/earn/VesperEarnSaddleLp.sol";
+import "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol";
+import "vesper-strategies/contracts/strategies/compound/CompoundLeverage.sol";
+import "vesper-strategies/contracts/strategies/stargate/Stargate.sol";
 import "vesper-strategies/contracts/strategies/maker/MakerVesperStETH.sol";
 import "vesper-strategies/contracts/interfaces/maker/IMakerDAO.sol";
 

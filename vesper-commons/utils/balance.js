@@ -62,6 +62,11 @@ const slots = {
 // there is no clear balanceOf storage so using whale address for adjusting balance
 const whales = {
   [Address.stETH]: '0x1982b2F5814301d4e9a8b0201555376e62F82428',
+  [Address.Saddle.FRAXBP_LP]: '0xfb516cf3710fc6901f2266aaeb8834cf5e4e9558',
+  [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
+
+  // Avalanche
+  [AvalancheAddress.Curve.CRV]: '0x59227430ac7bfd9ff9fd34e8085d4327bc2e3b24',
 }
 
 /**
@@ -100,7 +105,7 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
  *
  * @param {string} token  token address
  * @param {string} targetAddress address at which token balance to be updated.
- * @param {BigNumber|string|number} balance balance amount to be set
+ * @param {BigNumber|string|number} balance balance amount to be set, in wei
  * @returns {Promise<BigNumber>} Actual balance after balance adjustment
  */
 
@@ -116,8 +121,8 @@ async function adjustBalance(token, targetAddress, balance) {
   const value = hexlify(zeroPad(BigNumber.from(balance).toHexString(), 32))
 
   // Hack the balance by directly setting the EVM storage
-  helpers.setStorageAt(token, index, value)
-  helpers.mine(1)
+  await helpers.setStorageAt(token, index, value)
+  await helpers.mine(1)
   return balance
 }
 
