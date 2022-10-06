@@ -12,28 +12,27 @@ contract Euler is Strategy {
     string public constant VERSION = "5.0.0";
 
     IEToken internal immutable eToken;
-
-    address internal immutable protocol;
+    address internal immutable euler;
 
     uint256 internal constant SUB_ACCOUNT_ID = 0;
 
     constructor(
         address pool_,
         address swapper_,
-        address markets_,
-        address protocol_,
+        address euler_,
+        address eulerMarkets_,
         string memory name_
     ) Strategy(pool_, swapper_, address(0)) {
-        require(markets_ != address(0), "market-address-is-null");
-        require(protocol_ != address(0), "euler-protocol-address-is-null");
-        receiptToken = IEulerMarkers(markets_).underlyingToEToken(address(collateralToken));
+        require(euler_ != address(0), "euler-protocol-address-is-null");
+        require(eulerMarkets_ != address(0), "market-address-is-null");
+        receiptToken = IEulerMarkets(eulerMarkets_).underlyingToEToken(address(collateralToken));
         eToken = IEToken(receiptToken);
-        protocol = protocol_;
+        euler = euler_;
         NAME = name_;
     }
 
-    function isReservedToken(address _token) public view virtual override returns (bool) {
-        return _token == address(eToken);
+    function isReservedToken(address token_) public view virtual override returns (bool) {
+        return token_ == address(eToken);
     }
 
     function tvl() external view override returns (uint256) {
@@ -41,16 +40,16 @@ contract Euler is Strategy {
     }
 
     /// @dev Approve all required tokens
-    function _approveToken(uint256 _amount) internal virtual override {
-        super._approveToken(_amount);
-        collateralToken.safeApprove(protocol, _amount);
+    function _approveToken(uint256 amount_) internal virtual override {
+        super._approveToken(amount_);
+        collateralToken.safeApprove(euler, amount_);
     }
 
     //solhint-disable-next-line no-empty-blocks
-    function _beforeMigration(address _newStrategy) internal virtual override {}
+    function _beforeMigration(address newStrategy_) internal virtual override {}
 
     //solhint-disable-next-line no-empty-blocks
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual {}
+    function _claimRewardsAndConvertTo(address toToken_) internal virtual {}
 
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
@@ -93,7 +92,6 @@ contract Euler is Strategy {
         _collateralHere = collateralToken.balanceOf(address(this));
 
         if (_collateralHere > 0) {
-            // The "0" argument refers to the sub-account you are depositing to.
             eToken.deposit(SUB_ACCOUNT_ID, _collateralHere);
         }
     }
