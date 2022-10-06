@@ -159,7 +159,7 @@ abstract contract CompoundXyCore is Strategy {
             _repayAmount = _borrowed - _borrowLowerBound;
         } else if (_borrowLowerBound > _borrowed) {
             _borrowAmount = _borrowLowerBound - _borrowed;
-            uint256 _availableLiquidity = borrowCToken.getCash();
+            uint256 _availableLiquidity = _getAvailableLiquidity();
             if (_borrowAmount > _availableLiquidity) {
                 _borrowAmount = _availableLiquidity;
             }
@@ -181,6 +181,10 @@ abstract contract CompoundXyCore is Strategy {
             _mintX(_collateralBalance);
             _borrowY(_borrowAmount);
         }
+    }
+
+    function _getAvailableLiquidity() internal view virtual returns (uint256) {
+        return borrowCToken.getCash();
     }
 
     /// @dev Get the borrow balance strategy is holding. Override to handle vToken balance.

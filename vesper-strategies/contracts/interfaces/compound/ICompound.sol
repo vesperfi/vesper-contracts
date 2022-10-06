@@ -54,6 +54,8 @@ interface CToken {
     function underlying() external view returns (address);
 
     function comptroller() external view returns (address);
+
+    function totalBorrows() external view returns (uint256);
 }
 
 interface Comptroller {
@@ -84,6 +86,8 @@ interface Comptroller {
         );
 
     function oracle() external view returns (address);
+
+    function borrowCaps(address market) external view returns (uint256);
 }
 
 interface Oracle {
