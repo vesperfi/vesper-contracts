@@ -960,7 +960,8 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
-      crvSlippage: 150, // 1.5%
+      // The d3pool is unbalanced at the moment (block 15688590)
+      crvSlippage: 1500, // 15%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -976,7 +977,8 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.D3_POOL,
-      crvSlippage: 100, // 1%
+      // The d3pool is unbalanced at the moment (block 15688590)
+      crvSlippage: 1500, // 15%
       masterOracle,
       swapper,
       collateralIdx: 1,

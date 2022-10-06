@@ -184,6 +184,7 @@ async function configureOracles(strategies) {
         'function oracles(address) external view returns (address)',
         'function updateTokenOracle(address,address) external',
         'function governor() external view returns(address)',
+        'function addressProvider() external view returns(address)',
       ]
       const defaultOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
       const btcPeggedOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
