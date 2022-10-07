@@ -1,5 +1,6 @@
 'use strict'
 
+const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { parseEther } = require('ethers/lib/utils')
@@ -74,6 +75,27 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       await strategy.rebalance()
       const crvBalance = await crv.balanceOf(strategy.address)
       expect(crvBalance).to.be.equal('0', 'CRV balance should be 0 on rebalance')
+    })
+
+    // Note: This test won't work because the `stkAAVE` rewards are inactive at the moment
+    // To run this test properly, follow the steps below:
+    // 1. Set `BLOCK_NUMBER` to `12420000`
+    // 2. Comment `configureSwapper` and `configureOracles` in `setup.js`
+    // 3. Comment `swapper.swapExactInput` call from `_claimRewardsAndConvertTo` function
+    // 4. Change `_calculateAmountOutMin` function to return `0`
+    // Changes are needed because of `MasterOracle` and `Swapper` weren't available on that old block
+    it.skip('Should claim stkAAVE for aave pool', async function () {
+      const stkAAVE = await ethers.getContractAt('ERC20', Address.Aave.stkAAVE, alice)
+
+      // given
+      await deposit(pool, collateralToken, 10, alice)
+      await strategy.rebalance()
+      await time.increase(time.duration.days(1))
+      expect(await stkAAVE.balanceOf(strategy.address)).eq(0)
+
+      // when
+      await strategy.rebalance()
+      expect(await stkAAVE.balanceOf(strategy.address)).gt(0)
     })
   })
 }

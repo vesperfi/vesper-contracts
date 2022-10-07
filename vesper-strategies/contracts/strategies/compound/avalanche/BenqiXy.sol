@@ -71,6 +71,19 @@ contract BenqiXy is CompoundXyCore {
         }
     }
 
+    function _getAvailableLiquidity() internal view override returns (uint256) {
+        uint256 _borrowCap = comptroller.borrowCaps(address(borrowCToken));
+
+        if (_borrowCap == 0) {
+            // 0 borrowCap meaning all cash can be borrowed.
+            return borrowCToken.getCash();
+        } else {
+            uint256 _totalBorrows = borrowCToken.totalBorrows();
+            // Available to borrow will be less than cap hence minus one.
+            return _borrowCap > _totalBorrows ? _borrowCap - _totalBorrows - 1 : 0;
+        }
+    }
+
     /// @dev Benqi qiAVAX doesn't has underlying method
     function _getUnderlyingToken(address _cToken) internal view override returns (address) {
         if (_cToken == qiAVAX) {

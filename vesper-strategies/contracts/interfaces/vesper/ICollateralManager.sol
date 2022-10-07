@@ -46,4 +46,8 @@ interface ICollateralManager {
             uint256 collateralRatio,
             uint256 minimumDebt
         );
+
+    function mcdGemJoin(bytes32) external view returns (address);
+
+    function governor() external view returns (address);
 }

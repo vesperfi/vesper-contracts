@@ -438,6 +438,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Compound_Leverage_DAI: {
+    contract: 'CompoundLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Compound.cDAI,
+      strategyName: 'Compound_Leverage_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Compound_Leverage_UNI: {
     contract: 'CompoundLeverage',
     type: StrategyTypes.COMPOUND_LEVERAGE,
@@ -961,7 +976,8 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      // The d3pool is unbalanced at the moment (block 15688590)
+      crvSlippage: 1500, // 15%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -980,7 +996,8 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 100, // 1%
+      // The d3pool is unbalanced at the moment (block 15688590)
+      crvSlippage: 1500, // 15%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -999,7 +1016,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 250, // 2.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1340,6 +1357,86 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Curve_compound_DAI: {
+    contract: 'Curve2LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.COMPOUND_POOL,
+      crvDeposit: Address.Curve.COMPOUND_DEPOSIT,
+      crvSlippage: 200, // 2.0%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'Curve_compound_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_usdt_DAI: {
+    contract: 'Curve3LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.USDT_POOL,
+      crvDeposit: Address.Curve.USDT_DEPOSIT,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'Curve_usdt_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_busd_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.BUSD_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.BUSD_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_busd_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_pax_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.PAX_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.PAX_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_pax_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Curve_y_DAI: {
+    contract: 'Curve4LendingPool',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.Y_POOL,
+      crvSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      crvDeposit: Address.Curve.Y_DEPOSIT,
+      collateralIdx: 0,
+      strategyName: 'Curve_y_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   AaveMakerStrategyETH: {
     contract: 'AaveMakerStrategy',
     type: StrategyTypes.AAVE_MAKER,
@@ -1381,6 +1478,22 @@ const StrategyConfig = {
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
+  },
+
+  Maker_Vesper_STETH: {
+    contract: 'MakerVesperStETH',
+    type: StrategyTypes.VESPER_MAKER,
+    constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
+      swapper,
+      receiptToken: Address.Vesper.vaDAI,
+      collateralType: ethers.utils.formatBytes32String('WSTETH-B'),
+      highWater: 250,
+      lowWater: 225,
+      strategyName: 'Maker_Vesper_STETH',
+    },
+    config: { ...config },
+    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
   },
 
   Maker_Vesper_LINK: {

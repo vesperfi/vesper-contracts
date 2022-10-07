@@ -161,7 +161,8 @@
           "implementation": "0x10fde8c254A100674439D707628569686c8580Fa"
         },
         "strategies": {
-          "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A"
+          "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "Maker_Vesper_STETH": "0xc2dDA4d6CA0e2728BDC7b0A738D4664bF58698e1"
         }
       },
       "vaeth": {
@@ -320,6 +321,7 @@
           "implementation": "0xE244881025f8F5005985D60757CC95c8D667e493"
         },
         "strategies": {
+          "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
@@ -604,7 +606,8 @@
         },
         "strategies": {
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
-          "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65"
+          "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
+          "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
         }
       },
       "vafei": {

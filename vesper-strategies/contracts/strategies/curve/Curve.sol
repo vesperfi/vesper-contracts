@@ -162,7 +162,7 @@ contract Curve is Strategy {
         collateralToken.safeApprove(_swapper, amount_);
 
         uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; i++) {
+        for (uint256 i; i < _rewardTokensLength; ++i) {
             IERC20(rewardTokens[i]).safeApprove(_swapper, amount_);
         }
         crvLp.safeApprove(address(crvGauge), amount_);
@@ -205,7 +205,7 @@ contract Curve is Strategy {
     function _claimRewardsAndConvertTo(address tokenOut_) internal virtual {
         _claimRewards();
         uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; i++) {
+        for (uint256 i; i < _rewardTokensLength; ++i) {
             address _rewardToken = rewardTokens[i];
             uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
             if (_amountIn > 0) {
@@ -488,7 +488,7 @@ contract Curve is Strategy {
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; i++) {
+        for (uint256 i; i < _rewardTokensLength; ++i) {
             require(
                 rewardTokens_[i] != _receiptToken &&
                     rewardTokens_[i] != address(collateralToken) &&

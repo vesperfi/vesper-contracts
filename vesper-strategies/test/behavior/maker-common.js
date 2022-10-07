@@ -44,14 +44,14 @@ function shouldValidateMakerCommonBehavior(index) {
     describe('Resurface', function () {
       it('Should resurface only when pool is underwater ', async function () {
         if (isUnderwater) {
-          await expect(strategy.resurface()).to.not.reverted
+          await expect(strategy.resurface(ethers.constants.MaxUint256)).to.not.reverted
         }
-        await expect(strategy.resurface()).to.be.revertedWith('pool-is-above-water')
+        await expect(strategy.resurface(ethers.constants.MaxUint256)).to.be.revertedWith('pool-is-above-water')
       })
 
       it('Should bring the pool above water on resurface', async function () {
         if (isUnderwater) {
-          await expect(strategy.resurface()).to.not.reverted
+          await expect(strategy.resurface(ethers.constants.MaxUint256)).to.not.reverted
           await expect(strategy.isUnderwater()).to.be.true
         }
       })
@@ -123,7 +123,8 @@ function shouldValidateMakerCommonBehavior(index) {
     describe('Withdraw scenario', function () {
       it('Should withdraw after rebalance', async function () {
         await deposit(pool, collateralToken, 10, user2)
-        await strategy.rebalance()
+        let tx = await strategy.rebalance()
+        console.log('gas used', (await tx.wait()).gasUsed)
         const balanceBefore = await collateralToken.balanceOf(user2.address)
         const withdrawAmount = await pool.balanceOf(user2.address)
         await pool.connect(user2).withdraw(withdrawAmount)
@@ -134,12 +135,17 @@ function shouldValidateMakerCommonBehavior(index) {
       it('Should pay back all debt if debt is below dust.', async function () {
         await deposit(pool, collateralToken, 20, user1)
         const withdrawAmount = (await pool.balanceOf(user1.address)).sub(BN.from('100')).toString()
-        await strategy.rebalance()
+        let tx = await strategy.rebalance()
+        console.log('gas used', (await tx.wait()).gasUsed)
         let vaultInfo = await cm.getVaultInfo(strategy.address)
         expect(vaultInfo.daiDebt).to.be.gt('0', 'Dai debt should be gt zero')
         await executeIfExist(token.exchangeRateCurrent)
-        await strategy.resurface()
-        await strategy.rebalance()
+        const underwater = await strategy.isUnderwater()
+        if (underwater) {
+          await strategy.resurface(ethers.constants.MaxUint256)
+        }
+        tx = await strategy.rebalance()
+        console.log('gas used', (await tx.wait()).gasUsed)
         await pool.connect(user1).withdraw(withdrawAmount)
         vaultInfo = await cm.getVaultInfo(strategy.address)
         expect(vaultInfo.daiDebt).to.be.equal('0', 'Dai debt should be zero')
