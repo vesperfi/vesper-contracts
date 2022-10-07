@@ -175,8 +175,6 @@ async function configureSwapper(strategies, collateral) {
 }
 
 async function configureOracles(strategies) {
-  const { getContractAt } = ethers
-
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
 
@@ -186,53 +184,53 @@ async function configureOracles(strategies) {
         'function oracles(address) external view returns (address)',
         'function updateTokenOracle(address,address) external',
         'function governor() external view returns(address)',
+        'function addressProvider() external view returns(address)',
       ]
-      const defaultOracleABI = ['function updateStalePeriod(uint256) external']
-      const btcPeggedOracleABI = ['function updateStalePeriod(uint256) external']
-      const curveLpTokenOracleABI = ['function registerPool(address)']
+      const defaultOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
+      const btcPeggedOracleABI = ['function governor() view returns(address)', 'function updateStalePeriod(uint256)']
 
-      let masterOracle = await getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
-      // Assuming that MasterOracles's governor is the same governor of all other contracts
-      const governor = await unlock(await masterOracle.governor())
-      masterOracle = masterOracle.connect(governor)
-      const defaultOracle = await getContractAt(defaultOracleABI, await masterOracle.defaultOracle(), governor)
-      const btcPeggedOracle = await getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle, governor)
-      const curveLpTokenOracle = await getContractAt(curveLpTokenOracleABI, Address.Vesper.CurveLpTokenOracle, governor)
-
-      // Accepts outdated prices due to time travels
-      await defaultOracle.updateStalePeriod(ethers.constants.MaxUint256)
-      await btcPeggedOracle.updateStalePeriod(ethers.constants.MaxUint256)
+      const masterOracle = await ethers.getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
+      const defaultOracle = await ethers.getContractAt(defaultOracleABI, await masterOracle.defaultOracle())
+      const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
 
       if (chain === 'mainnet') {
-        const stableCoinProviderABI = ['function updateStalePeriod(uint256) external']
-        const alUsdOracleABI = ['function updateStalePeriod(uint256) external', 'function update() external']
+        const stableCoinProviderABI = [
+          'function governor() view returns(address)',
+          'function updateStalePeriod(uint256)',
+        ]
+        const alUsdOracleABI = [
+          'function governor() view returns(address)',
+          'function updateStalePeriod(uint256)',
+          'function update()',
+        ]
 
-        const alUsdOracle = await getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD), governor)
-        const stableProvider = await getContractAt(stableCoinProviderABI, Address.Vesper.StableCoinProvider, governor)
-
-        // frax (FRAX + USDC)
-        await curveLpTokenOracle.registerPool(Address.Curve.FRAX_USDC_LP)
-        await masterOracle.updateTokenOracle(Address.Curve.FRAX_USDC_LP, curveLpTokenOracle.address)
+        const stableCoinProvider = await ethers.getContractAt(stableCoinProviderABI, Address.Vesper.StableCoinProvider)
+        const alUsdOracle = await ethers.getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD))
 
         // Accepts outdated prices due to time travels
-        await stableProvider.updateStalePeriod(ethers.constants.MaxUint256)
-        await alUsdOracle.updateStalePeriod(ethers.constants.MaxUint256)
+        await defaultOracle
+          .connect(await unlock(await defaultOracle.governor()))
+          .updateStalePeriod(ethers.constants.MaxUint256)
+        await stableCoinProvider
+          .connect(await unlock(await stableCoinProvider.governor()))
+          .updateStalePeriod(ethers.constants.MaxUint256)
+        await alUsdOracle
+          .connect(await unlock(await alUsdOracle.governor()))
+          .updateStalePeriod(ethers.constants.MaxUint256)
+        await btcPeggedOracle
+          .connect(await unlock(await btcPeggedOracle.governor()))
+          .updateStalePeriod(ethers.constants.MaxUint256)
 
         // Ensure alUSD oracle is updated
-        await alUsdOracle.update()
+        await alUsdOracle.connect(await unlock(await alUsdOracle.governor())).update()
       } else if (chain === 'avalanche') {
-        // ren (avWBTC + renBTC.e)
-        await curveLpTokenOracle.registerPool(Address.Curve.REN_POOL_LP)
-        await masterOracle.updateTokenOracle(Address.Curve.REN_POOL_LP, curveLpTokenOracle.address)
-        await masterOracle.updateTokenOracle(Address.renBTC, btcPeggedOracle.address)
-        await masterOracle.updateTokenOracle(Address.Aave.avWBTC, Address.Vesper.aTokenOracle)
+        const addressProviderABI = ['function governor() view returns(address)']
+        const addressProvider = await ethers.getContractAt(addressProviderABI, await masterOracle.addressProvider())
+        const governor = await unlock(await addressProvider.governor())
 
-        // aave (aDAI.e + aUSDC.e + aUSDT.e)
-        await curveLpTokenOracle.registerPool(Address.Curve.AAVE_POOL_LP)
-        await masterOracle.updateTokenOracle(Address.Curve.AAVE_POOL_LP, curveLpTokenOracle.address)
-        await masterOracle.updateTokenOracle(Address.Aave.avDAI, Address.Vesper.aTokenOracle)
-        await masterOracle.updateTokenOracle(Address.Aave.avUSDC, Address.Vesper.aTokenOracle)
-        await masterOracle.updateTokenOracle(Address.Aave.avUSDT, Address.Vesper.aTokenOracle)
+        // Accepts outdated prices due to time travels
+        await defaultOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
+        await btcPeggedOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
       }
 
       // Setup is needed just once
@@ -313,6 +311,13 @@ async function createMakerStrategy(strategy, poolAddress, options) {
     const cm = await deployContract(CollateralManager)
     await cm.addGemJoin(gemJoins)
     strategy.constructorArgs.cm = cm
+  } else {
+    const cm = await ethers.getContractAt('ICollateralManager', strategy.constructorArgs.cm)
+    const gemJoin = await cm.mcdGemJoin(strategy.constructorArgs.collateralType)
+    if (gemJoin === ethers.constants.AddressZero) {
+      const governor = await unlock(await cm.governor())
+      await cm.connect(governor).addGemJoin([strategy.setup.maker.gemJoin])
+    }
   }
   const strategyInstance = await deployContract(strategy.contract, [
     poolAddress,
@@ -483,7 +488,7 @@ async function getStrategyToken(strategy) {
   const address = await strategy.instance.token()
   // TODO fine tune this
   if (
-    name.toLowerCase().includes('compound') ||
+    (name.toLowerCase().includes('compound') && !strategy.type.toLowerCase().includes('curve')) ||
     strategy.type.toLowerCase().includes('compound') ||
     strategy.type.includes('traderJoe')
   ) {

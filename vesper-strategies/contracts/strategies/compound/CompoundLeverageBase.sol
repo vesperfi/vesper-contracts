@@ -59,8 +59,9 @@ abstract contract CompoundLeverageBase is Strategy {
 
     /// @notice Return supply and borrow position. Position may return few block old value
     function getPosition() public view returns (uint256 _supply, uint256 _borrow) {
-        (, uint256 _cTokenBalance, uint256 _borrowBalance, uint256 _exchangeRate) =
-            cToken.getAccountSnapshot(address(this));
+        (, uint256 _cTokenBalance, uint256 _borrowBalance, uint256 _exchangeRate) = cToken.getAccountSnapshot(
+            address(this)
+        );
         _supply = (_cTokenBalance * _exchangeRate) / 1e18;
         _borrow = _borrowBalance;
     }
@@ -219,8 +220,8 @@ abstract contract CompoundLeverageBase is Strategy {
         // Claim rewardToken and convert to collateral token
         _claimRewardsAndConvertTo(address(collateralToken));
         // Invested collateral = supply - borrow
-        uint256 _investedCollateral =
-            cToken.balanceOfUnderlying(address(this)) - cToken.borrowBalanceStored(address(this));
+        uint256 _investedCollateral = cToken.balanceOfUnderlying(address(this)) -
+            cToken.borrowBalanceStored(address(this));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _investedCollateral + _collateralHere;

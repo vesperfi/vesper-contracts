@@ -3,7 +3,7 @@
 
 const { ethers } = require('hardhat')
 const { isDelegateOrOwner, proposeMultiTxn, prepareTxn } = require('./gnosis-txn')
-// const CollateralManager = 'CollateralManager'
+const CollateralManager = 'CollateralManager'
 const PoolAccountant = 'PoolAccountant'
 
 function sleep(ms) {
@@ -30,20 +30,6 @@ const deployFunction = async function (hre) {
   const strategyAlias = strategyConfig.alias
 
   const constructorArgs = [poolProxy.address, ...Object.values(strategyConfig.constructorArgs)]
-
-  // TODO commented out Maker code as maker contracts are not available yet.
-  // if (strategyAlias.includes('Maker')) {
-  //   // Maker strategy of any type, EarnXXXMaker, XXXMaker
-  //   // TODO move this to constructorArgs?
-  //   let cm = address.Vesper.COLLATERAL_MANAGER
-  //   if (!cm) {
-  //     // Deploy collateral manager
-  //     await sleep(5000)
-  //     cm = (await deploy(CollateralManager, { from: deployer, log: true, waitConfirmations })).address
-  //   }
-  //   // Insert cm at index 1 in constructorArgs
-  //   constructorArgs.splice(1, 0, cm)
-  // }
 
   // Deploy strategy
   await sleep(5000)
@@ -101,27 +87,25 @@ const deployFunction = async function (hre) {
     }
   }
 
-  // TODO commented out Maker code as maker contracts are not available yet.
-  // if (strategyAlias.includes('Maker')) {
-  //   const collateralType = await (await ethers.getContractAt('GemJoinLike', setup.maker.gemJoin)).ilk()
-  //   const gemJoinInCM = await read(CollateralManager, {}, 'mcdGemJoin', collateralType)
-  //   if (gemJoinInCM !== setup.maker.gemJoin) {
-  //     operations.push({
-  //       alias: CollateralManager,
-  //       contractName: CollateralManager,
-  //       contractAddress: address.Vesper.COLLATERAL_MANAGER,
-  //       params: ['addGemJoin', [setup.maker.gemJoin]],
-  //     })
-  //   }
-  //   operations.push({
-  //     ...strategyOps,
-  //     params: ['createVault', []],
-  //   })
-  //   operations.push({
-  //     ...strategyOps,
-  //     params: ['updateBalancingFactor', [setup.maker.highWater, setup.maker.lowWater]],
-  //   })
-  // }
+  if (strategyAlias.includes('Maker')) {
+    const collateralType = await (await ethers.getContractAt('GemJoinLike', setup.maker.gemJoin)).ilk()
+    const gemJoinInCM = await read(CollateralManager, {}, 'mcdGemJoin', collateralType)
+    const cmGovernor = await (
+      await ethers.getContractAt('ICollateralManager', address.Vesper.COLLATERAL_MANAGER)
+    ).governor()
+    if (gemJoinInCM !== setup.maker.gemJoin && ethers.utils.getAddress(cmGovernor) === address.MultiSig.safe) {
+      operations.push({
+        alias: CollateralManager,
+        contractName: 'ICollateralManager',
+        contractAddress: address.Vesper.COLLATERAL_MANAGER,
+        params: ['addGemJoin', [[setup.maker.gemJoin]]],
+      })
+    }
+    operations.push({
+      ...strategyOps,
+      params: ['createVault', []],
+    })
+  }
 
   const config = strategyConfig.config
   const poolAccountantAddress = (await deployments.get(PoolAccountant)).address

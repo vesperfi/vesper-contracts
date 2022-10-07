@@ -2,6 +2,7 @@
 
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
+const { ethers } = require('hardhat')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
@@ -48,7 +49,8 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
-      crvSlippage: 100, // 1.0%
+      crvDeposit: ethers.constants.AddressZero,
+      crvSlippage: 200, // 1.0%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -63,6 +65,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AAVE_POOL,
+      crvDeposit: ethers.constants.AddressZero,
       crvSlippage: 100, // 1.0%
       masterOracle,
       swapper,
@@ -78,6 +81,7 @@ const StrategyConfig = {
     type: StrategyTypes.CURVE,
     constructorArgs: {
       crvPool: Address.Curve.AVWBTCRENBTC_POOL,
+      crvDeposit: ethers.constants.AddressZero,
       crvSlippage: 200, // 2.0%
       masterOracle,
       swapper,
