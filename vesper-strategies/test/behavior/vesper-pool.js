@@ -357,10 +357,12 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       if (isEarnPool) {
         it('Earn Pool:: Should collect universal fee on rebalance', async function () {
           const earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          let rewardToken = await ethers.getContractAt('ERC20', await earnDrip.growToken())
           const dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          if (rewardToken.address === ethers.constants.AddressZero) {
-            rewardToken = dripToken
+          let rewardToken = dripToken
+
+          const growToken = await earnDrip.growToken()
+          if (growToken !== ethers.constants.AddressZero) {
+            rewardToken = await ethers.getContractAt('ERC20', growToken)
           }
           const feeCollector = strategies[0].feeCollector
           const rewardBalanceBefore = await rewardToken.balanceOf(feeCollector)
@@ -590,10 +592,12 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
         beforeEach(async function () {
           earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          rewardToken = await ethers.getContractAt('ERC20', await earnDrip.growToken())
           dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          if (rewardToken.address === ethers.constants.AddressZero) {
-            rewardToken = dripToken
+          rewardToken = dripToken
+
+          const growToken = await earnDrip.growToken()
+          if (growToken !== ethers.constants.AddressZero) {
+            rewardToken = await ethers.getContractAt('ERC20', growToken)
           }
         })
 
