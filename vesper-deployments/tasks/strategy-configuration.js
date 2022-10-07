@@ -21,6 +21,15 @@ function getConstructorArgKeys(strategyName) {
   } else if (strategyName.includes('CompoundXY')) {
     // Has borrowCToken but no strategy name
     keys = ['swapper', 'receiptToken', 'borrowCToken']
+  } else if (strategyName.includes('Stargate')) {
+    keys = [
+      'swapper',
+      'stargateRouter',
+      'stargateLpStaking',
+      'stargatePoolId',
+      'stargateLpStakingPoolId',
+      'strategyName',
+    ]
   }
 
   // Separate conditions
@@ -67,7 +76,7 @@ function validateStrategyConfig(strategyName, strategyConfig) {
   validateObject(strategyConfig.setup, setupKeys)
   // Validate Maker config
   if (strategyName.includes('Maker')) {
-    const makerKeys = ['gemJoin', 'highWater', 'lowWater']
+    const makerKeys = ['gemJoin']
     validateObject(strategyConfig.setup.maker, makerKeys)
   }
 }

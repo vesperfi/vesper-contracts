@@ -30,6 +30,21 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
+  vadai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Compound leverage strategy for VADAI pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/compound/leverage/vadai.spec.js
+
   vaeth-test:
     needs: [setup-job]
     runs-on: ubuntu-latest

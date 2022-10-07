@@ -9,4 +9,6 @@ module.exports = [
   Maker.MCD_JOIN_UNI_A,
   Maker.MCD_JOIN_WBTC_A,
   Maker.MCD_JOIN_WBTC_C,
+  Maker.MCD_JOIN_WSTETH_A,
+  Maker.MCD_JOIN_WSTETH_B,
 ]

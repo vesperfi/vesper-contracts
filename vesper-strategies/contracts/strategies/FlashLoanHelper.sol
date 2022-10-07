@@ -69,8 +69,9 @@ abstract contract FlashLoanHelper {
     ) internal returns (uint256 _amount) {
         require(isAaveActive, Errors.AAVE_FLASH_LOAN_NOT_ACTIVE);
         AaveLendingPool _aaveLendingPool = AaveLendingPool(poolAddressesProvider.getLendingPool());
-        AaveProtocolDataProvider _aaveProtocolDataProvider =
-            AaveProtocolDataProvider(poolAddressesProvider.getAddress(AAVE_PROVIDER_ID));
+        AaveProtocolDataProvider _aaveProtocolDataProvider = AaveProtocolDataProvider(
+            poolAddressesProvider.getAddress(AAVE_PROVIDER_ID)
+        );
         // Check token liquidity in Aave
         (uint256 _availableLiquidity, , , , , , , , , ) = _aaveProtocolDataProvider.getReserveData(_token);
         if (_amountDesired > _availableLiquidity) {

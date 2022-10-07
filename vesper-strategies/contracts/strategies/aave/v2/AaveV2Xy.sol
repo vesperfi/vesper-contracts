@@ -112,10 +112,11 @@ contract AaveV2Xy is Strategy, AaveV2Core {
         }
         uint256 _collateral = aToken.balanceOf(address(this));
         // In case of withdraw, _amount can be greater than _supply
-        uint256 _hypotheticalCollateral =
-            _depositAmount > 0 ? _collateral + _depositAmount : _collateral > _withdrawAmount
-                ? _collateral - _withdrawAmount
-                : 0;
+        uint256 _hypotheticalCollateral = _depositAmount > 0
+            ? _collateral + _depositAmount
+            : _collateral > _withdrawAmount
+            ? _collateral - _withdrawAmount
+            : 0;
         if (_hypotheticalCollateral == 0) {
             return (0, _borrowed);
         }
@@ -128,16 +129,16 @@ contract AaveV2Xy is Strategy, AaveV2Core {
             return (0, _borrowed);
         }
         // _collateralFactor in 4 decimal. 10_000 = 100%
-        (, uint256 _collateralFactor, , , , , , , , ) =
-            aaveProtocolDataProvider.getReserveConfigurationData(address(collateralToken));
+        (, uint256 _collateralFactor, , , , , , , , ) = aaveProtocolDataProvider.getReserveConfigurationData(
+            address(collateralToken)
+        );
 
         // Collateral in base currency based on oracle price and cf;
-        uint256 _actualCollateralForBorrow =
-            (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-                (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
+        uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
+            (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
         // Calculate max borrow possible in borrow token number
-        uint256 _maxBorrowPossible =
-            (_actualCollateralForBorrow * (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+        uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
+            (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }

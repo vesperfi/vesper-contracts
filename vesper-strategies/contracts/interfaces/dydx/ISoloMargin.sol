@@ -5,7 +5,11 @@ pragma solidity 0.8.9;
 /** In order to keep code/files short, all libraries and interfaces are trimmed as per Vesper need */
 
 library Account {
-    enum Status {Normal, Liquid, Vapor}
+    enum Status {
+        Normal,
+        Liquid,
+        Vapor
+    }
     struct Info {
         address owner; // The address that owns the account
         uint256 number; // A nonce that allows a single address to control many accounts
