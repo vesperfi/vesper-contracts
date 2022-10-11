@@ -31,6 +31,7 @@ const StrategyType = {
   STARGATE: 'stargate',
   EULER: 'euler',
   EULER_VESPER_XY: 'eulerVesperXY',
+  COMPOUNDV3: 'compoundV3',
 }
 
 module.exports = Object.freeze(StrategyType)
