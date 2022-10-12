@@ -187,11 +187,6 @@ abstract contract CompoundXyCore is Strategy {
         return borrowCToken.getCash();
     }
 
-    /// @dev Get the borrow balance strategy is holding. Override to handle vToken balance.
-    function _getBorrowBalance() internal view virtual returns (uint256) {
-        return IERC20(borrowToken).balanceOf(address(this));
-    }
-
     /// @dev TraderJoe Compound fork has different markets API so allow this method to override.
     function _getCollateralFactor(address _cToken) internal view virtual returns (uint256 _collateralFactor) {
         (, _collateralFactor, ) = comptroller.markets(_cToken);
@@ -201,6 +196,8 @@ abstract contract CompoundXyCore is Strategy {
     function _getUnderlyingToken(address _cToken) internal view virtual returns (address) {
         return CToken(_cToken).underlying();
     }
+
+    function _getYTokensInProtocol() internal view virtual returns (uint256) {}
 
     /// @dev Deposit collateral aka X in Compound. Override to handle ETH
     function _mintX(uint256 _amount) internal virtual {
@@ -222,15 +219,25 @@ abstract contract CompoundXyCore is Strategy {
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
         // Claim any reward we have.
         _claimRewardsAndConvertTo(address(collateralToken));
-        uint256 _borrow = borrowCToken.borrowBalanceCurrent(address(this));
-        uint256 _borrowBalanceHere = _getBorrowBalance();
+
+        uint256 _yTokensBorrowed = borrowCToken.borrowBalanceCurrent(address(this));
+        uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+        uint256 _yTokensInProtocol = _getYTokensInProtocol();
+        uint256 _totalYTokens = _yTokensHere + _yTokensInProtocol;
+
         // _borrow increases every block. Convert collateral to borrowToken.
-        if (_borrow > _borrowBalanceHere) {
-            _swapToBorrowToken(_borrow - _borrowBalanceHere);
+        if (_yTokensBorrowed > _totalYTokens) {
+            _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
         } else {
-            // When _borrowBalanceHere exceeds _borrow balance from Compound
-            // Customize this hook to handle the excess borrowToken profit
-            _rebalanceBorrow(_borrowBalanceHere - _borrow);
+            // When _yTokensInProtocol exceeds _yTokensBorrowed from Compound
+            // then we have profit from investing borrow tokens. _yTokensHere is profit.
+            if (_yTokensInProtocol > _yTokensBorrowed) {
+                _withdrawY(_yTokensInProtocol - _yTokensBorrowed);
+                _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+            }
+            if (_yTokensHere > 0) {
+                _safeSwapExactInput(borrowToken, address(collateralToken), _yTokensHere);
+            }
         }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
@@ -259,9 +266,6 @@ abstract contract CompoundXyCore is Strategy {
         _deposit();
     }
 
-    /// @dev Hook to handle profit scenario i.e. actual borrowed balance > Compound borrow account.
-    function _rebalanceBorrow(uint256 _excessBorrow) internal virtual {}
-
     /// @dev Withdraw collateral aka X from Compound. Override to handle ETH
     function _redeemX(uint256 _amount) internal virtual {
         require(supplyCToken.redeemUnderlying(_amount) == 0, "withdraw-failed");
@@ -275,25 +279,25 @@ abstract contract CompoundXyCore is Strategy {
      */
     function _repay(uint256 _repayAmount, bool _shouldClaimComp) internal {
         if (_repayAmount > 0) {
-            uint256 _borrowBalanceHere = _getBorrowBalance();
+            uint256 _totalYTokens = IERC20(borrowToken).balanceOf(address(this)) + _getYTokensInProtocol();
             // Liability is more than what we have.
             // To repay loan - convert all rewards to collateral, if asked, and redeem collateral(if needed).
             // This scenario is rare and if system works okay it will/might happen during final repay only.
-            if (_repayAmount > _borrowBalanceHere) {
+            if (_repayAmount > _totalYTokens) {
                 if (_shouldClaimComp) {
                     // Claim rewardToken and convert those to collateral.
                     _claimRewardsAndConvertTo(address(collateralToken));
                 }
 
-                uint256 _currentBorrow = borrowCToken.borrowBalanceCurrent(address(this));
+                uint256 _yTokensBorrowed = borrowCToken.borrowBalanceCurrent(address(this));
                 // For example this is final repay and 100 blocks has passed since last withdraw/rebalance,
-                // _currentBorrow is increasing due to interest. Now if _repayAmount > _borrowBalanceHere is true
-                // _currentBorrow > _borrowBalanceHere is also true.
-                // To maintain safe position we always try to keep _currentBorrow = _borrowBalanceHere
+                // _yTokensBorrowed is increasing due to interest. Now if _repayAmount > _borrowBalanceHere is true
+                // _yTokensBorrowed > _borrowBalanceHere is also true.
+                // To maintain safe position we always try to keep _yTokensBorrowed = _borrowBalanceHere
 
                 // Swap collateral to borrowToken to repay borrow and also maintain safe position
-                // Here borrowToken amount needed is (_currentBorrow - _borrowBalanceHere)
-                _swapToBorrowToken(_currentBorrow - _borrowBalanceHere);
+                // Here borrowToken amount needed is (_yTokensBorrowed - _borrowBalanceHere)
+                _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
             }
             _repayY(_repayAmount);
         }
@@ -329,9 +333,19 @@ abstract contract CompoundXyCore is Strategy {
     function _withdrawHere(uint256 _amount) internal override {
         (, uint256 _repayAmount) = _calculateBorrowPosition(0, _amount);
         _repay(_repayAmount, true);
-        uint256 _supply = supplyCToken.balanceOfUnderlying(address(this));
-        _redeemX(_supply > _amount ? _amount : _supply);
+        // If _amount is very small and equivalent to 0 cToken then skip withdraw.
+        uint256 _expectedCToken = (_amount * 1e18) / supplyCToken.exchangeRateStored();
+        if (_expectedCToken > 0) {
+            // Get minimum of _amount and _available collateral and _availableLiquidity
+            uint256 _withdrawAmount = Math.min(
+                _amount,
+                Math.min(supplyCToken.balanceOfUnderlying(address(this)), supplyCToken.getCash())
+            );
+            _redeemX(_withdrawAmount);
+        }
     }
+
+    function _withdrawY(uint256 _amount) internal virtual {}
 
     /************************************************************************************************
      *                          Governor/admin/keeper function                                      *
