@@ -147,33 +147,34 @@ abstract contract Maker is Strategy {
         )
     {
         (
-            uint256 _collateralInVault,
+            uint256 _wrappedCollateralInVault18,
             uint256 _currentDaiDebt,
             uint256 _collateralUsdRate,
             ,
             uint256 _minimumDaiDebt
         ) = cm.getVaultInfo(address(this));
-
         _payback = IVesperPool(pool).excessDebt(address(this));
-        uint256 _paybackInWrapped;
+        uint256 withdrawFromVault;
         if (_payback > 0) {
-            _paybackInWrapped = _convertToWrapped(_payback);
+            withdrawFromVault = _convertToWrapped(_payback);
         }
-
         // Assets in maker is always in 18 decimal.
         {
-            uint256 _collateralInVault18 = convertFrom18(_collateralInVault);
-            if (_paybackInWrapped > _collateralInVault18) {
-                _paybackInWrapped = _collateralInVault18;
+            uint256 _wrappedCollateralInVault = convertFrom18(_wrappedCollateralInVault18);
+            uint256 _strategyDebtInWrapped = _convertToWrapped(IVesperPool(pool).totalDebtOf(address(this)));
+            if (_wrappedCollateralInVault > _strategyDebtInWrapped) {
+                withdrawFromVault += _wrappedCollateralInVault - _strategyDebtInWrapped;
+            }
+            if (withdrawFromVault > _wrappedCollateralInVault) {
+                withdrawFromVault = _wrappedCollateralInVault;
             }
         }
-
-        // _collateralInVault after payback
-        _collateralInVault -= convertTo18(_paybackInWrapped); // Collateral in Maker vault is always 18 decimal.
+        // remaining _collateralInVault
+        _wrappedCollateralInVault18 -= convertTo18(withdrawFromVault); // Collateral in Maker vault is always 18 decimal.
 
         // Calculate daiToRepay or daiToBorrow considering current collateral in Vault, payback, collateralUsdRate
         (uint256 _daiToRepay, uint256 _daiToBorrow) = _calculateSafeBorrowPosition(
-            _collateralInVault,
+            _wrappedCollateralInVault18,
             _currentDaiDebt,
             _collateralUsdRate,
             _minimumDaiDebt
@@ -195,9 +196,9 @@ abstract contract Maker is Strategy {
             _currentDaiDebt -= _daiToRepay;
         }
         // Dai paid back by now. Good to withdraw excessDebt in collateral.
-        if (_paybackInWrapped > 0) {
-            cm.withdrawCollateral(_paybackInWrapped);
-            _unwrap(_paybackInWrapped);
+        if (withdrawFromVault > 0) {
+            cm.withdrawCollateral(withdrawFromVault);
+            _unwrap(withdrawFromVault);
         }
 
         // All remaining dai here is profit.
@@ -221,9 +222,9 @@ abstract contract Maker is Strategy {
         if (_collateralHere > 0) {
             uint256 _wrappedHere = _wrap(_collateralHere);
             cm.depositCollateral(_wrappedHere);
-            _collateralInVault += convertTo18(_wrappedHere);
+            _wrappedCollateralInVault18 += convertTo18(_wrappedHere);
             (, _daiToBorrow) = _calculateSafeBorrowPosition(
-                _collateralInVault,
+                _wrappedCollateralInVault18,
                 _currentDaiDebt,
                 _collateralUsdRate,
                 _minimumDaiDebt
