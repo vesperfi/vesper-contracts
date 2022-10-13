@@ -484,17 +484,15 @@ async function getEvent(txnObj, contractInstance, eventName) {
 }
 
 async function getStrategyToken(strategy) {
-  const name = strategy.constructorArgs.strategyName
   const address = await strategy.instance.token()
-  // TODO fine tune this
-  if (
-    (name.toLowerCase().includes('compound') && !strategy.type.toLowerCase().includes('curve')) ||
-    strategy.type.toLowerCase().includes('compound') ||
-    strategy.type.includes('traderJoe')
-  ) {
-    return ethers.getContractAt(CToken, address)
+
+  let token = await ethers.getContractAt(CToken, address)
+  try {
+    await token.accrueInterest()
+  } catch (e) {
+    token = ethers.getContractAt('ERC20', address)
   }
-  return ethers.getContractAt('ERC20', address)
+  return token
 }
 
 module.exports = {

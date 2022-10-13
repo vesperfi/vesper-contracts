@@ -1867,6 +1867,20 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  CompoundV3_USDC: {
+    contract: 'CompoundV3',
+    type: StrategyTypes.COMPOUNDV3,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.Compound.COMP,
+      comet: Address.CompoundV3.cUSDCv3,
+      strategyName: 'CompoundV3_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
