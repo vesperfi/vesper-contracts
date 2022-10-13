@@ -39,12 +39,12 @@ contract CompoundV3 is Strategy {
     }
 
     function tvl() external view override returns (uint256) {
-        return comet.balanceOf(address(this)) + comet.balanceOf(address(this));
+        return comet.balanceOf(address(this)) + collateralToken.balanceOf(address(this));
     }
 
     /// @notice Approve all required tokens
     function _approveToken(uint256 amount_) internal virtual override {
-        collateralToken.safeApprove(pool, amount_);
+        super._approveToken(amount_);
         collateralToken.safeApprove(address(comet), amount_);
         IERC20(rewardToken).safeApprove(address(swapper), amount_);
     }
@@ -70,6 +70,12 @@ contract CompoundV3 is Strategy {
         if (_amount > 0) {
             comet.supply(address(collateralToken), _amount);
         }
+    }
+
+    function _getAvailableLiquidity() internal view returns (uint256) {
+        uint256 _totalSupply = comet.totalSupply();
+        uint256 _totalBorrow = comet.totalBorrow();
+        return _totalSupply > _totalBorrow ? _totalSupply - _totalBorrow : 0;
     }
 
     /**
@@ -111,16 +117,10 @@ contract CompoundV3 is Strategy {
         _deposit(collateralToken.balanceOf(address(this)));
     }
 
-    function _availableLiquidity() internal view returns (uint256) {
-        uint256 _totalSupply = comet.totalSupply();
-        uint256 _totalBorrow = comet.totalBorrow();
-        return _totalSupply > _totalBorrow ? _totalSupply - _totalBorrow : 0;
-    }
-
     /// @dev Withdraw collateral here. Do not transfer to pool
     function _withdrawHere(uint256 _amount) internal override {
         // Get minimum of _amount and _available collateral and _availableLiquidity
-        uint256 _withdrawAmount = Math.min(_amount, Math.min(comet.balanceOf(address(this)), _availableLiquidity()));
+        uint256 _withdrawAmount = Math.min(_amount, Math.min(comet.balanceOf(address(this)), _getAvailableLiquidity()));
         comet.withdraw(address(collateralToken), _withdrawAmount);
     }
 }
