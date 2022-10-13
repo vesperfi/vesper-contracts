@@ -5,6 +5,17 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 interface IComet is IERC20 {
+    struct AssetInfo {
+        uint8 offset;
+        address asset;
+        address priceFeed;
+        uint64 scale;
+        uint64 borrowCollateralFactor;
+        uint64 liquidateCollateralFactor;
+        uint64 liquidationFactor;
+        uint128 supplyCap;
+    }
+
     struct TotalsCollateral {
         uint128 totalSupplyAsset;
         uint128 _reserved;
@@ -12,6 +23,17 @@ interface IComet is IERC20 {
 
     /// @notice The address of the base token contract
     function baseToken() external view returns (address);
+
+    /// @notice The address of the price feed for the base token
+    function baseTokenPriceFeed() external view returns (address);
+
+    /**
+     * @notice Query the current negative base balance of an account or zero
+     * @dev Note: uses updated interest indices to calculate
+     * @param account The account whose balance to query
+     * @return The present day base balance magnitude of the account, if negative
+     */
+    function borrowBalanceOf(address account) external view returns (uint256);
 
     /**
      * @notice Query the current collateral balance of an account
@@ -22,12 +44,29 @@ interface IComet is IERC20 {
     function collateralBalanceOf(address account, address asset) external view returns (uint128);
 
     /**
+     * @dev Determine index of asset that matches given address and return assetInfo
+     */
+    function getAssetInfoByAddress(address asset) external view returns (AssetInfo memory);
+
+    /**
+     * @notice Get the current price from a feed
+     * @param priceFeed The address of a price feed
+     * @return The price, scaled by `PRICE_SCALE`
+     */
+    function getPrice(address priceFeed) external view returns (uint256);
+
+    /**
      * @notice Get the total amount of debt
      * @dev Note: uses updated interest indices to calculate
      * @return The amount of debt
      **/
     function totalBorrow() external view returns (uint256);
 
+    /**
+     * @notice Get the total amount of given token
+     * @param asset The collateral asset to check the total for
+     * @return The total collateral balance
+     */
     function totalsCollateral(address asset) external view returns (TotalsCollateral memory);
 
     /**
