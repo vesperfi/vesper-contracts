@@ -281,8 +281,8 @@ contract EulerXy is Strategy {
         }
 
         // There are scenarios when we want to call _calculateBorrowPosition and act on it.
-        // 1. We have got some collateral from pool, this may lead to borrow more.
-        // 2. Collateral and/or borrow token price is changed. Leads to reply or borrow.
+        // 1. Strategy got some collateral from pool which will allow strategy to borrow more.
+        // 2. Collateral and/or borrow token price is changed which leads to repay or borrow.
         // 3. BorrowLimits are updated.
         // In some edge scenarios, below call is redundant but keeping it as is for simplicity.
         (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(
