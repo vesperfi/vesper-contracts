@@ -31,7 +31,7 @@ const StrategyConfig = {
 
   AaveV3_Vesper_Xy_ETH_DAIe: {
     contract: 'AaveV3VesperXy',
-    type: StrategyTypes.AAVE_VESPER_XY,
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aAvaWETH,
