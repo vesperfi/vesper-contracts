@@ -143,7 +143,7 @@ async function configureSwapper(strategies, collateral) {
         await strategy.instance.receiptToken(),
       )
       const incentiveController = await ethers.getContractAt(
-        ['function getRewardsList() external view override returns (address[] memory)'],
+        ['function getRewardsList() external view returns (address[] memory)'],
         await aToken.getIncentivesController(),
       )
       const _rewardTokens = await getIfExist(incentiveController.getRewardsList)

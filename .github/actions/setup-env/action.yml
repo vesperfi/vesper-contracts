@@ -40,5 +40,9 @@ runs:
 
     - name: Run hardhat compile if needed
       if: steps.artifacts-cache.outputs.cache-hit != 'true'
-      run: npm run compile
+      # When compiling multiple packages at same time, compiler download will fail as multiple
+      # process tries to lock same file. Hence compile 1 package first and then compile whole repo.
+      run: |
+        npm run compile:pools
+        npm run compile
       shell: bash
