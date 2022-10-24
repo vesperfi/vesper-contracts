@@ -807,86 +807,56 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AlphaLendStrategyDAI: {
-    contract: 'AlphaLendStrategy',
-    type: StrategyTypes.ALPHA_LEND,
+  Alpha_Homora_DPI: {
+    contract: 'AlphaHomora',
+    type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Alpha.ibDAIv2,
-      strategyName: 'AlphaLendStrategyDAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  AlphaLendStrategyDPI: {
-    contract: 'AlphaLendStrategy',
-    type: StrategyTypes.ALPHA_LEND,
-    constructorArgs: {
-      swapper,
+      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibDPIv2,
-      strategyName: 'AlphaLendStrategyDPI',
+      strategyName: 'Alpha_Homora_DPI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AlphaLendStrategyETH: {
-    contract: 'AlphaLendStrategyETH',
-    type: StrategyTypes.ALPHA_LEND,
+  Alpha_Homora_ETH: {
+    contract: 'AlphaHomoraETH',
+    type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
+      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibETHv2,
-      strategyName: 'AlphaLendStrategyETH',
+      nativeToken: Address.NATIVE_TOKEN,
+      strategyName: 'Alpha_Homora_ETH',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AlphaLendStrategyLINK: {
-    contract: 'AlphaLendStrategy',
-    type: StrategyTypes.ALPHA_LEND,
+  Alpha_Homora_USDC: {
+    contract: 'AlphaHomora',
+    type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Alpha.ibLINKv2,
-      strategyName: 'AlphaLendStrategyLINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  AlphaLendStrategyUSDC: {
-    contract: 'AlphaLendStrategy',
-    type: StrategyTypes.ALPHA_LEND,
-    constructorArgs: {
-      swapper,
+      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibUSDCv2,
-      strategyName: 'AlphaLendStrategyUSDC',
+      strategyName: 'Alpha_Homora_USDC',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  AlphaLendStrategyUSDT: {
-    contract: 'AlphaLendStrategy',
-    type: StrategyTypes.ALPHA_LEND,
+  Alpha_Homora_Earn_ETH_DAI: {
+    contract: 'AlphaHomoraEarnETH',
+    type: StrategyTypes.EARN_ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Alpha.ibUSDTv2,
-      strategyName: 'AlphaLendStrategyUSDT',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  EarnAlphaLendStrategyETH: {
-    contract: 'EarnAlphaLendStrategyETH',
-    type: StrategyTypes.EARN_ALPHA_LEND,
-    constructorArgs: {
-      swapper,
+      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibETHv2,
       dripToken: Address.DAI,
-      strategyName: 'EarnAlphaLendStrategyETH',
+      nativeToken: Address.NATIVE_TOKEN,
+      strategyName: 'Alpha_Homora_Earn_ETH_DAI',
     },
     config: { ...config },
     setup: { ...setup },
