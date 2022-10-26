@@ -26,6 +26,7 @@ import "vesper-strategies/contracts/strategies/maker/MakerVesperStETH.sol";
 import "vesper-strategies/contracts/interfaces/maker/IMakerDAO.sol";
 import "vesper-strategies/contracts/strategies/convex/4Pool/Convex4FactoryMetaPool.sol";
 import "vesper-strategies/contracts/strategies/convex/4Pool/Convex4MetaPool.sol";
+import "vesper-strategies/contracts/strategies/compound/bsc/VenusBNB.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
