@@ -90,6 +90,10 @@ interface Comptroller {
     function borrowCaps(address market) external view returns (uint256);
 }
 
+interface VenusComptroller is Comptroller {
+    function claimVenus(address holder, address[] memory) external;
+}
+
 interface Oracle {
     function getUnderlyingPrice(address cToken) external view returns (uint256);
 
