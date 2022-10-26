@@ -51,6 +51,12 @@ module.exports = {
       gas: 8000000,
       accounts: { mnemonic: process.env.MNEMONIC || junk },
     },
+    bsc: {
+      url: process.env.NODE_URL,
+      chainId: 56,
+      gas: 8000000,
+      accounts: { mnemonic: process.env.MNEMONIC || junk },
+    },
   },
   contractSizer: {
     alphaSort: true,

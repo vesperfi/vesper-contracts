@@ -914,6 +914,23 @@
           "BenqiCompoundStrategyAvalancheQI": "0x95ADd6A66bED963CcdA6fCc11ae109400E1b1743"
         }
       }
+    },
+    "bsc": {
+      "vabnb": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xdAa2a8AF96f8Df51ED989E9D1fd3F86DF1EE882e",
+          "implementation": "0x2bCb97e729a1c85E7e3EED73E0AC08E36C18940D",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0xFdcb4cc4a75235f53Db7a3dF3e0e839f421c072f",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BNB": "0x2dBE5137541A704666b68D9751F728685893Aff4"
+        }
+      }
     }
   }
 }
