@@ -13,6 +13,20 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  Stargate_BUSD: {
+    contract: 'Stargate',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 5, // BUSD LP Pool ID
+      stargateLpStakingPoolId: 1, // Staking Contract pool ID
+      strategyName: 'Stargate_BUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Venus_BUSD: {
     contract: 'Venus',
     type: StrategyTypes.COMPOUND,
