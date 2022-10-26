@@ -10,13 +10,12 @@ const { shouldBehaveLikeCrvStrategy } = require('./curve')
 
 const Address = getChainData().address
 
-const {
-  Curve: { CRV },
-  CVX,
-} = Address
-
 // cvx strategy specific tests
-function shouldBehaveLikeCvxStrategy(strategyIndex) {
+function shouldBehaveLikeConvexStrategy(strategyIndex) {
+  const {
+    Curve: { CRV },
+    CVX,
+  } = Address
   shouldBehaveLikeCrvStrategy(strategyIndex)
   let strategy
   let governor
@@ -159,4 +158,4 @@ function shouldBehaveLikeCvxStrategy(strategyIndex) {
   })
 }
 
-module.exports = { shouldBehaveLikeCvxStrategy }
+module.exports = { shouldBehaveLikeConvexStrategy }

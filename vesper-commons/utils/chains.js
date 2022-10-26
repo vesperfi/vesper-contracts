@@ -5,6 +5,7 @@ const hre = require('hardhat')
 
 const CHAIN = {
   1: 'mainnet',
+  56: 'bsc',
   137: 'polygon',
   42161: 'arbitrum',
   43114: 'avalanche',

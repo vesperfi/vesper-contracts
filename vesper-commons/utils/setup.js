@@ -82,12 +82,34 @@ async function setDefaultRouting(swapperAddress, pairs) {
   const abi = [
     'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
     'function governor() external view returns(address)',
+    'function addressProvider() external view returns(address)',
     'function defaultRoutings(bytes memory) external view returns(bytes memory)',
   ]
   const swapper = await ethers.getContractAt(abi, swapperAddress)
-  const caller = await unlock(await swapper.governor())
+
+  let governor
+  try {
+    governor = await swapper.governor()
+  } catch (e) {
+    const apABI = ['function governor() external view returns(address)']
+    const addressProvider = await ethers.getContractAt(apABI, await swapper.addressProvider())
+    governor = await addressProvider.governor()
+  }
+
+  const caller = await unlock(governor)
   const ExchangeType = { UNISWAP_V2: 0, SUSHISWAP: 1, TRADERJOE: 2, PANGOLIN: 3, QUICKSWAP: 4, UNISWAP_V3: 5 }
-  const defaultExchange = chain === 'avalanche' ? ExchangeType.TRADERJOE : ExchangeType.UNISWAP_V2
+  let defaultExchange
+  switch (chain) {
+    case 'avalanche':
+      defaultExchange = ExchangeType.TRADERJOE
+      break
+    case 'bsc':
+      defaultExchange = ExchangeType.SUSHISWAP
+      break
+    default:
+      defaultExchange = ExchangeType.UNISWAP_V2
+  }
+
   const swapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
   for (let pair of pairs) {
     let exchange = defaultExchange
@@ -96,27 +118,28 @@ async function setDefaultRouting(swapperAddress, pairs) {
       tokens = [pair.tokenIn, pair.tokenOut]
     }
     let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
-
-    if (chain === 'mainnet' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
-      // uni3 has pair of USDC, WETH in 0.3 fee pool.
-      // TODO: modify logic to support more STG pairs
-      path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
-      exchange = ExchangeType.UNISWAP_V3
-    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
-      path = ethers.utils.solidityPack(
-        ['address', 'uint24', 'address', 'uint24', 'address'],
-        [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-      )
-      exchange = ExchangeType.UNISWAP_V3
-    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
-      path = ethers.utils.solidityPack(
-        ['address', 'uint24', 'address', 'uint24', 'address'],
-        [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-      )
-      exchange = ExchangeType.UNISWAP_V3
-    } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
-      path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
-      exchange = ExchangeType.SUSHISWAP
+    if (chain !== 'bsc') {
+      if (chain === 'mainnet' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
+        // uni3 has pair of USDC, WETH in 0.3 fee pool.
+        // TODO: modify logic to support more STG pairs
+        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
+        exchange = ExchangeType.UNISWAP_V3
+      } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address', 'uint24', 'address'],
+          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+        )
+        exchange = ExchangeType.UNISWAP_V3
+      } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address', 'uint24', 'address'],
+          [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+        )
+        exchange = ExchangeType.UNISWAP_V3
+      } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
+        path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
+        exchange = ExchangeType.SUSHISWAP
+      }
     }
 
     await swapper.connect(caller).setDefaultRouting(swapType.EXACT_INPUT, pair.tokenIn, pair.tokenOut, exchange, path)
