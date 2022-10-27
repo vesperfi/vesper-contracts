@@ -166,7 +166,7 @@ async function configureSwapper(strategies, collateral) {
         await strategy.instance.receiptToken(),
       )
       const incentiveController = await ethers.getContractAt(
-        ['function getRewardsList() external view override returns (address[] memory)'],
+        ['function getRewardsList() external view returns (address[] memory)'],
         await aToken.getIncentivesController(),
       )
       const _rewardTokens = await getIfExist(incentiveController.getRewardsList)
@@ -201,12 +201,13 @@ async function configureOracles(strategies) {
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
 
-    if (strategyType.includes('curve')) {
+    if (strategyType.includes('curve') || strategyType.includes('convex')) {
       const masterOracleABI = [
-        'function defaultOracle() external view returns(address)',
-        'function oracles(address) external view returns (address)',
-        'function updateTokenOracle(address,address) external',
-        'function addressProvider() external view returns(address)',
+        'function governor() view returns(address)',
+        'function defaultOracle() view returns(address)',
+        'function oracles(address) view returns (address)',
+        'function updateTokenOracle(address,address)',
+        'function addressProvider() view returns (address)', // mainnet doesn't have this yet
       ]
       const defaultOracleABI = ['function updateStalePeriod(uint256)']
       const btcPeggedOracleABI = ['function updateStalePeriod(uint256)']
@@ -490,17 +491,15 @@ async function getEvent(txnObj, contractInstance, eventName) {
 }
 
 async function getStrategyToken(strategy) {
-  const name = strategy.constructorArgs.strategyName
   const address = await strategy.instance.token()
-  // TODO fine tune this
-  if (
-    (name.toLowerCase().includes('compound') && !strategy.type.toLowerCase().includes('curve')) ||
-    strategy.type.toLowerCase().includes('compound') ||
-    strategy.type.includes('traderJoe')
-  ) {
-    return ethers.getContractAt(CToken, address)
+
+  let token = await ethers.getContractAt(CToken, address)
+  try {
+    await token.accrueInterest()
+  } catch (e) {
+    token = ethers.getContractAt('ERC20', address)
   }
-  return ethers.getContractAt('ERC20', address)
+  return token
 }
 
 module.exports = {

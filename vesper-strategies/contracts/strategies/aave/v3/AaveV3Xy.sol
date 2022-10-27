@@ -257,15 +257,16 @@ contract AaveV3Xy is Strategy {
         uint256 _newSupply = collateralToken.balanceOf(address(this));
         _depositToAave(_newSupply, _aaveLendingPool);
 
-        //TODO: _calculateBorrowPosition is called two times when  _totalAmountToWithdraw > 0 . How to avoid it?
-        // borrow position may be affected in following scenario.
-        // 1. Collateral or borrow token price changes.
-        // 2.  More collateral received from pool.
+        // There are scenarios when we want to call _calculateBorrowPosition and act on it.
+        // 1. Strategy got some collateral from pool which will allow strategy to borrow more.
+        // 2. Collateral and/or borrow token price is changed which leads to repay or borrow.
+        // 3. BorrowLimits are updated.
+        // In some edge scenarios, below call is redundant but keeping it as is for simplicity.
         (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(
             0,
             0,
-            _borrowed,
-            _supplied + _newSupply
+            vdToken.balanceOf(address(this)),
+            IERC20(receiptToken).balanceOf(address(this))
         );
         if (_repayAmount > 0) {
             // Repay _borrowAmount to maintain safe position

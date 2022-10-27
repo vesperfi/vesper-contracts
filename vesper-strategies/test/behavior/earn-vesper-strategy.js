@@ -49,10 +49,11 @@ async function shouldBehaveLikeEarnVesperStrategy(strategyIndex) {
       vToken = await ethers.getContractAt('VPool', await strategy.instance.token()) // receiptToken
       dripTokenSymbol = await dripToken.symbol()
       earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-      rewardToken = await ethers.getContractAt('ERC20', await earnDrip.growToken())
 
-      if (rewardToken.address === ethers.constants.AddressZero) {
-        rewardToken = dripToken
+      rewardToken = dripToken
+      const growToken = await earnDrip.growToken()
+      if (growToken !== ethers.constants.AddressZero) {
+        rewardToken = await ethers.getContractAt('ERC20', growToken)
       }
       rewardTokenSymbol = await rewardToken.symbol()
       unlockedStrategy = await unlock(strategy.instance.address)

@@ -114,12 +114,14 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
  * @returns {Promise<BigNumber>} Actual balance after balance adjustment
  */
 
-async function adjustBalance(token, targetAddress, balance) {
-  const slot = getSlot(token)
+async function adjustBalance(token, targetAddress, balance, slot) {
   if (slot === undefined) {
-    return getBalanceFromWhale(token, targetAddress, balance)
+    // eslint-disable-next-line no-param-reassign
+    slot = getSlot(token)
+    if (slot === undefined) {
+      return getBalanceFromWhale(token, targetAddress, balance)
+    }
   }
-
   // reason: https://github.com/nomiclabs/hardhat/issues/1585 comments
   // Create solidity has for index, convert it into hex string and remove all the leading zeros
   const index = hexStripZeros(hexlify(solidityKeccak256(['uint256', 'uint256'], [targetAddress, slot])))

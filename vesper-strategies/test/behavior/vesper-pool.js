@@ -8,6 +8,7 @@ const {
   rebalanceStrategy,
   totalDebtOfAllStrategy,
   makeStrategyProfitable,
+  increaseTimeIfNeeded,
 } = require('vesper-commons/utils/poolOps')
 const chaiAlmost = require('chai-almost')
 const chai = require('chai')
@@ -115,7 +116,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const withdrawAmount = await pool.balanceOf(user1.address)
         const pricePerShare = await pool.pricePerShare()
         const expectedCollateral = withdrawAmount.mul(pricePerShare).div(ethers.utils.parseEther('1'))
-
+        await increaseTimeIfNeeded(strategies[0])
         await pool.connect(user1).withdraw(withdrawAmount)
         const totalDebtOfStrategies = await totalDebtOfAllStrategy(strategies, pool)
         return Promise.all([
@@ -143,6 +144,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const pricePerShare = await pool.pricePerShare()
         const expectedCollateral = withdrawAmount.mul(pricePerShare).div(ethers.utils.parseEther('1'))
         // Withdraw
+        await increaseTimeIfNeeded(strategies[0])
         await pool.connect(user1).withdraw(withdrawAmount)
         vPoolBalance = await pool.balanceOf(user1.address)
         const collateralBalance = await collateralToken.balanceOf(user1.address)
@@ -157,6 +159,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       it(`Should withdraw ${collateralName} using whitelistedWithdraw()`, async function () {
         await rebalance(strategies)
         const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
+        await increaseTimeIfNeeded(strategies[0])
         const withdrawAmount = '10000000000000000'
         await pool.connect(user1).whitelistedWithdraw(withdrawAmount)
         const collateralBalance = await collateralToken.balanceOf(user1.address)
@@ -169,6 +172,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       it(`Should withdraw very small ${collateralName} after rebalance`, async function () {
         await rebalance(strategies)
         const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
+        await increaseTimeIfNeeded(strategies[0])
         const withdrawAmount = '10000000000000000'
         await pool.connect(user1).withdraw(withdrawAmount)
         const collateralBalance = await collateralToken.balanceOf(user1.address)
@@ -181,6 +185,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       it(`Should withdraw partial ${collateralName} after rebalance`, async function () {
         await rebalance(strategies)
         const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
+        await increaseTimeIfNeeded(strategies[0])
         const withdrawAmount = (await pool.balanceOf(user1.address)).div(2)
         await pool.connect(user1).withdraw(withdrawAmount)
         const totalDebt = await pool.totalDebt()
@@ -352,10 +357,12 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       if (isEarnPool) {
         it('Earn Pool:: Should collect universal fee on rebalance', async function () {
           const earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          let rewardToken = await ethers.getContractAt('ERC20', await earnDrip.growToken())
           const dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          if (rewardToken.address === ethers.constants.AddressZero) {
-            rewardToken = dripToken
+          let rewardToken = dripToken
+
+          const growToken = await earnDrip.growToken()
+          if (growToken !== ethers.constants.AddressZero) {
+            rewardToken = await ethers.getContractAt('ERC20', growToken)
           }
           const feeCollector = strategies[0].feeCollector
           const rewardBalanceBefore = await rewardToken.balanceOf(feeCollector)
@@ -487,6 +494,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           1,
           'Total debt of all strategies is wrong after rebalance',
         )
+        await increaseTimeIfNeeded(strategies[0])
         const withdrawAmount = await pool.balanceOf(user1.address)
         await pool.connect(user1).withdraw(withdrawAmount)
         // Withdraw decreases value
@@ -505,6 +513,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         for (let i = 1; i < strategies.length; i++) {
           await strategies[i].instance.rebalance()
         }
+        await increaseTimeIfNeeded(strategies[0])
         await strategies[0].instance.rebalance()
 
         // FIXME: This is always false when `debtRatio` decreases after rebalance
@@ -583,10 +592,12 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
         beforeEach(async function () {
           earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          rewardToken = await ethers.getContractAt('ERC20', await earnDrip.growToken())
           dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          if (rewardToken.address === ethers.constants.AddressZero) {
-            rewardToken = dripToken
+          rewardToken = dripToken
+
+          const growToken = await earnDrip.growToken()
+          if (growToken !== ethers.constants.AddressZero) {
+            rewardToken = await ethers.getContractAt('ERC20', growToken)
           }
         })
 
