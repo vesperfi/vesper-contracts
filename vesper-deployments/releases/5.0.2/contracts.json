@@ -930,6 +930,21 @@
         "strategies": {
           "Venus_BNB": "0x2dBE5137541A704666b68D9751F728685893Aff4"
         }
+      },
+      "vabusd": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xa77f218cf8B28BddB2039eC1Cd2986548aecE76b",
+          "implementation": "0x0Ec1CC407F01952F9AFD5bF79EEc4c32Aa925401",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0x54072A3d881DaD78015aA96e0caaCA6bC116EA5D",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BUSD": "0x810B916Ff0CDc1AF652f1b29Cd7342F3896742D4"
+        }
       }
     }
   }
