@@ -70,6 +70,12 @@ module.exports = {
       gas: 8000000,
       accounts,
     },
+    bsc: {
+      url: process.env.NODE_URL,
+      chainId: 56,
+      gas: 8000000,
+      accounts,
+    },
   },
   paths: {
     sources: process.env.SOURCES_DIR || './contracts',

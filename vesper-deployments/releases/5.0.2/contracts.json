@@ -162,7 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
-          "Maker_Vesper_STETH": "0xc2dDA4d6CA0e2728BDC7b0A738D4664bF58698e1"
+          "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
         }
       },
       "vaeth": {
@@ -323,6 +323,7 @@
         "strategies": {
           "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
+          "Convex_dola_DAI": "0x269041586AB615Cd19E8CbFABC7C45CdA8179289",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
           "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
@@ -691,6 +692,9 @@
           "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
           "proxy": "0x968d6024e32d30a7334Ffc5373CcD97a3d199E94",
           "implementation": "0x233ADa5Dd2941AD71aD40e059878660fFA958319"
+        },
+        "strategies": {
+          "Convex_musd_MUSD": "0x0D58D1F0F183120dE7cbCD2a131b7aA519caf304"
         }
       },
       "vaape": {
@@ -908,6 +912,23 @@
         },
         "strategies": {
           "BenqiCompoundStrategyAvalancheQI": "0x95ADd6A66bED963CcdA6fCc11ae109400E1b1743"
+        }
+      }
+    },
+    "bsc": {
+      "vabnb": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xdAa2a8AF96f8Df51ED989E9D1fd3F86DF1EE882e",
+          "implementation": "0x2bCb97e729a1c85E7e3EED73E0AC08E36C18940D",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0xFdcb4cc4a75235f53Db7a3dF3e0e839f421c072f",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BNB": "0x2dBE5137541A704666b68D9751F728685893Aff4"
         }
       }
     }

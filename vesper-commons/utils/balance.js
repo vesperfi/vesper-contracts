@@ -4,6 +4,7 @@ const hre = require('hardhat')
 const Address = require('../config/mainnet/address')
 const AvalancheAddress = require('../config/avalanche/address')
 const PolygonAddress = require('../config/polygon/address')
+const BscAddress = require('../config/bsc/address')
 const ethers = hre.ethers
 const helpers = require('@nomicfoundation/hardhat-network-helpers')
 const BigNumber = ethers.BigNumber
@@ -67,6 +68,10 @@ const whales = {
 
   // Avalanche
   [AvalancheAddress.Curve.CRV]: '0xb67b891a1dcb86b7933924ebb0e120d229423594',
+
+  // BSC
+  [BscAddress.BUSD]: '0xf977814e90da44bfa03b6295a0616a897441acec',
+  [BscAddress.WBNB]: '0x0ed7e52944161450477ee417de9cd3a859b14fd0',
 }
 
 /**
