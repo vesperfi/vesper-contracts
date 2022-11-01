@@ -72,6 +72,7 @@ const whales = {
   // BSC
   [BscAddress.BUSD]: '0xf977814e90da44bfa03b6295a0616a897441acec',
   [BscAddress.WBNB]: '0x0ed7e52944161450477ee417de9cd3a859b14fd0',
+  [BscAddress.Ellipsis.EPX]: '0xF977814e90dA44bFA03b6295A0616a897441aceC',
 }
 
 /**

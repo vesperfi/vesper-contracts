@@ -3,7 +3,7 @@
 const { ethers } = require('hardhat')
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
-const CurvePoolTypes = require('../../utils/curvePoolTypes')
+const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
