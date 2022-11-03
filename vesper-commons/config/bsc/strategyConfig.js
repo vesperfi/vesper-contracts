@@ -17,6 +17,22 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  DotDot_Val3Pool_BUSD: {
+    contract: 'DotDot',
+    type: StrategyTypes.DOT_DOT,
+    constructorArgs: {
+      ellipsisPool: Address.Ellipsis.VAL_3EPS,
+      ellipsisPoolType: EllipsisPoolTypes.PLAIN_3_POOL,
+      depositZap: ethers.constants.AddressZero,
+      ellipsisSlippage: 10, // 0.1%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'DotDot_Val3Pool_BUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Ellipsis_Val3Pool_BUSD: {
     contract: 'Ellipsis',
     type: StrategyTypes.ELLIPSIS,

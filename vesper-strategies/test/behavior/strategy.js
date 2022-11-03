@@ -23,6 +23,7 @@ const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
 const { shouldBehaveLikeEulerVesperXY } = require('./euler-vesper-xy')
 const { shouldBehaveLikeAaveV3VesperXY } = require('./aavev3-vesper-xy')
 const { shouldBehaveLikeEllipsisStrategy } = require('./ellipsis')
+const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
@@ -55,6 +56,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.EULER_VESPER_XY]: shouldBehaveLikeEulerVesperXY,
     [StrategyType.AAVE_V3_VESPER_XY]: shouldBehaveLikeAaveV3VesperXY,
     [StrategyType.ELLIPSIS]: shouldBehaveLikeEllipsisStrategy,
+    [StrategyType.DOT_DOT]: shouldBehaveLikeDotDotStrategy,
   }
 
   const shouldBehaveLikeSpecificStrategy = behaviors[type]
