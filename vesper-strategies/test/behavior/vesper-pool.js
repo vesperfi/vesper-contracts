@@ -201,10 +201,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         await deposit(15, user1)
         depositAmount = await deposit(15, user2)
         await rebalance(strategies)
-        // Some strategies can report a loss if they don't have time to earn anything
-        // Time travel based on type of strategy. For compound strategy mine 500 blocks, else time travel
-        await time.increase(60 * 24 * 60 * 60)
-        await mine(500)
         await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
         const user2Balance = await pool.balanceOf(user2.address)
