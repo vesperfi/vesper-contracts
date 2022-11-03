@@ -208,8 +208,9 @@ async function configureSwapper(strategies, collateral) {
 async function configureOracles(strategies) {
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
-
-    if (strategyType.includes('curve') || strategyType.includes('convex') || strategyType.includes('ellipsis')) {
+    // NOTE:: CONVEX type is using value as curveConvex, hence can't use that value for comparison
+    const curveLikeStrategies = [StrategyType.CURVE, 'convex', StrategyType.ELLIPSIS, StrategyType.DOT_DOT]
+    if (curveLikeStrategies.some(value => strategyType.includes(value.toLowerCase()))) {
       const masterOracleABI = [
         'function governor() view returns(address)',
         'function defaultOracle() view returns(address)',
