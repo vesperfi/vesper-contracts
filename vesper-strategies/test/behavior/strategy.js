@@ -6,7 +6,6 @@ const { expect } = require('chai')
 const { getEvent } = require('vesper-commons/utils/setup')
 const { shouldMigrateStrategies } = require('./strategy-migration')
 const { shouldBehaveLikeCompoundStrategy } = require('./compound')
-// const { shouldBehaveLikeTraderJoeStrategy } = require('./traderjoe-strategy')
 const { shouldBehaveLikeCompoundXyStrategy } = require('./compound-xy')
 const { shouldBehaveLikeCompoundLeverageStrategy } = require('./compound-leverage')
 const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
@@ -14,9 +13,6 @@ const { shouldBehaveLikeCrvStrategy } = require('./curve')
 const { shouldBehaveLikeConvexStrategy } = require('./convex')
 const { shouldBehaveLikeConvexForFraxStrategy } = require('./convex-for-frax')
 const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
-// const { shouldBehaveLikeEarnMakerStrategy } = require('./earn-maker-strategy')
-// const { shouldBehaveLikeEarnVesperMakerStrategy } = require('./earn-vesper-maker-strategy')
-// const { shouldBehaveLikeRariFuseStrategy } = require('./rari-fuse-strategy')
 const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
 const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
 const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
@@ -24,6 +20,7 @@ const { shouldBehaveLikeEulerVesperXY } = require('./euler-vesper-xy')
 const { shouldBehaveLikeAaveV3VesperXY } = require('./aavev3-vesper-xy')
 const { shouldBehaveLikeEllipsisStrategy } = require('./ellipsis')
 const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
+const { shouldBehaveLikeWombatStrategy } = require('./wombat')
 
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
@@ -36,10 +33,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
 
   const behaviors = {
     [StrategyType.COMPOUND]: shouldBehaveLikeCompoundStrategy,
-    // [StrategyType.AAVE_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.VESPER_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.COMPOUND_VESPER_XY]: shouldBehaveLikeCompoundVesperXyStrategy,
-    // [StrategyType.COMPOUND_MAKER]: shouldBehaveLikeMakerStrategy,
     [StrategyType.COMPOUND_XY]: shouldBehaveLikeCompoundXyStrategy,
     [StrategyType.COMPOUND_LEVERAGE]: shouldBehaveLikeCompoundLeverageStrategy,
     [StrategyType.AAVE_LEVERAGE]: shouldBehaveLikeAaveLeverageStrategy,
@@ -47,16 +42,12 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
     [StrategyType.CONVEX]: shouldBehaveLikeConvexStrategy,
     [StrategyType.CONVEX_FOR_FRAX]: shouldBehaveLikeConvexForFraxStrategy,
-    // [StrategyType.VESPER_AAVE_XY]: shouldBehaveLikeVesperAaveXYStrategy,
-    // [StrategyType.EARN_MAKER]: shouldBehaveLikeEarnMakerStrategy,
-    // [StrategyType.EARN_VESPER_MAKER]: shouldBehaveLikeEarnVesperMakerStrategy,
     [StrategyType.EARN_VESPER]: shouldBehaveLikeEarnVesperStrategy,
-    // [StrategyType.RARI_FUSE]: shouldBehaveLikeRariFuseStrategy,
-    // [StrategyType.TRADER_JOE]: shouldBehaveLikeTraderJoeStrategy,
     [StrategyType.EULER_VESPER_XY]: shouldBehaveLikeEulerVesperXY,
     [StrategyType.AAVE_V3_VESPER_XY]: shouldBehaveLikeAaveV3VesperXY,
     [StrategyType.ELLIPSIS]: shouldBehaveLikeEllipsisStrategy,
     [StrategyType.DOT_DOT]: shouldBehaveLikeDotDotStrategy,
+    [StrategyType.WOMBAT]: shouldBehaveLikeWombatStrategy,
   }
 
   const shouldBehaveLikeSpecificStrategy = behaviors[type]
