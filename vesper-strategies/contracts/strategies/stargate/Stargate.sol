@@ -186,6 +186,12 @@ contract Stargate is Strategy {
      *                                       keeper function                                        *
      ***********************************************************************************************/
 
+    /**
+     * @notice OnlyKeeper: This function will withdraw required collateral from given
+     *   destination chain to the chain where this contract is deployed.
+     * @param _dstChainId Destination chainId.
+     * @dev Stargate has different chainId than EVM chainId.
+     */
     function withdrawForRebalance(uint16 _dstChainId) external payable onlyKeeper {
         // amountToWithdraw is excessDebt of strategy
         uint256 _amountToWithdraw = IVesperPool(pool).excessDebt(address(this));
