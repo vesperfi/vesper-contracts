@@ -80,7 +80,7 @@ contract Curve is Strategy {
                 _registry.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
                 "collateral-mismatch"
             );
-            _crvGauge = _registry.get_gauges(crvPool_)[0]; // TODO: Check other gauges?
+            _crvGauge = _registry.get_gauges(crvPool_)[0];
         } else {
             // Get data from Factory contract
             IMetapoolFactory _factory = IMetapoolFactory(ADDRESS_PROVIDER.get_address(FACTORY_ADDRESS_ID));
