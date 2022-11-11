@@ -152,6 +152,7 @@ contract ConvexForFrax is Curve {
      * Should claim rewards that will be swept later
      */
     function _unstakeAllLp() internal override {
+        require(block.timestamp >= unlockTime, "unlock-time-didnt-pass");
         vault.withdrawLockedAndUnwrap(kekId);
         kekId = 0x0;
     }
