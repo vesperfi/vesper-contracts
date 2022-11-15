@@ -1084,6 +1084,23 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Convex_dola_DAI: {
+    contract: 'Convex4FactoryMetaPool',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.DOLA_3CRV_POOL,
+      crvSlippage: 50, // 0.5%
+      masterOracle,
+      swapper,
+      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      collateralIdx: 1,
+      convexPoolId: 62,
+      strategyName: 'Convex_dola_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Convex_frax_DAI: {
     contract: 'Convex',
     type: StrategyTypes.CONVEX,

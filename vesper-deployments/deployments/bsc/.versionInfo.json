@@ -1,0 +1,14 @@
+{
+  "PoolAccountant": {
+    "address": "0xb09806846f4291417Ce7E776DE9474432fA2DD44",
+    "version": "5.0.2"
+  },
+  "VETH": {
+    "address": "0x2bCb97e729a1c85E7e3EED73E0AC08E36C18940D",
+    "version": "5.0.2"
+  },
+  "VPool": {
+    "address": "0x0Ec1CC407F01952F9AFD5bF79EEc4c32Aa925401",
+    "version": "5.0.2"
+  }
+}
