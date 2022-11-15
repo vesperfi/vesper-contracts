@@ -37,6 +37,7 @@ const StrategyType = {
   ELLIPSIS: 'ellipsis',
   DOT_DOT: 'dotDot',
   WOMBAT: 'wombat',
+  ALPACA: 'alpaca',
 }
 
 module.exports = Object.freeze(StrategyType)

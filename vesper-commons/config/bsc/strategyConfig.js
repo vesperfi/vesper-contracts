@@ -17,6 +17,32 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  Alpaca_BNB: {
+    contract: 'AlpacaBNB',
+    type: StrategyTypes.ALPACA,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Alpaca.ibBNB,
+      rewardToken: Address.Alpaca.ALPACA,
+      poolId: '1',
+      strategyName: 'Alpaca_BNB',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Alpaca_BUSD: {
+    contract: 'Alpaca',
+    type: StrategyTypes.ALPACA,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Alpaca.ibBUSD,
+      rewardToken: Address.Alpaca.ALPACA,
+      poolId: '3',
+      strategyName: 'Alpaca_BUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   DotDot_Val3Pool_BUSD: {
     contract: 'DotDot',
     type: StrategyTypes.DOT_DOT,
