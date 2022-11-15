@@ -1085,7 +1085,7 @@ const StrategyConfig = {
   },
 
   Convex_dola_DAI: {
-    contract: 'Convex4FactoryMetaPool',
+    contract: 'Convex',
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.DOLA_3CRV_POOL,

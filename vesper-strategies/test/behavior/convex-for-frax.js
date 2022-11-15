@@ -10,15 +10,15 @@ const { shouldBehaveLikeCrvStrategy } = require('./curve')
 
 const Address = getChainData().address
 
-const {
-  Curve: { CRV },
-  CVX,
-  FXS,
-} = Address
-
 // cvx strategy specific tests
 function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
   shouldBehaveLikeCrvStrategy(strategyIndex)
+  const {
+    Curve: { CRV },
+    CVX,
+    FXS,
+  } = Address
+
   let strategy
   let governor
   let alice
