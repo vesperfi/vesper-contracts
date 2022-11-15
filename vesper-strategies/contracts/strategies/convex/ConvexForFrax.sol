@@ -77,7 +77,7 @@ contract ConvexForFrax is Curve {
 
     function lpBalanceStaked() public view override returns (uint256 _total) {
         // Note: No need to specify which position here because we'll always have one open position at the same time
-        // because a position is deleted when `vault.withdrawLockedAndUnwrap(kekId)` is called
+        // because of the open position is deleted when `vault.withdrawLockedAndUnwrap(kekId)` is called
         _total = fraxStaking.lockedLiquidityOf(address(vault));
     }
 
@@ -88,6 +88,9 @@ contract ConvexForFrax is Curve {
 
     /// @dev
     function _claimRewards() internal override {
+        // `getReward` reverts if there isn't an open position
+        if (kekId == bytes32(0)) return;
+
         // solhint-disable-next-line no-empty-blocks
         try vault.getReward() {} catch {
             // It may fail if reward collection is paused on FRAX side
@@ -131,7 +134,7 @@ contract ConvexForFrax is Curve {
     function _stakeAllLp() internal virtual override {
         uint256 _balance = crvLp.balanceOf(address(this));
         if (_balance > 0) {
-            if (lpBalanceStaked() > 0) {
+            if (kekId != bytes32(0)) {
                 // if there is an active position, lock more
                 vault.lockAdditionalCurveLp(kekId, _balance);
             } else {
@@ -145,10 +148,13 @@ contract ConvexForFrax is Curve {
     /**
      * @notice Unstake all LPs
      * @dev This function is called by `_beforeMigration()` hook
+     * @dev `withdrawLockedAndUnwrap` destroys current position
      * Should claim rewards that will be swept later
      */
     function _unstakeAllLp() internal override {
+        require(block.timestamp >= unlockTime, "unlock-time-didnt-pass");
         vault.withdrawLockedAndUnwrap(kekId);
+        kekId = 0x0;
     }
 
     /**
