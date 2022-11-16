@@ -34,32 +34,32 @@ contract Stargate is Strategy {
     IStargateRouter internal immutable stargateRouter;
 
     constructor(
-        address _pool,
-        address _swapper,
-        IStargateRouter _stargateRouter,
-        IStargatePool _stargateLp,
-        IStargateLpStaking _stargateLpStaking,
-        uint256 _stargatePoolId,
-        uint256 _stargateLpStakingPoolId,
-        string memory _name
-    ) Strategy(_pool, _swapper, address(0)) {
-        require(address(_stargateRouter) != address(0), "stg-router-is-zero");
-        require(address(_stargateLp) != address(0), "stg-lp-pool-is-zero");
-        require(address(_stargateLpStaking) != address(0), "stg-staking-is-zero");
-        require(_stargatePoolId > 0, "stg-pool-is-zero");
+        address pool_,
+        address swapper_,
+        IStargateRouter stargateRouter_,
+        IStargatePool stargateLp_,
+        IStargateLpStaking stargateLpStaking_,
+        uint256 stargatePoolId_,
+        uint256 stargateLpStakingPoolId_,
+        string memory name_
+    ) Strategy(pool_, swapper_, address(0)) {
+        require(address(stargateRouter_) != address(0), "stg-router-is-zero");
+        require(address(stargateLp_) != address(0), "stg-lp-pool-is-zero");
+        require(address(stargateLpStaking_) != address(0), "stg-staking-is-zero");
+        require(stargatePoolId_ > 0, "stg-pool-is-zero");
 
-        stargateRouter = _stargateRouter;
-        stargateLpStaking = IStargateLpStaking(_stargateLpStaking);
-        receiptToken = address(_stargateLp);
-        stargateLp = _stargateLp;
-        stargatePoolId = _stargatePoolId;
-        stargateLpStakingPoolId = _stargateLpStakingPoolId; // can be 0
+        stargateRouter = stargateRouter_;
+        stargateLpStaking = IStargateLpStaking(stargateLpStaking_);
+        receiptToken = address(stargateLp_);
+        stargateLp = stargateLp_;
+        stargatePoolId = stargatePoolId_;
+        stargateLpStakingPoolId = stargateLpStakingPoolId_; // can be 0
         rewardToken = stargateLpStaking.stargate();
-        NAME = _name;
+        NAME = name_;
     }
 
-    function isReservedToken(address _token) public view override returns (bool) {
-        return _token == receiptToken;
+    function isReservedToken(address token_) public view override returns (bool) {
+        return token_ == receiptToken;
     }
 
     function lpAmountStaked() public view returns (uint256 _lpAmountStaked) {
@@ -74,42 +74,43 @@ contract Stargate is Strategy {
         return _getCollateralInStargate() + collateralToken.balanceOf(address(this));
     }
 
-    function _approveToken(uint256 amount_) internal virtual override {
-        super._approveToken(amount_);
-        collateralToken.safeApprove(address(stargateRouter), amount_);
-        stargateLp.safeApprove(address(stargateLpStaking), amount_);
-        stargateLp.safeApprove(address(stargateRouter), amount_);
-        IERC20(rewardToken).safeApprove(address(swapper), amount_);
+    function _approveToken(uint256 _amount) internal virtual override {
+        super._approveToken(_amount);
+        collateralToken.safeApprove(address(stargateRouter), _amount);
+        stargateLp.safeApprove(address(stargateLpStaking), _amount);
+        stargateLp.safeApprove(address(stargateRouter), _amount);
+        IERC20(rewardToken).safeApprove(address(swapper), _amount);
     }
 
-    function _beforeDeposit(uint256 _collateralAmount) internal virtual {}
+    // solhint-disable-next-line no-empty-blocks
+    function _beforeDeposit(uint256 collateralAmount_) internal virtual {}
 
     /**
      * @notice Before migration hook.
      */
-    function _beforeMigration(address _newStrategy) internal override {
-        require(IStrategy(_newStrategy).token() == receiptToken, "wrong-receipt-token");
+    function _beforeMigration(address newStrategy_) internal override {
+        require(IStrategy(newStrategy_).token() == receiptToken, "wrong-receipt-token");
         stargateLpStaking.withdraw(stargateLpStakingPoolId, lpAmountStaked());
     }
 
     /// @notice Claim rewardToken from LPStaking contract
-    function _claimRewardsAndConvertTo(address _toToken) internal {
+    function _claimRewardsAndConvertTo(address toToken_) internal {
         // 0 withdraw will trigger rewards claim
         stargateLpStaking.withdraw(stargateLpStakingPoolId, 0);
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
+            _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
         }
     }
 
     /// @dev Converts a collateral amount in its relative shares of STG LP Token
-    function _convertToLpShares(uint256 _collateralAmount) internal view returns (uint256) {
+    function _convertToLpShares(uint256 collateralAmount_) internal view returns (uint256) {
         uint256 _totalLiquidity = stargateLp.totalLiquidity();
         // amount SD = _collateralAmount / stargateLp.convertRate()
         // amount LP = SD * totalSupply / totalLiquidity
         return
             (_totalLiquidity > 0)
-                ? ((_collateralAmount / stargateLp.convertRate()) * stargateLp.totalSupply()) / _totalLiquidity
+                ? ((collateralAmount_ / stargateLp.convertRate()) * stargateLp.totalSupply()) / _totalLiquidity
                 : 0;
     }
 
@@ -126,8 +127,8 @@ contract Stargate is Strategy {
         return stargateLp.amountLPtoLD(lpAmountStaked() + stargateLp.balanceOf(address(this)));
     }
 
-    function _getLpForCollateral(uint256 _collateralAmount) internal returns (uint256) {
-        uint256 _lpRequired = _convertToLpShares(_collateralAmount);
+    function _getLpForCollateral(uint256 collateralAmount_) internal returns (uint256) {
+        uint256 _lpRequired = _convertToLpShares(collateralAmount_);
         uint256 _lpHere = stargateLp.balanceOf(address(this));
         if (_lpRequired > _lpHere) {
             uint256 _lpAmountStaked = lpAmountStaked();
@@ -194,10 +195,10 @@ contract Stargate is Strategy {
     /**
      * @notice OnlyKeeper: This function will withdraw required collateral from given
      *   destination chain to the chain where this contract is deployed.
-     * @param _dstChainId Destination chainId.
+     * @param dstChainId_ Destination chainId.
      * @dev Stargate has different chainId than EVM chainId.
      */
-    function withdrawForRebalance(uint16 _dstChainId) external payable onlyKeeper {
+    function withdrawForRebalance(uint16 dstChainId_) external payable onlyKeeper {
         // amountToWithdraw is excessDebt of strategy
         uint256 _amountToWithdraw = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
@@ -213,7 +214,7 @@ contract Stargate is Strategy {
             // RedeemLocal will redeem asset from dstChain to this chain and at this address.
             // Also srcPoolId and dstPoolId will be same in this case
             stargateRouter.redeemLocal{value: msg.value}(
-                _dstChainId,
+                dstChainId_,
                 stargatePoolId,
                 stargatePoolId,
                 payable(msg.sender),
