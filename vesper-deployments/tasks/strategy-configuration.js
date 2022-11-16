@@ -12,7 +12,7 @@ function getConstructorArgKeys(strategyName) {
   if (strategyName.includes('RariFuse')) {
     // fusePoolId replaces receiptToken
     keys = ['swapper', 'fusePoolId', 'strategyName']
-  } else if (strategyName.includes('Convex') || strategyName.includes('Crv')) {
+  } else if (strategyName.includes('Convex') || strategyName.includes('Curve')) {
     // collateralIdx replaces receiptToken
     keys = ['swapper', 'collateralIdx', 'strategyName']
   } else if (strategyName.includes('CompoundLeverage')) {

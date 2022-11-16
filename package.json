@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.3.0",
-    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "chai-almost": "^1.0.1",
@@ -40,7 +40,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "eslint-plugin-require-path-exists": "^1.1.9",
-    "hardhat": "2.10.1",
+    "hardhat": "^2.11.2",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.11.18",
     "hardhat-log-remover": "^2.0.2",

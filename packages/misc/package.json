@@ -1,0 +1,24 @@
+{
+  "name": "misc",
+  "version": "5.0.0",
+  "description": "Vesper miscellaneous contracts excluding pools or strategies",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "npm run clean && npm run compile",
+    "coverage": "hardhat coverage",
+    "fork": "hardhat node --no-deploy",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "vesper-commons": "^1.0.0"
+  }
+}

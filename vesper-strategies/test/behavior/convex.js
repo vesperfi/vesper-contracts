@@ -88,7 +88,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       expect(await rewards.balanceOf(strategy.address)).gt(0)
 
       expect(await rewards.earned(strategy.address)).eq(0)
-      await time.increase(24 * 60 * 60)
+      await time.increase(time.duration.days(1))
       expect(await rewards.earned(strategy.address)).gt(0)
 
       // when
@@ -114,7 +114,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       expect(await rewards.balanceOf(strategy.address)).gt(0)
 
       expect(await rewards.earned(strategy.address)).eq(0)
-      await time.increase(24 * 60 * 60)
+      await time.increase(time.duration.days(1))
       expect(await rewards.earned(strategy.address)).gt(0)
 
       // when
@@ -142,7 +142,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       await strategy.rebalance()
       expect(await rewards.balanceOf(strategy.address)).gt(0)
 
-      await time.increase(24 * 60 * 60)
+      await time.increase(time.duration.days(1))
       expect(await rewards.earned(strategy.address)).gt(0)
       expect(await cvx.balanceOf(strategy.address)).eq(0)
 

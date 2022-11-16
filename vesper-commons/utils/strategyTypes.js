@@ -11,6 +11,7 @@ const StrategyType = {
   EARN_VESPER_MAKER: 'earnVesperMaker',
   CURVE: 'curve',
   CONVEX: 'curveConvex',
+  CONVEX_FOR_FRAX: 'fraxConvex',
   YEARN: 'yearn',
   EARN_MAKER: 'earnMaker',
   EARN_COMPOUND: 'earnCompound',
@@ -29,6 +30,7 @@ const StrategyType = {
   AAVE_VESPER_XY: 'aaveVesperXY',
   STARGATE: 'stargate',
   EULER: 'euler',
+  EULER_VESPER_XY: 'eulerVesperXY',
 }
 
 module.exports = Object.freeze(StrategyType)

@@ -17,15 +17,15 @@ import "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundXyETH.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundVesperXyETH.sol";
 import "vesper-strategies/contracts/strategies/aave/v2/AaveV2VesperXy.sol";
-import "vesper-strategies/contracts/strategies/convex/2Pool/Convex2PlainPool.sol";
+import "vesper-strategies/contracts/strategies/convex/Convex.sol";
 import "vesper-strategies/contracts/strategies/vesper/earn/VesperEarnSaddleLp.sol";
 import "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundLeverage.sol";
 import "vesper-strategies/contracts/strategies/stargate/Stargate.sol";
 import "vesper-strategies/contracts/strategies/maker/MakerVesperStETH.sol";
 import "vesper-strategies/contracts/interfaces/maker/IMakerDAO.sol";
-import "vesper-strategies/contracts/strategies/convex/4Pool/Convex4FactoryMetaPool.sol";
-import "vesper-strategies/contracts/strategies/convex/4Pool/Convex4MetaPool.sol";
+import "vesper-strategies/contracts/strategies/convex/Convex.sol";
+import "vesper-strategies/contracts/strategies/curve/Curve.sol";
 import "vesper-strategies/contracts/strategies/compound/bsc/VenusBNB.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.

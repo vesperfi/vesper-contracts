@@ -67,7 +67,7 @@ const whales = {
   [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
 
   // Avalanche
-  [AvalancheAddress.Curve.CRV]: '0xb67b891a1dcb86b7933924ebb0e120d229423594',
+  [AvalancheAddress.Curve.CRV]: '0xabc000d88f23bb45525e447528dbf656a9d55bf5',
 
   // BSC
   [BscAddress.BUSD]: '0xf977814e90da44bfa03b6295a0616a897441acec',
@@ -97,7 +97,7 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
   const tokenObj = await ethers.getContractAt('ERC20', token)
   const whaleBalance = await tokenObj.balanceOf(whale)
   if (whaleBalance.lt(balance)) {
-    throw new Error('Whale has less token balance than requested')
+    throw new Error(`${token} whale has less token balance than requested`)
   }
   await helpers.setBalance(whale, ethers.utils.parseEther('1'))
   const whaleSigner = await ethers.getImpersonatedSigner(whale)
@@ -114,12 +114,14 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
  * @returns {Promise<BigNumber>} Actual balance after balance adjustment
  */
 
-async function adjustBalance(token, targetAddress, balance) {
-  const slot = getSlot(token)
+async function adjustBalance(token, targetAddress, balance, slot) {
   if (slot === undefined) {
-    return getBalanceFromWhale(token, targetAddress, balance)
+    // eslint-disable-next-line no-param-reassign
+    slot = getSlot(token)
+    if (slot === undefined) {
+      return getBalanceFromWhale(token, targetAddress, balance)
+    }
   }
-
   // reason: https://github.com/nomiclabs/hardhat/issues/1585 comments
   // Create solidity has for index, convert it into hex string and remove all the leading zeros
   const index = hexStripZeros(hexlify(solidityKeccak256(['uint256', 'uint256'], [targetAddress, slot])))
