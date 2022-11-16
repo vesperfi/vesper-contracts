@@ -1,0 +1,44 @@
+name: Binance Smart Chain Wombat Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bsc-wombat.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/wombat.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/wombat/Wombat.sol"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vabusd-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Wombat strategy VABUSD pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/wombat/vabusd.spec.js

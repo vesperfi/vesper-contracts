@@ -187,12 +187,14 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
         await increaseTimeIfNeeded(strategies[0])
         const withdrawAmount = (await pool.balanceOf(user1.address)).div(2)
+        const expectedCollateral = withdrawAmount.mul(await pool.pricePerShare()).div(ethers.utils.parseEther('1'))
         await pool.connect(user1).withdraw(withdrawAmount)
         const totalDebt = await pool.totalDebt()
         const totalDebtOfStrategies = await totalDebtOfAllStrategy(strategies, pool)
         expect(totalDebtOfStrategies).to.be.equal(totalDebt, `${collateralName} totalDebt of strategies is wrong`)
-        const collateralBalance = await collateralToken.balanceOf(user1.address)
-        expect(collateralBalance).to.be.gt(collateralBalanceBefore, 'Withdraw failed')
+        const collateralWithdrawn = (await collateralToken.balanceOf(user1.address)).sub(collateralBalanceBefore)
+        // Collateral balance should be expected +-10%
+        expect(collateralWithdrawn).closeTo(expectedCollateral, expectedCollateral.div(10), 'Withdraw failed')
       })
 
       it(`Should withdraw all ${collateralName} after rebalance`, async function () {

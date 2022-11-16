@@ -89,6 +89,18 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Wombat_BUSD: {
+    contract: 'Wombat',
+    type: StrategyTypes.WOMBAT,
+    constructorArgs: {
+      swapper,
+      wombatPool: Address.Wombat.MainPool,
+      strategyName: 'Wombat_BUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
