@@ -27,6 +27,7 @@ import "vesper-strategies/contracts/interfaces/maker/IMakerDAO.sol";
 import "vesper-strategies/contracts/strategies/convex/Convex.sol";
 import "vesper-strategies/contracts/strategies/curve/Curve.sol";
 import "vesper-strategies/contracts/strategies/compound/bsc/VenusBNB.sol";
+import "vesper-strategies/contracts/strategies/euler/Euler.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks

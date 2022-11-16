@@ -187,6 +187,7 @@
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
           "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
+          "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
           "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
           "RariFuseStrategy": "0x4769f18ba364658bf98Bf74606ef2f8cfB17D425",
           "RariFuseStrategyETH": "0x67893865686C22f0a243114B0893De65117d2f3b",
