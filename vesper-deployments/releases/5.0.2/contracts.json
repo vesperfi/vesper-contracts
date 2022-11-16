@@ -323,6 +323,7 @@
         },
         "strategies": {
           "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
+          "Compound_Vesper_Xy_DAI_USDC": "0x5D69a654F6eB9aaf5738A05fd17bb1ad707AeA03",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
           "Convex_dola_DAI": "0x269041586AB615Cd19E8CbFABC7C45CdA8179289",
           "Euler_Vesper_Xy_DAI_USDC": "0xf1886Aa6F728D9006141644207ebC7f4090c17Ad",

@@ -630,6 +630,23 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Compound_Vesper_Xy_DAI_USDC: {
+    contract: 'CompoundVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      receiptToken: Address.Compound.cDAI,
+      borrowCToken: Address.Compound.cUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Compound_Vesper_Xy_DAI_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   IronBankXYStrategyETH_DAI: {
     contract: 'IronBankXYStrategy',
     type: StrategyTypes.COMPOUND_XY,
