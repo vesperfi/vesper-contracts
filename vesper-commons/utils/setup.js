@@ -208,7 +208,10 @@ async function configureOracles(strategies) {
         'function updateTokenOracle(address,address) external',
         'function addressProvider() external view returns(address)',
       ]
-      const defaultOracleABI = ['function updateDefaultStalePeriod(uint256)']
+      const defaultOracleABI = [
+        'function updateDefaultStalePeriod(uint256)',
+        'function updateCustomStalePeriod(address,uint256)',
+      ]
       const btcPeggedOracleABI = ['function updateDefaultStalePeriod(uint256)']
       const addressProviderABI = ['function governor() view returns(address)']
 
@@ -226,6 +229,10 @@ async function configureOracles(strategies) {
 
         // Accepts outdated prices due to time travels
         await defaultOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.DAI, ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDC, ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDT, ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.sUSD, ethers.constants.MaxUint256)
         await stableCoinProvider.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
         await alUsdOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
         await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
