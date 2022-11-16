@@ -938,7 +938,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 20, // 0.2%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1089,10 +1089,12 @@ const StrategyConfig = {
     type: StrategyTypes.CONVEX,
     constructorArgs: {
       crvPool: Address.Curve.DOLA_3CRV_POOL,
+      curvePoolType: CurvePoolTypes.META_4_POOL,
+      depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
+      crvToken: Address.Curve.CRV,
       crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
-      deposit: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
       collateralIdx: 1,
       convexPoolId: 62,
       strategyName: 'Convex_dola_DAI',
@@ -1147,7 +1149,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.SBTC_DEPOSIT,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 210, // 2.1%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1203,7 +1205,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1347,7 +1349,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1364,7 +1366,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 20, // 0.2%
       masterOracle,
       swapper,
       collateralIdx: 1,

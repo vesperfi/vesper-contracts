@@ -33,10 +33,7 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
     })
 
     it('Should claim COMP when rebalance is called', async function () {
-      if (getChain() === 'mainnet' && comptroller.address !== address.Drops.COMPTROLLER) {
-        // compAccrued doesn't increment in Drops Finance,
-        // deposits and withdraws automatically claim rewards
-        // Reference: https://shorturl.at/luJKP
+      if (getChain() === 'mainnet' && (await comptroller.compSupplySpeeds(token.address)).gt(0)) {
         await deposit(pool, collateralToken, 1, user1)
         await strategy.rebalance()
         await token.exchangeRateCurrent()
@@ -57,12 +54,9 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
         await deposit(pool, collateralToken, 1, user1)
         await strategy.rebalance()
         const balance = ethers.utils.parseEther('10')
-        adjustBalance(comp.address, strategy.address, balance)
+        await adjustBalance(comp.address, strategy.address, balance)
         const afterSwap = await comp.balanceOf(strategy.address)
         expect(afterSwap).to.be.gt(0, 'COMP balance should increase on strategy address')
-        await comptroller.claimComp(strategy.address, [token.address], { from: user1.address })
-        const afterClaim = await comp.balanceOf(strategy.address)
-        expect(afterClaim).to.be.gt(afterSwap, 'COMP balance increase after claim')
         await helpers.mine(100)
         await token.exchangeRateCurrent()
         await strategy.rebalance()
