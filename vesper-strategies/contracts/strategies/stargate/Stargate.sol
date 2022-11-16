@@ -36,20 +36,20 @@ contract Stargate is Strategy {
     constructor(
         address _pool,
         address _swapper,
-        address _stargateRouter,
-        address _stargateLpStaking,
+        IStargateRouter _stargateRouter,
+        IStargatePool _stargateLp,
+        IStargateLpStaking _stargateLpStaking,
         uint256 _stargatePoolId,
         uint256 _stargateLpStakingPoolId,
         string memory _name
     ) Strategy(_pool, _swapper, address(0)) {
-        require(_stargateRouter != address(0), "stg-router-is-zero");
-        require(_stargateLpStaking != address(0), "stg-staking-is-zero");
+        require(address(_stargateRouter) != address(0), "stg-router-is-zero");
+        require(address(_stargateLp) != address(0), "stg-lp-pool-is-zero");
+        require(address(_stargateLpStaking) != address(0), "stg-staking-is-zero");
         require(_stargatePoolId > 0, "stg-pool-is-zero");
 
-        stargateRouter = IStargateRouter(_stargateRouter);
+        stargateRouter = _stargateRouter;
         stargateLpStaking = IStargateLpStaking(_stargateLpStaking);
-        IStargatePool _stargateLp = IStargatePool(IStargateFactory(stargateRouter.factory()).getPool(_stargatePoolId));
-        require(address(collateralToken) == _stargateLp.token(), "wrong-pool-id");
         receiptToken = address(_stargateLp);
         stargateLp = _stargateLp;
         stargatePoolId = _stargatePoolId;
@@ -74,14 +74,15 @@ contract Stargate is Strategy {
         return _getCollateralInStargate() + collateralToken.balanceOf(address(this));
     }
 
-    /// @notice Approve all required tokens
-    function _approveToken(uint256 _amount) internal virtual override {
-        super._approveToken(_amount);
-        collateralToken.safeApprove(address(stargateRouter), _amount);
-        stargateLp.safeApprove(address(stargateLpStaking), _amount);
-        stargateLp.safeApprove(address(stargateRouter), _amount);
-        IERC20(rewardToken).safeApprove(address(swapper), _amount);
+    function _approveToken(uint256 amount_) internal virtual override {
+        super._approveToken(amount_);
+        collateralToken.safeApprove(address(stargateRouter), amount_);
+        stargateLp.safeApprove(address(stargateLpStaking), amount_);
+        stargateLp.safeApprove(address(stargateRouter), amount_);
+        IERC20(rewardToken).safeApprove(address(swapper), amount_);
     }
+
+    function _beforeDeposit(uint256 _collateralAmount) internal virtual {}
 
     /**
      * @notice Before migration hook.
@@ -110,6 +111,14 @@ contract Stargate is Strategy {
             (_totalLiquidity > 0)
                 ? ((_collateralAmount / stargateLp.convertRate()) * stargateLp.totalSupply()) / _totalLiquidity
                 : 0;
+    }
+
+    function _deposit(uint256 collateralAmount_) internal {
+        if (collateralAmount_ > 0) {
+            _beforeDeposit(collateralAmount_);
+            stargateRouter.addLiquidity(stargatePoolId, collateralAmount_, address(this));
+            stargateLpStaking.deposit(stargateLpStakingPoolId, stargateLp.balanceOf(address(this)));
+        }
     }
 
     /// @dev Gets collateral balance deposited into STG Pool
@@ -169,17 +178,13 @@ contract Stargate is Strategy {
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
 
         // strategy may get new fund. Deposit and stake it to stargate
-        _collateralHere = collateralToken.balanceOf(address(this));
-        if (_collateralHere > 0) {
-            stargateRouter.addLiquidity(stargatePoolId, _collateralHere, address(this));
-            stargateLpStaking.deposit(stargateLpStakingPoolId, stargateLp.balanceOf(address(this)));
-        }
+        _deposit(collateralToken.balanceOf(address(this)));
     }
 
-    /// @dev Withdraw collateral here. Do not transfer to pool.
+    /// @dev Withdraw collateral here.
     /// @dev This method may withdraw less than requested amount. Caller may need to check balance before and after
-    function _withdrawHere(uint256 _amount) internal override {
-        stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _getLpForCollateral(_amount), address(this));
+    function _withdrawHere(uint256 amount_) internal override {
+        stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _getLpForCollateral(amount_), address(this));
     }
 
     /************************************************************************************************
