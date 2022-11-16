@@ -1818,10 +1818,28 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.usdcLP,
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 1, // USDC LP Pool ID
       stargateLpStakingPoolId: 0, // Staking Contract pool ID
       strategyName: 'Stargate_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Stargate_ETH: {
+    contract: 'StargateETH',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.ethLP,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 13, // ETH LP Pool ID
+      stargateLpStakingPoolId: 2, // Staking Contract pool ID
+      wrappedNativeToken: Address.NATIVE_TOKEN,
+      strategyName: 'Stargate_ETH',
     },
     config: { ...config },
     setup: { ...setup },
