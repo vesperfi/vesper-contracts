@@ -894,7 +894,8 @@
         "strategies": {
           "AlphaLendAvalancheStrategyUSDC_N": "0x468E9DA5e22baf34a2E89dd8438AFC5558eEdBEA",
           "BenqiLeverageStrategyUSDCN": "0x0844913292bB5953Eda9904aa5Dde7ba43659274",
-          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e"
+          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e",
+          "Stargate_USDC": "0x03Bbb5D31A0E10135F31DDe035342bd9242e70a8"
         }
       },
       "vaqi": {

@@ -89,6 +89,11 @@ const Address = {
     REN_POOL_LP: '0xC2b1DF84112619D190193E48148000e3990Bf627',
     AAVE_POOL_LP: '0x1337BedC9D22ecbe766dF105c9623922A27963EC',
   },
+  Stargate: {
+    STG: '0x2F6F07CDcf3588944Bf4C42aC74ff24bF56e7590',
+    router: '0x45A01E4e04F14f7A4a6702c74187c5F6222033cd',
+    lpStaking: '0x8731d54E9D02c286767d56ac03e8037C07e01e98',
+  },
 }
 
 module.exports = Object.freeze(Address)
