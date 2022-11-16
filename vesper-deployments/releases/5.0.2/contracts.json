@@ -845,6 +845,7 @@
           "AlphaLendAvalancheStrategyAVAX": "0xBa6D61020067E296BA1bf4C5A4CE728e50d4a835",
           "BenqiCompoundLeverageStrategyAvalancheAVAX": "0x2727c4de420d94013b5cbcbec4e73b7893c4f818",
           "BenqiCompoundStrategyAvalancheAVAX": "0x2Da7b2c35A6a4e5C41C95027ab090bc3Ee6263ff",
+          "Benqi_AVAX": "0x8E16465e07d39B8E93935a01bF8d9554699307BF",
           "TraderJoeCompoundLeverageStrategyAvalancheAVAX": "0x00fB8B4987b867F941985449AfA16F818750d60C",
           "TraderJoeCompoundStrategyAvalancheAVAX": "0xaAA36344B8A82F82F74f4Be1bdD7AA13D41853A4",
           "TraderJoeLeverageStrategyAVAX": "0xE9bBDCFA94E25AB786050c5bde06A613BBef9EF9"
@@ -894,7 +895,8 @@
         "strategies": {
           "AlphaLendAvalancheStrategyUSDC_N": "0x468E9DA5e22baf34a2E89dd8438AFC5558eEdBEA",
           "BenqiLeverageStrategyUSDCN": "0x0844913292bB5953Eda9904aa5Dde7ba43659274",
-          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e"
+          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e",
+          "Stargate_USDC": "0x03Bbb5D31A0E10135F31DDe035342bd9242e70a8"
         }
       },
       "vaqi": {
