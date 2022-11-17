@@ -56,3 +56,18 @@ jobs:
 
       - name: Running Stargate strategy VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/stargate/vaeth.spec.js
+
+  vafrax-stargate-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Stargate strategy VAFRAX pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/stargate/vafrax.spec.js
