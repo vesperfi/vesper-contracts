@@ -1940,6 +1940,25 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Euler_Vesper_Xy_ETH_DAI: {
+    contract: 'EulerVesperXy',
+    type: StrategyTypes.EULER_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
+      eulerExec: Address.Euler.Exec,
+      rewardDistributor: Address.Euler.EulDistributor,
+      rewardToken: Address.Euler.EUL,
+      borrowToken: Address.DAI,
+      vPool: Address.Vesper.vaDAI,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Euler_Vesper_Xy_ETH_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
