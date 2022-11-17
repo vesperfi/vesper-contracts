@@ -35,23 +35,25 @@ async function deposit(pool, token, amount, depositor) {
  * @param {object} token Balance will be updated for this token
  * @param {object``} token2 Optional token for balance update
  */
-async function makeStrategyProfitable(strategy, token, token2 = {}) {
+async function makeStrategyProfitable(strategy, token) {
   const balance = await token.balanceOf(strategy.address)
-  const tvl = await strategy.tvl()
+  const collateral = await ethers.getContractAt('ERC20', await strategy.collateralToken())
+  const collateralDecimal = await collateral.decimals()
+  const tokenDecimal = await token.decimals()
+
+  let tvl = await strategy.tvl()
+
+  if (tokenDecimal > collateralDecimal) {
+    // scale up
+    tvl = ethers.utils.parseUnits(tvl.toString(), tokenDecimal - collateralDecimal)
+  } else {
+    // scale down
+    BigNumber.from(ethers.utils.formatUnits(tvl, collateralDecimal - tokenDecimal).split('.')[0])
+  }
+
   // Increase balance of strategy by 5% of tvl
   const increaseBalanceBy = tvl.mul(5).div(100)
-  try {
-    // Do not fail if adjust balance fails on first token.
-    await adjustBalance(token.address, strategy.address, balance.add(increaseBalanceBy))
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error('Error while making strategy profitable', e)
-  }
-  // Adjust balance of token 2 if provided
-  if (token2.address) {
-    const balance2 = await token2.balanceOf(strategy.address)
-    await adjustBalance(token2.address, strategy.address, balance2.add(increaseBalanceBy))
-  }
+  await adjustBalance(token.address, strategy.address, balance.add(increaseBalanceBy))
 }
 
 /**

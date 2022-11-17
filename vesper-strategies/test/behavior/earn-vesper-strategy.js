@@ -118,7 +118,6 @@ async function shouldBehaveLikeEarnVesperStrategy(strategyIndex) {
         await vToken.connect(user2).deposit(amount)
         await vToken.connect(user2).transfer(strategy.instance.address, await vToken.balanceOf(user2.address))
 
-        await makeStrategyProfitable(strategy.instance, vToken)
         const rewardTokenBalanceBefore = await rewardToken.balanceOf(earnDrip.address)
         const vTokenBalBefore = await vToken.balanceOf(strategy.instance.address)
         expect(rewardTokenBalanceBefore).eq(0)

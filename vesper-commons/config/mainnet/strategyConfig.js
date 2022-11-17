@@ -1136,7 +1136,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.SBTC_DEPOSIT,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 210, // 2.1%
+      crvSlippage: 250, // 2.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1228,7 +1228,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1246,7 +1246,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
