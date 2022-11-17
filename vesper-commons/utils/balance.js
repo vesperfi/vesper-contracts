@@ -67,7 +67,7 @@ const whales = {
   [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
 
   // Avalanche
-  [AvalancheAddress.Curve.CRV]: '0xb67b891a1dcb86b7933924ebb0e120d229423594',
+  [AvalancheAddress.Curve.CRV]: '0xabc000d88f23bb45525e447528dbf656a9d55bf5',
 
   // BSC
   [BscAddress.BUSD]: '0xf977814e90da44bfa03b6295a0616a897441acec',
@@ -98,7 +98,7 @@ async function getBalanceFromWhale(token, targetAddress, balance) {
   const tokenObj = await ethers.getContractAt('ERC20', token)
   const whaleBalance = await tokenObj.balanceOf(whale)
   if (whaleBalance.lt(balance)) {
-    throw new Error('Whale has less token balance than requested')
+    throw new Error(`${token} whale has less token balance than requested`)
   }
   await helpers.setBalance(whale, ethers.utils.parseEther('1'))
   const whaleSigner = await ethers.getImpersonatedSigner(whale)

@@ -630,6 +630,23 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Compound_Vesper_Xy_DAI_USDC: {
+    contract: 'CompoundVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Compound.COMPTROLLER,
+      rewardToken: Address.Compound.COMP,
+      receiptToken: Address.Compound.cDAI,
+      borrowCToken: Address.Compound.cUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Compound_Vesper_Xy_DAI_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   IronBankXYStrategyETH_DAI: {
     contract: 'IronBankXYStrategy',
     type: StrategyTypes.COMPOUND_XY,
@@ -908,7 +925,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 20, // 0.2%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1119,7 +1136,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.SBTC_DEPOSIT,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 250, // 2.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1175,7 +1192,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1211,7 +1228,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1229,7 +1246,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1319,7 +1336,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 50, // 0.5%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1336,7 +1353,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 20, // 0.2%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1771,10 +1788,28 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.usdcLP,
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 1, // USDC LP Pool ID
       stargateLpStakingPoolId: 0, // Staking Contract pool ID
       strategyName: 'Stargate_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Stargate_ETH: {
+    contract: 'StargateETH',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.ethLP,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 13, // ETH LP Pool ID
+      stargateLpStakingPoolId: 2, // Staking Contract pool ID
+      wrappedNativeToken: Address.NATIVE_TOKEN,
+      strategyName: 'Stargate_ETH',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1852,6 +1887,25 @@ const StrategyConfig = {
       vPool: Address.Vesper.vaWBTC,
       vsp: Address.Vesper.VSP,
       strategyName: 'Euler_Vesper_Xy_USDC_WBTC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Euler_Vesper_Xy_DAI_USDC: {
+    contract: 'EulerVesperXy',
+    type: StrategyTypes.EULER_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
+      eulerExec: Address.Euler.Exec,
+      rewardDistributor: Address.Euler.EulDistributor,
+      rewardToken: Address.Euler.EUL,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'Euler_Vesper_Xy_DAI_USDC',
     },
     config: { ...config },
     setup: { ...setup },

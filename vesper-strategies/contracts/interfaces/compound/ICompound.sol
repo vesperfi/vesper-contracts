@@ -88,6 +88,8 @@ interface Comptroller {
     function oracle() external view returns (address);
 
     function borrowCaps(address market) external view returns (uint256);
+
+    function compSupplySpeeds(address cToken) external view returns (uint256);
 }
 
 interface VenusComptroller is Comptroller {

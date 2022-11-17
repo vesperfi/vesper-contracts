@@ -62,6 +62,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
     describe(`Deposit ${collateralName} into the ${poolName} pool`, function () {
       it(`Should deposit ${collateralName}`, async function () {
+        // If there is address conflict then it will be non zero. Subtract it from TVL
+        const balanceBefore = await collateralToken.balanceOf(pool.address)
         const pricePerShareBefore = await pool.pricePerShare()
         const depositAmount = await deposit(10, user1)
 
@@ -75,7 +77,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         }
 
         const totalSupply = await pool.totalSupply()
-        const totalValue = await pool.totalValue()
+        const totalValue = (await pool.totalValue()).sub(balanceBefore)
         const vPoolBalance = await pool.balanceOf(user1.address)
 
         expect(vPoolBalance).to.be.equal(expectedShares, `${poolName} balance of user is wrong`)
@@ -290,8 +292,15 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
             `${collateralName} total debt of pool is wrong`,
           )
         }
-        // If external deposit fee is non zero, shares will be less than deposit amount
-        expect(vPoolBalance, `${poolName} balance of user is wrong`).to.be.lte(depositAmount)
+
+        if ((await accountant.externalDepositFee()).gt(0)) {
+          // If external deposit fee is non zero, shares will be less than deposit amount
+          expect(vPoolBalance, `${poolName} balance of user is wrong`).to.be.lte(depositAmount)
+        } else {
+          // There is possibility that result is off by few wei
+          expect(vPoolBalance, `${poolName} balance of user is wrong`).to.closeTo(depositAmount, 25)
+        }
+
         expect(totalSupply, `Total supply of ${poolName} is wrong`).to.be.gte(vPoolBalance)
       })
 
@@ -369,7 +378,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
           await deposit(20, user1)
           await rebalance(strategies)
-          await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
+          await makeStrategyProfitable(strategies[0].instance, dripToken)
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
 
           const rewardBalanceAfter = await rewardToken.balanceOf(feeCollector)
@@ -607,7 +617,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await time.increase(30 * 24 * 60 * 60)
           await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
+          await makeStrategyProfitable(strategies[0].instance, dripToken)
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards
@@ -633,7 +644,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await time.increase(30 * 24 * 60 * 60)
           await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
+          await makeStrategyProfitable(strategies[0].instance, dripToken)
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards
@@ -654,7 +666,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           await time.increase(30 * 24 * 60 * 60)
           await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken, collateralToken)
+          await makeStrategyProfitable(strategies[0].instance, dripToken)
+          await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards

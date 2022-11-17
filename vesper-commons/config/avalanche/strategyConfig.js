@@ -89,7 +89,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_2_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 200, // 2.0%
+      crvSlippage: 500, // 5%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -607,6 +607,22 @@ const StrategyConfig = {
       vPool: Address.Vesper.vaUSDCe,
       vsp: Address.Vesper.VSP,
       strategyName: 'TraderJoe_Vesper_Xy_WBTCe_USDCe',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Stargate_USDC: {
+    contract: 'Stargate',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.usdcLP,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 1, // USDC LP Pool ID
+      stargateLpStakingPoolId: 0, // Staking Contract pool ID
+      strategyName: 'Stargate_USDC',
     },
     config: { ...config },
     setup: { ...setup },

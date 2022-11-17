@@ -187,9 +187,11 @@
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
           "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
+          "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
           "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
           "RariFuseStrategy": "0x4769f18ba364658bf98Bf74606ef2f8cfB17D425",
           "RariFuseStrategyETH": "0x67893865686C22f0a243114B0893De65117d2f3b",
+          "Stargate_ETH": "0xd21105aCf65386A10A8BDaaeD68D6f03068248B3",
           "VesperAaveXYStrategyETH_FEI": "0xA14D4c41b989DC4Ae20150AA2Ec7A6C6B5622406",
           "VesperCompoundXYStrategyETH_LINK": "0xd50A7D1Bf1fC1624F26B5Bb75EB13b4C8d81e367",
           "VesperIronBankXYStrategyETH_DAI": "0x79D198221D0BB53a1f03491aE902Eb0dac63828A",
@@ -322,8 +324,10 @@
         },
         "strategies": {
           "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
+          "Compound_Vesper_Xy_DAI_USDC": "0x5D69a654F6eB9aaf5738A05fd17bb1ad707AeA03",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
           "Convex_dola_DAI": "0x269041586AB615Cd19E8CbFABC7C45CdA8179289",
+          "Euler_Vesper_Xy_DAI_USDC": "0xf1886Aa6F728D9006141644207ebC7f4090c17Ad",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
           "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
@@ -842,6 +846,7 @@
           "AlphaLendAvalancheStrategyAVAX": "0xBa6D61020067E296BA1bf4C5A4CE728e50d4a835",
           "BenqiCompoundLeverageStrategyAvalancheAVAX": "0x2727c4de420d94013b5cbcbec4e73b7893c4f818",
           "BenqiCompoundStrategyAvalancheAVAX": "0x2Da7b2c35A6a4e5C41C95027ab090bc3Ee6263ff",
+          "Benqi_AVAX": "0x8E16465e07d39B8E93935a01bF8d9554699307BF",
           "TraderJoeCompoundLeverageStrategyAvalancheAVAX": "0x00fB8B4987b867F941985449AfA16F818750d60C",
           "TraderJoeCompoundStrategyAvalancheAVAX": "0xaAA36344B8A82F82F74f4Be1bdD7AA13D41853A4",
           "TraderJoeLeverageStrategyAVAX": "0xE9bBDCFA94E25AB786050c5bde06A613BBef9EF9"
@@ -891,7 +896,8 @@
         "strategies": {
           "AlphaLendAvalancheStrategyUSDC_N": "0x468E9DA5e22baf34a2E89dd8438AFC5558eEdBEA",
           "BenqiLeverageStrategyUSDCN": "0x0844913292bB5953Eda9904aa5Dde7ba43659274",
-          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e"
+          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e",
+          "Stargate_USDC": "0x03Bbb5D31A0E10135F31DDe035342bd9242e70a8"
         }
       },
       "vaqi": {
@@ -929,6 +935,21 @@
         },
         "strategies": {
           "Venus_BNB": "0x2dBE5137541A704666b68D9751F728685893Aff4"
+        }
+      },
+      "vabusd": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xa77f218cf8B28BddB2039eC1Cd2986548aecE76b",
+          "implementation": "0x0Ec1CC407F01952F9AFD5bF79EEc4c32Aa925401",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0x54072A3d881DaD78015aA96e0caaCA6bC116EA5D",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BUSD": "0x810B916Ff0CDc1AF652f1b29Cd7342F3896742D4"
         }
       }
     }

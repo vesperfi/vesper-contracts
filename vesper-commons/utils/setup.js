@@ -212,28 +212,21 @@ async function configureOracles(strategies) {
     const curveLikeStrategies = [StrategyType.CURVE, 'convex', StrategyType.ELLIPSIS, StrategyType.DOT_DOT]
     if (curveLikeStrategies.some(value => strategyType.includes(value.toLowerCase()))) {
       const masterOracleABI = [
-        'function defaultOracle() view returns(address)',
-        'function oracles(address) view returns (address)',
-        'function updateTokenOracle(address,address)',
-        'function addressProvider() view returns (address)',
+        'function defaultOracle() external view returns(address)',
+        'function oracles(address) external view returns (address)',
+        'function updateTokenOracle(address,address) external',
+        'function addressProvider() external view returns(address)',
       ]
       const defaultOracleABI = [
         'function updateDefaultStalePeriod(uint256)',
         'function updateCustomStalePeriod(address,uint256)',
-        'function updateStalePeriod(uint256)', // TODO: Remove after AVAX oracle upgrade
       ]
-      const btcPeggedOracleABI = [
-        'function updateDefaultStalePeriod(uint256)',
-        'function updateStalePeriod(uint256)', // TODO: Remove after AVAX oracle upgrade
-      ]
+      const btcPeggedOracleABI = ['function updateDefaultStalePeriod(uint256)']
       const addressProviderABI = [
         'function governor() view returns(address)',
         'function stableCoinProvider() view returns (address)',
       ]
-      const stableCoinProviderABI = [
-        'function updateDefaultStalePeriod(uint256)',
-        'function updateStalePeriod(uint256)', // TODO: Remove after AVAX oracle upgrade
-      ]
+      const stableCoinProviderABI = ['function updateDefaultStalePeriod(uint256)']
 
       const masterOracle = await ethers.getContractAt(masterOracleABI, Address.Vesper.MasterOracle)
       const defaultOracle = await ethers.getContractAt(defaultOracleABI, await masterOracle.defaultOracle())
@@ -244,13 +237,13 @@ async function configureOracles(strategies) {
         await addressProvider.stableCoinProvider(),
       )
 
+      await defaultOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
       if (chain === 'mainnet') {
         const alUsdOracleABI = ['function updateDefaultStalePeriod(uint256)', 'function update()']
         const alUsdOracle = await ethers.getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD))
         const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
 
         // Accepts outdated prices due to time travels
-        await defaultOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.DAI, ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDC, ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDT, ethers.constants.MaxUint256)
@@ -264,11 +257,8 @@ async function configureOracles(strategies) {
       } else if (chain === 'avalanche') {
         const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
         // Accepts outdated prices due to time travels
-        await defaultOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
-        await stableCoinProvider.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
-        await btcPeggedOracle.connect(governor).updateStalePeriod(ethers.constants.MaxUint256)
-      } else if (chain === 'bsc') {
-        await defaultOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
       }
 
       // Setup is needed just once
