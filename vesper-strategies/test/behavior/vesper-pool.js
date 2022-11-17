@@ -62,6 +62,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
     describe(`Deposit ${collateralName} into the ${poolName} pool`, function () {
       it(`Should deposit ${collateralName}`, async function () {
+        // If there is address conflict then it will be non zero. Subtract it from TVL
+        const balanceBefore = await collateralToken.balanceOf(pool.address)
         const pricePerShareBefore = await pool.pricePerShare()
         const depositAmount = await deposit(10, user1)
 
@@ -75,7 +77,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         }
 
         const totalSupply = await pool.totalSupply()
-        const totalValue = await pool.totalValue()
+        const totalValue = (await pool.totalValue()).sub(balanceBefore)
         const vPoolBalance = await pool.balanceOf(user1.address)
 
         expect(vPoolBalance).to.be.equal(expectedShares, `${poolName} balance of user is wrong`)

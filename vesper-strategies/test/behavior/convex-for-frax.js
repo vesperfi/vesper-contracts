@@ -12,12 +12,13 @@ const Address = getChainData().address
 
 // cvx strategy specific tests
 function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
+  shouldBehaveLikeCrvStrategy(strategyIndex)
   const {
     Curve: { CRV },
     CVX,
     FXS,
   } = Address
-  shouldBehaveLikeCrvStrategy(strategyIndex)
+
   let strategy
   let governor
   let alice
@@ -70,89 +71,83 @@ function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
       }
     })
 
-    it('Should claim all rewards during rebalance', async function () {
-      const vault = await ethers.getContractAt('IStakingProxyConvex', await strategy.vault())
+    describe('when strategy has some balance', function () {
+      let vault
 
-      // given
-      await deposit(pool, collateralToken, 10, alice)
-      await strategy.rebalance()
-      await time.increase(time.duration.days(1))
+      beforeEach(async function () {
+        vault = await ethers.getContractAt('IStakingProxyConvex', await strategy.vault())
+        await deposit(pool, collateralToken, 10, alice)
+        await strategy.rebalance()
+        await time.increase(time.duration.days(1))
+      })
 
-      const before = await vault.earned()
-      expect(before.token_addresses).deep.eq([FXS, CRV, CVX])
-      const [fxsBefore, crvBefore, cvxBefore] = before.total_earned
-      expect(fxsBefore).gt(0)
-      expect(crvBefore).gt(0)
-      expect(cvxBefore).gt(0)
+      it('Should claim all rewards during rebalance', async function () {
+        // given
+        const claimableBefore = await vault.earned()
+        expect(claimableBefore.token_addresses).deep.eq([FXS, CRV, CVX])
+        claimableBefore.total_earned.forEach(earned => expect(earned).gt(0))
 
-      // when
-      await increaseTimeIfNeeded(this.strategies[strategyIndex])
-      await strategy.rebalance()
+        // when
+        await increaseTimeIfNeeded(this.strategies[strategyIndex])
+        await strategy.rebalance()
 
-      // then
-      const after = await vault.earned()
-      const [fxsAfter, crvAfter, cvxAfter] = after.total_earned
-      expect(fxsAfter).eq(0)
-      expect(crvAfter).eq(0)
-      expect(cvxAfter).eq(0)
-    })
+        // then
+        const claimableAfter = await vault.earned()
+        claimableAfter.total_earned.forEach(earned => expect(earned).eq(0))
+      })
 
-    it('Should claim all rewards when unstaking', async function () {
-      const vault = await ethers.getContractAt('IStakingProxyConvex', await strategy.vault())
+      it('Should claim all rewards when unstaking', async function () {
+        // given
+        const claimableBefore = await vault.earned()
+        expect(claimableBefore.token_addresses).deep.eq([FXS, CRV, CVX])
+        claimableBefore.total_earned.forEach(earned => expect(earned).gt(0))
 
-      // given
-      await deposit(pool, collateralToken, 10, alice)
-      await strategy.rebalance()
-      await time.increase(time.duration.days(1))
+        // when
+        await increaseTimeIfNeeded(this.strategies[strategyIndex])
+        await poolAccountant.updateDebtRatio(strategy.address, 0) // force withdraw all
+        expect(await strategy.tvl()).gt(0)
+        await strategy.rebalance()
+        expect(await strategy.tvl()).eq(0)
 
-      const before = await vault.earned()
-      expect(before.token_addresses).deep.eq([FXS, CRV, CVX])
-      const [fxsBefore, crvBefore, cvxBefore] = before.total_earned
-      expect(fxsBefore).gt(0)
-      expect(crvBefore).gt(0)
-      expect(cvxBefore).gt(0)
+        // then
+        const claimableAfter = await vault.earned()
+        claimableAfter.total_earned.forEach(earned => expect(earned).eq(0))
+      })
 
-      // when
-      await increaseTimeIfNeeded(this.strategies[strategyIndex])
-      await poolAccountant.updateDebtRatio(strategy.address, 0) // force withdraw all
-      expect(await strategy.tvl()).gt(0)
-      await strategy.rebalance()
-      expect(await strategy.tvl()).eq(0)
+      it('Should claim rewards during migration', async function () {
+        //
+        // given
+        //
+        const { debtRatio } = await poolAccountant.strategy(strategy.address)
+        expect(debtRatio).eq(10000)
+        expect(await strategy.lpBalanceStaked()).gt(0)
+        const claimableBefore = await vault.earned()
+        expect(claimableBefore.token_addresses).deep.eq([FXS, CRV, CVX])
+        claimableBefore.total_earned.forEach(earned => expect(earned).gt(0))
 
-      // then
-      const after = await vault.earned()
-      const [fxsAfter, crvAfter, cvxAfter] = after.total_earned
-      expect(fxsAfter).eq(0)
-      expect(crvAfter).eq(0)
-      expect(cvxAfter).eq(0)
-    })
+        //
+        // when
+        //
+        const newStrategy = await createStrategy(this.strategies[strategyIndex], pool.address, { skipVault: true })
+        // wait until lock period ending
+        await increaseTimeIfNeeded(this.strategies[strategyIndex])
+        // pull out money from old strategy
+        await poolAccountant.updateDebtRatio(strategy.address, 0)
+        await strategy.rebalance()
+        // migrate
+        await pool.connect(governor).migrateStrategy(strategy.address, newStrategy.address)
+        // push money to the new strategy
+        await poolAccountant.updateDebtRatio(newStrategy.address, debtRatio)
+        await newStrategy.rebalance()
 
-    it('Should claim rewards during migration', async function () {
-      const vault = await ethers.getContractAt('IStakingProxyConvex', await strategy.vault())
-
-      // given
-      await deposit(pool, collateralToken, 10, alice)
-      await strategy.rebalance()
-      await time.increase(time.duration.days(1))
-
-      const before = await vault.earned()
-      expect(before.token_addresses).deep.eq([FXS, CRV, CVX])
-      const [fxsBefore, crvBefore, cvxBefore] = before.total_earned
-      expect(fxsBefore).gt(0)
-      expect(crvBefore).gt(0)
-      expect(cvxBefore).gt(0)
-
-      // when
-      await increaseTimeIfNeeded(this.strategies[strategyIndex])
-      const newStrategy = await createStrategy(this.strategies[strategyIndex], pool.address, { skipVault: true })
-      await pool.connect(governor).migrateStrategy(strategy.address, newStrategy.address)
-
-      // then
-      const after = await vault.earned()
-      const [fxsAfter, crvAfter, cvxAfter] = after.total_earned
-      expect(fxsAfter).eq(0)
-      expect(crvAfter).eq(0)
-      expect(cvxAfter).eq(0)
+        //
+        // then
+        //
+        const claimableAfter = await vault.earned()
+        claimableAfter.total_earned.forEach(earned => expect(earned).eq(0))
+        expect(await strategy.lpBalanceStaked()).eq(0)
+        expect(await newStrategy.lpBalanceStaked()).gt(0)
+      })
     })
   })
 }

@@ -26,6 +26,7 @@ contract Euler is Strategy {
         require(euler_ != address(0), "euler-protocol-address-is-null");
         require(eulerMarkets_ != address(0), "market-address-is-null");
         receiptToken = IEulerMarkets(eulerMarkets_).underlyingToEToken(address(collateralToken));
+        require(receiptToken != address(0), "market-does-not-exist");
         eToken = IEToken(receiptToken);
         euler = euler_;
         NAME = name_;
