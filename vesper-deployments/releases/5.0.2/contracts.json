@@ -331,6 +331,7 @@
           "Euler_Vesper_Xy_DAI_USDC": "0xf1886Aa6F728D9006141644207ebC7f4090c17Ad",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
+          "Stargate_DAI": "0xE053E3CC956D2A835B504E932c5DCd789bF0a6aA",
           "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
         }
       },

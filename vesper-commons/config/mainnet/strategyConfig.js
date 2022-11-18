@@ -1861,6 +1861,22 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Stargate_DAI: {
+    contract: 'Stargate',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.daiLP,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 3, // DAI LP Pool ID
+      stargateLpStakingPoolId: 3, // Staking Contract pool ID
+      strategyName: 'Stargate_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Vesper_Earn_FRAX_FRAXBP: {
     contract: 'VesperEarnSaddleLp',
     type: StrategyTypes.EARN_VESPER,
