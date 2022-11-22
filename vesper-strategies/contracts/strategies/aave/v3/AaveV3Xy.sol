@@ -84,7 +84,9 @@ contract AaveV3Xy is Strategy {
         try AToken(receiptToken).getIncentivesController() returns (address _aaveIncentivesController) {
             address[] memory _rewardTokens = AaveIncentivesController(_aaveIncentivesController).getRewardsList();
             for (uint256 i; i < _rewardTokens.length; ++i) {
-                IERC20(_rewardTokens[i]).safeApprove(_swapper, _amount);
+                if (_rewardTokens[i] != address(collateralToken) && _rewardTokens[i] != borrowToken) {
+                    IERC20(_rewardTokens[i]).safeApprove(_swapper, _amount);
+                }
             }
             //solhint-disable no-empty-blocks
         } catch {}
