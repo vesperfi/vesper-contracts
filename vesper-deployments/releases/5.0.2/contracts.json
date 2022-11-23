@@ -614,6 +614,7 @@
           "implementation": "0x7a75d934ecd0Dffae11592E7E6955C8186273b1c"
         },
         "strategies": {
+          "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
           "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
