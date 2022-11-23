@@ -247,6 +247,13 @@ contract Curve is Strategy {
         IDeposit4x(depositZap).add_liquidity(_depositAmounts, lpAmountOutMin_);
     }
 
+    function _depositTo3FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+        uint256[3] memory _depositAmounts;
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        // Note: The function below won't return a reason when reverting due to slippage
+        IDepositZap3x(depositZap).add_liquidity(address(crvPool), _depositAmounts, lpAmountOutMin_);
+    }
+
     function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
         uint256[4] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
@@ -275,6 +282,9 @@ contract Curve is Strategy {
         }
         if (curvePoolType == PoolType.PLAIN_4_POOL) {
             return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin);
+        }
+        if (curvePoolType == PoolType.META_3_POOL) {
+            return _depositTo3FactoryMetaPool(coinAmountIn_, _lpAmountOutMin);
         }
         if (curvePoolType == PoolType.META_4_POOL) {
             if (isFactoryPool) {
@@ -343,6 +353,9 @@ contract Curve is Strategy {
 
         if (curvePoolType == PoolType.PLAIN_4_POOL) {
             return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
+        }
+        if (curvePoolType == PoolType.META_3_POOL) {
+            return IDepositZap3x(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
         }
         if (curvePoolType == PoolType.META_4_POOL) {
             if (isFactoryPool) {
@@ -421,13 +434,13 @@ contract Curve is Strategy {
         IDeposit4x(depositZap).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
-    function _withdrawFrom4FactoryMetaPool(
+    function _withdrawFrom3FactoryMetaOr4FactoryMetaPool(
         uint256 lpAmount_,
         uint256 minAmountOut_,
         int128 i_
     ) private {
         // Note: The function below won't return a reason when reverting due to slippage
-        IDepositZap4x(depositZap).remove_liquidity_one_coin(address(crvLp), lpAmount_, i_, minAmountOut_);
+        IDepositZap(depositZap).remove_liquidity_one_coin(address(crvLp), lpAmount_, i_, minAmountOut_);
     }
 
     function _withdrawFromCurve(uint256 lpToBurn_, int128 coinIdx_) internal {
@@ -449,9 +462,12 @@ contract Curve is Strategy {
         if (curvePoolType == PoolType.PLAIN_4_POOL) {
             return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
         }
+        if (curvePoolType == PoolType.META_3_POOL) {
+            return _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        }
         if (curvePoolType == PoolType.META_4_POOL) {
             if (isFactoryPool) {
-                return _withdrawFrom4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+                return _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
             }
             return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
         }
