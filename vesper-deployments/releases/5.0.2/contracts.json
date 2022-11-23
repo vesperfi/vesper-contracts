@@ -244,6 +244,7 @@
           "implementation": "0x92574eD22C0b3961e240dBa1EbA02F6f30fd066C"
         },
         "strategies": {
+          "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
           "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
           "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
