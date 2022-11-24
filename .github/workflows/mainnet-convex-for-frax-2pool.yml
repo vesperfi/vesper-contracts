@@ -1,0 +1,63 @@
+name: Mainnet Convex for Frax 2pool Strategies
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-convex-for-frax-2pool.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-strategies/test/behavior/curve.js"
+      - "vesper-strategies/test/behavior/convex.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/curve/Curve.sol"
+      - "vesper-strategies/contracts/strategies/convex/Convex.sol"
+      - "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol"
+      - "vesper-strategies/test/mainnet/convex/convex_for_frax/2pool/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  fraxusdc-pool-frax-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex for Frax strategy for VAFRAX pool using fraxusdc 2pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/convex_for_frax/2pool/fraxusdc-frax.spec.js
+
+  fraxusdc-pool-usdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex for Frax strategy for VAUSDC pool using fraxusdc 2pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/convex_for_frax/2pool/fraxusdc-usdc.spec.js
