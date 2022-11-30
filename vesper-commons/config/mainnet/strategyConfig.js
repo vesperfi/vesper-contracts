@@ -1166,7 +1166,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.SBTC_DEPOSIT,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 210, // 2.1%
+      crvSlippage: 250, // 2.5%
       masterOracle,
       swapper,
       collateralIdx: 2,
@@ -1210,6 +1210,44 @@ const StrategyConfig = {
       collateralIdx: 1,
       convexPoolId: 9,
       strategyName: 'ConvexForFrax_fraxusdc_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_dolafraxbp_FRAX: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.DOLA_CRVFRAX_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      swapper,
+      collateralIdx: 1,
+      convexPoolId: 27,
+      strategyName: 'ConvexForFrax_dolafraxbp_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_dolafraxbp_USDC: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.DOLA_CRVFRAX_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      swapper,
+      collateralIdx: 2,
+      convexPoolId: 27,
+      strategyName: 'ConvexForFrax_dolafraxbp_USDC',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1277,7 +1315,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1295,7 +1333,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 150, // 1.5%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 1,
