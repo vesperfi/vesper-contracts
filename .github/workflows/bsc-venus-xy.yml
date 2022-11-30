@@ -1,0 +1,63 @@
+name: Binance Smart Chain Venus Xy Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bsc-venus-xy.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-strategies/test/behavior/vesper-compound-xy.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/compound/CompoundXyCore.sol"
+      - "vesper-strategies/contracts/strategies/compound/bsc/VenusXy.sol"
+      - "vesper-strategies/contracts/strategies/compound/bsc/VenusVesperXy.sol"
+      - "vesper-strategies/contracts/strategies/compound/bsc/VenusVesperXyBNB.sol"
+      - "vesper-strategies/test/bsc/venus/xy/**/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vabnb-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Venus Vesper XY strategy for VABNB pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/venus/xy/vesper/vabnb.spec.js
+
+  vabusd-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Venus Vesper XY strategy for VABUSD pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/venus/xy/vesper/vabusd.spec.js
