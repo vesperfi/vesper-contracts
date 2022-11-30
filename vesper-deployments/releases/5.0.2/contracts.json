@@ -640,6 +640,7 @@
         },
         "strategies": {
           "AaveStrategyFEI": "0xD5b60408f4513B112C7138a45b02C280249aCfb2",
+          "Convex_d3pool_FEI": "0xD9700EA432950E804923067D10dD815F03B68347",
           "RariFuseStrategy#18": "0xf5A66196306855821159e41f4dDbb71Ae5663825",
           "RariFuseStrategy#27": "0x187C51C9803424efe1Cbe62cFFc0D99B6912c0F6",
           "RariFuseStrategy#6": "0x0a46A9716b4632A57863d52123c5c10FDF9e10F8"
