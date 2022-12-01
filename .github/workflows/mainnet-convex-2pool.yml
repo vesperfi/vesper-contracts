@@ -31,21 +31,6 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  ren-pool-wbtc-test:
-    needs: [setup-job]
-    runs-on: ubuntu-latest
-    env:
-      NODE_URL: ${{ secrets.NODE_URL }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-
-      - name: Running Convex strategy for VAWBTC pool using ren 2pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/2pool/ren-wbtc.spec.js
-
   fraxusdc-pool-frax-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
