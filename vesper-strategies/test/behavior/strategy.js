@@ -23,10 +23,9 @@ const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
 const { shouldBehaveLikeWombatStrategy } = require('./wombat')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
 
-const { deposit } = require('vesper-commons/utils/poolOps')
+const { deposit, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
-const { adjustBalance } = require('vesper-commons/utils/balance')
 const ZERO_ADDRESS = ethers.constants.AddressZero
 function shouldBehaveLikeStrategy(index, type, strategyName) {
   let strategy, pool, feeCollector, collateralToken, accountant
@@ -159,9 +158,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         expect(totalDebtBefore, 'Total debt should be zero').to.be.equal(0)
         await strategy.rebalance()
         await mine(50)
-        // Send some collateral to strategy to generate profit.
-        const amount = ethers.utils.parseUnits('1000', await collateralToken.decimals())
-        await adjustBalance(collateralToken.address, strategy.address, amount)
+        // Generate profit
+        await makeStrategyProfitable(strategy, collateralToken)
         const data = await strategy.callStatic.rebalance()
         if ((await pool.name()).includes('Earn')) {
           // Earn strategies don't generate profit
