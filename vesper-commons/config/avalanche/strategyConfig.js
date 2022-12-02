@@ -618,6 +618,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.usdcLP,
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 1, // USDC LP Pool ID
       stargateLpStakingPoolId: 0, // Staking Contract pool ID
