@@ -1841,6 +1841,18 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Euler_STETH: {
+    contract: 'EulerSTETH',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
+      strategyName: 'Euler_STETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Euler_USDC: {
     contract: 'Euler',
     type: StrategyTypes.EULER,

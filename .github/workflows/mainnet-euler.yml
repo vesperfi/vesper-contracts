@@ -44,6 +44,21 @@ jobs:
       - name: Running Euler strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/euler/vaeth.spec.js
 
+  vasteth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Euler strategy for VASTETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/euler/vasteth.spec.js
+
   vausdc-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
