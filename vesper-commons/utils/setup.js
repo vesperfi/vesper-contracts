@@ -188,7 +188,8 @@ async function configureSwapper(strategies, collateral) {
       pairs.push({ tokenIn: token1, tokenOut: token2 })
       pairs.push({ tokenIn: token2, tokenOut: token1 })
     }
-    if (strategyType.includes('vesper')) {
+
+    if (strategyType.includes('vesper') && Address.Vesper.VSP) {
       pairs.push({ tokenIn: Address.Vesper.VSP, tokenOut: collateral })
     }
     if (strategyType.includes('maker')) {
