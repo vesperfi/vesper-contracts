@@ -131,10 +131,10 @@ abstract contract CompoundLeverageBase is Strategy {
      * @return _position Amount of borrow that need to be adjusted
      * @return _shouldRepay Flag indicating whether _position is borrow amount or repay amount
      */
-    function _calculateDesiredPosition(uint256 _amount, bool _isDeposit)
-        internal
-        returns (uint256 _position, bool _shouldRepay)
-    {
+    function _calculateDesiredPosition(
+        uint256 _amount,
+        bool _isDeposit
+    ) internal returns (uint256 _position, bool _shouldRepay) {
         uint256 _totalSupply = cToken.balanceOfUnderlying(address(this));
         uint256 _currentBorrow = cToken.borrowBalanceStored(address(this));
         // If minimum borrow limit set to 0 then repay borrow
@@ -161,17 +161,6 @@ abstract contract CompoundLeverageBase is Strategy {
             _shouldRepay = false;
             // We can borrow more.
             _position = _borrowLowerBound - _currentBorrow;
-        }
-    }
-
-    /// @notice Claim rewardToken and convert rewardToken into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual {
-        address[] memory _markets = new address[](1);
-        _markets[0] = address(cToken);
-        comptroller.claimComp(address(this), _markets);
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
         }
     }
 
@@ -204,21 +193,12 @@ abstract contract CompoundLeverageBase is Strategy {
 
     /**
      * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Call claimAndSwapRewards to convert rewards to collateral before calling this function.
      */
-    function _generateReport()
-        internal
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _generateReport() internal returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         (, , , , uint256 _totalDebt, , , uint256 _debtRatio, ) = IVesperPool(pool).strategy(address(this));
 
-        // Claim rewardToken and convert to collateral token
-        _claimRewardsAndConvertTo(address(collateralToken));
         // Invested collateral = supply - borrow
         uint256 _investedCollateral = cToken.balanceOfUnderlying(address(this)) -
             cToken.borrowBalanceStored(address(this));
@@ -327,16 +307,7 @@ abstract contract CompoundLeverageBase is Strategy {
         _mint(collateralToken.balanceOf(address(this)));
     }
 
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
