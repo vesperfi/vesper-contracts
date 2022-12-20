@@ -11,6 +11,7 @@ const chain = getChain()
 const Address = getChainData().address
 hre.address = Address
 
+const MAX_UINT = ethers.constants.MaxUint256
 // Contract names
 const CToken = 'CToken'
 const TokenLike = 'TokenLikeTest'
@@ -237,28 +238,28 @@ async function configureOracles(strategies) {
         await addressProvider.stableCoinProvider(),
       )
 
-      await defaultOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+      await defaultOracle.connect(governor).updateDefaultStalePeriod(MAX_UINT)
       if (chain === 'mainnet') {
         const alUsdOracleABI = ['function updateDefaultStalePeriod(uint256)', 'function update()']
         const alUsdOracle = await ethers.getContractAt(alUsdOracleABI, await masterOracle.oracles(Address.ALUSD))
         const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
 
         // Accepts outdated prices due to time travels
-        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.DAI, ethers.constants.MaxUint256)
-        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDC, ethers.constants.MaxUint256)
-        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDT, ethers.constants.MaxUint256)
-        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.sUSD, ethers.constants.MaxUint256)
-        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
-        await alUsdOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
-        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.DAI, MAX_UINT)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDC, MAX_UINT)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDT, MAX_UINT)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.sUSD, MAX_UINT)
+        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(MAX_UINT)
+        await alUsdOracle.connect(governor).updateDefaultStalePeriod(MAX_UINT)
+        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(MAX_UINT)
 
         // Ensure alUSD oracle is updated
         await alUsdOracle.update()
       } else if (chain === 'avalanche') {
         const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
         // Accepts outdated prices due to time travels
-        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
-        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
+        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(MAX_UINT)
+        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(MAX_UINT)
       }
 
       // Setup is needed just once
@@ -413,7 +414,7 @@ async function createStrategy(strategy, poolAddress, options = {}) {
   } else {
     instance = await deployContract(strategy.contract, [poolAddress, ...Object.values(strategy.constructorArgs)])
   }
-  await instance.approveToken()
+  await instance.approveToken(MAX_UINT)
   await instance.updateFeeCollector(strategy.feeCollector)
 
   // Earn strategies require call to approveGrowToken
