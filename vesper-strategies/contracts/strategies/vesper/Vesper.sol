@@ -117,8 +117,8 @@ abstract contract Vesper is Strategy {
             uint256 _amountToWithdraw = Math.min((_profitAndExcessDebt - _collateralHere), _collateralInVesper);
             if (_amountToWithdraw > 0) {
                 uint256 _sharesToBurn = Math.min(_convertToShares(_amountToWithdraw), _sharesHere);
-
-                if (_sharesToBurn > 0) {
+                // Making sure that _sharesToBurn is equivalent to > zero assets.
+                if (_convertToAssets(_sharesToBurn) > 0) {
                     vToken.withdraw(_sharesToBurn);
                     _collateralHere = collateralToken.balanceOf(address(this));
                 }
