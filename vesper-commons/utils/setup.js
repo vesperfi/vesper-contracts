@@ -232,6 +232,7 @@ async function configureOracles(strategies) {
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.DAI, ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDC, ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.USDT, ethers.constants.MaxUint256)
+        await defaultOracle.connect(governor).updateCustomStalePeriod(Address.FRAX, ethers.constants.MaxUint256)
         await defaultOracle.connect(governor).updateCustomStalePeriod(Address.sUSD, ethers.constants.MaxUint256)
         await stableCoinProvider.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)
         await alUsdOracle.connect(governor).updateDefaultStalePeriod(ethers.constants.MaxUint256)

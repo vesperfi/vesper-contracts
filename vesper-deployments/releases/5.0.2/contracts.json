@@ -246,6 +246,7 @@
         "strategies": {
           "ConvexForFrax_dolafraxbp_FRAX": "0xDA91f27C301a1831e8df3E2D35627eA1A3067d2F",
           "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
+          "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
           "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
           "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
@@ -617,6 +618,7 @@
         "strategies": {
           "ConvexForFrax_dolafraxbp_USDC": "0xeE44D248248E1b0bBE313003a41016db004326EB",
           "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
+          "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
           "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
