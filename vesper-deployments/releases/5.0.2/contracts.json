@@ -366,11 +366,11 @@
         "pool": {
           "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
           "proxy": "0x7a74B6D3A07D3249Ea2FBb58e47F0DaF6d6a2ebf",
-          "implementation": "0x8d48fD51FfEB99b1Ad1224038E46166Cfc7d9dE3",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
           "poolAccountant": {
             "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
             "proxy": "0x11aAb1b00c62EA9528c3286C53c2308Aad6f64ea",
-            "implementation": "0x2Ad6DefC823D6DF64117C6dB0A17596faD90C767"
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
           }
         },
         "poolRewards": {
@@ -380,7 +380,7 @@
         },
         "strategies": {
           "EarnVesperMakerStrategyWBTC": "0x2740B8b29B229bD690252DBc5590A5c7416e44DC",
-          "EarnVesperStrategyWBTCDAI": "0x1Cd0f3bD73d60D56B487073A0caB2E8a9085CF08"
+          "Vesper_Earn_WBTC_DAI": "0xFd3783586aBDE50E7b03C171bd1062354641F661"
         }
       },
       "velink_dai": {
