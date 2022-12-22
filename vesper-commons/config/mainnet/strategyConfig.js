@@ -1253,6 +1253,44 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Convex_dolafraxbp_USDC: {
+    contract: 'Convex',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.DOLA_CRVFRAX_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      swapper,
+      collateralIdx: 2,
+      convexPoolId: 115,
+      strategyName: 'Convex_dolafraxbp_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Convex_dolafraxbp_FRAX: {
+    contract: 'Convex',
+    type: StrategyTypes.CONVEX,
+    constructorArgs: {
+      crvPool: Address.Curve.DOLA_CRVFRAX_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      swapper,
+      collateralIdx: 1,
+      convexPoolId: 115,
+      strategyName: 'Convex_dolafraxbp_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Curve_ren_WBTC: {
     contract: 'Curve',
     type: StrategyTypes.CURVE,

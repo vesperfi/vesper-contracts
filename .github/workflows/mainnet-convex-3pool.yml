@@ -105,3 +105,33 @@ jobs:
 
       - name: Running Convex strategy for VADAI pool using 3Crv 3pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/convex/3pool/tripool-dai.spec.js
+
+  dolafraxbp-pool-frax-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAFRAX pool using dolafraxbp 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/3pool/dolafraxbp-frax.spec.js
+
+  dolafraxbp-pool-usdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Convex strategy for VAUSDC pool using dolafraxbp 3pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/3pool/dolafraxbp-usdc.spec.js
