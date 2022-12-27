@@ -36,11 +36,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     event UniversalFeePaid(uint256 strategyDebt, uint256 profit, uint256 fee);
 
     // We are using constructor to initialize implementation with basic details
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        address _token
-    ) PoolERC20(_name, _symbol) {
+    constructor(string memory _name, string memory _symbol, address _token) PoolERC20(_name, _symbol) {
         // 0x0 is acceptable as has no effect on functionality
         token = IERC20(_token);
     }
@@ -165,16 +161,13 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @param _payback strategy willing to payback outstanding above debtLimit. no performance fee on this amount.
      *  when governance has reduced debtRatio of strategy, strategy will report profit and payback amount separately.
      */
-    function reportEarning(
-        uint256 _profit,
-        uint256 _loss,
-        uint256 _payback
-    ) external {
+    function reportEarning(uint256 _profit, uint256 _loss, uint256 _payback) external {
         address _strategy = _msgSender();
         // Calculate universal fee
         if (_profit > 0) {
-            (, , , uint256 _lastRebalanceAt, uint256 _totalDebt, , , , ) =
-                IPoolAccountant(poolAccountant).strategy(_strategy);
+            (, , , uint256 _lastRebalanceAt, uint256 _totalDebt, , , , ) = IPoolAccountant(poolAccountant).strategy(
+                _strategy
+            );
             uint256 _fee = _calculateUniversalFee(_lastRebalanceAt, _totalDebt, _profit);
             // Mint shares equal to universal fee
             if (_fee > 0) {
@@ -184,8 +177,12 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         }
 
         // Report earning in pool accountant
-        (uint256 _actualPayback, uint256 _creditLine) =
-            IPoolAccountant(poolAccountant).reportEarning(_strategy, _profit, _loss, _payback);
+        (uint256 _actualPayback, uint256 _creditLine) = IPoolAccountant(poolAccountant).reportEarning(
+            _strategy,
+            _profit,
+            _loss,
+            _payback
+        );
         uint256 _totalPayback = _profit + _actualPayback;
         // After payback, if strategy has credit line available then send more fund to strategy
         // If payback is more than available credit line then get fund from strategy
@@ -289,12 +286,14 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      */
     function pricePerShare() public view returns (uint256) {
         if (totalSupply() == 0 || totalValue() == 0) {
-            return 10**IERC20Metadata(address(token)).decimals();
+            return 10 ** IERC20Metadata(address(token)).decimals();
         }
         return (totalValue() * 1e18) / totalSupply();
     }
 
-    function strategy(address _strategy)
+    function strategy(
+        address _strategy
+    )
         public
         view
         returns (
@@ -356,11 +355,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /// @dev Update pool rewards of sender and receiver during transfer.
-    function _transfer(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) internal override {
+    function _transfer(address sender, address recipient, uint256 amount) internal override {
         if (poolRewards != address(0)) {
             IPoolRewards(poolRewards).updateReward(sender);
             IPoolRewards(poolRewards).updateReward(recipient);
@@ -472,8 +467,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      */
     function _calculateUniversalFee(address _strategy, uint256 _profit) private view returns (uint256 _fee) {
         // Calculate universal fee
-        (, , , uint256 _lastRebalance, uint256 _totalDebt, , , , ) =
-            IPoolAccountant(poolAccountant).strategy(_strategy);
+        (, , , uint256 _lastRebalance, uint256 _totalDebt, , , , ) = IPoolAccountant(poolAccountant).strategy(
+            _strategy
+        );
         return _calculateUniversalFee(_lastRebalance, _totalDebt, _profit);
     }
 

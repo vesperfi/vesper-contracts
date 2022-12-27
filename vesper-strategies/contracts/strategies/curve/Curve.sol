@@ -38,6 +38,7 @@ contract Curve is Strategy {
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
 
+    // solhint-disable-next-line var-name-mixedcase
     address public immutable CRV;
     IERC20 public immutable crvLp; // Note: Same as `receiptToken` but using this in order to save gas since it's `immutable` and `receiptToken` isn't
     address public immutable crvPool;
@@ -47,6 +48,7 @@ contract Curve is Strategy {
     PoolType public immutable curvePoolType;
     bool private immutable isFactoryPool;
 
+    // solhint-disable-next-line var-name-mixedcase
     string public NAME;
     uint256 public crvSlippage;
     IMasterOracle public masterOracle;
@@ -296,15 +298,7 @@ contract Curve is Strategy {
         revert("deposit-to-curve-failed");
     }
 
-    function _generateReport()
-        internal
-        virtual
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _strategyDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -367,16 +361,7 @@ contract Curve is Strategy {
         return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
     }
 
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
@@ -400,45 +385,25 @@ contract Curve is Strategy {
         }
     }
 
-    function _withdrawFromPlainPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFromPlainPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         IStableSwap(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
-    function _withdrawFrom2LendingPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFrom2LendingPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         // Note: Using use_underlying = true to withdraw underlying instead of IB token
         IStableSwap2xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
     }
 
-    function _withdrawFrom3LendingPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFrom3LendingPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         // Note: Using use_underlying = true to withdraw underlying instead of IB token
         IStableSwap3xUnderlying(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_, true);
     }
 
-    function _withdrawFrom4PlainOrMetaPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFrom4PlainOrMetaPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         IDeposit4x(depositZap).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
-    function _withdrawFrom3FactoryMetaOr4FactoryMetaPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFrom3FactoryMetaOr4FactoryMetaPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap(depositZap).remove_liquidity_one_coin(address(crvLp), lpAmount_, i_, minAmountOut_);
     }

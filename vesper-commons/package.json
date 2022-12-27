@@ -4,6 +4,7 @@
   "description": "Common code for Vesper ecosystem",
   "license": "MIT",
   "scripts": {
-    "solhint": "solhint './contracts/**/*.sol'"
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'"
   }
 }

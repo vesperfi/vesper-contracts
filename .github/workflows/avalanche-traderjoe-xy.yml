@@ -11,7 +11,7 @@ on:
       - "vesper-strategies/contracts/strategies/compound/CompoundXyCore.sol"
       - "vesper-strategies/contracts/strategies/compound/avalanche/TraderJoeXy.sol"
       - "vesper-strategies/contracts/strategies/compound/avalanche/TraderJoeVesperXy.sol"
-      - "vesper-strategies/test/behavior/vesper-compound-xy.js"
+      - "vesper-strategies/test/behavior/compound-vesper-xy.js"
       - "vesper-strategies/test/avalanche/traderjoe/xy/**/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request

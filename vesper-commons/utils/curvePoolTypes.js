@@ -12,4 +12,10 @@ const CurvePoolType = {
   META_4_POOL: 7,
 }
 
-module.exports = Object.freeze(CurvePoolType)
+const EllipsisPoolType = {
+  PLAIN_2_POOL: 0,
+  PLAIN_3_POOL: 1,
+  META_4_POOL: 2,
+}
+
+module.exports = { CurvePoolTypes: Object.freeze(CurvePoolType), EllipsisPoolTypes: Object.freeze(EllipsisPoolType) }

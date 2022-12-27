@@ -99,11 +99,10 @@ contract AaveV2Xy is Strategy, AaveV2Core {
      * @return _borrowAmount borrow more amount
      * @return _repayAmount repay amount to keep ltv within limit
      */
-    function _calculateBorrowPosition(uint256 _depositAmount, uint256 _withdrawAmount)
-        internal
-        view
-        returns (uint256 _borrowAmount, uint256 _repayAmount)
-    {
+    function _calculateBorrowPosition(
+        uint256 _depositAmount,
+        uint256 _withdrawAmount
+    ) internal view returns (uint256 _borrowAmount, uint256 _repayAmount) {
         require(_depositAmount == 0 || _withdrawAmount == 0, "all-input-gt-zero");
         uint256 _borrowed = vdToken.balanceOf(address(this));
         // If maximum borrow limit set to 0 then repay borrow
@@ -135,10 +134,10 @@ contract AaveV2Xy is Strategy, AaveV2Core {
 
         // Collateral in base currency based on oracle price and cf;
         uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-            (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
+            (MAX_BPS * (10 ** IERC20Metadata(address(collateralToken)).decimals()));
         // Calculate max borrow possible in borrow token number
         uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
-            (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+            (10 ** IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }
@@ -194,15 +193,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
      * @notice Generate report for pools accounting and also send profit and any payback to pool.
      * @dev Claim rewardToken and convert to collateral.
      */
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 

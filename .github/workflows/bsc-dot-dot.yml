@@ -1,0 +1,45 @@
+name: Binance Smart Chain DotDot Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bsc-dot-dot.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-strategies/test/behavior/dot-dot.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/dot-dot/DotDot.sol"
+      - "vesper-strategies/test/bsc/dot-dot/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vabusd-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running DotDot val3EPS strategy for VABUSD pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/dot-dot/3pool/tripool-busd.spec.js
