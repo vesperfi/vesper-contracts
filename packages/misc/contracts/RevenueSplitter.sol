@@ -128,7 +128,7 @@ contract RevenueSplitter is Governable {
                 // answer is 1 collateral token price in ETH (18 decimals)
                 int256 _answer = IAggregatorV3(oracles[address(_vToken)]).latestAnswer();
                 uint256 _decimals = IERC20Metadata(address(_vToken.token())).decimals();
-                _valueInEth = uint256(_answer).mul(_collateralTokenAmount).div(10**_decimals);
+                _valueInEth = uint256(_answer).mul(_collateralTokenAmount).div(10 ** _decimals);
             }
         }
     }
@@ -265,11 +265,7 @@ contract RevenueSplitter is Governable {
     }
 
     /// @notice Transfer _asset to _partner address
-    function transfer(
-        address _asset,
-        address _partner,
-        uint256 _amount
-    ) public onlyGovernor {
+    function transfer(address _asset, address _partner, uint256 _amount) public onlyGovernor {
         require(_partner != address(0), "partner-is-zero-address");
         require(_amount > 0, "incorrect-amount");
         IERC20(_asset).safeTransfer(_partner, _amount);

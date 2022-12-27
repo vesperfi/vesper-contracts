@@ -142,10 +142,10 @@ contract AaveV3Xy is Strategy {
 
         // Collateral in base currency based on oracle price and cf;
         uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-            (MAX_BPS * (10**IERC20Metadata(address(collateralToken)).decimals()));
+            (MAX_BPS * (10 ** IERC20Metadata(address(collateralToken)).decimals()));
         // Calculate max borrow possible in borrow token number
         uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
-            (10**IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+            (10 ** IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }
@@ -205,15 +205,7 @@ contract AaveV3Xy is Strategy {
      * @notice Generate report for pools accounting and also send profit and any payback to pool.
      * @dev Claim rewardToken and convert to collateral.
      */
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _borrowed = vdToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();

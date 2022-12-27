@@ -22,7 +22,7 @@ abstract contract Maker is Strategy {
     uint256 public highWater;
     uint256 public lowWater;
     uint256 public immutable decimalConversionFactor;
-    uint256 private constant WAT = 10**16;
+    uint256 private constant WAT = 10 ** 16;
 
     constructor(
         address _pool,
@@ -40,7 +40,7 @@ abstract contract Maker is Strategy {
         _updateBalancingFactor(_highWater, _lowWater);
         // Assuming token supports 18 or less decimals.
         uint256 _decimals = IERC20Metadata(address(IVesperPool(_pool).token())).decimals();
-        decimalConversionFactor = 10**(18 - _decimals);
+        decimalConversionFactor = 10 ** (18 - _decimals);
         NAME = _name;
     }
 
@@ -136,16 +136,7 @@ abstract contract Maker is Strategy {
         }
     }
 
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (
             uint256 _wrappedCollateralInVault18,
             uint256 _currentDaiDebt,

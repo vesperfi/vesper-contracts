@@ -73,13 +73,7 @@ interface IEulDistributor {
     /// @param token Address of token being claimed (ie EUL)
     /// @param proof Merkle proof that validates this claim
     /// @param stake If non-zero, then the address of a token to auto-stake to, instead of claiming
-    function claim(
-        address account,
-        address token,
-        uint256 claimable,
-        bytes32[] calldata proof,
-        address stake
-    ) external;
+    function claim(address account, address token, uint256 claimable, bytes32[] calldata proof, address stake) external;
 }
 
 interface IExec {

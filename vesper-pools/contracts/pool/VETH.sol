@@ -7,11 +7,7 @@ import "../interfaces/token/IToken.sol";
 
 //solhint-disable no-empty-blocks
 contract VETH is VPool {
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        address _token
-    ) VPool(_name, _symbol, _token) {}
+    constructor(string memory _name, string memory _symbol, address _token) VPool(_name, _symbol, _token) {}
 
     /// @dev Handle incoming ETH to the contract address.
     receive() external payable {

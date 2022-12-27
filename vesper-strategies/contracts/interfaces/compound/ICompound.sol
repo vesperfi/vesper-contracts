@@ -17,15 +17,7 @@ interface CToken {
 
     function exchangeRateStored() external view returns (uint256);
 
-    function getAccountSnapshot(address account)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256
-        );
+    function getAccountSnapshot(address account) external view returns (uint256, uint256, uint256, uint256);
 
     function borrow(uint256 borrowAmount) external returns (uint256);
 
@@ -45,11 +37,7 @@ interface CToken {
 
     function getCash() external view returns (uint256);
 
-    function transferFrom(
-        address owner,
-        address user,
-        uint256 amount
-    ) external returns (bool);
+    function transferFrom(address owner, address user, uint256 amount) external returns (bool);
 
     function underlying() external view returns (address);
 
@@ -67,23 +55,11 @@ interface Comptroller {
 
     function compAccrued(address holder) external view returns (uint256);
 
-    function getAccountLiquidity(address account)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256
-        );
+    function getAccountLiquidity(address account) external view returns (uint256, uint256, uint256);
 
-    function markets(address market)
-        external
-        view
-        returns (
-            bool isListed,
-            uint256 collateralFactorMantissa,
-            bool isCompted
-        );
+    function markets(
+        address market
+    ) external view returns (bool isListed, uint256 collateralFactorMantissa, bool isCompted);
 
     function oracle() external view returns (address);
 

@@ -99,7 +99,7 @@ abstract contract FlashLoanHelper {
 
     /// @dev Aave will call this function after doing flash loan
     function executeOperation(
-        address[] calldata, /*_assets*/
+        address[] calldata /*_assets*/,
         uint256[] calldata _amounts,
         uint256[] calldata _premiums,
         address _initiator,
@@ -160,11 +160,7 @@ abstract contract FlashLoanHelper {
     }
 
     /// @dev DyDx calls this function after doing flash loan
-    function callFunction(
-        address _sender,
-        Account.Info memory, /* _account */
-        bytes memory _callData
-    ) external {
+    function callFunction(address _sender, Account.Info memory /* _account */, bytes memory _callData) external {
         (bytes memory _data, uint256 _repayAmount) = abi.decode(_callData, (bytes, uint256));
         require(msg.sender == SOLO, "!solo");
         require(_sender == address(this), Errors.INVALID_INITIATOR);

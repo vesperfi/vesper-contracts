@@ -28,18 +28,9 @@ interface AToken is IERC20 {
      **/
     function getIncentivesController() external view returns (address);
 
-    function mint(
-        address user,
-        uint256 amount,
-        uint256 index
-    ) external returns (bool);
+    function mint(address user, uint256 amount, uint256 index) external returns (bool);
 
-    function burn(
-        address user,
-        address receiverOfUnderlying,
-        uint256 amount,
-        uint256 index
-    ) external;
+    function burn(address user, address receiverOfUnderlying, uint256 amount, uint256 index) external;
 
     //solhint-disable func-name-mixedcase
     function UNDERLYING_ASSET_ADDRESS() external view returns (address);
@@ -48,39 +39,22 @@ interface AToken is IERC20 {
 interface AaveIncentivesController {
     function getRewardsBalance(address[] calldata assets, address user) external view returns (uint256);
 
-    function claimRewards(
-        address[] calldata assets,
-        uint256 amount,
-        address to
-    ) external returns (uint256);
+    function claimRewards(address[] calldata assets, uint256 amount, address to) external returns (uint256);
 
-    function claimAllRewards(address[] calldata assets, address to)
-        external
-        returns (address[] memory rewardsList, uint256[] memory claimedAmounts);
+    function claimAllRewards(
+        address[] calldata assets,
+        address to
+    ) external returns (address[] memory rewardsList, uint256[] memory claimedAmounts);
 
     function getRewardsList() external view returns (address[] memory);
 }
 
 interface AaveLendingPool {
-    function deposit(
-        address asset,
-        uint256 amount,
-        address onBehalfOf,
-        uint16 referralCode
-    ) external;
+    function deposit(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
 
-    function supply(
-        address asset,
-        uint256 amount,
-        address onBehalfOf,
-        uint16 referralCode
-    ) external;
+    function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
 
-    function withdraw(
-        address asset,
-        uint256 amount,
-        address to
-    ) external returns (uint256);
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 
     function flashLoan(
         address receiverAddress,
@@ -100,14 +74,11 @@ interface AaveLendingPool {
         address onBehalfOf
     ) external;
 
-    function repay(
-        address asset,
-        uint256 amount,
-        uint256 interestRateMode,
-        address onBehalfOf
-    ) external;
+    function repay(address asset, uint256 amount, uint256 interestRateMode, address onBehalfOf) external;
 
-    function getUserAccountData(address _user)
+    function getUserAccountData(
+        address _user
+    )
         external
         view
         returns (
@@ -121,16 +92,13 @@ interface AaveLendingPool {
 }
 
 interface AaveProtocolDataProvider {
-    function getReserveTokensAddresses(address asset)
-        external
-        view
-        returns (
-            address aTokenAddress,
-            address stableDebtTokenAddress,
-            address variableDebtTokenAddress
-        );
+    function getReserveTokensAddresses(
+        address asset
+    ) external view returns (address aTokenAddress, address stableDebtTokenAddress, address variableDebtTokenAddress);
 
-    function getReserveData(address asset)
+    function getReserveData(
+        address asset
+    )
         external
         view
         returns (
@@ -146,7 +114,9 @@ interface AaveProtocolDataProvider {
             uint40 lastUpdateTimestamp
         );
 
-    function getReserveConfigurationData(address asset)
+    function getReserveConfigurationData(
+        address asset
+    )
         external
         view
         returns (

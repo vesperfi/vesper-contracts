@@ -25,9 +25,5 @@ interface ISafeBox is IERC20Metadata {
 
     function claim(uint256 totalAmount, bytes32[] memory proof) external;
 
-    function claimAndWithdraw(
-        uint256 totalAmount,
-        bytes32[] memory proof,
-        uint256 withdrawAmount
-    ) external;
+    function claimAndWithdraw(uint256 totalAmount, bytes32[] memory proof, uint256 withdrawAmount) external;
 }
