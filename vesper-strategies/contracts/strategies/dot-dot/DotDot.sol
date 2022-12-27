@@ -94,9 +94,7 @@ contract DotDot is Ellipsis {
      ***********************************************************************************************/
 
     /// @dev DotDot can add new rewards. This method refresh list.
-    function setRewardTokens(
-        address[] memory /*_rewardTokens*/
-    ) external override onlyKeeper {
+    function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
         // Claims all rewards, if any, before updating the reward list
         _claimRewardsAndConvertTo(address(collateralToken));
         rewardTokens = _getRewardTokens();

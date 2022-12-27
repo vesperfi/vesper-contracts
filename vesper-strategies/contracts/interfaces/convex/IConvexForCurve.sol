@@ -3,24 +3,10 @@
 pragma solidity 0.8.9;
 
 interface IConvex {
-    function poolInfo(uint256)
-        external
-        view
-        returns (
-            address,
-            address,
-            address,
-            address,
-            address,
-            bool
-        );
+    function poolInfo(uint256) external view returns (address, address, address, address, address, bool);
 
     // deposit lp tokens and stake
-    function deposit(
-        uint256 _pid,
-        uint256 _amount,
-        bool _stake
-    ) external returns (bool);
+    function deposit(uint256 _pid, uint256 _amount, bool _stake) external returns (bool);
 
     // deposit all lp tokens and stake
     function depositAll(uint256 _pid, bool _stake) external returns (bool);
@@ -38,11 +24,7 @@ interface IConvex {
     function claimRewards(uint256 _pid, address _gauge) external returns (bool);
 
     // delegate address votes on dao (needs to be voteDelegate)
-    function vote(
-        uint256 _voteId,
-        address _votingAddress,
-        bool _support
-    ) external returns (bool);
+    function vote(uint256 _voteId, address _votingAddress, bool _support) external returns (bool);
 
     function voteGaugeWeight(address[] calldata _gauge, uint256[] calldata _weight) external returns (bool);
 }

@@ -217,15 +217,7 @@ contract Ellipsis is Strategy {
         revert("deposit-to-ellipsis-failed");
     }
 
-    function _generateReport()
-        internal
-        virtual
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _strategyDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -279,16 +271,7 @@ contract Ellipsis is Strategy {
         return IStableSwap(ellipsisPool).calc_withdraw_one_coin(amountIn_, toIdx_);
     }
 
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
@@ -312,19 +295,11 @@ contract Ellipsis is Strategy {
         }
     }
 
-    function _withdrawFromPlainPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFromPlainPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         IStableSwap(ellipsisPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
     }
 
-    function _withdrawFrom4FactoryMetaPool(
-        uint256 lpAmount_,
-        uint256 minAmountOut_,
-        int128 i_
-    ) private {
+    function _withdrawFrom4FactoryMetaPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap4x(depositZap).remove_liquidity_one_coin(address(ellipsisLp), lpAmount_, i_, minAmountOut_);
     }

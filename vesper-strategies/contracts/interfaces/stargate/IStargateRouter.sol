@@ -3,6 +3,7 @@
 pragma solidity ^0.8.9;
 
 interface IStargateRouter {
+    // solhint-disable-next-line contract-name-camelcase
     struct lzTxObj {
         uint256 dstGasForCall;
         uint256 dstNativeAmount;
@@ -11,11 +12,7 @@ interface IStargateRouter {
 
     function factory() external view returns (address);
 
-    function addLiquidity(
-        uint256 _poolId,
-        uint256 _amountLD,
-        address _to
-    ) external;
+    function addLiquidity(uint256 _poolId, uint256 _amountLD, address _to) external;
 
     function swap(
         uint16 _dstChainId,
@@ -40,11 +37,7 @@ interface IStargateRouter {
         lzTxObj memory _lzTxParams
     ) external payable;
 
-    function instantRedeemLocal(
-        uint16 _srcPoolId,
-        uint256 _amountLP,
-        address _to
-    ) external returns (uint256);
+    function instantRedeemLocal(uint16 _srcPoolId, uint256 _amountLP, address _to) external returns (uint256);
 
     function redeemLocal(
         uint16 _dstChainId,

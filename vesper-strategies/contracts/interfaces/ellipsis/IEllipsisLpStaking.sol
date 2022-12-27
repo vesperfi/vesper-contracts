@@ -45,11 +45,7 @@ interface IEllipsisLpStaking {
         @param _claimRewards If true, also claim rewards earned on the token.
         @return uint256 Claimed reward amount
      */
-    function deposit(
-        address _token,
-        uint256 _amount,
-        bool _claimRewards
-    ) external returns (uint256);
+    function deposit(address _token, uint256 _amount, bool _claimRewards) external returns (uint256);
 
     /**
         @notice Withdraw LP tokens from the contract
@@ -59,9 +55,5 @@ interface IEllipsisLpStaking {
         @param _claimRewards If true, also claim rewards earned on the token.
         @return uint256 Claimed reward amount
      */
-    function withdraw(
-        address _token,
-        uint256 _amount,
-        bool _claimRewards
-    ) external returns (uint256);
+    function withdraw(address _token, uint256 _amount, bool _claimRewards) external returns (uint256);
 }

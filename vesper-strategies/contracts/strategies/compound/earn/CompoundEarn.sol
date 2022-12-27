@@ -34,11 +34,7 @@ contract CompoundEarn is Compound, Earn {
     function _rebalance()
         internal
         override(Strategy, Compound)
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
+        returns (uint256 _profit, uint256 _loss, uint256 _payback)
     {
         (_profit, , _payback) = _generateReport();
         _handleProfit(_profit);

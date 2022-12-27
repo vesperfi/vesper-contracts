@@ -86,7 +86,7 @@ abstract contract AvalancheFlashLoanHelper {
 
     /// @dev Aave will call this function after doing flash loan
     function executeOperation(
-        address[] calldata, /*_assets*/
+        address[] calldata /*_assets*/,
         uint256[] calldata _amounts,
         uint256[] calldata _premiums,
         address _initiator,

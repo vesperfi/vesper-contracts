@@ -160,10 +160,10 @@ contract EulerXy is Strategy {
 
         // Actual collateral based on price, collateral factor and borrow factor
         uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _effectiveCF * _collateralTokenPrice) /
-            (EULER_CONFIG_FACTOR_SCALE * (10**IERC20Metadata(address(collateralToken)).decimals()));
+            (EULER_CONFIG_FACTOR_SCALE * (10 ** IERC20Metadata(address(collateralToken)).decimals()));
 
         // Calculate max possible borrow amount
-        uint256 _maxBorrowPossible = (_actualCollateralForBorrow * 10**IERC20Metadata(borrowToken).decimals()) /
+        uint256 _maxBorrowPossible = (_actualCollateralForBorrow * 10 ** IERC20Metadata(borrowToken).decimals()) /
             _borrowTokenPrice;
 
         if (_maxBorrowPossible == 0) {
@@ -205,11 +205,10 @@ contract EulerXy is Strategy {
         }
     }
 
-    function _getAvailableLiquidity(IEToken eToken_, IDToken dToken_)
-        private
-        view
-        returns (uint256 _availableLiquidity)
-    {
+    function _getAvailableLiquidity(
+        IEToken eToken_,
+        IDToken dToken_
+    ) private view returns (uint256 _availableLiquidity) {
         // totalSupplyUnderlying on eToken = Total supply of underlying token
         // totalSupply on dToken = Total borrow issued.
         // Available liquidity of underlying token = (supply - borrow)
@@ -228,15 +227,7 @@ contract EulerXy is Strategy {
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _borrowed = borrowDToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
@@ -321,11 +312,7 @@ contract EulerXy is Strategy {
         );
     }
 
-    function _withdrawHere(
-        uint256 withdrawAmount_,
-        uint256 borrowed_,
-        uint256 supplied_
-    ) internal {
+    function _withdrawHere(uint256 withdrawAmount_, uint256 borrowed_, uint256 supplied_) internal {
         (, uint256 _repayAmount) = _calculateBorrowPosition(0, withdrawAmount_, borrowed_, supplied_);
         if (_repayAmount > 0) {
             _repayY(_repayAmount);

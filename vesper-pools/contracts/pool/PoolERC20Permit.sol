@@ -78,11 +78,7 @@ abstract contract PoolERC20Permit is PoolERC20, IERC20Permit {
         }
     }
 
-    function _buildDomainSeparator(
-        bytes32 typeHash,
-        bytes32 name,
-        bytes32 version
-    ) private view returns (bytes32) {
+    function _buildDomainSeparator(bytes32 typeHash, bytes32 name, bytes32 version) private view returns (bytes32) {
         return keccak256(abi.encode(typeHash, name, version, block.chainid, address(this)));
     }
 }

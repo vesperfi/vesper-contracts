@@ -89,15 +89,7 @@ abstract contract Vesper is Strategy {
         }
     }
 
-    function _generateReport()
-        internal
-        virtual
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _strategyDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -130,16 +122,7 @@ abstract contract Vesper is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();

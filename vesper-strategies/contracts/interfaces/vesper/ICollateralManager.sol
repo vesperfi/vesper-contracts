@@ -21,7 +21,9 @@ interface ICollateralManager {
 
     function getVaultDebt(address _vaultOwner) external view returns (uint256 daiDebt);
 
-    function getVaultInfo(address _vaultOwner)
+    function getVaultInfo(
+        address _vaultOwner
+    )
         external
         view
         returns (
@@ -36,7 +38,10 @@ interface ICollateralManager {
 
     function vaultNum(address _vaultOwner) external view returns (uint256 _vaultNum);
 
-    function whatWouldWithdrawDo(address _vaultOwner, uint256 _amount)
+    function whatWouldWithdrawDo(
+        address _vaultOwner,
+        uint256 _amount
+    )
         external
         view
         returns (
