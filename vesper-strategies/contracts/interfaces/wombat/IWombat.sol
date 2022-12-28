@@ -38,10 +38,10 @@ interface IWombatPool {
      * @return liquidity The potential liquidity user would receive
      * @return reward
      */
-    function quotePotentialDeposit(address token, uint256 amount)
-        external
-        view
-        returns (uint256 liquidity, uint256 reward);
+    function quotePotentialDeposit(
+        address token,
+        uint256 amount
+    ) external view returns (uint256 liquidity, uint256 reward);
 
     /**
      * @notice Quotes potential withdrawal from pool
@@ -51,10 +51,10 @@ interface IWombatPool {
      * @return amount The potential amount user would receive
      * @return fee The fee that would be applied
      */
-    function quotePotentialWithdraw(address token, uint256 liquidity)
-        external
-        view
-        returns (uint256 amount, uint256 fee);
+    function quotePotentialWithdraw(
+        address token,
+        uint256 liquidity
+    ) external view returns (uint256 amount, uint256 fee);
 
     /**
      * @notice Withdraws liquidity amount of asset to `to` address ensuring minimum amount required
@@ -96,7 +96,10 @@ interface IMasterWombat {
     /// @notice View function to see pending WOMs on frontend.
     /// @param _pid the pool id
     /// @param _user the user address
-    function pendingTokens(uint256 _pid, address _user)
+    function pendingTokens(
+        uint256 _pid,
+        address _user
+    )
         external
         view
         returns (
@@ -108,10 +111,9 @@ interface IMasterWombat {
 
     /// @notice Get bonus token info from the rewarder contract for a given pool, if it is a double reward farm
     /// @param _pid the pool id
-    function rewarderBonusTokenInfo(uint256 _pid)
-        external
-        view
-        returns (address[] memory bonusTokenAddresses, string[] memory bonusTokenSymbols);
+    function rewarderBonusTokenInfo(
+        uint256 _pid
+    ) external view returns (address[] memory bonusTokenAddresses, string[] memory bonusTokenSymbols);
 
     function userInfo(uint256 _pid, address _user) external view returns (UserInfo memory info);
 

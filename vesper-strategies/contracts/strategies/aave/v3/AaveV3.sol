@@ -71,15 +71,7 @@ contract AaveV3 is Strategy {
         }
     }
 
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 

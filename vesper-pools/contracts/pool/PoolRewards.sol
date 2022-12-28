@@ -136,13 +136,9 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
      * @return _rewardTokens Array of tokens being rewarded
      * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
      */
-    function claimable(address _account)
-        external
-        view
-        virtual
-        override
-        returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts)
-    {
+    function claimable(
+        address _account
+    ) external view virtual override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
         uint256 _len = rewardTokens.length;
@@ -203,17 +199,13 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         uint256 _totalSupply,
         uint256 _balance
     ) internal view returns (uint256) {
-        uint256 _rewardPerTokenAvailable =
-            _rewardPerToken(_rewardToken, _totalSupply) - userRewardPerTokenPaid[_rewardToken][_account];
+        uint256 _rewardPerTokenAvailable = _rewardPerToken(_rewardToken, _totalSupply) -
+            userRewardPerTokenPaid[_rewardToken][_account];
         uint256 _rewardsEarnedSinceLastUpdate = (_balance * _rewardPerTokenAvailable) / 1e18;
         return rewards[_rewardToken][_account] + _rewardsEarnedSinceLastUpdate;
     }
 
-    function _claimReward(
-        address _rewardToken,
-        address _account,
-        uint256 _reward
-    ) internal virtual {
+    function _claimReward(address _rewardToken, address _account, uint256 _reward) internal virtual {
         // Mark reward as claimed
         rewards[_rewardToken][_account] = 0;
         // Transfer reward
@@ -282,12 +274,7 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         return rewardPerTokenStored[_rewardToken] + _rewardsPerTokenSinceLastUpdate;
     }
 
-    function _updateReward(
-        address _rewardToken,
-        address _account,
-        uint256 _totalSupply,
-        uint256 _balance
-    ) internal {
+    function _updateReward(address _rewardToken, address _account, uint256 _totalSupply, uint256 _balance) internal {
         uint256 _rewardPerTokenStored = _rewardPerToken(_rewardToken, _totalSupply);
         rewardPerTokenStored[_rewardToken] = _rewardPerTokenStored;
         lastUpdateTime[_rewardToken] = lastTimeRewardApplicable(_rewardToken);

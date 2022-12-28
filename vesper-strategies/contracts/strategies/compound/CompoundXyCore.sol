@@ -110,10 +110,10 @@ abstract contract CompoundXyCore is Strategy {
      * @return _borrowAmount borrow more amount
      * @return _repayAmount repay amount to keep ltv within limit
      */
-    function _calculateBorrowPosition(uint256 _depositAmount, uint256 _withdrawAmount)
-        internal
-        returns (uint256 _borrowAmount, uint256 _repayAmount)
-    {
+    function _calculateBorrowPosition(
+        uint256 _depositAmount,
+        uint256 _withdrawAmount
+    ) internal returns (uint256 _borrowAmount, uint256 _repayAmount) {
         require(_depositAmount == 0 || _withdrawAmount == 0, "all-input-gt-zero");
         uint256 _borrowed = borrowCToken.borrowBalanceCurrent(address(this));
         // If maximum borrow limit set to 0 then repay borrow
@@ -206,15 +206,7 @@ abstract contract CompoundXyCore is Strategy {
         }
     }
 
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
         // Claim any reward we have.

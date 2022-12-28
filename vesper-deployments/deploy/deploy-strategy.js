@@ -44,7 +44,7 @@ const deployFunction = async function (hre) {
 
   // Execute setup transactions
   await sleep(5000)
-  await execute(strategyAlias, { from: deployer, log: true }, 'approveToken')
+  await execute(strategyAlias, { from: deployer, log: true }, 'approveToken', ethers.constants.MaxUint256)
 
   // For earn strategies approve grow token
   if (strategyAlias.includes('Earn')) {

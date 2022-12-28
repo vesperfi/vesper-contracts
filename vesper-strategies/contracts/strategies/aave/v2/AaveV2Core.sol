@@ -73,15 +73,7 @@ abstract contract AaveV2Core {
     }
 
     /// @notice Return cooldown related timestamps
-    function cooldownData()
-        public
-        view
-        returns (
-            uint256 _cooldownStart,
-            uint256 _cooldownEnd,
-            uint256 _unstakeEnd
-        )
-    {
+    function cooldownData() public view returns (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) {
         _cooldownStart = stkAAVE.stakersCooldowns(address(this));
         _cooldownEnd = _cooldownStart + stkAAVE.COOLDOWN_SECONDS();
         _unstakeEnd = _cooldownEnd + stkAAVE.UNSTAKE_WINDOW();
@@ -141,11 +133,7 @@ abstract contract AaveV2Core {
      * @param _amount Amount of collateral to withdraw.
      * @return Actual collateral withdrawn
      */
-    function _safeWithdraw(
-        address _asset,
-        address _to,
-        uint256 _amount
-    ) internal returns (uint256) {
+    function _safeWithdraw(address _asset, address _to, uint256 _amount) internal returns (uint256) {
         uint256 _aTokenBalance = aToken.balanceOf(address(this));
         // If Vesper becomes large liquidity provider in Aave(This happened in past in vUSDC 1.0)
         // In this case we might have more aToken compare to available liquidity in Aave and any
@@ -164,11 +152,7 @@ abstract contract AaveV2Core {
      * @param _amount Amount of collateral to withdraw.
      * @return Actual collateral withdrawn
      */
-    function _withdraw(
-        address _asset,
-        address _to,
-        uint256 _amount
-    ) internal returns (uint256) {
+    function _withdraw(address _asset, address _to, uint256 _amount) internal returns (uint256) {
         if (_amount > 0) {
             require(aaveLendingPool.withdraw(_asset, _amount, _to) == _amount, Errors.INCORRECT_WITHDRAW_AMOUNT);
         }

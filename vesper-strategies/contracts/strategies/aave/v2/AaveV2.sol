@@ -74,14 +74,7 @@ contract AaveV2 is Strategy, AaveV2Core {
      * @notice Generate report for pools accounting and also send profit and any payback to pool.
      * @dev Claim rewardToken and convert to collateral.
      */
-    function _generateReport()
-        internal
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _generateReport() internal returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -110,16 +103,7 @@ contract AaveV2 is Strategy, AaveV2Core {
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         // Pool may give fund to strategy. Deposit fund to generate yield.

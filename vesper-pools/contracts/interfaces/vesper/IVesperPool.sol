@@ -19,11 +19,7 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
 
     function poolRewards() external view returns (address);
 
-    function reportEarning(
-        uint256 _profit,
-        uint256 _loss,
-        uint256 _payback
-    ) external;
+    function reportEarning(uint256 _profit, uint256 _loss, uint256 _payback) external;
 
     function reportLoss(uint256 _loss) external;
 
@@ -41,7 +37,9 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
 
     function pricePerShare() external view returns (uint256);
 
-    function strategy(address _strategy)
+    function strategy(
+        address _strategy
+    )
         external
         view
         returns (

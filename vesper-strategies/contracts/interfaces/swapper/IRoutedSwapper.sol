@@ -18,22 +18,14 @@ interface IRoutedSwapper {
      * It will return the swap amount based on the current reserves of the best pair/path found (i.e. spot price).
      * @dev It shouldn't be used as oracle!!!
      */
-    function getAmountIn(
-        address tokenIn_,
-        address tokenOut_,
-        uint256 amountOut_
-    ) external returns (uint256 _amountIn);
+    function getAmountIn(address tokenIn_, address tokenOut_, uint256 amountOut_) external returns (uint256 _amountIn);
 
     /**
      * @notice Get *spot* quote
      * It will return the swap amount based on the current reserves of the best pair/path found (i.e. spot price).
      * @dev It shouldn't be used as oracle!!!
      */
-    function getAmountOut(
-        address tokenIn_,
-        address tokenOut_,
-        uint256 amountIn_
-    ) external returns (uint256 _amountOut);
+    function getAmountOut(address tokenIn_, address tokenOut_, uint256 amountIn_) external returns (uint256 _amountOut);
 
     /**
      * @notice Perform an exact input swap - will revert if there is no default routing

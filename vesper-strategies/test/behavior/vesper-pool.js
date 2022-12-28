@@ -60,7 +60,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       })
     })
 
-    describe(`Deposit ${collateralName} into the ${poolName} pool`, function () {
+    describe(`Deposit ${collateralName} into the ${poolName}`, function () {
       it(`Should deposit ${collateralName}`, async function () {
         // If there is address conflict then it will be non zero. Subtract it from TVL
         const balanceBefore = await collateralToken.balanceOf(pool.address)
@@ -107,7 +107,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       })
     })
 
-    describe(`Withdraw ${collateralName} from ${poolName} pool`, function () {
+    describe(`Withdraw ${collateralName} from ${poolName}`, function () {
       let depositAmount
       const valueDust = '100000'
       beforeEach(async function () {
@@ -210,6 +210,10 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         const user2Balance = await pool.balanceOf(user2.address)
         // Earn pool leaves dust behind sometimes
         const dust = user2Balance.div(1000000) // 0.0001 % dust
+        // Time travel 7 days to unlock asset from ConvexFroFrax strategies
+        if (strategies[0].type === StrategyType.CONVEX_FOR_FRAX) {
+          await time.increase(time.duration.days(7))
+        }
         await pool.connect(user2).withdraw(user2Balance)
         return Promise.all([pool.balanceOf(user2.address), collateralToken.balanceOf(user2.address)]).then(function ([
           vPoolBalance,
@@ -530,7 +534,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           // totalDebt of pool after rebalance, it should be close to maxTotalDebt
           totalDebtAfter = await pool.totalDebt()
 
-          let delta = maxTotalDebt.div(100000) // allow 0.001% deviation
+          let delta = maxTotalDebt.div(10000) // allow 0.01% deviation
           if (delta.eq('0')) {
             delta = '1'
           }

@@ -105,7 +105,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_2_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 500, // 5%
+      crvSlippage: 2500, // 25.0%
       masterOracle,
       swapper,
       collateralIdx: 0,

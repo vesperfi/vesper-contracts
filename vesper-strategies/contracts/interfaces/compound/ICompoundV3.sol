@@ -110,9 +110,5 @@ interface IRewards {
      * @param src The owner to claim for
      * @param shouldAccrue Whether or not to call accrue first
      */
-    function claim(
-        address comet,
-        address src,
-        bool shouldAccrue
-    ) external;
+    function claim(address comet, address src, bool shouldAccrue) external;
 }

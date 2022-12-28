@@ -573,8 +573,8 @@ describe('RevenueSplitter', function () {
 
     context('Vesper Deployer Account top-up with vaETH token', function () {
       let payees, shares, psContract, vaETH, asset1
-      const low = '10000000000000000000' // 10 eth
-      const high = '20000000000000000000' // 20 eth
+      const low = ethers.utils.parseEther('10') // 10 eth
+      const high = ethers.utils.parseEther('20') // 20 eth
 
       beforeEach(async function () {
         ;[payee1, payee2, payee3, payer1, nonpayee1, user6] = await ethers.getSigners()
@@ -582,8 +582,7 @@ describe('RevenueSplitter', function () {
         shares = [5, 95]
         psContract = await deployContract('RevenueSplitter', [payees, shares])
         asset1 = await deployContract('ERC20', ['test', 't1'])
-        const amount = '10000000000000000'
-        const mintAmount = BN.from(amount).toString()
+        const mintAmount = '10000000000000000'
         await adjustBalance(asset1.address, psContract.address, mintAmount, slot)
         vaETH = await ethers.getContractAt('IVesperPool', address.Vesper.vaETH)
         await adjustBalance(vaETH.address, VESPER_DEPLOYER, 0, slot)
@@ -604,8 +603,7 @@ describe('RevenueSplitter', function () {
       it('should not top-up by default on release', async function () {
         // Keep 10 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('10'))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('8').mul(DECIMAL18).toString() })
@@ -633,8 +631,7 @@ describe('RevenueSplitter', function () {
 
         // Keep 10 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
+        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('10'))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
         await vaETH.connect(signer)['deposit()']({ value: BN.from('8').mul(DECIMAL18).toString() })
@@ -660,24 +657,22 @@ describe('RevenueSplitter', function () {
       it('should top-up vesper deployer to exact high level', async function () {
         // Keep 23 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('13').mul(DECIMAL18))
+        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('23'))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
-        await vaETH.connect(signer)['deposit()']({ value: BN.from('22').mul(DECIMAL18).toString() })
-        const vaethAmount = BN.from('21').mul(DECIMAL18)
+        await vaETH.connect(signer)['deposit()']({ value: ethers.utils.parseEther('22') })
+        const vaethAmount = ethers.utils.parseEther('21')
         await vaETH.connect(signer).transfer(psContract.address, vaethAmount.toString())
         const pricePerShare = await vaETH.pricePerShare()
         // eth balance below low level
         const vesperEthBalanceBefore = await ethers.provider.getBalance(VESPER_DEPLOYER)
         const vdVethBalanceBefore = await vaETH.balanceOf(VESPER_DEPLOYER)
         const totalVesperBefore = vesperEthBalanceBefore.add(vdVethBalanceBefore)
-        expect(totalVesperBefore).to.be.lt(BN.from(low), 'eth balance is above low value')
+        expect(totalVesperBefore).to.be.lt(low, 'eth balance is above low value')
 
         // Check vaETH at revenue splitter contract address
         const psVethBalanceBefore = await vaETH.balanceOf(psContract.address)
-        expect(psVethBalanceBefore).to.be.equal(BN.from(vaethAmount), 'wrong vaeth amount')
+        expect(psVethBalanceBefore).to.be.equal(vaethAmount, 'wrong vaeth amount')
 
         // Top-up vesper deployer
         await psContract.connect(user6).topUp()
@@ -690,61 +685,58 @@ describe('RevenueSplitter', function () {
         const actualAmountTransfer = vdVethBalanceAfter.sub(vdVethBalanceBefore)
 
         expect(expectedAmountTransfer).to.be.equal(actualAmountTransfer, 'Top-up done with wrong amount')
-        expect(totalVesperAfter.sub(high), 'vesper deployer should be close to high balance').to.closeTo(0, 10)
+        expect(totalVesperAfter.sub(high), 'vesper deployer should be close to high balance').to.closeTo(0, 50)
       })
 
       it('should top-up vesper deployer with less than high level amount', async function () {
         // Keep 25 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('25'))
 
         // Transfer some vaETH at revenue splitter contract address to bring VESPER_DEPLOYER balance < low level
-        await vaETH.connect(signer)['deposit()']({ value: BN.from('23').mul(DECIMAL18).toString() })
-        const vaethAmount = BN.from('22').mul(DECIMAL18) // high level is 20 so transfer > 20
+        await vaETH.connect(signer)['deposit()']({ value: ethers.utils.parseEther('23') })
+        const vaethAmount = ethers.utils.parseEther('22') // high level is 20 so transfer > 20
         await vaETH.connect(signer).transfer(psContract.address, vaethAmount.toString())
 
         // eth balance below low level
         const ethBalanceBefore = await ethers.provider.getBalance(VESPER_DEPLOYER)
-        expect(ethBalanceBefore).to.be.lt(BN.from(low), 'eth balance is above low value')
+        expect(ethBalanceBefore).to.be.lt(low, 'eth balance is above low value')
 
         // Check vaETH at revenue splitter contract address
         const psVethBalanceBefore = await vaETH.balanceOf(psContract.address)
-        expect(psVethBalanceBefore).to.be.equal(BN.from(vaethAmount), 'wrong vaeth amount')
+        expect(psVethBalanceBefore).to.be.equal(vaethAmount, 'wrong vaeth amount')
 
         // calculate total vesper deployer balance
         const weth = await ethers.getContractAt(TokenLike, WETH)
         const vesperWethBalanceBefore = await weth.balanceOf(VESPER_DEPLOYER)
         const vdVethBalanceBefore = await vaETH.balanceOf(VESPER_DEPLOYER)
-        const totalVesperBalanceBefore = ethBalanceBefore.add(BN.from(vesperWethBalanceBefore)).add(vdVethBalanceBefore)
+        const totalVesperBalanceBefore = ethBalanceBefore.add(vesperWethBalanceBefore).add(vdVethBalanceBefore)
         // Top-up vesper deployer
         await psContract.connect(user6).topUp()
         const pricePerShare = await vaETH.pricePerShare()
         const vdVethBalanceAfter = (await vaETH.balanceOf(VESPER_DEPLOYER)).mul(pricePerShare).div(DECIMAL18)
         const psVethBalanceAfter = await vaETH.balanceOf(psContract.address)
 
-        const actualDiff = BN.from(vdVethBalanceAfter).sub(BN.from(vdVethBalanceBefore))
-        const expectedDiff = BN.from(high).sub(BN.from(totalVesperBalanceBefore))
+        const actualDiff = vdVethBalanceAfter.sub(vdVethBalanceBefore)
+        const expectedDiff = high.sub(totalVesperBalanceBefore)
         expect(vdVethBalanceAfter).to.be.lte(high, 'vesper deployer have > high balance')
-        expect(expectedDiff, 'Top-up amount not matching').to.closeTo(actualDiff, 10)
+        expect(expectedDiff, 'Top-up amount not matching').to.closeTo(actualDiff, 50)
         expect(psVethBalanceAfter).to.be.lt(psVethBalanceBefore, 'failed to transfer partial amount')
       })
 
       it('should not top-up vesper deployer when balance is greater than low level', async function () {
-        // Transfer 25 ether at VESPER_DEPLOYER
+        // Set 30 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
+        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('30'))
 
         // add some vaETH at revenue splitter contract address
-        await vaETH.connect(signer)['deposit()']({ value: BN.from('15').mul(DECIMAL18).toString() })
-        const vaethAmount = BN.from('11').mul(DECIMAL18)
+        await vaETH.connect(signer)['deposit()']({ value: ethers.utils.parseEther('15') })
+        const vaethAmount = ethers.utils.parseEther('11')
         await vaETH.connect(signer).transfer(psContract.address, vaethAmount.toString())
 
         // Check eth balance is > low level.
         const ethBalanceBefore = await ethers.provider.getBalance(VESPER_DEPLOYER)
-        expect(ethBalanceBefore).to.be.gt(BN.from(low), 'eth balance is below low value')
+        expect(ethBalanceBefore).to.be.gt(low, 'eth balance is below low value')
 
         // VESPER_DEPLOYER has eth balance > low so top-up will be skipped.
         const vdVethBalanceBefore = await vaETH.balanceOf(VESPER_DEPLOYER)
@@ -770,11 +762,7 @@ describe('RevenueSplitter', function () {
       })
 
       it('should top-up vesper deployer with vaUSDC token', async function () {
-        // Keep 25 ether at VESPER_DEPLOYER
         const signer = await unlock(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('10').mul(DECIMAL18))
-        await sendEth(user6.address, VESPER_DEPLOYER, BN.from('15').mul(DECIMAL18))
         const token = await vaUSDC.token()
         const usdc = await ethers.getContractAt('ERC20', token)
 
@@ -789,9 +777,9 @@ describe('RevenueSplitter', function () {
 
         // Set ETH balance to 0 for VESPER_DEPLOYER
         const vesperVusdcBalance = await vaUSDC.balanceOf(VESPER_DEPLOYER)
-        await helpers.setBalance(VESPER_DEPLOYER, ethers.utils.parseEther('0'))
+        await helpers.setBalance(VESPER_DEPLOYER, 1)
         expect(vesperVusdcBalance).to.be.equal(0, 'vaUSDC vesper deployer balance is not 0')
-        expect(await ethers.provider.getBalance(VESPER_DEPLOYER)).to.be.equal(0, 'eth balance is not 0')
+        expect(await ethers.provider.getBalance(VESPER_DEPLOYER)).to.be.equal(1, 'eth balance is not 0')
 
         // Check vaUSDC at revenue splitter contract address
         const psVusdcBalanceBefore = await vaUSDC.balanceOf(psContract.address)
