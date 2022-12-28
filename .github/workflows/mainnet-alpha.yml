@@ -73,3 +73,18 @@ jobs:
 
       - name: Running Alpha Homora strategy for VAUSDC pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/alpha/vausdc.spec.js
+
+  vadai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Alpha Homora strategy for VADAI pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/alpha/vadai.spec.js
