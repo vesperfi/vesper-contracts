@@ -111,7 +111,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       let depositAmount
       const valueDust = '100000'
       beforeEach(async function () {
-        depositAmount = await deposit(10, user1)
+        depositAmount = await deposit(50, user1)
       })
 
       it(`Should withdraw all ${collateralName} before rebalance`, async function () {
@@ -252,7 +252,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
 
     describe(`Rebalance ${poolName} pool`, function () {
       it('Should rebalance multiple times.', async function () {
-        let depositAmount = await deposit(10, user3)
+        let depositAmount = await deposit(50, user3)
         await rebalance(strategies)
         const totalDebtRatioBefore = await pool.totalDebtRatio()
         let totalValue = await pool.totalValue()
@@ -327,7 +327,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
     describe(`Price per share of ${poolName} pool`, function () {
       if (isEarnPool) {
         it('Should not increase pool value', async function () {
-          await deposit(20, user1)
+          await deposit(50, user1)
           await rebalance(strategies)
           // Curve strategy takes a loss initially hence taking value after 1st rebalance
           const value1 = await pool.totalValue()
@@ -341,7 +341,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         })
       } else {
         it('Should increase pool value', async function () {
-          await deposit(20, user1)
+          await deposit(50, user1)
           await rebalance(strategies)
           // some strategies are loss making so lets make strategy profitable by sending token
           await makeStrategyProfitable(strategies[0].instance, collateralToken)
@@ -361,7 +361,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
       beforeEach(async function () {
         // Set external deposit fee to 0 for curve strategies
         await accountant.updateExternalDepositFee(strategies[0].instance.address, '0')
-        await deposit(30, user1)
+        await deposit(50, user1)
         secondsPerYear = await pool.ONE_YEAR()
         universalFee = await pool.universalFee()
       })

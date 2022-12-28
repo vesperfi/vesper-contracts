@@ -21,6 +21,9 @@ function getConstructorArgKeys(strategyName) {
   } else if (strategyName.includes('CompoundXY')) {
     // Has borrowCToken but no strategy name
     keys = ['swapper', 'receiptToken', 'borrowCToken']
+  } else if (strategyName.includes('CompoundV3')) {
+    // Has borrowCToken but no strategy name
+    keys = ['swapper', 'comet', 'borrowToken']
   } else if (strategyName.includes('Euler')) {
     keys = ['swapper', 'euler', 'eulerMarkets', 'strategyName']
   } else if (strategyName.includes('Stargate')) {
