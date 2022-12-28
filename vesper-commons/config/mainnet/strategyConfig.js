@@ -864,6 +864,19 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Alpha_Homora_DAI: {
+    contract: 'AlphaHomora',
+    type: StrategyTypes.ALPHA_HOMORA,
+    constructorArgs: {
+      swapper,
+      rewardToken: Address.Alpha.ALPHA,
+      receiptToken: Address.Alpha.ibDAIv2,
+      strategyName: 'Alpha_Homora_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Alpha_Homora_Earn_ETH_DAI: {
     contract: 'AlphaHomoraEarnETH',
     type: StrategyTypes.EARN_ALPHA_HOMORA,
