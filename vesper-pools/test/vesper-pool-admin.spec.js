@@ -2,8 +2,7 @@
 const { ethers } = require('hardhat')
 const { expect } = require('chai')
 const { deployContract } = require('vesper-commons/utils/setup')
-const { deployMockContract } = require('ethereum-waffle')
-
+const { smock } = require('@defi-wonderland/smock')
 const { poolConfig } = require('vesper-commons/utils/chains').getChainData()
 const VDAI = poolConfig.VDAI
 
@@ -153,12 +152,13 @@ describe('Vesper Pool: Admin only function tests', function () {
     beforeEach(async function () {
       config = { debtRatio: 9500, externalDepositFee: 10 }
       const abi = ['function pool() external view returns(address)', 'function migrate(address) external']
-      strategy = await deployMockContract(user1, abi)
-      newStrategy = await deployMockContract(user2, abi)
+
+      strategy = await smock.fake(abi)
+      newStrategy = await smock.fake(abi)
       // Mock strategy functions
-      await strategy.mock.pool.returns(pool.address)
-      await newStrategy.mock.pool.returns(pool.address)
-      await strategy.mock.migrate.returns()
+      await strategy.pool.returns(pool.address)
+      await newStrategy.pool.returns(pool.address)
+      await strategy.migrate.returns()
     })
     it('Should migrate strategy', async function () {
       await accountant.addStrategy(strategy.address, ...Object.values(config))
@@ -178,7 +178,7 @@ describe('Vesper Pool: Admin only function tests', function () {
     it('Should revert if strategy is invalid', async function () {
       await accountant.addStrategy(strategy.address, ...Object.values(config))
       // Mock strategy to return some other address but not pool
-      await newStrategy.mock.pool.returns(accountant.address)
+      await newStrategy.pool.returns(accountant.address)
       const tx = pool.migrateStrategy(strategy.address, newStrategy.address)
       // 17 = INVALID_STRATEGY
       await expect(tx).to.be.revertedWith('17', 'Strategies has different pool')

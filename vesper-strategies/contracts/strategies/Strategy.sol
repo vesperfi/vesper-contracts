@@ -28,11 +28,7 @@ abstract contract Strategy is IStrategy, Context {
     event UpdatedFeeCollector(address indexed previousFeeCollector, address indexed newFeeCollector);
     event UpdatedSwapper(IRoutedSwapper indexed oldSwapper, IRoutedSwapper indexed newSwapper);
 
-    constructor(
-        address _pool,
-        address _swapper,
-        address _receiptToken
-    ) {
+    constructor(address _pool, address _swapper, address _receiptToken) {
         require(_pool != address(0), "pool-address-is-zero");
         require(_swapper != address(0), "swapper-address-is-zero");
         swapper = IRoutedSwapper(_swapper);
@@ -66,9 +62,8 @@ abstract contract Strategy is IStrategy, Context {
     }
 
     /// @dev Approve all required tokens
-    function approveToken() external onlyKeeper {
-        _approveToken(0);
-        _approveToken(MAX_UINT_VALUE);
+    function approveToken(uint256 _approvalAmount) external onlyKeeper {
+        _approveToken(_approvalAmount);
     }
 
     /// @notice Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
@@ -100,15 +95,7 @@ abstract contract Strategy is IStrategy, Context {
      * @return _loss Realized loss, if any, in collateral.
      * @return _payback If strategy has any excess debt, we have to liquidate asset to payback excess debt.
      */
-    function rebalance()
-        external
-        onlyKeeper
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function rebalance() external onlyKeeper returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         return _rebalance();
     }
 
@@ -198,14 +185,7 @@ abstract contract Strategy is IStrategy, Context {
      */
     function _beforeMigration(address _newStrategy) internal virtual;
 
-    function _rebalance()
-        internal
-        virtual
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        );
+    function _rebalance() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback);
 
     function _swapExactInput(
         address _tokenIn,
@@ -215,11 +195,7 @@ abstract contract Strategy is IStrategy, Context {
         _amountOut = swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this));
     }
 
-    function _safeSwapExactInput(
-        address _tokenIn,
-        address _tokenOut,
-        uint256 _amountIn
-    ) internal {
+    function _safeSwapExactInput(address _tokenIn, address _tokenOut, uint256 _amountIn) internal {
         try swapper.swapExactInput(_tokenIn, _tokenOut, _amountIn, 1, address(this)) {} catch {} //solhint-disable no-empty-blocks
     }
 

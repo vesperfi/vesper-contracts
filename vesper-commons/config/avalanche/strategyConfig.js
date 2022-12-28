@@ -3,7 +3,7 @@
 const { ethers } = require('hardhat')
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
-const CurvePoolTypes = require('../../utils/curvePoolTypes')
+const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
@@ -31,7 +31,7 @@ const StrategyConfig = {
 
   AaveV3_Vesper_Xy_ETH_DAIe: {
     contract: 'AaveV3VesperXy',
-    type: StrategyTypes.AAVE_VESPER_XY,
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aAvaWETH,
@@ -89,7 +89,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_2_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 500, // 5.0%
+      crvSlippage: 2500, // 25.0%
       masterOracle,
       swapper,
       collateralIdx: 0,

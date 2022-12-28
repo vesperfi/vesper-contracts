@@ -12,11 +12,7 @@ interface IPoolRewards {
 
     function claimReward(address) external;
 
-    function notifyRewardAmount(
-        address _rewardToken,
-        uint256 _rewardAmount,
-        uint256 _rewardDuration
-    ) external;
+    function notifyRewardAmount(address _rewardToken, uint256 _rewardAmount, uint256 _rewardDuration) external;
 
     function notifyRewardAmount(
         address[] memory _rewardTokens,
@@ -26,10 +22,9 @@ interface IPoolRewards {
 
     function updateReward(address) external;
 
-    function claimable(address _account)
-        external
-        view
-        returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts);
+    function claimable(
+        address _account
+    ) external view returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts);
 
     function lastTimeRewardApplicable(address _rewardToken) external view returns (uint256);
 

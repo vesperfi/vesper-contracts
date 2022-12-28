@@ -18,32 +18,15 @@ interface IStableSwap {
 
     function get_virtual_price() external view returns (uint256);
 
-    function get_dy(
-        int128 i,
-        int128 j,
-        uint256 dx
-    ) external view returns (uint256);
+    function get_dy(int128 i, int128 j, uint256 dx) external view returns (uint256);
 
-    function get_dy_underlying(
-        int128 i,
-        int128 j,
-        uint256 dx
-    ) external view returns (uint256);
+    function get_dy_underlying(int128 i, int128 j, uint256 dx) external view returns (uint256);
 
-    function exchange(
-        int128 i,
-        int128 j,
-        uint256 dx,
-        uint256 min_dy
-    ) external returns (uint256);
+    function exchange(int128 i, int128 j, uint256 dx, uint256 min_dy) external returns (uint256);
 
     function calc_withdraw_one_coin(uint256 _token_amount, int128 i) external view returns (uint256);
 
-    function remove_liquidity_one_coin(
-        uint256 _token_amount,
-        int128 i,
-        uint256 _min_amount
-    ) external;
+    function remove_liquidity_one_coin(uint256 _token_amount, int128 i, uint256 _min_amount) external;
 }
 
 interface IStableSwapV2 {
@@ -53,12 +36,7 @@ interface IStableSwapV2 {
 interface IStableSwapUnderlying is IStableSwap {
     function underlying_coins(uint256 i) external view returns (address);
 
-    function exchange_underlying(
-        int128 i,
-        int128 j,
-        uint256 dx,
-        uint256 min_dy
-    ) external;
+    function exchange_underlying(int128 i, int128 j, uint256 dx, uint256 min_dy) external;
 
     function remove_liquidity_one_coin(
         uint256 _token_amount,
@@ -75,9 +53,10 @@ interface IStableSwap2x is IStableSwap {
 
     function remove_liquidity(uint256 _amount, uint256[2] memory _min_amounts) external;
 
-    function remove_liquidity_imbalance(uint256[2] memory _amounts, uint256 _max_burn_amount)
-        external
-        returns (uint256);
+    function remove_liquidity_imbalance(
+        uint256[2] memory _amounts,
+        uint256 _max_burn_amount
+    ) external returns (uint256);
 }
 
 interface IStableSwap3x is IStableSwap {
@@ -87,9 +66,10 @@ interface IStableSwap3x is IStableSwap {
 
     function remove_liquidity(uint256 _amount, uint256[3] memory _min_amounts) external;
 
-    function remove_liquidity_imbalance(uint256[3] memory _amounts, uint256 _max_burn_amount)
-        external
-        returns (uint256);
+    function remove_liquidity_imbalance(
+        uint256[3] memory _amounts,
+        uint256 _max_burn_amount
+    ) external returns (uint256);
 }
 
 interface IStableSwap4x is IStableSwap {
@@ -99,17 +79,14 @@ interface IStableSwap4x is IStableSwap {
 
     function remove_liquidity(uint256 _amount, uint256[4] memory _min_amounts) external;
 
-    function remove_liquidity_imbalance(uint256[4] memory _amounts, uint256 _max_burn_amount)
-        external
-        returns (uint256);
+    function remove_liquidity_imbalance(
+        uint256[4] memory _amounts,
+        uint256 _max_burn_amount
+    ) external returns (uint256);
 }
 
 interface IStableSwap2xUnderlying is IStableSwap2x, IStableSwapUnderlying {
-    function add_liquidity(
-        uint256[2] calldata amounts,
-        uint256 min_mint_amount,
-        bool use_underlying
-    ) external;
+    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
 
     function remove_liquidity_imbalance(
         uint256[2] calldata amounts,
@@ -117,19 +94,11 @@ interface IStableSwap2xUnderlying is IStableSwap2x, IStableSwapUnderlying {
         bool use_underlying
     ) external;
 
-    function remove_liquidity(
-        uint256 amount,
-        uint256[2] calldata min_amounts,
-        bool use_underlying
-    ) external;
+    function remove_liquidity(uint256 amount, uint256[2] calldata min_amounts, bool use_underlying) external;
 }
 
 interface IStableSwap3xUnderlying is IStableSwap3x, IStableSwapUnderlying {
-    function add_liquidity(
-        uint256[3] calldata amounts,
-        uint256 min_mint_amount,
-        bool use_underlying
-    ) external;
+    function add_liquidity(uint256[3] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
 
     function remove_liquidity_imbalance(
         uint256[3] calldata amounts,
@@ -137,19 +106,11 @@ interface IStableSwap3xUnderlying is IStableSwap3x, IStableSwapUnderlying {
         bool use_underlying
     ) external;
 
-    function remove_liquidity(
-        uint256 amount,
-        uint256[3] calldata min_amounts,
-        bool use_underlying
-    ) external;
+    function remove_liquidity(uint256 amount, uint256[3] calldata min_amounts, bool use_underlying) external;
 }
 
 interface IStableSwap4xUnderlying is IStableSwap4x, IStableSwapUnderlying {
-    function add_liquidity(
-        uint256[4] calldata amounts,
-        uint256 min_mint_amount,
-        bool use_underlying
-    ) external;
+    function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
 
     function remove_liquidity_imbalance(
         uint256[4] calldata amounts,
@@ -157,11 +118,7 @@ interface IStableSwap4xUnderlying is IStableSwap4x, IStableSwapUnderlying {
         bool use_underlying
     ) external;
 
-    function remove_liquidity(
-        uint256 amount,
-        uint256[4] calldata min_amounts,
-        bool use_underlying
-    ) external;
+    function remove_liquidity(uint256 amount, uint256[4] calldata min_amounts, bool use_underlying) external;
 }
 
 /* solhint-enable */

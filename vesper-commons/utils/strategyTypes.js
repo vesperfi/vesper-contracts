@@ -2,7 +2,7 @@
 const StrategyType = {
   AAVE: 'aave',
   AAVE_V1: 'aaveV1',
-  ALPHA_LEND: 'alphaLend',
+  ALPHA_HOMORA: 'alphaHomora',
   COMPOUND: 'compound',
   TRADER_JOE: 'traderJoe',
   AAVE_MAKER: 'aaveMaker',
@@ -17,7 +17,7 @@ const StrategyType = {
   EARN_COMPOUND: 'earnCompound',
   EARN_AAVE: 'earnAave',
   EARN_RARI_FUSE: 'earnRariFuse',
-  EARN_ALPHA_LEND: 'earnAlphaLend',
+  EARN_ALPHA_HOMORA: 'earnAlphaHomora',
   EARN_YEARN: 'earnYearn',
   EARN_CURVE: 'earnCurve',
   EARN_VESPER: 'earnVesper',
@@ -31,6 +31,13 @@ const StrategyType = {
   STARGATE: 'stargate',
   EULER: 'euler',
   EULER_VESPER_XY: 'eulerVesperXY',
+  COMPOUNDV3: 'compoundV3',
+  COMPOUNDV3_VESPER_XY: 'compoundV3VesperXY',
+  AAVE_V3_VESPER_XY: 'aaveV3VesperXy',
+  ELLIPSIS: 'ellipsis',
+  DOT_DOT: 'dotDot',
+  WOMBAT: 'wombat',
+  ALPACA: 'alpaca',
 }
 
 module.exports = Object.freeze(StrategyType)

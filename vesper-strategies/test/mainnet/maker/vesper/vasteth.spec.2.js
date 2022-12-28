@@ -20,7 +20,7 @@ describe('Maker', function () {
       const contractFactory = await ethers.getContractFactory(strategyParams.contract)
       strategy = await contractFactory.deploy(poolMock.address, ...Object.values(strategyParams.constructorArgs))
       await strategy.createVault()
-      await strategy.approveToken()
+      await strategy.approveToken(ethers.constants.MaxUint256)
       await strategy.updateFeeCollector(alice.address)
       const amount = ethers.utils.parseUnits('100', '18')
       await adjustBalance(addresses.stETH, strategy.address, amount)

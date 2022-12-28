@@ -33,7 +33,7 @@ contract BenqiVesperXy is BenqiXy {
 
     /// @notice Gets amount of borrowed Y collateral in strategy + Y collateral amount deposited in vPool
     function borrowBalance() external view returns (uint256) {
-        return _getBorrowBalance();
+        return IERC20(borrowToken).balanceOf(address(this)) + _getYTokensInProtocol();
     }
 
     /// @notice Claim VSP and convert to collateral token
@@ -65,34 +65,24 @@ contract BenqiVesperXy is BenqiXy {
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 _amount) internal override {
-        _withdrawFromPool(_amount);
+        _withdrawY(_amount);
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool
-    function _getBorrowBalance() internal view override returns (uint256) {
-        return
-            IERC20(borrowToken).balanceOf(address(this)) +
-            ((vPool.pricePerShare() * vPool.balanceOf(address(this))) / 1e18);
-    }
-
-    function _rebalanceBorrow(uint256 _excessBorrow) internal override {
-        if (_excessBorrow > 0) {
-            uint256 _borrowedHereBefore = IERC20(borrowToken).balanceOf(address(this));
-            _withdrawFromPool(_excessBorrow);
-            uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this)) - _borrowedHereBefore;
-            if (_borrowedHere > 0) {
-                _safeSwapExactInput(borrowToken, address(collateralToken), _borrowedHere);
-            }
-        }
+    function _getYTokensInProtocol() internal view override returns (uint256) {
+        return (vPool.pricePerShare() * vPool.balanceOf(address(this))) / 1e18;
     }
 
     /// @notice Withdraw _shares proportional to collateral _amount from vPool
-    function _withdrawFromPool(uint256 _amount) internal {
+    function _withdrawY(uint256 _amount) internal override {
         uint256 _pricePerShare = vPool.pricePerShare();
         uint256 _shares = (_amount * 1e18) / _pricePerShare;
         _shares = _amount > ((_shares * _pricePerShare) / 1e18) ? _shares + 1 : _shares;
 
         uint256 _maxShares = vPool.balanceOf(address(this));
-        vPool.withdraw(_shares > _maxShares ? _maxShares : _shares);
+        _shares = _shares > _maxShares ? _maxShares : _shares;
+        if (_shares > 0) {
+            vPool.withdraw(_shares);
+        }
     }
 }

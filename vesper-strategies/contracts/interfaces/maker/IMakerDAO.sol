@@ -3,11 +3,7 @@
 pragma solidity 0.8.9;
 
 interface ManagerLike {
-    function cdpCan(
-        address,
-        uint256,
-        address
-    ) external view returns (uint256);
+    function cdpCan(address, uint256, address) external view returns (uint256);
 
     function ilks(uint256) external view returns (bytes32);
 
@@ -21,38 +17,17 @@ interface ManagerLike {
 
     function give(uint256, address) external;
 
-    function cdpAllow(
-        uint256,
-        address,
-        uint256
-    ) external;
+    function cdpAllow(uint256, address, uint256) external;
 
     function urnAllow(address, uint256) external;
 
-    function frob(
-        uint256,
-        int256,
-        int256
-    ) external;
+    function frob(uint256, int256, int256) external;
 
-    function flux(
-        uint256,
-        address,
-        uint256
-    ) external;
+    function flux(uint256, address, uint256) external;
 
-    function move(
-        uint256,
-        address,
-        uint256
-    ) external;
+    function move(uint256, address, uint256) external;
 
-    function exit(
-        address,
-        uint256,
-        address,
-        uint256
-    ) external;
+    function exit(address, uint256, address, uint256) external;
 
     function quit(uint256, address) external;
 
@@ -64,39 +39,19 @@ interface ManagerLike {
 interface VatLike {
     function can(address, address) external view returns (uint256);
 
-    function ilks(bytes32)
-        external
-        view
-        returns (
-            uint256,
-            uint256,
-            uint256,
-            uint256,
-            uint256
-        );
+    function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
 
     function dai(address) external view returns (uint256);
 
     function urns(bytes32, address) external view returns (uint256, uint256);
 
-    function frob(
-        bytes32,
-        address,
-        address,
-        address,
-        int256,
-        int256
-    ) external;
+    function frob(bytes32, address, address, address, int256, int256) external;
 
     function hope(address) external;
 
     function nope(address) external;
 
-    function move(
-        address,
-        address,
-        uint256
-    ) external;
+    function move(address, address, uint256) external;
 }
 
 interface GemJoinLike {

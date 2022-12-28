@@ -1,0 +1,61 @@
+name: Binance Smart Chain Alpaca Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/bsc-alpaca.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-strategies/test/behavior/alpaca.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/alpaca/Alpaca.sol"
+      - "vesper-strategies/contracts/strategies/alpaca/AlpacaBNB.sol"
+      - "vesper-strategies/test/bsc/alpaca/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vabnb-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Alpaca strategy for VABNB pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/alpaca/vabnb.spec.js
+
+  vabusd-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BSC_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Alpaca strategy for VABUSD pool
+        run: npm test -- --scope vesper-strategies -- test/bsc/alpaca/vabusd.spec.js
