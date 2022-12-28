@@ -6,24 +6,15 @@ import "./ICompound.sol";
 interface ComptrollerMultiReward {
     function claimReward(uint8 rewardType, address holder) external;
 
-    function claimReward(
-        uint8 rewardType,
-        address holder,
-        address[] memory markets
-    ) external;
+    function claimReward(uint8 rewardType, address holder, address[] memory markets) external;
 
     function rewardDistributor() external view returns (address);
 }
 
 interface TraderJoeComptroller {
-    function markets(address market)
-        external
-        view
-        returns (
-            bool isListed,
-            uint256 collateralFactorMantissa,
-            uint8 version
-        );
+    function markets(
+        address market
+    ) external view returns (bool isListed, uint256 collateralFactorMantissa, uint8 version);
 }
 
 interface IRewardDistributor {

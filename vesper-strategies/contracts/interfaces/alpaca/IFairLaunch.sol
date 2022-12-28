@@ -19,20 +19,12 @@ interface IFairLaunch {
      */
     function userInfo(uint256 _pid, address _user) external view returns (UserInfo memory _userInfo);
 
-    function deposit(
-        address _for,
-        uint256 _pid,
-        uint256 _amount
-    ) external;
+    function deposit(address _for, uint256 _pid, uint256 _amount) external;
 
     function harvest(uint256 _pid) external;
 
     // View function to see pending ALPACAs on frontend.
     function pendingAlpaca(uint256 _pid, address _user) external view returns (uint256);
 
-    function withdraw(
-        address _for,
-        uint256 _pid,
-        uint256 _amount
-    ) external;
+    function withdraw(address _for, uint256 _pid, uint256 _amount) external;
 }

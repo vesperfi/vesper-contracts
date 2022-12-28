@@ -204,11 +204,13 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
 
     describe('Approve token', function () {
       it('Should revert if called from non keeper', async function () {
-        await expect(strategy.connect(user4).approveToken()).to.be.revertedWith('caller-is-not-a-keeper')
+        await expect(strategy.connect(user4).approveToken(0)).to.be.revertedWith('caller-is-not-a-keeper')
       })
 
       it('Should call approve tokens', async function () {
-        await expect(strategy.approveToken()).to.not.reverted
+        // Test setup already calling approveToken so let's reset approval first.
+        await strategy.approveToken(0)
+        await expect(strategy.approveToken(ethers.constants.MaxUint256)).to.not.reverted
       })
     })
   })

@@ -5,7 +5,9 @@
 pragma solidity 0.8.9;
 
 interface IConvexFraxPoolRegistry {
-    function poolInfo(uint256)
+    function poolInfo(
+        uint256
+    )
         external
         view
         returns (
@@ -111,14 +113,9 @@ interface IFraxFarmERC20 {
 
     function fraxPerLPToken() external view returns (uint256);
 
-    function calcCurCombinedWeight(address account)
-        external
-        view
-        returns (
-            uint256 old_combined_weight,
-            uint256 new_vefxs_multiplier,
-            uint256 new_combined_weight
-        );
+    function calcCurCombinedWeight(
+        address account
+    ) external view returns (uint256 old_combined_weight, uint256 new_vefxs_multiplier, uint256 new_combined_weight);
 
     function lockedStakesOf(address account) external view returns (LockedStake[] memory);
 

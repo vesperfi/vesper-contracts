@@ -80,28 +80,23 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @param _debtRatio Pool fund allocation to this strategy
      * @param _externalDepositFee External deposit fee of strategy
      */
-    function addStrategy(
-        address _strategy,
-        uint256 _debtRatio,
-        uint256 _externalDepositFee
-    ) public onlyGovernor {
+    function addStrategy(address _strategy, uint256 _debtRatio, uint256 _externalDepositFee) public onlyGovernor {
         require(_strategy != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
         require(!strategy[_strategy].active, Errors.STRATEGY_IS_ACTIVE);
         totalDebtRatio = totalDebtRatio + _debtRatio;
         require(totalDebtRatio <= MAX_BPS, Errors.DEBT_RATIO_LIMIT_REACHED);
         require(_externalDepositFee <= MAX_BPS, Errors.FEE_LIMIT_REACHED);
-        StrategyConfig memory newStrategy =
-            StrategyConfig({
-                active: true,
-                interestFee: 0, // Obsolete
-                debtRate: 0, // Obsolete
-                lastRebalance: block.timestamp,
-                totalDebt: 0,
-                totalLoss: 0,
-                totalProfit: 0,
-                debtRatio: _debtRatio,
-                externalDepositFee: _externalDepositFee
-            });
+        StrategyConfig memory newStrategy = StrategyConfig({
+            active: true,
+            interestFee: 0, // Obsolete
+            debtRate: 0, // Obsolete
+            lastRebalance: block.timestamp,
+            totalDebt: 0,
+            totalLoss: 0,
+            totalProfit: 0,
+            debtRatio: _debtRatio,
+            externalDepositFee: _externalDepositFee
+        });
         strategy[_strategy] = newStrategy;
         strategies.push(_strategy);
         withdrawQueue.push(_strategy);
@@ -231,18 +226,17 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     function migrateStrategy(address _old, address _new) external onlyPool {
         require(strategy[_old].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         require(!strategy[_new].active, Errors.STRATEGY_IS_ACTIVE);
-        StrategyConfig memory _newStrategy =
-            StrategyConfig({
-                active: true,
-                interestFee: 0, // Obsolete
-                debtRate: 0, // Obsolete
-                lastRebalance: strategy[_old].lastRebalance,
-                totalDebt: strategy[_old].totalDebt,
-                totalLoss: 0,
-                totalProfit: 0,
-                debtRatio: strategy[_old].debtRatio,
-                externalDepositFee: strategy[_old].externalDepositFee
-            });
+        StrategyConfig memory _newStrategy = StrategyConfig({
+            active: true,
+            interestFee: 0, // Obsolete
+            debtRate: 0, // Obsolete
+            lastRebalance: strategy[_old].lastRebalance,
+            totalDebt: strategy[_old].totalDebt,
+            totalLoss: 0,
+            totalProfit: 0,
+            debtRatio: strategy[_old].debtRatio,
+            externalDepositFee: strategy[_old].externalDepositFee
+        });
         delete strategy[_old];
         strategy[_new] = _newStrategy;
 
@@ -401,8 +395,10 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         strategy[_strategy].totalLoss += _loss;
         strategy[_strategy].totalDebt -= _loss;
         totalDebt -= _loss;
-        uint256 _deltaDebtRatio =
-            _min((_loss * MAX_BPS) / IVesperPool(pool).totalValue(), strategy[_strategy].debtRatio);
+        uint256 _deltaDebtRatio = _min(
+            (_loss * MAX_BPS) / IVesperPool(pool).totalValue(),
+            strategy[_strategy].debtRatio
+        );
         strategy[_strategy].debtRatio -= _deltaDebtRatio;
         totalDebtRatio -= _deltaDebtRatio;
     }

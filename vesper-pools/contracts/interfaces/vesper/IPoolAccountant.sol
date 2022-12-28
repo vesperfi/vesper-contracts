@@ -24,7 +24,9 @@ interface IPoolAccountant {
 
     function getWithdrawQueue() external view returns (address[] memory);
 
-    function strategy(address _strategy)
+    function strategy(
+        address _strategy
+    )
         external
         view
         returns (

@@ -119,16 +119,7 @@ contract Alpaca is Strategy {
     /**
      * @dev Generate report for pools accounting and report earning statement to pool.
      */
-    function _rebalance()
-        internal
-        virtual
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 

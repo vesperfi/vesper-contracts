@@ -30,12 +30,9 @@ contract VesperEarnDrip is PoolRewards {
      * @return _rewardTokens Array of tokens being rewarded
      * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
      */
-    function claimable(address _account)
-        external
-        view
-        override
-        returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts)
-    {
+    function claimable(
+        address _account
+    ) external view override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
         uint256 _len = rewardTokens.length;
@@ -84,11 +81,7 @@ contract VesperEarnDrip is PoolRewards {
      * @dev Withdraws from the Grow Pool and transfers the amount to _account
      * @dev Claim rewards only if reward in dripToken is non zero
      */
-    function _claimReward(
-        address _rewardToken,
-        address _account,
-        uint256 _reward
-    ) internal override {
+    function _claimReward(address _rewardToken, address _account, uint256 _reward) internal override {
         if (_rewardToken == growToken) {
             // Calculate reward in drip token
             uint256 _rewardInDripToken = _calculateRewardInDripToken(_rewardToken, _reward);

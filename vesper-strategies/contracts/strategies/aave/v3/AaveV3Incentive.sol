@@ -8,10 +8,9 @@ library AaveV3Incentive {
     /**
      * @notice Claim rewards from Aave incentive controller
      */
-    function _claimRewards(address _aToken)
-        internal
-        returns (address[] memory rewardsList, uint256[] memory claimedAmounts)
-    {
+    function _claimRewards(
+        address _aToken
+    ) internal returns (address[] memory rewardsList, uint256[] memory claimedAmounts) {
         // Some aTokens may have no incentive controller method/variable. Better use try catch
         try AToken(_aToken).getIncentivesController() returns (address _aaveIncentivesController) {
             address[] memory assets = new address[](1);

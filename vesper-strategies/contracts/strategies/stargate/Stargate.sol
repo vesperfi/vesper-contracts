@@ -142,15 +142,7 @@ contract Stargate is Strategy {
         return _lpRequired;
     }
 
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -185,7 +177,10 @@ contract Stargate is Strategy {
     /// @dev Withdraw collateral here.
     /// @dev This method may withdraw less than requested amount. Caller may need to check balance before and after
     function _withdrawHere(uint256 amount_) internal override {
-        stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _getLpForCollateral(amount_), address(this));
+        uint256 _lpToRedeem = _getLpForCollateral(amount_);
+        if (_lpToRedeem > 0) {
+            stargateRouter.instantRedeemLocal(uint16(stargatePoolId), _lpToRedeem, address(this));
+        }
     }
 
     /************************************************************************************************

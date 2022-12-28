@@ -5,7 +5,9 @@ pragma solidity 0.8.9;
 import "./UpgraderBase.sol";
 
 contract VPoolUpgrader is UpgraderBase {
-    constructor(address _multicall)
+    constructor(
+        address _multicall
+    )
         UpgraderBase(_multicall) // solhint-disable-next-line no-empty-blocks
     {}
 

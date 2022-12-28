@@ -188,6 +188,7 @@
           "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
           "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
           "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
+          "Euler_Vesper_Xy_ETH_DAI": "0x46667F3771514E7D76c3948AcAD6DdA378db63f5",
           "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
           "RariFuseStrategy": "0x4769f18ba364658bf98Bf74606ef2f8cfB17D425",
           "RariFuseStrategyETH": "0x67893865686C22f0a243114B0893De65117d2f3b",
@@ -243,11 +244,15 @@
           "implementation": "0x92574eD22C0b3961e240dBa1EbA02F6f30fd066C"
         },
         "strategies": {
+          "ConvexForFrax_dolafraxbp_FRAX": "0xDA91f27C301a1831e8df3E2D35627eA1A3067d2F",
+          "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
+          "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
           "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
           "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
           "RariFuseStrategy#6": "0x463C835f2959c52F99D65b5E712F3806c7E6A46F",
-          "RariFuseStrategy#7": "0xf95fb643c7b26afe64a6daf7e2b84d9eda6559bb"
+          "RariFuseStrategy#7": "0xf95fb643c7b26afe64a6daf7e2b84d9eda6559bb",
+          "Stargate_FRAX": "0x3AfB216035709B3FdDBF17b195d19C1986Efe46d"
         }
       },
       "vefrax_fraxbp": {
@@ -323,13 +328,14 @@
           "implementation": "0xE244881025f8F5005985D60757CC95c8D667e493"
         },
         "strategies": {
-          "Compound_Leverage_DAI": "0xFd81543db31f59b80Eb7dcE12499431177F1F241",
+          "Compound_Leverage_DAI": "0x01c48862AE9De8306ddE1C29c2c7131E40817B84",
           "Compound_Vesper_Xy_DAI_USDC": "0x5D69a654F6eB9aaf5738A05fd17bb1ad707AeA03",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
           "Convex_dola_DAI": "0x269041586AB615Cd19E8CbFABC7C45CdA8179289",
           "Euler_Vesper_Xy_DAI_USDC": "0xf1886Aa6F728D9006141644207ebC7f4090c17Ad",
           "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
+          "Stargate_DAI": "0xE053E3CC956D2A835B504E932c5DCd789bF0a6aA",
           "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
         }
       },
@@ -361,11 +367,11 @@
         "pool": {
           "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
           "proxy": "0x7a74B6D3A07D3249Ea2FBb58e47F0DaF6d6a2ebf",
-          "implementation": "0x8d48fD51FfEB99b1Ad1224038E46166Cfc7d9dE3",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
           "poolAccountant": {
             "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
             "proxy": "0x11aAb1b00c62EA9528c3286C53c2308Aad6f64ea",
-            "implementation": "0x2Ad6DefC823D6DF64117C6dB0A17596faD90C767"
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
           }
         },
         "poolRewards": {
@@ -375,7 +381,7 @@
         },
         "strategies": {
           "EarnVesperMakerStrategyWBTC": "0x2740B8b29B229bD690252DBc5590A5c7416e44DC",
-          "EarnVesperStrategyWBTCDAI": "0x1Cd0f3bD73d60D56B487073A0caB2E8a9085CF08"
+          "Vesper_Earn_WBTC_DAI": "0xFd3783586aBDE50E7b03C171bd1062354641F661"
         }
       },
       "velink_dai": {
@@ -610,6 +616,9 @@
           "implementation": "0x7a75d934ecd0Dffae11592E7E6955C8186273b1c"
         },
         "strategies": {
+          "ConvexForFrax_dolafraxbp_USDC": "0xeE44D248248E1b0bBE313003a41016db004326EB",
+          "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
+          "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
           "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
@@ -633,6 +642,7 @@
         },
         "strategies": {
           "AaveStrategyFEI": "0xD5b60408f4513B112C7138a45b02C280249aCfb2",
+          "Convex_d3pool_FEI": "0xD9700EA432950E804923067D10dD815F03B68347",
           "RariFuseStrategy#18": "0xf5A66196306855821159e41f4dDbb71Ae5663825",
           "RariFuseStrategy#27": "0x187C51C9803424efe1Cbe62cFFc0D99B6912c0F6",
           "RariFuseStrategy#6": "0x0a46A9716b4632A57863d52123c5c10FDF9e10F8"
@@ -655,6 +665,7 @@
           "implementation": "0x72DCF9bA5F5E124b393A659F1629DEf439fF1b56"
         },
         "strategies": {
+          "Convex_d3pool_AlUSD": "0xA7b8Bf67A4E0c4435DC43AA9B5266d3960a8E777",
           "RariFuseStrategy#18": "0xf4BB5824F3e5b6314e1c0A8BE60c733B3dB53786",
           "RariFuseStrategy#6": "0x8B3AC0f18Eae871b83b9212345E736735e6604d6",
           "RariFuseStrategy#7": "0xc6e5505d7C501D51e9d69669b1C393079Fc426D0"

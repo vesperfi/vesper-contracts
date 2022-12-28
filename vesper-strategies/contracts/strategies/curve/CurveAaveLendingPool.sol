@@ -52,15 +52,7 @@ contract CurveAaveLendingPool is Curve {
         return _canUnstake(_cooldownEnd, _unstakeEnd);
     }
 
-    function cooldownData()
-        public
-        view
-        returns (
-            uint256 _cooldownStart,
-            uint256 _cooldownEnd,
-            uint256 _unstakeEnd
-        )
-    {
+    function cooldownData() public view returns (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) {
         _cooldownStart = STKAAVE.stakersCooldowns(address(this));
         _cooldownEnd = _cooldownStart + STKAAVE.COOLDOWN_SECONDS();
         _unstakeEnd = _cooldownEnd + STKAAVE.UNSTAKE_WINDOW();

@@ -104,11 +104,10 @@ contract CompoundV3Xy is Strategy {
      * @return _borrowAmount borrow more amount
      * @return _repayAmount repay amount to keep ltv within limits
      */
-    function _calculateBorrowPosition(uint256 depositAmount_, uint256 withdrawAmount_)
-        internal
-        view
-        returns (uint256 _borrowAmount, uint256 _repayAmount)
-    {
+    function _calculateBorrowPosition(
+        uint256 depositAmount_,
+        uint256 withdrawAmount_
+    ) internal view returns (uint256 _borrowAmount, uint256 _repayAmount) {
         require(depositAmount_ == 0 || withdrawAmount_ == 0, "all-input-gt-zero");
         uint256 _borrowed = comet.borrowBalanceOf(address(this));
         // If maximum borrow limit set to 0 then repay borrow
@@ -135,10 +134,11 @@ contract CompoundV3Xy is Strategy {
         // Calculate max borrow based on collateral factor. CF is 18 decimal based
         uint256 _collateralForBorrowInUSD = (_hypotheticalCollateral *
             _collateralTokenPrice *
-            _collateralInfo.borrowCollateralFactor) / (1e18 * 10**IERC20Metadata(address(collateralToken)).decimals());
+            _collateralInfo.borrowCollateralFactor) /
+            (1e18 * 10 ** IERC20Metadata(address(collateralToken)).decimals());
 
         // Max borrow limit in borrow token
-        uint256 _maxBorrowPossible = (_collateralForBorrowInUSD * 10**IERC20Metadata(borrowToken).decimals()) /
+        uint256 _maxBorrowPossible = (_collateralForBorrowInUSD * 10 ** IERC20Metadata(borrowToken).decimals()) /
             _borrowTokenPrice;
         // If maxBorrow is zero, we should repay total amount of borrow
         if (_maxBorrowPossible == 0) {
@@ -205,15 +205,7 @@ contract CompoundV3Xy is Strategy {
         }
     }
 
-    function _rebalance()
-        internal
-        override
-        returns (
-            uint256 _profit,
-            uint256 _loss,
-            uint256 _payback
-        )
-    {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 

@@ -37,23 +37,6 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
         AvalancheFlashLoanHelper._approveToken(address(collateralToken), _amount);
     }
 
-    /// @notice Claim Protocol rewards + AVAX and convert them into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal override {
-        address[] memory _markets = new address[](1);
-        _markets[0] = address(receiptToken);
-        ComptrollerMultiReward(address(comptroller)).claimReward(0, address(this)); // Claim protocol rewards
-        ComptrollerMultiReward(address(comptroller)).claimReward(1, address(this)); // Claim native AVAX (optional)
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
-        }
-        uint256 _avaxRewardAmount = address(this).balance;
-        if (_avaxRewardAmount > 0) {
-            TokenLike(WAVAX).deposit{value: _avaxRewardAmount}();
-            _safeSwapExactInput(WAVAX, _toToken, _avaxRewardAmount);
-        }
-    }
-
     /**
      * @dev Aave flash is used only for withdrawal due to fee
      * @param _flashAmount Amount for flash loan
@@ -95,6 +78,29 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
     /************************************************************************************************
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
+
+    /// @notice Claim Protocol rewards + AVAX and convert them into collateral token.
+    function claimAndSwapRewards(uint256 _minAmountOut) external onlyKeeper returns (uint256) {
+        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+
+        address[] memory _markets = new address[](1);
+        _markets[0] = address(receiptToken);
+        ComptrollerMultiReward(address(comptroller)).claimReward(0, address(this)); // Claim protocol rewards
+        ComptrollerMultiReward(address(comptroller)).claimReward(1, address(this)); // Claim native AVAX (optional)
+        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
+        if (_rewardAmount > 0) {
+            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
+        }
+        uint256 _avaxRewardAmount = address(this).balance;
+        if (_avaxRewardAmount > 0) {
+            TokenLike(WAVAX).deposit{value: _avaxRewardAmount}();
+            _safeSwapExactInput(WAVAX, address(collateralToken), _avaxRewardAmount);
+        }
+
+        uint256 _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
+        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
+        return _amountOut;
+    }
 
     function updateAaveStatus(bool _status) external onlyGovernor {
         _updateAaveStatus(_status);
