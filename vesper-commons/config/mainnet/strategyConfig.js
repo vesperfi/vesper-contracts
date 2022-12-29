@@ -2100,6 +2100,23 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  CompoundV3_Vesper_Xy_LINK_USDC: {
+    contract: 'CompoundV3VesperXy',
+    type: StrategyTypes.COMPOUNDV3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.Compound.COMP,
+      comet: Address.CompoundV3.cUSDCv3,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'CompoundV3_Vesper_Xy_LINK_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
