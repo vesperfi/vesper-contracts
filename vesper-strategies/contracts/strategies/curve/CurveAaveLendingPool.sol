@@ -76,8 +76,9 @@ contract CurveAaveLendingPool is Curve {
         STKAAVE.claimRewards(address(this), MAX_UINT_VALUE);
     }
 
-    function _claimRewards() internal virtual override {
-        Curve._claimRewards();
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal override returns (address, uint256) {
         _claimAave();
+        return Curve._claimRewards();
     }
 }
