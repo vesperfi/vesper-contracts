@@ -1,67 +1,14 @@
 'use strict'
-const _ = require('lodash')
 const fs = require('fs')
 const copy = require('recursive-copy')
 
-// Prepare constructor args keys
-// eslint-disable-next-line complexity
-function getConstructorArgKeys(strategyName) {
-  // Most of the strategies has these keys
-  let keys = ['swapper', 'receiptToken', 'strategyName']
-
-  if (strategyName.includes('RariFuse')) {
-    // fusePoolId replaces receiptToken
-    keys = ['swapper', 'fusePoolId', 'strategyName']
-  } else if (strategyName.includes('Convex') || strategyName.includes('Curve')) {
-    // collateralIdx replaces receiptToken
-    keys = ['swapper', 'collateralIdx', 'strategyName']
-  } else if (strategyName.includes('CompoundLeverage')) {
-    // No strategy name
-    keys = ['swapper', 'receiptToken']
-  } else if (strategyName.includes('CompoundXY')) {
-    // Has borrowCToken but no strategy name
-    keys = ['swapper', 'receiptToken', 'borrowCToken']
-  } else if (strategyName.includes('Euler')) {
-    keys = ['swapper', 'euler', 'eulerMarkets', 'strategyName']
-  } else if (strategyName.includes('Stargate')) {
-    keys = [
-      'swapper',
-      'stargateRouter',
-      'stargateLpStaking',
-      'stargatePoolId',
-      'stargateLpStakingPoolId',
-      'strategyName',
-    ]
-  }
-
-  // Separate conditions
-  // Any combination of Earn strategies
-  if (strategyName.includes('Earn')) {
-    if (strategyName === 'Curve_Earn_sbtc_WBTC_DAI') {
-      keys = ['swapper', 'dripToken', 'strategyName']
-    } else {
-      keys.push('dripToken')
+// Validate given values exists in given object
+function validateObject(object) {
+  for (const [key, value] of Object.entries(object)) {
+    if (value === undefined || value === '') {
+      throw new Error(`Value is missing for key ${key} in strategy config`)
     }
   }
-
-  if (strategyName.includes('Vesper') && !strategyName.includes('Maker')) {
-    keys.push('vsp')
-  }
-
-  // Any combination of Maker strategies
-  if (strategyName.includes('Maker')) {
-    keys.push('collateralType')
-  }
-  return keys
-}
-
-// Validate given keys exists in given object
-function validateObject(object, keys) {
-  keys.forEach(function (key) {
-    if (!_.has(object, key)) {
-      throw new Error(`${key} is missing in strategy config`)
-    }
-  })
 }
 
 function validateStrategyConfig(strategyName, strategyConfig) {
@@ -72,7 +19,7 @@ function validateStrategyConfig(strategyName, strategyConfig) {
   const configKeys = ['debtRatio']
   validateObject(strategyConfig.config, configKeys)
   // Validate constructor args
-  validateObject(strategyConfig.constructorArgs, getConstructorArgKeys(strategyName))
+  validateObject(strategyConfig.constructorArgs)
   // Validate setup config
   const setupKeys = ['feeCollector', 'keepers']
   validateObject(strategyConfig.setup, setupKeys)
@@ -116,10 +63,6 @@ task('strategy-configuration', 'Prepare strategy configuration for deployment')
     validateStrategyConfig(strategyName, config)
 
     config.alias = strategyName
-    if (strategyName.includes('RariFuse')) {
-      config.alias = `${config.alias}#${config.constructorArgs.fusePoolId}`
-    }
-
     console.log(
       `Deploying ${strategyName} on ${hre.network.name} for ${hre.targetChain} with following configuration: `,
       config,

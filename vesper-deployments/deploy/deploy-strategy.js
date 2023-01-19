@@ -30,6 +30,11 @@ const deployFunction = async function (hre) {
   const strategyAlias = strategyConfig.alias
 
   const constructorArgs = [poolProxy.address, ...Object.values(strategyConfig.constructorArgs)]
+  const artifact = await deployments.getArtifact(strategyConfig.contract)
+  const [constructorArgsConfig] = artifact.abi.filter(item => item.type === 'constructor')
+  if (constructorArgs.length !== constructorArgsConfig.inputs.length) {
+    throw new Error(`Constructor arguments mismatch for contract ${strategyConfig.contract} in strategy config`)
+  }
 
   // Deploy strategy
   await sleep(5000)
