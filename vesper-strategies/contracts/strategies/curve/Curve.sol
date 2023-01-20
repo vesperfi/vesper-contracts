@@ -123,6 +123,10 @@ contract Curve is Strategy {
         NAME = name_;
     }
 
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
+    }
+
     /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
     function isReservedToken(address token_) public view override returns (bool) {
         return token_ == address(crvLp) || token_ == address(collateralToken);
