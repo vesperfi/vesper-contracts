@@ -88,9 +88,6 @@ contract ConvexForFrax is Curve {
 
     /// @dev Return values are not being used hence returning 0
     function _claimRewards() internal override returns (address, uint256) {
-        // `getReward` reverts if there isn't an open position
-        if (kekId == bytes32(0)) return (address(0), 0);
-
         // solhint-disable-next-line no-empty-blocks
         try vault.getReward() {} catch {
             // It may fail if reward collection is paused on FRAX side
