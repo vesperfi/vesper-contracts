@@ -60,7 +60,7 @@ function shouldBehaveLikeDotDotStrategy(strategyIndex) {
       }
     })
 
-    it('Should claim all rewards during rebalance', async function () {
+    it('Should claim and swap all rewards', async function () {
       const lpDepositor = await ethers.getContractAt('ILpDepositor', await strategy.LP_DEPOSITOR())
       const lp = await strategy.token()
       // given
@@ -78,7 +78,8 @@ function shouldBehaveLikeDotDotStrategy(strategyIndex) {
       expect(claimable[1]).gt(0)
 
       // when
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
 
       // then
       claimable = (await lpDepositor.claimable(strategy.address, [lp]))[0]

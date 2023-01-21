@@ -21,7 +21,6 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
   let governor
   let alice
   let pool
-  let poolAccountant
   let collateralToken
   let cvx
 
@@ -29,7 +28,6 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
     beforeEach(async function () {
       ;[governor, alice] = this.users
       pool = this.pool
-      poolAccountant = await ethers.getContractAt('PoolAccountant', await pool.poolAccountant())
       strategy = this.strategies[strategyIndex].instance
       collateralToken = this.collateralToken
       cvx = await ethers.getContractAt('ERC20', CVX)
@@ -72,7 +70,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       }
     })
 
-    it('Should claim all rewards during rebalance', async function () {
+    it('Should claim and swap all rewards', async function () {
       const rewards = await ethers.getContractAt('Rewards', await strategy.cvxCrvRewards())
       const queuedRewards = await rewards.queuedRewards()
       if (queuedRewards.eq(0)) {
@@ -92,39 +90,10 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       expect(await rewards.earned(strategy.address)).gt(0)
 
       // when
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
 
       // then
-      expect(await rewards.earned(strategy.address)).eq(0)
-    })
-
-    it('Should claim all rewards when unstaking', async function () {
-      const rewards = await ethers.getContractAt('Rewards', await strategy.cvxCrvRewards())
-      const queuedRewards = await rewards.queuedRewards()
-      if (queuedRewards.eq(0)) {
-        // No rewards to distribute
-        return
-      }
-
-      // given
-      await deposit(pool, collateralToken, 10, alice)
-
-      expect(await rewards.balanceOf(strategy.address)).eq(0)
-      await strategy.rebalance()
-      expect(await rewards.balanceOf(strategy.address)).gt(0)
-
-      expect(await rewards.earned(strategy.address)).eq(0)
-      await time.increase(time.duration.days(1))
-      expect(await rewards.earned(strategy.address)).gt(0)
-
-      // when
-      await poolAccountant.updateDebtRatio(strategy.address, 0) // force withdraw all
-      expect(await strategy.tvl()).gt(0)
-      await strategy.rebalance()
-      expect(await strategy.tvl()).eq(0)
-
-      // then
-      expect(await rewards.balanceOf(strategy.address)).eq(0)
       expect(await rewards.earned(strategy.address)).eq(0)
     })
 
@@ -148,6 +117,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
 
       // when
       const newStrategy = await createStrategy(this.strategies[strategyIndex], pool.address, { skipVault: true })
+      // Migrate will claim rewards during unstake call but it will NOT swap those.
       await pool.connect(governor).migrateStrategy(strategy.address, newStrategy.address)
 
       // then
