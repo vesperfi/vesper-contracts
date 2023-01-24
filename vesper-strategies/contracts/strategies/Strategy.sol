@@ -194,7 +194,7 @@ abstract contract Strategy is IStrategy, Context {
         uint256 _collateralBefore = collateralToken.balanceOf(address(this));
         (address _rewardToken, uint256 _rewardsAmount) = _claimRewards();
         if (_rewardsAmount > 0) {
-            _swapExactInput(_rewardToken, address(collateralToken), _rewardsAmount);
+            _safeSwapExactInput(_rewardToken, address(collateralToken), _rewardsAmount);
             _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
         }
         require(_amountOut >= _minAmountOut, "not-enough-amountOut");

@@ -95,7 +95,10 @@ contract DotDot is Ellipsis {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @dev DotDot can add new rewards. This method refresh list.
+    /**
+     * @notice DotDot can add new rewards. This method refresh list.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     */
     function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
         // Before updating the reward list, claim rewards and swap into collateral.
         // Passing 0 as minOut in case there is no rewards when this function is called.

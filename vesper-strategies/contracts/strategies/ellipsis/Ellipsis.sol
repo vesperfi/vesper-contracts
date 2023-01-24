@@ -154,13 +154,7 @@ contract Ellipsis is Strategy {
             address _rewardToken = rewardTokens[i];
             uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
             if (_amountIn > 0) {
-                /* solhint-disable no-empty-blocks */
-                try
-                    swapper.swapExactInput(_rewardToken, address(collateralToken), _amountIn, 1, address(this))
-                {} catch {
-                    // Note: It may fail under some conditions
-                    // For instance: 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
-                }
+                _safeSwapExactInput(_rewardToken, address(collateralToken), _amountIn);
             }
         }
         _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
@@ -347,10 +341,17 @@ contract Ellipsis is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @notice Ellipsis may update reward token on the fly hence update reward token here too.
-    /// @dev LpStaking only distribute EPX rewards other rewards can be distributed using lp
-    /// contract. It is quite possible to update rewardToken in LP by Ellipsis.
+    /**
+     * @notice Ellipsis may update reward token on the fly hence update reward token here too.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     * @dev LpStaking only distribute EPX rewards other rewards can be distributed using lp
+     * contract. It is quite possible to update rewardToken in LP by Ellipsis.
+     * @param rewardTokens_ Array of new reward tokens
+     */
     function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
+        // Claim rewards before updating the reward list.
+        // Passing 0 as minOut in case there is no rewards when this function is called.
+        _claimAndSwapRewards(0);
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;

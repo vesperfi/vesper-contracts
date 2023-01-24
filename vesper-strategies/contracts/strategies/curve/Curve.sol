@@ -198,12 +198,7 @@ contract Curve is Strategy {
             address _rewardToken = rewardTokens[i];
             uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
             if (_amountIn > 0) {
-                try
-                    swapper.swapExactInput(_rewardToken, address(collateralToken), _amountIn, 1, address(this))
-                {} catch {
-                    // Note: It may fail under some conditions
-                    // For instance: 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
-                }
+                _safeSwapExactInput(_rewardToken, address(collateralToken), _amountIn);
             }
         }
         _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
@@ -472,6 +467,9 @@ contract Curve is Strategy {
     /// @dev Rewards token in gauge can be updated any time. Governor can set reward tokens
     /// Different version of gauge has different method to read reward tokens better governor set it
     function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
+        // Claim rewards before updating the reward list.
+        // Passing 0 as minOut in case there is no rewards when this function is called.
+        _claimAndSwapRewards(0);
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;
