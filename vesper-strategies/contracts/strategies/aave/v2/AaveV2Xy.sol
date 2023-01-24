@@ -160,6 +160,11 @@ contract AaveV2Xy is Strategy, AaveV2Core {
         }
     }
 
+    /// @dev Claim Aave rewards
+    function _claimRewards() internal override returns (address, uint256) {
+        return (AAVE, _claimAave());
+    }
+
     /// @notice Deposit collateral in Aave and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
@@ -190,18 +195,11 @@ contract AaveV2Xy is Strategy, AaveV2Core {
     }
 
     /**
-     * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Claim rewards and convert to collateral token
-        uint256 _aaveAmount = _claimAave();
-        if (_aaveAmount > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _aaveAmount);
-        }
 
         uint256 _borrow = vdToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
