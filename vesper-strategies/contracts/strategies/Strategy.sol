@@ -68,7 +68,10 @@ abstract contract Strategy is IStrategy, Context {
 
     /// @notice Claim rewardToken and convert rewardToken into collateral token.
     function claimAndSwapRewards(uint256 _minAmountOut) external onlyKeeper returns (uint256 _amountOut) {
-        return _claimAndSwapRewards(_minAmountOut);
+        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+        _claimAndSwapRewards();
+        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
+        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
     }
 
     /// @notice Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
@@ -190,14 +193,11 @@ abstract contract Strategy is IStrategy, Context {
      */
     function _beforeMigration(address _newStrategy) internal virtual;
 
-    function _claimAndSwapRewards(uint256 _minAmountOut) internal virtual returns (uint256 _amountOut) {
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+    function _claimAndSwapRewards() internal virtual {
         (address _rewardToken, uint256 _rewardsAmount) = _claimRewards();
         if (_rewardsAmount > 0) {
             _safeSwapExactInput(_rewardToken, address(collateralToken), _rewardsAmount);
-            _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
         }
-        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
     }
 
     // solhint-disable-next-line no-empty-blocks

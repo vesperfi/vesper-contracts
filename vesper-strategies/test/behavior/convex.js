@@ -72,8 +72,10 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
 
     it('Should claim and swap all rewards', async function () {
       const rewards = await ethers.getContractAt('Rewards', await strategy.cvxCrvRewards())
+      const periodFinish = await rewards.periodFinish()
+      const blockTimestamp = (await ethers.provider.getBlock()).timestamp
       const queuedRewards = await rewards.queuedRewards()
-      if (queuedRewards.eq(0)) {
+      if (queuedRewards.eq(0) || periodFinish.lte(blockTimestamp)) {
         // No rewards to distribute
         return
       }
@@ -99,8 +101,10 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
 
     it('Should claim rewards during migration', async function () {
       const rewards = await ethers.getContractAt('Rewards', await strategy.cvxCrvRewards())
+      const periodFinish = await rewards.periodFinish()
+      const blockTimestamp = (await ethers.provider.getBlock()).timestamp
       const queuedRewards = await rewards.queuedRewards()
-      if (queuedRewards.eq(0)) {
+      if (queuedRewards.eq(0) || periodFinish.lte(blockTimestamp)) {
         // No rewards to distribute
         return
       }

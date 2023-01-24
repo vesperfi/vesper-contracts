@@ -38,9 +38,7 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
     }
 
     /// @dev Claim Protocol rewards + AVAX and convert them into collateral token.
-    function _claimAndSwapRewards(uint256 _minAmountOut) internal override returns (uint256 _amountOut) {
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-
+    function _claimAndSwapRewards() internal override {
         ComptrollerMultiReward(address(comptroller)).claimReward(0, address(this)); // Claim protocol rewards
         ComptrollerMultiReward(address(comptroller)).claimReward(1, address(this)); // Claim native AVAX (optional)
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
@@ -54,9 +52,6 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
                 _safeSwapExactInput(WAVAX, address(collateralToken), _avaxRewardAmount);
             }
         }
-
-        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
-        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
     }
 
     /**

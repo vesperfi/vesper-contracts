@@ -40,6 +40,8 @@ interface Rewards {
 
     function extraRewards(uint256) external view returns (address);
 
+    function periodFinish() external view returns (uint256);
+
     function rewardPerToken() external view returns (uint256);
 
     function rewardPerTokenStored() external view returns (uint256);
