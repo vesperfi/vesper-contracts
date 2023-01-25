@@ -41,24 +41,25 @@ contract CompoundLike is Compound {
         }
     }
 
-    //solhint-disable-next-line no-empty-blocks
-    function _claimRewards() internal override {}
+    /// @dev Claim Protocol rewards + AVAX and convert them into collateral token.
+    function _claimAndSwapRewards(uint256 _minAmountOut) internal override returns (uint256 _amountOut) {
+        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
 
-    /// @notice Claim Protocol rewards + AVAX and convert them into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual override {
         ComptrollerMultiReward(address(COMPTROLLER)).claimReward(0, address(this)); // Claim protocol rewards
         ComptrollerMultiReward(address(COMPTROLLER)).claimReward(1, address(this)); // Claim native AVAX (optional)
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
+            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
         }
         uint256 _avaxRewardAmount = address(this).balance;
         if (_avaxRewardAmount > 0) {
             TokenLike(WAVAX).deposit{value: _avaxRewardAmount}();
-            if (_toToken != WAVAX) {
-                _safeSwapExactInput(WAVAX, _toToken, _avaxRewardAmount);
+            if (address(collateralToken) != WAVAX) {
+                _safeSwapExactInput(WAVAX, address(collateralToken), _avaxRewardAmount);
             }
         }
+        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
+        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
     }
 
     // Updates rewardDistributor of the Compound fork, in case it changes over time

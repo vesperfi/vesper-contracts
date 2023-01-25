@@ -33,7 +33,7 @@ function shouldBehaveLikeEllipsisStrategy(strategyIndex) {
       expect(totalValue).to.be.gt(0, 'Total tokens should be > zero')
     })
 
-    it('Should claim EPX when rebalance is called', async function () {
+    it('Should claim and swap EPX', async function () {
       const strategySigner = await unlock(strategy.address)
       const staking = await ethers.getContractAt('IEllipsisLpStaking', await strategy.LP_STAKING(), strategySigner)
 
@@ -48,7 +48,8 @@ function shouldBehaveLikeEllipsisStrategy(strategyIndex) {
       expect(claimable).gt(0)
 
       // when
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
 
       // then
       claimable = (await staking.claimableReward(strategy.address, [receiptToken]))[0]
@@ -62,7 +63,8 @@ function shouldBehaveLikeEllipsisStrategy(strategyIndex) {
       // Get some EPX at strategy address
       await adjustBalance(epx.address, strategy.address, parseEther('10'))
       expect(await epx.balanceOf(strategy.address)).to.be.gt('0')
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
       expect(await epx.balanceOf(strategy.address)).eq(0)
     })
   })

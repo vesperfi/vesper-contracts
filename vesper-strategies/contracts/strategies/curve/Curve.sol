@@ -123,6 +123,10 @@ contract Curve is Strategy {
         NAME = name_;
     }
 
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
+    }
+
     /// @dev Check whether given token is reserved or not. Reserved tokens are not allowed to sweep.
     function isReservedToken(address token_) public view override returns (bool) {
         return token_ == address(crvLp) || token_ == address(collateralToken);
@@ -183,7 +187,26 @@ contract Curve is Strategy {
         _amountOutMin = (masterOracle.quote(tokenIn_, tokenOut_, amountIn_) * (MAX_BPS - crvSlippage)) / MAX_BPS;
     }
 
-    function _claimRewards() internal virtual {
+    /**
+     * @dev Curve pool may have more than one reward token. Child contract should override _claimRewardsFromCurve
+     */
+    function _claimAndSwapRewards(uint256 _minAmountOut) internal virtual override returns (uint256 _amountOut) {
+        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+        _claimRewards();
+        uint256 _rewardTokensLength = rewardTokens.length;
+        for (uint256 i; i < _rewardTokensLength; ++i) {
+            address _rewardToken = rewardTokens[i];
+            uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
+            if (_amountIn > 0) {
+                _safeSwapExactInput(_rewardToken, address(collateralToken), _amountIn);
+            }
+        }
+        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
+        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
+    }
+
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal virtual override returns (address, uint256) {
         if (block.chainid == 1) {
             // Side-chains don't have minter contract
             CRV_MINTER.mint(address(crvGauge));
@@ -192,24 +215,7 @@ contract Curve is Strategy {
             // This call may fail in some scenarios
             // e.g. 3Crv gauge doesn't have such function
         }
-    }
-
-    /**
-     * @notice Curve pool may have more than one reward token. Child contract should override _claimRewards
-     */
-    function _claimRewardsAndConvertTo(address tokenOut_) internal virtual {
-        _claimRewards();
-        uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; ++i) {
-            address _rewardToken = rewardTokens[i];
-            uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
-            if (_amountIn > 0) {
-                try swapper.swapExactInput(_rewardToken, tokenOut_, _amountIn, 1, address(this)) {} catch {
-                    // Note: It may fail under some conditions
-                    // For instance: 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
-                }
-            }
-        }
+        return (address(0), 0);
     }
 
     function _deposit() internal {
@@ -301,8 +307,6 @@ contract Curve is Strategy {
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _strategyDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         int128 _i = SafeCast.toInt128(int256(collateralIdx));
         uint256 _lpHere = lpBalanceHere();
@@ -456,9 +460,16 @@ contract Curve is Strategy {
         _withdrawFromCurve(_lpToBurn, _i);
     }
 
+    /************************************************************************************************
+     *                          Governor/admin/keeper function                                      *
+     ***********************************************************************************************/
+
     /// @dev Rewards token in gauge can be updated any time. Governor can set reward tokens
     /// Different version of gauge has different method to read reward tokens better governor set it
     function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
+        // Claim rewards before updating the reward list.
+        // Passing 0 as minOut in case there is no rewards when this function is called.
+        _claimAndSwapRewards(0);
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;

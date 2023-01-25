@@ -60,21 +60,11 @@ contract Compound is Strategy {
     function _beforeMigration(address _newStrategy) internal virtual override {}
 
     /// @notice Claim comp
-    function _claimRewards() internal virtual {
+    function _claimRewards() internal virtual override returns (address, uint256) {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
         COMPTROLLER.claimComp(address(this), _markets);
-    }
-
-    /// @notice Claim COMP and convert COMP into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual {
-        if (rewardToken != address(0)) {
-            _claimRewards();
-            uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-            if (_rewardAmount > 0) {
-                _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
-            }
-        }
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /**
@@ -93,8 +83,6 @@ contract Compound is Strategy {
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + cToken.balanceOfUnderlying(address(this));

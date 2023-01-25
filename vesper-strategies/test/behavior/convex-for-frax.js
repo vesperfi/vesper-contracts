@@ -89,14 +89,15 @@ function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
 
         // when
         await increaseTimeIfNeeded(this.strategies[strategyIndex])
-        await strategy.rebalance()
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
 
         // then
         const claimableAfter = await vault.earned()
         claimableAfter.total_earned.forEach(earned => expect(earned).eq(0))
       })
 
-      it('Should claim all rewards when unstaking', async function () {
+      it('Should claim all rewards after unstakingAll', async function () {
         // given
         const claimableBefore = await vault.earned()
         expect(claimableBefore.token_addresses).deep.eq([FXS, CRV, CVX])
@@ -106,15 +107,19 @@ function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
         await increaseTimeIfNeeded(this.strategies[strategyIndex])
         await poolAccountant.updateDebtRatio(strategy.address, 0) // force withdraw all
         expect(await strategy.tvl()).gt(0)
+        // Unstake all as debtRatio is updated to 0
         await strategy.rebalance()
         expect(await strategy.tvl()).eq(0)
+        // Claim rewards
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
 
         // then
         const claimableAfter = await vault.earned()
         claimableAfter.total_earned.forEach(earned => expect(earned).eq(0))
       })
 
-      it('Should claim rewards during migration', async function () {
+      it('Should claim rewards of old strategy after migration', async function () {
         //
         // given
         //
@@ -126,7 +131,7 @@ function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
         claimableBefore.total_earned.forEach(earned => expect(earned).gt(0))
 
         //
-        // when
+        // Migrate to new strategy
         //
         const newStrategy = await createStrategy(this.strategies[strategyIndex], pool.address, { skipVault: true })
         // wait until lock period ending
@@ -139,6 +144,11 @@ function shouldBehaveLikeConvexForFraxStrategy(strategyIndex) {
         // push money to the new strategy
         await poolAccountant.updateDebtRatio(newStrategy.address, debtRatio)
         await newStrategy.rebalance()
+
+        //
+        // When calling claim on old strategy
+        //
+        await strategy.claimAndSwapRewards(0)
 
         //
         // then

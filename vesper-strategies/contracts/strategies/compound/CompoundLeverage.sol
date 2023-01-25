@@ -34,6 +34,14 @@ contract CompoundLeverage is CompoundLeverageBase, FlashLoanHelper {
         FlashLoanHelper._approveToken(address(collateralToken), _amount);
     }
 
+    /// @notice Claim comp
+    function _claimRewards() internal override returns (address, uint256) {
+        address[] memory _markets = new address[](1);
+        _markets[0] = address(cToken);
+        comptroller.claimComp(address(this), _markets);
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
+    }
+
     /**
      * @dev Aave flash is used only for withdrawal due to high fee compare to DyDx
      * @param _flashAmount Amount for flash loan
@@ -80,20 +88,6 @@ contract CompoundLeverage is CompoundLeverageBase, FlashLoanHelper {
     /************************************************************************************************
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
-
-    /// @notice Claim rewardToken and convert rewardToken into collateral token.
-    function claimAndSwapRewards(uint256 _minAmountOut) external onlyKeeper returns (uint256 _amountOut) {
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-        address[] memory _markets = new address[](1);
-        _markets[0] = address(cToken);
-        comptroller.claimComp(address(this), _markets);
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
-            _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
-            require(_amountOut >= _minAmountOut, "not-enough-amountOut");
-        }
-    }
 
     function updateAaveStatus(bool _status) external onlyGovernor {
         _updateAaveStatus(_status);

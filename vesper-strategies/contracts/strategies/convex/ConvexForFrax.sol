@@ -86,17 +86,15 @@ contract ConvexForFrax is Curve {
         crvLp.safeApprove(address(vault), amount_);
     }
 
-    /// @dev
-    function _claimRewards() internal override {
-        // `getReward` reverts if there isn't an open position
-        if (kekId == bytes32(0)) return;
-
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal override returns (address, uint256) {
         // solhint-disable-next-line no-empty-blocks
         try vault.getReward() {} catch {
             // It may fail if reward collection is paused on FRAX side
             // See more: https://github.com/convex-eth/frax-cvx-platform/blob/01855f4f82729b49cbed0b5fab37bdefe9fdb736/contracts/contracts/StakingProxyConvex.sol#L222-L225
             vault.getReward(false);
         }
+        return (address(0), 0);
     }
 
     /// @notice Get reward tokens
@@ -167,10 +165,14 @@ contract ConvexForFrax is Curve {
         }
     }
 
-    /// @dev convex pool can add new rewards. This method refresh list.
+    /**
+     * @notice convex pool can add new rewards. This method refresh list.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     */
     function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Claims all rewards, if any, before updating the reward list
-        _claimRewardsAndConvertTo(address(collateralToken));
+        // Before updating the reward list, claim rewards and swap into collateral.
+        // Passing 0 as minOut in case there is no rewards when this function is called.
+        _claimAndSwapRewards(0);
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);

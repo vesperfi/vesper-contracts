@@ -62,8 +62,10 @@ contract Convex is Curve {
         crvLp.safeApprove(address(BOOSTER), amount_);
     }
 
-    function _claimRewards() internal override {
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal override returns (address, uint256) {
         require(cvxCrvRewards.getReward(address(this), true), "reward-claim-failed");
+        return (address(0), 0);
     }
 
     /**
@@ -124,10 +126,14 @@ contract Convex is Curve {
         }
     }
 
-    /// @dev convex pool can add new rewards. This method refresh list.
+    /**
+     * @notice convex pool can add new rewards. This method refresh list.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     */
     function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Claims all rewards, if any, before updating the reward list
-        _claimRewardsAndConvertTo(address(collateralToken));
+        // Before updating the reward list, claim rewards and swap into collateral.
+        // Passing 0 as minOut in case there is no rewards when this function is called.
+        _claimAndSwapRewards(0);
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
