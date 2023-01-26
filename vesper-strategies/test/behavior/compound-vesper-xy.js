@@ -4,8 +4,11 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { getStrategyToken, unlock } = require('vesper-commons/utils/setup')
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { mine } = require('@nomicfoundation/hardhat-network-helpers')
+const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('vesper-commons/utils/balance')
+const { shouldTestCompoundRewards } = require('./compound-rewards')
+const { getChain } = require('vesper-commons/utils/chains')
+const Address = require('vesper-commons/utils/chains').getChainData().address
 
 async function simulateVesperPoolProfit(strategy) {
   const vPool = await ethers.getContractAt('IVesperPool', await strategy.instance.vPool())
@@ -68,6 +71,10 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       expect(borrowed, 'borrowed should be > lower bound').to.gte(borrowLowerBound)
     }
   }
+
+  // Compound rewards test
+  shouldTestCompoundRewards(index)
+
   describe('CompoundVesperXyStrategy specific tests', function () {
     beforeEach(async function () {
       ;[, user1, user2] = this.users
@@ -179,6 +186,25 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       const data = await strategy.callStatic.rebalance()
       expect(data._profit, 'Profit should be > 0').to.gt(0)
     })
+
+    if (getChain() == 'mainnet' || getChain() == 'avalanche') {
+      it('Should claim and swap VSP for collateral', async function () {
+        const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
+        // given
+        await deposit(pool, collateralToken, 100, user2)
+        await strategy.rebalance()
+
+        // Time travel to earn some VSP
+        await time.increase(time.duration.days(5))
+
+        // when claim and swap rewards
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
+
+        // Verify no VSP left in strategy
+        expect(await vsp.balanceOf(strategy.address)).eq(0)
+      })
+    }
 
     context('Calculate APY', function () {
       // Not doing any assert. This block is only for pool token price and apy display purpose.

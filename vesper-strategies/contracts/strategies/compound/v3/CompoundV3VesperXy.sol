@@ -36,18 +36,6 @@ contract CompoundV3VesperXy is CompoundV3Xy {
         return IERC20(borrowToken).balanceOf(address(this)) + _getYTokensInProtocol();
     }
 
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
-    }
-
     function isReservedToken(address token_) public view virtual override returns (bool) {
         return super.isReservedToken(token_) || token_ == address(vPool);
     }
@@ -61,6 +49,22 @@ contract CompoundV3VesperXy is CompoundV3Xy {
         super._approveToken(amount_);
         IERC20(borrowToken).safeApprove(address(vPool), amount_);
         IERC20(vsp).safeApprove(address(swapper), amount_);
+    }
+
+    /// @dev Claim Compound and VSP rewards and convert to collateral token.
+    function _claimAndSwapRewards() internal override {
+        // Claim and swap Compound rewards
+        CompoundV3Xy._claimAndSwapRewards();
+
+        // Claim and swap VSP
+        address _poolRewards = vPool.poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
+        }
     }
 
     function _getYTokensInProtocol() internal view override returns (uint256) {

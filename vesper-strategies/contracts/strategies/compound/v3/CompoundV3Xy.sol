@@ -165,13 +165,12 @@ contract CompoundV3Xy is Strategy {
     }
 
     /// @dev Claim COMP and convert COMP into given token.
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {
-        if (rewardToken != address(0)) {
-            compRewards.claim(address(comet), address(this), true);
-            uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-            if (_rewardAmount > 0) {
-                _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
-            }
+    /// Overriding _claimAndSwapRewards will help child contract otherwise override _claimReward.
+    function _claimAndSwapRewards() internal virtual override {
+        compRewards.claim(address(comet), address(this), true);
+        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
+        if (_rewardAmount > 0) {
+            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
         }
     }
 
@@ -208,9 +207,6 @@ contract CompoundV3Xy is Strategy {
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Claim any reward we have.
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _yTokensBorrowed = comet.borrowBalanceOf(address(this));
         uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
@@ -273,7 +269,7 @@ contract CompoundV3Xy is Strategy {
             if (_repayAmount > _totalYTokens) {
                 if (_shouldClaimComp) {
                     // Claim rewardToken and convert those to collateral.
-                    _claimRewardsAndConvertTo(address(collateralToken));
+                    _claimAndSwapRewards();
                 }
 
                 uint256 _yTokensBorrowed = comet.borrowBalanceOf(address(this));
