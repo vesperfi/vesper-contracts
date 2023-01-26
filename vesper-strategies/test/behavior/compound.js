@@ -29,7 +29,7 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
       collateralDecimal = await this.collateralToken.decimals()
       token = await getStrategyToken(this.strategies[strategyIndex])
       comp = await ethers.getContractAt('ERC20', await strategy.rewardToken())
-      comptroller = await ethers.getContractAt('Comptroller', await strategy.COMPTROLLER())
+      comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
     })
 
     it('Should claim COMP', async function () {

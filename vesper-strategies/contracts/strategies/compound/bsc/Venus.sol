@@ -20,7 +20,7 @@ contract Venus is Compound {
     function _claimRewards() internal override returns (address, uint256) {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
-        VenusComptroller(address(COMPTROLLER)).claimVenus(address(this), _markets);
+        VenusComptroller(address(comptroller)).claimVenus(address(this), _markets);
         return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 }
