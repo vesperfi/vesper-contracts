@@ -26,6 +26,11 @@ contract AaveEarn is AaveV2, Earn {
         AaveV2._approveToken(_amount);
     }
 
+    /// @dev Claim Aave rewards
+    function _claimRewards() internal override(AaveV2, Strategy) returns (address, uint256) {
+        return AaveV2._claimRewards();
+    }
+
     /**
      * @dev Generate report for pools accounting. Drip profit as rewards and send payback to pool.
      */

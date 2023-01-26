@@ -39,10 +39,8 @@ contract CurveEarn is Curve, Earn {
         Curve._approveToken(_amount);
     }
 
-    function _claimAndSwapRewards(
-        uint256 _minAmountOut
-    ) internal override(Curve, Strategy) returns (uint256 _amountOut) {
-        return Curve._claimAndSwapRewards(_minAmountOut);
+    function _claimAndSwapRewards() internal override(Curve, Strategy) {
+        return Curve._claimAndSwapRewards();
     }
 
     function _claimRewards() internal override(Curve, Strategy) returns (address, uint256) {

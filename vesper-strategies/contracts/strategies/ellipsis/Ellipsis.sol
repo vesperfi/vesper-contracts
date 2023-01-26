@@ -144,10 +144,9 @@ contract Ellipsis is Strategy {
     }
 
     /**
-     * @dev Ellipsis pool may have more than one reward token. Child contract should override _claimRewards
+     * @dev Ellipsis pool may have more than one reward token.
      */
-    function _claimAndSwapRewards(uint256 _minAmountOut) internal override returns (uint256 _amountOut) {
-        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+    function _claimAndSwapRewards() internal override {
         _claimRewards();
         uint256 _rewardTokensLength = rewardTokens.length;
         for (uint256 i; i < _rewardTokensLength; ++i) {
@@ -157,8 +156,6 @@ contract Ellipsis is Strategy {
                 _safeSwapExactInput(_rewardToken, address(collateralToken), _amountIn);
             }
         }
-        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
-        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
     }
 
     /// @dev Return values are not being used hence returning 0
@@ -350,8 +347,7 @@ contract Ellipsis is Strategy {
      */
     function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
         // Claim rewards before updating the reward list.
-        // Passing 0 as minOut in case there is no rewards when this function is called.
-        _claimAndSwapRewards(0);
+        _claimAndSwapRewards();
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;

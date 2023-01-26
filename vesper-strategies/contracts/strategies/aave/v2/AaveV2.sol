@@ -57,28 +57,22 @@ contract AaveV2 is Strategy, AaveV2Core {
      */
     function _beforeMigration(address _newStrategy) internal override {
         uint256 _stkAaveAmount = stkAAVE.balanceOf(address(this));
-        if (_stkAaveAmount != 0) {
+        if (_stkAaveAmount > 0) {
             IERC20(stkAAVE).safeTransfer(_newStrategy, _stkAaveAmount);
         }
     }
 
-    /// @notice Claim Aave rewards and convert to _toToken.
-    function _claimRewardsAndConvertTo(address _toToken) internal {
-        uint256 _aaveAmount = _claimAave();
-        if (_aaveAmount > 0) {
-            _swapExactInput(AAVE, _toToken, _aaveAmount);
-        }
+    /// @dev Claim Aave rewards
+    function _claimRewards() internal virtual override returns (address, uint256) {
+        return (AAVE, _claimAave());
     }
 
     /**
-     * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
     function _generateReport() internal returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = aToken.balanceOf(address(this)) + _collateralHere;

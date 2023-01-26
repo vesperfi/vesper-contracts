@@ -1,3 +1,4 @@
+/* eslint-disable mocha/no-async-describe */
 'use strict'
 
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
@@ -8,6 +9,7 @@ const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { unlock } = require('vesper-commons/utils/setup')
 const { adjustBalance } = require('vesper-commons/utils/balance')
+const { testStkAaveRewards } = require('./stk-aave-rewards')
 const { getChain, getChainData } = require('vesper-commons/utils/chains')
 
 const Address = getChainData().address
@@ -21,7 +23,7 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
   let crv
   let isConvex
 
-  describe('Curve specific tests', function () {
+  describe('Curve specific tests', async function () {
     beforeEach(async function () {
       ;[alice] = this.users
       pool = this.pool
@@ -77,32 +79,10 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       })
 
       it('Should claim stkAAVE for aave pool', async function () {
-        if (!(await strategy.NAME()).includes('aave')) {
-          return
+        if ((await strategy.NAME()).includes('aave')) {
+          // Aave rewards test
+          await testStkAaveRewards(pool, strategy, collateralToken)
         }
-        const stkAAVE = await ethers.getContractAt('ERC20', Address.Aave.stkAAVE, alice)
-        // given
-        await deposit(pool, collateralToken, 100, alice)
-        await strategy.rebalance()
-        expect(await stkAAVE.balanceOf(strategy.address)).eq(0)
-
-        // Send some stkAAVE to strategy i.e. assume stkAAVE are claimed from Curve.
-        await adjustBalance(stkAAVE.address, strategy.address, ethers.utils.parseEther('10'))
-
-        // claim rewards. This should trigger stkAAVE cooldown.
-        await strategy.claimAndSwapRewards(0)
-
-        // Increase 10 days to finish cooldown and claim AAVE from stkAAVE
-        await time.increase(time.duration.days(10))
-        expect(await stkAAVE.balanceOf(strategy.address)).gt(0)
-
-        // when claim and swap rewards
-        // Claim Rewards from Curve. Also unstake AAVE from stkAAVE
-        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
-        await strategy.claimAndSwapRewards(amountOut)
-
-        // Verify no stkAAVE left in strategy
-        expect(await stkAAVE.balanceOf(strategy.address)).eq(0)
       })
     }
 

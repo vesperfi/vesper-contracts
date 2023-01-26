@@ -171,8 +171,7 @@ contract ConvexForFrax is Curve {
      */
     function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
         // Before updating the reward list, claim rewards and swap into collateral.
-        // Passing 0 as minOut in case there is no rewards when this function is called.
-        _claimAndSwapRewards(0);
+        _claimAndSwapRewards();
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
