@@ -53,7 +53,8 @@ contract BenqiXy is CompoundXyCore {
         }
     }
 
-    function _claimRewardsAndConvertTo(address _toToken) internal override {
+    /// @dev Overriding _claimAndSwapRewards will help child contract otherwise override _claimReward.
+    function _claimAndSwapRewards() internal virtual override {
         address[] memory _markets = new address[](2);
         _markets[0] = address(supplyCToken);
         _markets[1] = address(borrowCToken);
@@ -62,12 +63,14 @@ contract BenqiXy is CompoundXyCore {
 
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
+            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
         }
         uint256 _avaxRewardAmount = address(this).balance;
         if (_avaxRewardAmount > 0) {
             TokenLike(WAVAX).deposit{value: _avaxRewardAmount}();
-            _safeSwapExactInput(WAVAX, _toToken, _avaxRewardAmount);
+            if (address(collateralToken) != WAVAX) {
+                _safeSwapExactInput(WAVAX, address(collateralToken), _avaxRewardAmount);
+            }
         }
     }
 

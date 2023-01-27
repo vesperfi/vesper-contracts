@@ -43,8 +43,10 @@ contract CompoundLike is Compound {
 
     /// @dev Claim Protocol rewards + AVAX and convert them into collateral token.
     function _claimAndSwapRewards() internal override {
-        ComptrollerMultiReward(address(COMPTROLLER)).claimReward(0, address(this)); // Claim protocol rewards
-        ComptrollerMultiReward(address(COMPTROLLER)).claimReward(1, address(this)); // Claim native AVAX (optional)
+        address[] memory _markets = new address[](1);
+        _markets[0] = address(cToken);
+        ComptrollerMultiReward(address(comptroller)).claimReward(0, address(this), _markets); // Claim protocol rewards
+        ComptrollerMultiReward(address(comptroller)).claimReward(1, address(this), _markets); // Claim native AVAX (optional)
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
             _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);

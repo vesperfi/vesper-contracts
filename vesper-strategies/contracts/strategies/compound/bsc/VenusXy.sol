@@ -48,16 +48,13 @@ contract VenusXy is CompoundXyCore {
         }
     }
 
-    /// @notice Claim rewardToken and convert rewardToken into collateral token.
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual override {
+    /// @notice Claim rewardToken
+    function _claimRewards() internal override returns (address, uint256) {
         address[] memory _markets = new address[](2);
         _markets[0] = address(supplyCToken);
         _markets[1] = address(borrowCToken);
         VenusComptroller(address(comptroller)).claimVenus(address(this), _markets);
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
-        }
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /// @dev vBNB doesn't has underlying method

@@ -52,15 +52,10 @@ contract CompoundV3 is Strategy {
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
 
-    /// @dev Claim COMP and convert COMP into given token.
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {
-        if (rewardToken != address(0)) {
-            compRewards.claim(address(comet), address(this), true);
-            uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-            if (_rewardAmount > 0) {
-                _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
-            }
-        }
+    /// @dev Claim COMP
+    function _claimRewards() internal override returns (address, uint256) {
+        compRewards.claim(address(comet), address(this), true);
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /**
@@ -85,7 +80,6 @@ contract CompoundV3 is Strategy {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
-        _claimRewardsAndConvertTo(address(collateralToken));
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + comet.balanceOf(address(this));
         if (_totalCollateral > _totalDebt) {

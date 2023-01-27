@@ -166,8 +166,6 @@ abstract contract CompoundXyCore is Strategy {
         }
     }
 
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual;
-
     /// @dev Deposit collateral in Compound and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
@@ -209,8 +207,6 @@ abstract contract CompoundXyCore is Strategy {
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-        // Claim any reward we have.
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _yTokensBorrowed = borrowCToken.borrowBalanceCurrent(address(this));
         uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
@@ -278,7 +274,7 @@ abstract contract CompoundXyCore is Strategy {
             if (_repayAmount > _totalYTokens) {
                 if (_shouldClaimComp) {
                     // Claim rewardToken and convert those to collateral.
-                    _claimRewardsAndConvertTo(address(collateralToken));
+                    _claimAndSwapRewards();
                 }
 
                 uint256 _yTokensBorrowed = borrowCToken.borrowBalanceCurrent(address(this));

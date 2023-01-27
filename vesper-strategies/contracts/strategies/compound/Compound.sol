@@ -13,10 +13,9 @@ contract Compound is Strategy {
     string public NAME;
     string public constant VERSION = "5.0.0";
 
-    CToken internal cToken;
+    CToken internal immutable cToken;
 
-    // solhint-disable-next-line var-name-mixedcase
-    Comptroller public immutable COMPTROLLER;
+    Comptroller public immutable comptroller;
     address public rewardToken;
 
     constructor(
@@ -31,8 +30,7 @@ contract Compound is Strategy {
         cToken = CToken(_receiptToken);
         NAME = _name;
 
-        // Either can be address(0), for example in Rari Strategy
-        COMPTROLLER = Comptroller(_comptroller);
+        comptroller = Comptroller(_comptroller);
         rewardToken = _rewardToken;
     }
 
@@ -63,7 +61,7 @@ contract Compound is Strategy {
     function _claimRewards() internal virtual override returns (address, uint256) {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
-        COMPTROLLER.claimComp(address(this), _markets);
+        comptroller.claimComp(address(this), _markets);
         return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
