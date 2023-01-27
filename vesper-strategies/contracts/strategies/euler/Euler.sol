@@ -50,9 +50,6 @@ contract Euler is Strategy {
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
 
-    //solhint-disable-next-line no-empty-blocks
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {}
-
     function _fetchReceiptToken(address eulerMarkets_) internal view virtual returns (address) {
         return IEulerMarkets(eulerMarkets_).underlyingToEToken(address(collateralToken));
     }
@@ -71,8 +68,6 @@ contract Euler is Strategy {
     function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + _getUnwrappedAmount(eToken.balanceOfUnderlying(address(this)));

@@ -188,6 +188,11 @@ contract EulerXy is Strategy {
         }
     }
 
+    function _claimRewards() internal virtual override returns (address, uint256) {
+        // Claim is being done by claimReward() public function
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
+    }
+
     /**
      * @dev Swap collateral token to borrowToken to overcome borrowToken shortage.
      * @param shortOnBorrow_ Amount of borrow token
@@ -333,14 +338,10 @@ contract EulerXy is Strategy {
      ***********************************************************************************************/
 
     /**
-     * @notice Claim EUL from Eul distributor and swap to collateral token.
+     * @notice onlyKeeper:: Claim EUL tokens from Euler.
      */
-    function harvestEul(uint256 claimable_, bytes32[] calldata proof_) external onlyKeeper {
+    function claimRewards(uint256 claimable_, bytes32[] calldata proof_) external onlyKeeper {
         rewardDistributor.claim(address(this), rewardToken, claimable_, proof_, address(0));
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
-        }
     }
 
     /**

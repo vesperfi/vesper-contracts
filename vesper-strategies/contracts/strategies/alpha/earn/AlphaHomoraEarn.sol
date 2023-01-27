@@ -25,6 +25,10 @@ contract AlphaHomoraEarn is AlphaHomora, Earn {
         collateralToken.safeApprove(address(swapper), amount_);
     }
 
+    function _claimRewards() internal override(AlphaHomora, Strategy) returns (address, uint256) {
+        return AlphaHomora._claimRewards();
+    }
+
     /**
      * @dev Generate report for pools accounting. Drip profit as rewards and send payback to pool.
      */

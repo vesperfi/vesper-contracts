@@ -49,7 +49,7 @@ contract Alpaca is Strategy {
         _lpAmount = getStakedLp() + _getLpHere();
     }
 
-    function isReservedToken(address token_) public view virtual override returns (bool) {
+    function isReservedToken(address token_) public view override returns (bool) {
         return token_ == address(vault);
     }
 
@@ -60,26 +60,22 @@ contract Alpaca is Strategy {
     // solhint-disable no-empty-blocks
     function _afterWithdrawal() internal virtual {}
 
-    function _approveToken(uint256 amount_) internal virtual override {
+    function _approveToken(uint256 amount_) internal override {
         super._approveToken(amount_);
         collateralToken.safeApprove(address(vault), amount_);
         IERC20(rewardToken).safeApprove(address(swapper), amount_);
         vault.safeApprove(address(fairLaunch), amount_);
     }
 
-    function _beforeMigration(address) internal virtual override {
+    function _beforeMigration(address) internal override {
         _unstakeLP(getStakedLp());
     }
 
-    function _claimRewardsAndConvertTo(address tokenOut_) internal virtual {
+    function _claimRewards() internal override returns (address, uint256) {
         if (fairLaunch.pendingAlpaca(poolId, address(this)) > 0) {
             fairLaunch.harvest(poolId);
         }
-        // There may be some rewards token in contract without calling harvest.
-        uint256 _rewards = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewards > 0) {
-            _safeSwapExactInput(rewardToken, tokenOut_, _rewards);
-        }
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /// @dev Converts a share amount in its relative collateral
@@ -99,7 +95,7 @@ contract Alpaca is Strategy {
     }
 
     /// @notice Deposit collateral in Alpaca
-    function _deposit(uint256 amount_) internal virtual {
+    function _deposit(uint256 amount_) internal {
         if (amount_ > 0) {
             vault.deposit(amount_);
         }
@@ -119,12 +115,9 @@ contract Alpaca is Strategy {
     /**
      * @dev Generate report for pools accounting and report earning statement to pool.
      */
-    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
+    function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Convert reward tokens into collateral tokens
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
 
