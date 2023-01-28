@@ -32,7 +32,7 @@ contract MakerVesperStETH is MakerVesper {
         IERC20(WSTETH).safeApprove(address(cm), _amount);
     }
 
-    function _convertToWrapped(uint256 _amount) internal override returns (uint256) {
+    function _convertToWrapped(uint256 _amount) internal view override returns (uint256) {
         return WSTETH.getWstETHByStETH(_amount);
     }
 
