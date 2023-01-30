@@ -76,7 +76,7 @@ async function shouldBehaveLikeEarnVesperStrategy(strategyIndex) {
 
         const tokenBalanceBefore = await rewardToken.balanceOf(earnDrip.address)
         const pricePerShareBefore = await pool.pricePerShare()
-
+        await makeStrategyProfitable(strategy.instance, dripToken)
         await makeStrategyProfitable(strategy.instance, collateralToken)
         await rebalanceStrategy(strategy)
 
@@ -141,7 +141,8 @@ async function shouldBehaveLikeEarnVesperStrategy(strategyIndex) {
         await adjustBalance(Address.Vesper.VSP, strategy.instance.address, ethers.utils.parseEther('1000'))
         const vspBalanceBefore = await vspToken.balanceOf(strategy.instance.address)
 
-        await strategy.instance.harvestVSP()
+        const amountOut = await strategy.instance.callStatic.claimAndSwapRewards(1)
+        await strategy.instance.claimAndSwapRewards(amountOut)
 
         const vspBalanceAfter = await vspToken.balanceOf(strategy.instance.address)
         expect(vspBalanceAfter).to.lt(vspBalanceBefore, `${dripTokenSymbol} vsp reward claim failed`)
