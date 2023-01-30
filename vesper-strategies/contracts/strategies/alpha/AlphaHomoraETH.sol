@@ -46,7 +46,7 @@ contract AlphaHomoraETH is AlphaHomora {
         }
     }
 
-    function _setupCheck(address _pool) internal view virtual override {
-        require(address(IVesperPool(_pool).token()) == address(safeBox.weth()), "u-token-mismatch");
+    function _setupCheck(address pool_) internal view virtual override {
+        require(address(IVesperPool(pool_).token()) == address(safeBox.weth()), "u-token-mismatch");
     }
 }

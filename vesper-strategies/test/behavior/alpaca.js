@@ -32,7 +32,7 @@ function shouldBehaveLikeAlpacaStrategy(strategyIndex) {
       expect(totalValue).to.be.gt(0, 'Total staked tokens should be > zero')
     })
 
-    it('Should claim ALPACA when rebalance is called', async function () {
+    it('Should claim ALPACA and swap to collateral', async function () {
       const strategySigner = await unlock(strategy.address)
       const fairLaunch = await ethers.getContractAt('IFairLaunch', await strategy.fairLaunch(), strategySigner)
       const poolId = await strategy.poolId()
@@ -47,7 +47,8 @@ function shouldBehaveLikeAlpacaStrategy(strategyIndex) {
       expect(claimable).gt(0)
 
       // when
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
 
       // then
       claimable = await fairLaunch.pendingAlpaca(poolId, strategy.address)
@@ -61,7 +62,8 @@ function shouldBehaveLikeAlpacaStrategy(strategyIndex) {
       // Get some ALPACA at strategy address
       await adjustBalance(alpacaToken.address, strategy.address, parseEther('10'))
       expect(await alpacaToken.balanceOf(strategy.address)).gt(0)
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
       expect(await alpacaToken.balanceOf(strategy.address)).eq(0)
     })
   })

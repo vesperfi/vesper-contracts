@@ -49,18 +49,6 @@ contract EulerVesperXy is EulerXy {
         vsp = vsp_;
     }
 
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
-    }
-
     /// @notice After borrowing Y, deposit to Vesper Pool
     function _afterBorrowY(uint256 amount_) internal virtual override {
         vPool.deposit(amount_);
@@ -76,6 +64,28 @@ contract EulerVesperXy is EulerXy {
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 amount_) internal virtual override {
         _withdrawFromVesperPool(amount_);
+    }
+
+    /**
+     * @dev Claim VSP rewards and swap for collateral tokens.
+     * Keeper will claim EUL and this function will swap those for collateral.
+     */
+    function _claimAndSwapRewards() internal override {
+        // Swap EUL for collateral
+        uint256 _eulAmount = IERC20(rewardToken).balanceOf(address(this));
+        if (_eulAmount > 0) {
+            _safeSwapExactInput(rewardToken, address(collateralToken), _eulAmount);
+        }
+
+        // Claim and swap VSP
+        address _poolRewards = vPool.poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
+        if (_vspAmount > 0) {
+            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
+        }
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool
