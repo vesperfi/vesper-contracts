@@ -130,9 +130,14 @@ async function setDefaultRouting(swapperAddress, pairs) {
     if (chain !== 'bsc') {
       if (chain === 'mainnet' && (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG)) {
         // uni3 has pair of USDC, WETH in 0.3 fee pool.
-        // TODO: modify logic to support more STG pairs
         path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
         exchange = ExchangeType.UNISWAP_V3
+        if (pair.tokenOut == Address.DAI || pair.tokenOut == Address.FRAX) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 3000, Address.USDC, 3000, pair.tokenOut],
+          )
+        }
       } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
