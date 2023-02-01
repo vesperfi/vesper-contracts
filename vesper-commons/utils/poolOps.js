@@ -7,7 +7,7 @@ const { BigNumber } = require('ethers')
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('./balance')
 const { getChain } = require('./chains')
-const { unlock, executeIfExist, getStrategyToken } = require('./setup')
+const { unlock, executeIfExist, getStrategyToken, getIfExist } = require('./setup')
 const address = require(`../config/${getChain()}/address`)
 
 /**
@@ -124,18 +124,9 @@ async function totalDebtOfAllStrategy(strategies, pool) {
  * @param {object} strategy - strategy object
  */
 async function increaseTimeIfNeeded(strategy) {
-  const c = new ethers.Contract(
-    strategy.instance.address,
-    ['function unlockTime() view returns (uint256)'],
-    ethers.provider,
-  )
-  try {
-    const unlockTime = await c.unlockTime()
-    if (unlockTime > 0) {
-      await time.increaseTo(unlockTime)
-    }
-  } catch (e) {
-    // fail silently because not all strategies have such function
+  const unlockTime = await getIfExist(strategy.instance.unlockTime)
+  if (unlockTime && unlockTime.gt(await time.latest())) {
+    await time.increaseTo(unlockTime)
   }
 }
 

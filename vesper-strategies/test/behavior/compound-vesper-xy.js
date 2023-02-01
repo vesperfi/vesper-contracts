@@ -99,6 +99,7 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       await strategy.rebalance()
       const cTokenBalance = await supplyCToken.balanceOf(strategy.address)
       const borrow = await strategy.borrowBalance()
+      await borrowCToken.exchangeRateCurrent()
       const currentBorrow = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
       expect(cTokenBalance).to.be.gt('0', 'Supply CToken balance should be > 0')
       expect(borrow).to.be.gt('0', 'Borrow token balance should be > 0')
