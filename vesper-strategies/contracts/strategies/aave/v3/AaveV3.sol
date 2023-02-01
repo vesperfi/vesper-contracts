@@ -12,7 +12,7 @@ contract AaveV3 is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
     PoolAddressesProvider public immutable aaveAddressProvider;
 
     constructor(

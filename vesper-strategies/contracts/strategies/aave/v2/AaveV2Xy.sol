@@ -15,7 +15,7 @@ contract AaveV2Xy is Strategy, AaveV2Core {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol

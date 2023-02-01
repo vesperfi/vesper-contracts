@@ -15,7 +15,7 @@ contract EulerXy is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint32 internal constant EULER_CONFIG_FACTOR_SCALE = 4_000_000_000;
     uint256 internal constant MAX_BPS = 10_000; //100%

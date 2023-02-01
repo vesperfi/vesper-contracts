@@ -32,7 +32,7 @@ contract Curve is Strategy {
         META_4_POOL
     }
 
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
     uint256 internal constant MAX_BPS = 10_000;
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains

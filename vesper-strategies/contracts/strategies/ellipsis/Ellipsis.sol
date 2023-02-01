@@ -23,7 +23,7 @@ contract Ellipsis is Strategy {
         META_4_POOL
     }
 
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint256 internal constant MAX_BPS = 10_000;
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x31D236483A15F9B9dD60b36D4013D75e9dbF852b);
