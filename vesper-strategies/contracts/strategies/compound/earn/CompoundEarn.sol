@@ -28,6 +28,10 @@ contract CompoundEarn is Compound, Earn {
         Compound._approveToken(_amount);
     }
 
+    function _claimRewards() internal override(Compound, Strategy) returns (address, uint256) {
+        return Compound._claimRewards();
+    }
+
     /**
      * @dev Generate report for pools accounting. Drip profit as rewards and send payback to pool.
      */

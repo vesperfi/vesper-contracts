@@ -7,11 +7,7 @@ const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { BigNumber } = require('ethers')
-
-// Read addresses of Compound in Address object
-const {
-  address: { Compound: Address },
-} = require('vesper-commons/utils/chains').getChainData()
+const { shouldTestCompoundRewards } = require('./compound-rewards')
 
 // Compound XY strategy specific tests
 function shouldBehaveLikeCompoundXyStrategy(index) {
@@ -38,6 +34,9 @@ function shouldBehaveLikeCompoundXyStrategy(index) {
       'borrowed is too much deviated from minBorrowLimit',
     )
   }
+
+  // Compound rewards test
+  shouldTestCompoundRewards(index)
 
   describe('CompoundXyStrategy specific tests', function () {
     beforeEach(async function () {
@@ -149,48 +148,6 @@ function shouldBehaveLikeCompoundXyStrategy(index) {
       })
     })
 
-    // eslint-disable-next-line mocha/no-async-describe
-    context('COMP rewards', async function () {
-      if ((await strategy.NAME()).includes('IronBankXYStrategy')) {
-        // eslint-disable-next-line no-console
-        console.log('Skipping COMP related tests as they are not relevant')
-        return
-      }
-      it('Should get COMP token as reserve token', async function () {
-        expect(await strategy.isReservedToken(Address.COMP)).to.be.equal(true, 'COMP token is reserved')
-      })
-
-      it('Should claim COMP when rebalance is called', async function () {
-        await deposit(pool, collateralToken, 10, user1)
-        await deposit(pool, collateralToken, 2, user2)
-        await strategy.connect(governor).rebalance()
-        await supplyCToken.exchangeRateCurrent()
-        await mine(100)
-
-        const withdrawAmount = await pool.balanceOf(user2.address)
-        // compAccrued is updated only when user do some activity. withdraw to trigger compAccrue update
-        await pool.connect(user2).withdraw(withdrawAmount)
-        const compAccruedBefore = await comptroller.compAccrued(strategy.address)
-        expect(compAccruedBefore).to.be.gt(0, 'comp accrued should be > 0 before rebalance')
-        await strategy.connect(governor).rebalance()
-        const compAccruedAfter = await comptroller.compAccrued(strategy.address)
-        expect(compAccruedAfter).to.be.equal(0, 'comp accrued should be 0 after rebalance')
-      })
-
-      it('Should liquidate COMP when claimed by external source', async function () {
-        const comp = await ethers.getContractAt('ERC20', Address.COMP)
-        await deposit(pool, collateralToken, 10, user2)
-        await strategy.connect(governor).rebalance()
-        await mine(100)
-        await comptroller.connect(user2).claimComp(strategy.address, [supplyCToken.address])
-        const afterClaim = await comp.balanceOf(strategy.address)
-        expect(afterClaim).to.be.gt('0', 'COMP balance should be > 0')
-        await supplyCToken.exchangeRateCurrent()
-        await strategy.connect(governor).rebalance()
-        const compBalance = await comp.balanceOf(strategy.address)
-        expect(compBalance).to.be.equal('0', 'COMP balance should be 0 on rebalance')
-      })
-    })
     context('Calculate APY', function () {
       // eslint-disable-next-line mocha/no-skipped-tests
       xit('Should calculate APY', async function () {

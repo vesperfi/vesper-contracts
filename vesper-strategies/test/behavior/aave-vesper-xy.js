@@ -5,17 +5,17 @@ const { ethers } = require('hardhat')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { BigNumber } = require('ethers')
-// Read addresses of Compound in Address object
-const {
-  address: { Aave: Address },
-} = require('vesper-commons/utils/chains').getChainData()
-// VesperAaveXY strategy specific tests
+const { adjustBalance } = require('vesper-commons/utils/balance')
+const { shouldTestStkAaveRewards } = require('./stk-aave-rewards')
+const Address = require('vesper-commons/utils/chains').getChainData().address
+
+// AaveV2VesperXY strategy specific tests
 function shouldBehaveLikeAaveVesperXY(strategyIndex) {
   let strategy, pool, collateralToken, borrowToken, vdToken
   let governor, user1, user2
   const maxBps = BigNumber.from('10000')
   async function assertCurrentBorrow() {
-    const aaveAddressProvider = await ethers.getContractAt('PoolAddressesProvider', Address.AddressProvider)
+    const aaveAddressProvider = await ethers.getContractAt('PoolAddressesProvider', Address.Aave.AddressProvider)
     const aaveLendingPool = await ethers.getContractAt('AaveLendingPool', await strategy.aaveLendingPool())
     const aaveOracle = await ethers.getContractAt('AaveOracle', await aaveAddressProvider.getPriceOracle())
     const strategyAccountData = await aaveLendingPool.getUserAccountData(strategy.address)
@@ -36,6 +36,10 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
     )
     return strategyAccountData
   }
+
+  // Aave rewards test
+  shouldTestStkAaveRewards(strategyIndex)
+
   describe('AaveV2VesperXy specific tests', function () {
     beforeEach(async function () {
       ;[governor, user1, user2] = this.users
@@ -120,6 +124,25 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
       accountDataBefore = accountDataAfter
       accountDataAfter = await assertCurrentBorrow()
       expect(accountDataAfter.totalDebtETH).to.be.gt(accountDataBefore.totalDebtETH, 'Borrowed is not correct')
+    })
+
+    it('Should claim VSP', async function () {
+      const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
+
+      // given
+      await deposit(pool, collateralToken, 100, user2)
+      await strategy.rebalance()
+      expect(await vsp.balanceOf(strategy.address)).eq(0)
+      // Send some VSP to strategy
+      await adjustBalance(vsp.address, strategy.address, ethers.utils.parseEther('10'))
+      expect(await vsp.balanceOf(strategy.address)).gt(0)
+
+      // when claim and swap rewards
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
+
+      // Verify no VSP left in strategy
+      expect(await vsp.balanceOf(strategy.address)).eq(0)
     })
   })
 }

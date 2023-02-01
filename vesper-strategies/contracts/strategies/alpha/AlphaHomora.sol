@@ -11,7 +11,7 @@ contract AlphaHomora is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     address public immutable rewardToken;
     ISafeBox internal immutable safeBox;
@@ -57,12 +57,17 @@ contract AlphaHomora is Strategy {
     // solhint-disable no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
 
-    function _convertToCollateral(uint256 _ibAmount) internal view returns (uint256) {
-        return ((_ibAmount * safeBox.cToken().exchangeRateStored()) / 1e18);
+    function _claimRewards() internal virtual override returns (address, uint256) {
+        // Claim is being done by claimReward() public function
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
-    function _convertToIb(uint256 _collateralAmount) internal view virtual returns (uint256) {
-        return (_collateralAmount * 1e18) / safeBox.cToken().exchangeRateStored();
+    function _convertToCollateral(uint256 ibAmount_) internal view returns (uint256) {
+        return ((ibAmount_ * safeBox.cToken().exchangeRateStored()) / 1e18);
+    }
+
+    function _convertToIb(uint256 collateralAmount_) internal view virtual returns (uint256) {
+        return (collateralAmount_ * 1e18) / safeBox.cToken().exchangeRateStored();
     }
 
     /// @notice Deposit collateral in Alpha
@@ -78,12 +83,6 @@ contract AlphaHomora is Strategy {
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Convert reward tokens into collateral tokens
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
-        }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + _convertToCollateral(safeBox.balanceOf(address(this)));
@@ -115,15 +114,15 @@ contract AlphaHomora is Strategy {
         _deposit(collateralToken.balanceOf(address(this)));
     }
 
-    function _setupCheck(address _pool) internal view virtual {
-        require(address(IVesperPool(_pool).token()) == address(safeBox.uToken()), "u-token-mismatch");
+    function _setupCheck(address pool_) internal view virtual {
+        require(address(IVesperPool(pool_).token()) == address(safeBox.uToken()), "u-token-mismatch");
     }
 
-    function _withdrawHere(uint256 _collateralAmount) internal override {
+    function _withdrawHere(uint256 collateralAmount_) internal override {
         uint256 _ibBalance = safeBox.balanceOf(address(this));
-        uint256 _ibToWithdraw = _convertToIb(_collateralAmount);
+        uint256 _ibToWithdraw = _convertToIb(collateralAmount_);
         // Inverse calculation to make sure required amount can be withdrawn
-        if (_collateralAmount > _convertToCollateral(_ibToWithdraw)) {
+        if (collateralAmount_ > _convertToCollateral(_ibToWithdraw)) {
             _ibToWithdraw += 1;
         }
         if (_ibToWithdraw > _ibBalance) {
@@ -137,7 +136,10 @@ contract AlphaHomora is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    function claimUTokenReward(uint256 amount_, bytes32[] memory proof_) external onlyKeeper {
-        safeBox.claim(amount_, proof_);
+    /**
+     * @notice onlyKeeper:: Claim reward tokens from safeBox.
+     */
+    function claimRewards(uint256 claimable_, bytes32[] memory proof_) external onlyKeeper {
+        safeBox.claim(claimable_, proof_);
     }
 }

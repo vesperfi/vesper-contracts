@@ -31,7 +31,6 @@ const slots = {
   [Address.FRAX]: 0,
   [Address.APE]: 0,
   [Address.MUSD]: 51,
-  [Address.Aave.stkAAVE]: 0,
   [Address.LMR]: 0,
   [Address.SHIB]: 0,
   [Address.Vesper.vaDAI]: 0,
@@ -62,18 +61,25 @@ const slots = {
 // Some tokens, specially rebase tokens, uses dynamic storage or multi storage hence
 // there is no clear balanceOf storage so using whale address for adjusting balance
 const whales = {
+  [Address.Aave.stkAAVE]: '0x4a49985b14bd0ce42c25efde5d8c379a48ab02f3',
   [Address.stETH]: '0x1982b2F5814301d4e9a8b0201555376e62F82428',
   [Address.Saddle.FRAXBP_LP]: '0xfb516cf3710fc6901f2266aaeb8834cf5e4e9558',
   [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
+  [Address.Alpha.ALPHA]: '0x580cE7B92F185D94511c9636869d28130702F68E',
+  [Address.Euler.EUL]: '0xc697BB6625D9f7AdcF0fbf0cbd4DcF50D8716cd3',
+  [Address.Stargate.STG]: '0x8A27E7e98f62295018611DD681Ec47C7d9FF633A',
+  [Address.rETH]: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
 
   // Avalanche
   [AvalancheAddress.Curve.CRV]: '0xabc000d88f23bb45525e447528dbf656a9d55bf5',
+  [AvalancheAddress.Stargate.STG]: '0x2B065946d41ADf43BBc3BaF8118ae94Ed19D7A40',
 
   // BSC
   [BscAddress.BUSD]: '0xf977814e90da44bfa03b6295a0616a897441acec',
   [BscAddress.WBNB]: '0x0ed7e52944161450477ee417de9cd3a859b14fd0',
   [BscAddress.Ellipsis.EPX]: '0xF977814e90dA44bFA03b6295A0616a897441aceC',
   [BscAddress.Alpaca.ALPACA]: '0xb7d85ab25b9d478961face285fa3d8aaecad24a9',
+  [BscAddress.Stargate.STG]: '0x6e690075eedBC52244Dd4822D9F7887d4f27442F',
 }
 
 /**
@@ -94,7 +100,7 @@ const getSlot = token => slots[getAddress(token)]
 async function getBalanceFromWhale(token, targetAddress, balance) {
   const whale = getWhale(token)
   if (whale === undefined) {
-    throw new Error(`Missing slot and whale, both, configuration for token ${token}. At least one is required`)
+    throw new Error(`Missing slot and whale, both, configuration for token ${token} . At least one is required`)
   }
   const tokenObj = await ethers.getContractAt('ERC20', token)
   const whaleBalance = await tokenObj.balanceOf(whale)

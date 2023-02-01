@@ -24,22 +24,19 @@ contract MakerVesper is Maker {
         require(address(IVesperPool(_vPool).token()) == DAI, "not-a-valid-dai-pool");
     }
 
-    /// @notice Claim VSP and convert to DAI
-    function harvestVSP() external {
-        address _poolRewards = IVesperPool(receiptToken).poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(VSP).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(VSP, DAI, _vspAmount);
-        }
-    }
-
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(DAI).safeApprove(address(receiptToken), _amount);
         IERC20(VSP).safeApprove(address(swapper), _amount);
+    }
+
+    /// @notice Claim VSP
+    function _claimRewards() internal virtual override returns (address, uint256) {
+        address _poolRewards = IVesperPool(receiptToken).poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        return (VSP, IERC20(VSP).balanceOf(address(this)));
     }
 
     function _depositDaiToLender(uint256 _amount) internal override {

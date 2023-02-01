@@ -5,10 +5,9 @@ const { ethers } = require('hardhat')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { BigNumber } = require('ethers')
+const { adjustBalance } = require('vesper-commons/utils/balance')
 
-const {
-  address: { Euler: Address },
-} = require('vesper-commons/utils/chains').getChainData()
+const Address = require('vesper-commons/utils/chains').getChainData().address
 
 // Euler_Vesper_Xy strategy specific tests
 function shouldBehaveLikeEulerVesperXY(strategyIndex) {
@@ -18,8 +17,8 @@ function shouldBehaveLikeEulerVesperXY(strategyIndex) {
   const EULER_CONFIG_FACTOR_SCALE = ethers.utils.parseUnits('4', '9')
 
   async function assertCurrentBorrow() {
-    const eulerExec = await ethers.getContractAt('IExec', Address.Exec)
-    const eulerMarkets = await ethers.getContractAt('IEulerMarkets', Address.Markets)
+    const eulerExec = await ethers.getContractAt('IExec', Address.Euler.Exec)
+    const eulerMarkets = await ethers.getContractAt('IEulerMarkets', Address.Euler.Markets)
     const eToken = await ethers.getContractAt('IEToken', await strategy.receiptToken())
 
     const collateralUnit = ethers.utils.parseUnits('1', await collateralToken.decimals())
@@ -136,6 +135,18 @@ function shouldBehaveLikeEulerVesperXY(strategyIndex) {
       borrowBefore = borrowAfter
       borrowAfter = await assertCurrentBorrow()
       expect(borrowAfter).to.be.gt(borrowBefore, 'Borrowed is not correct')
+    })
+
+    it('Should swap EUL rewards when claimed by external source', async function () {
+      const eul = await ethers.getContractAt('ERC20', Address.Euler.EUL, user2)
+      await deposit(pool, collateralToken, 10, user2)
+      await strategy.rebalance()
+      // Get some EUL at strategy address
+      await adjustBalance(eul.address, strategy.address, ethers.utils.parseEther('10'))
+      expect(await eul.balanceOf(strategy.address)).gt(0)
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
+      expect(await eul.balanceOf(strategy.address)).eq(0)
     })
   })
 }

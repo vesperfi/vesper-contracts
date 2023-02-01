@@ -42,28 +42,19 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
     return apyInBasisPoints / 100
   }
 
-  // TODO fix all the tests using rewards
-  // There is no rewardDistributor variable in strategy
   async function rewardAccrued() {
-    const strategyName = await strategy.NAME()
     let outcome
     if (getChain() === 'mainnet') {
-      if (strategyName.includes('Rari')) {
-        const rewardDistributor = await ethers.getContractAt(
-          'IRariRewardDistributor',
-          await strategy.rewardDistributor(),
-        )
-        const collateralsWithRewards = await rewardDistributor.getAllMarkets()
-        // return -1 when Rari pool do not have reward token
-        outcome = collateralsWithRewards.includes(collateralToken)
-          ? rewardDistributor.compAccrued(strategy.address)
-          : -1
-      }
       const comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
       return comptroller.compAccrued(strategy.address)
     } else if (chain === 'avalanche') {
       // avalanche
-      const rewardDistributor = await ethers.getContractAt('IRewardDistributor', await strategy.rewardDistributor())
+      let rewardDistributorAddress = await strategy.comptroller()
+      if ((await strategy.NAME()).includes('TraderJoe')) {
+        const comptroller = await ethers.getContractAt('ComptrollerMultiReward', await strategy.comptroller())
+        rewardDistributorAddress = await comptroller.rewardDistributor()
+      }
+      const rewardDistributor = await ethers.getContractAt('IRewardDistributor', rewardDistributorAddress)
       outcome = rewardDistributor.rewardAccrued(0, strategy.address)
     }
     return outcome
@@ -239,8 +230,7 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
       expect(borrowAfter).to.eq(0, 'Borrow amount should be = 0')
     })
 
-    // eslint-disable-next-line mocha/no-skipped-tests
-    xit('Should claim rewardToken when rebalance is called', async function () {
+    it('Should claim and swap rewards', async function () {
       await deposit(pool, collateralToken, 10, user1)
       await deposit(pool, collateralToken, 2, user2)
       await strategy.connect(governor).rebalance()
@@ -251,59 +241,56 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
       const withdrawAmount = await pool.balanceOf(user2.address)
       // reward accrued is updated only when user do some activity.
       // withdraw to trigger reward accrued update
-
       await pool.connect(user2).withdraw(withdrawAmount)
       const rewardAccruedBefore = await rewardAccrued()
       if (rewardAccruedBefore > 0) {
         // Assert only when reward tokens are available.
         expect(rewardAccruedBefore).to.gt(0, 'reward accrued should be > 0 before rebalance')
-        await strategy.connect(governor).rebalance()
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
         const rewardAccruedAfter = await rewardAccrued()
         expect(rewardAccruedAfter).to.equal(0, 'reward accrued should be 0 after rebalance')
       }
     })
 
-    // eslint-disable-next-line mocha/no-skipped-tests
-    xit('Should liquidate rewardToken when claimed by external source', async function () {
+    it('Should liquidate rewardToken when claimed by external source', async function () {
       const comptroller = await strategy.comptroller()
       const rewardToken = await ethers.getContractAt('IERC20', strategy.rewardToken())
       // using bigger amount for avalanche to generate significant rewards for wbtc pool
       const amount = chain === 'mainnet' ? 20 : 500
       await deposit(pool, collateralToken, amount, user2)
+      await deposit(pool, collateralToken, 10, user1)
       await strategy.connect(governor).rebalance()
       await mine(100)
-      const strategyName = await strategy.NAME()
+
+      const withdrawAmount = await pool.balanceOf(user1.address)
+      // reward accrued is updated only when user do some activity.
+      // withdraw to trigger reward accrued update
+      await pool.connect(user1).withdraw(withdrawAmount)
+      const _rewardAccrued = await rewardAccrued()
+      if (_rewardAccrued == 0) {
+        return
+      }
+
       if (chain === 'mainnet') {
-        if (strategyName.includes('Rari')) {
-          const rewardDistributor = await ethers.getContractAt(
-            'IRariRewardDistributor',
-            await strategy.rewardDistributor(),
-          )
-          const collateralsWithRewards = await rewardDistributor.getAllMarkets()
-          // return when Rari pool do not have reward token
-          if (!collateralsWithRewards.includes(collateralToken)) {
-            return
-          }
-        } else {
-          const comptrollerInstance = await ethers.getContractAt('Comptroller', comptroller)
-          await comptrollerInstance.connect(user2).claimComp(strategy.address, [token.address])
-        }
+        const comptrollerInstance = await ethers.getContractAt('Comptroller', comptroller)
+        await comptrollerInstance.connect(user2).claimComp(strategy.address, [token.address])
       } else if (chain === 'avalanche') {
         // avalanche case
         const comptrollerInstance = await ethers.getContractAt('ComptrollerMultiReward', comptroller)
-        await comptrollerInstance.connect(user2).claimReward(0, strategy.address)
-        await comptrollerInstance.connect(user2).claimReward(1, strategy.address) // AVAX
+        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](0, strategy.address)
+        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](1, strategy.address) // AVAX
         const avaxBalance = await ethers.provider.getBalance(strategy.address)
         // Not all platform offers AVAX rewards hence the check with gte
         expect(avaxBalance, 'Avax balance is wrong').to.gte('0')
       }
       const afterClaim = await rewardToken.balanceOf(strategy.address)
-      const _rewardAccrued = await rewardAccrued()
-      if (_rewardAccrued > 0) {
-        expect(afterClaim).to.gt('0', 'rewardToken balance should be > 0')
-      }
+      expect(afterClaim).to.gt('0', 'rewardToken balance should be > 0')
+
       await token.exchangeRateCurrent()
-      await strategy.connect(governor).rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
+
       const rewardTokenBalance = await rewardToken.balanceOf(strategy.address)
       expect(rewardTokenBalance).to.equal('0', 'rewardToken balance should be 0 on rebalance')
       if (chain === 'avalanche') {

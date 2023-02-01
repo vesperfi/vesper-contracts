@@ -1,0 +1,77 @@
+name: Mainnet Maker Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-maker.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-strategies/test/behavior/maker.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/maker/Maker*"
+      - "vesper-strategies/test/mainnet/maker/**/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vareth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Maker strategy for VARETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/maker/vesper/vareth.spec.js
+
+  vasteth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Maker strategy for VASTETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/maker/vesper/vasteth.spec.js
+
+  vawbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Maker strategy for VAWBTC pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/maker/vesper/vawbtc.spec.js
+
+ 

@@ -30,15 +30,22 @@ contract AaveV2VesperXy is AaveV2Xy {
         vsp = _vspAddress;
     }
 
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
+    /// @dev Claim AAVE and VSP and swap to collateral
+    function _claimAndSwapRewards() internal override {
+        // Claim and swap AAVE
+        uint256 _aaveAmount = _claimAave();
+        if (_aaveAmount > 0) {
+            _safeSwapExactInput(AAVE, address(collateralToken), _aaveAmount);
+        }
+
+        // Claim and swap VSP
         address _poolRewards = vPool.poolRewards();
         if (_poolRewards != address(0)) {
             IPoolRewards(_poolRewards).claimReward(address(this));
         }
         uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
         if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
+            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
         }
     }
 

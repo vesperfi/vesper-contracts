@@ -100,10 +100,8 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         expect(vPoolBalance).to.be.lte(depositAmount, `${poolName} balance of user is wrong`)
         expect(totalDebtOfStrategies).to.be.equal(totalDebt, `${collateralName} totalDebt of strategies is wrong`)
         expect(totalSupply).to.be.equal(vPoolBalance, `Total supply of ${poolName} is wrong`)
-        // There are scenarios when totalValue is equal or greater than depositAmount.
-        // But if there is rounding issue then instead of equal it can be 1 wei less.
-        // So it is safe to say that totalValue is equal or greater than depositAmount - 1
-        expect(totalValue, `Total value of ${poolName} is wrong`).to.gte(depositAmount.sub(1))
+        // There is possibility that result is off by few wei
+        expect(totalValue, `Total value of ${poolName} is wrong`).to.closeTo(depositAmount, 5)
       })
     })
 
@@ -617,15 +615,13 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           const rewardTokenBalanceBefore = await rewardToken.balanceOf(earnDrip.address)
           await deposit(20, user1)
           await rebalance(strategies)
-          // Time travel to generate earning
-          await time.increase(30 * 24 * 60 * 60)
-          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken)
           await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards
+          await time.increase(time.duration.days(1))
           await rebalance(strategies)
           const rewardTokenBalanceAfter = await rewardToken.balanceOf(earnDrip.address)
 
@@ -644,37 +640,32 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
               : await dripToken.balanceOf(user1.address)
 
           await rebalance(strategies)
-          // Time travel to generate earning
-          await time.increase(30 * 24 * 60 * 60)
-          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken)
           await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards
+          await time.increase(time.duration.days(1))
           await rebalance(strategies)
           await earnDrip.claimReward(user1.address)
           const dripTokenBalanceAfter =
             dripToken.address === NATIVE_TOKEN
               ? await ethers.provider.getBalance(user1.address)
               : await dripToken.balanceOf(user1.address)
-
           expect(dripTokenBalanceAfter).to.be.gt(dripTokenBalanceBefore, `dripToken balance in ${poolName} is wrong`)
         })
 
         it('Users should collect profits in dripToken on withdraw', async function () {
           await deposit(50, user1)
           await rebalance(strategies)
-          // Time travel to generate earning
-          await time.increase(30 * 24 * 60 * 60)
-          await mine(500)
           // Making 1 strategy profitable is enough, no need to loop over all strategies
           await makeStrategyProfitable(strategies[0].instance, dripToken)
           await makeStrategyProfitable(strategies[0].instance, collateralToken)
           await rebalance(strategies)
           // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
           // next rebalance, after 24 hours, will transfer those and drip as rewards
+          await time.increase(time.duration.days(1))
           await rebalance(strategies)
           const withdrawAmount = await pool.balanceOf(user1.address)
 

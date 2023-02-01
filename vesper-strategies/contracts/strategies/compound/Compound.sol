@@ -11,12 +11,11 @@ contract Compound is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
-    CToken internal cToken;
+    CToken internal immutable cToken;
 
-    // solhint-disable-next-line var-name-mixedcase
-    Comptroller public immutable COMPTROLLER;
+    Comptroller public immutable comptroller;
     address public rewardToken;
 
     constructor(
@@ -31,8 +30,7 @@ contract Compound is Strategy {
         cToken = CToken(_receiptToken);
         NAME = _name;
 
-        // Either can be address(0), for example in Rari Strategy
-        COMPTROLLER = Comptroller(_comptroller);
+        comptroller = Comptroller(_comptroller);
         rewardToken = _rewardToken;
     }
 
@@ -60,21 +58,11 @@ contract Compound is Strategy {
     function _beforeMigration(address _newStrategy) internal virtual override {}
 
     /// @notice Claim comp
-    function _claimRewards() internal virtual {
+    function _claimRewards() internal virtual override returns (address, uint256) {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
-        COMPTROLLER.claimComp(address(this), _markets);
-    }
-
-    /// @notice Claim COMP and convert COMP into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual {
-        if (rewardToken != address(0)) {
-            _claimRewards();
-            uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-            if (_rewardAmount > 0) {
-                _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
-            }
-        }
+        comptroller.claimComp(address(this), _markets);
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /**
@@ -93,8 +81,6 @@ contract Compound is Strategy {
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + cToken.balanceOfUnderlying(address(this));

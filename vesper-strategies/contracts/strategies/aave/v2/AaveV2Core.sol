@@ -86,23 +86,22 @@ abstract contract AaveV2Core {
      * @dev Not all collateral token has aave incentive
      */
     function _claimAave() internal returns (uint256) {
-        if (address(aaveIncentivesController) == address(0)) {
-            return 0;
-        }
         (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) = cooldownData();
-        if (_cooldownStart == 0 || block.timestamp > _unstakeEnd) {
+        if (address(aaveIncentivesController) != address(0) && (_cooldownStart == 0 || block.timestamp > _unstakeEnd)) {
             // claim stkAave when its first rebalance or unstake period passed.
             aaveIncentivesController.claimRewards(getAssets(), type(uint256).max, address(this));
         }
-        // Fetch and check again for next action.
-        (_cooldownStart, _cooldownEnd, _unstakeEnd) = cooldownData();
-        if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
-            stkAAVE.redeem(address(this), type(uint256).max);
-        } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
-            stkAAVE.cooldown();
-        }
+        if (stkAAVE.balanceOf(address(this)) > 0) {
+            // Fetch and check again for next action.
+            (_cooldownStart, _cooldownEnd, _unstakeEnd) = cooldownData();
+            if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
+                stkAAVE.redeem(address(this), type(uint256).max);
+            } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
+                stkAAVE.cooldown();
+            }
 
-        stkAAVE.claimRewards(address(this), type(uint256).max);
+            stkAAVE.claimRewards(address(this), type(uint256).max);
+        }
         return IERC20(AAVE).balanceOf(address(this));
     }
 

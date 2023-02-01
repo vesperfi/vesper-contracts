@@ -53,10 +53,12 @@ contract DotDot is Ellipsis {
         ellipsisLp.safeApprove(address(LP_DEPOSITOR), amount_);
     }
 
-    function _claimRewards() internal override {
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal override returns (address, uint256) {
         address[] memory _tokens = new address[](1);
         _tokens[0] = address(ellipsisLp);
         LP_DEPOSITOR.claim(address(this), _tokens, 0);
+        return (address(0), 0);
     }
 
     /**
@@ -93,10 +95,13 @@ contract DotDot is Ellipsis {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @dev DotDot can add new rewards. This method refresh list.
+    /**
+     * @notice DotDot can add new rewards. This method refresh list.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     */
     function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Claims all rewards, if any, before updating the reward list
-        _claimRewardsAndConvertTo(address(collateralToken));
+        // Before updating the reward list, claim rewards and swap into collateral.
+        _claimAndSwapRewards();
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);

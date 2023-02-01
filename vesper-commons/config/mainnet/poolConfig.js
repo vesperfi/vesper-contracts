@@ -204,6 +204,12 @@ const PoolConfig = {
     setup: { ...setup },
     rewards: { ...rewards },
   },
+  VARETH: {
+    contractName: 'VPool',
+    poolParams: ['vaRETH Pool', 'vaRETH', Address.rETH],
+    setup: { ...setup },
+    rewards: { ...rewards },
+  },
 }
 
 module.exports = Object.freeze(PoolConfig)

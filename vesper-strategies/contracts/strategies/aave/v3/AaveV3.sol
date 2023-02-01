@@ -12,7 +12,7 @@ contract AaveV3 is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
     PoolAddressesProvider public immutable aaveAddressProvider;
 
     constructor(
@@ -60,13 +60,13 @@ contract AaveV3 is Strategy {
     //solhint-disable no-empty-blocks
     function _beforeMigration(address _newStrategy) internal override {}
 
-    /// @notice Claim all rewards and convert to _toToken.
-    function _claimRewardsAndConvertTo(address _toToken) internal {
+    /// @dev Claim all rewards and convert to collateral.
+    function _claimAndSwapRewards() internal override {
         (address[] memory _tokens, uint256[] memory _amounts) = AaveV3Incentive._claimRewards(receiptToken);
         uint256 _length = _tokens.length;
         for (uint256 i; i < _length; ++i) {
             if (_amounts[i] > 0) {
-                _safeSwapExactInput(_tokens[i], _toToken, _amounts[i]);
+                _safeSwapExactInput(_tokens[i], address(collateralToken), _amounts[i]);
             }
         }
     }
@@ -74,9 +74,6 @@ contract AaveV3 is Strategy {
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Claim any reward we have.
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
 
