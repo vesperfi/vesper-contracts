@@ -1597,6 +1597,22 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
   },
 
+  Maker_Vesper_RETH: {
+    contract: 'MakerVesper',
+    type: StrategyTypes.VESPER_MAKER,
+    constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
+      swapper,
+      receiptToken: Address.Vesper.vaDAI,
+      collateralType: ethers.utils.formatBytes32String('RETH-A'),
+      highWater: 250,
+      lowWater: 225,
+      strategyName: 'Maker_Vesper_RETH',
+    },
+    config: { ...config },
+    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_RETH_A } },
+  },
+
   Maker_Vesper_LINK: {
     contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,

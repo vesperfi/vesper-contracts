@@ -46,6 +46,10 @@ function shouldBehaveLikeMakerStrategy(index) {
     })
 
     it('Should claim and swap VSP for collateral', async function () {
+      // rETH has LP in Uni V3 and VSP has in V2, so there is no way to swap.
+      if (collateralToken.address === Address.rETH) {
+        return
+      }
       const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
       // given
       await deposit(pool, collateralToken, 100, user2)
@@ -137,7 +141,7 @@ function shouldBehaveLikeMakerStrategy(index) {
       })
 
       it('Should pay back all debt if debt is below dust.', async function () {
-        await deposit(pool, collateralToken, 20, user1)
+        await deposit(pool, collateralToken, 40, user1)
         const withdrawAmount = (await pool.balanceOf(user1.address)).sub('100').toString()
         await strategy.rebalance()
 
