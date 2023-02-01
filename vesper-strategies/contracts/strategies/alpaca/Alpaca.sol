@@ -13,7 +13,7 @@ contract Alpaca is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     IVault public immutable vault;
     IFairLaunch public immutable fairLaunch;

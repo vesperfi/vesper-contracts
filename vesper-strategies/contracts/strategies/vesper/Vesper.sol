@@ -11,7 +11,7 @@ abstract contract Vesper is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     address internal immutable vsp;
 
