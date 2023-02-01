@@ -1,4 +1,4 @@
-name: Mainnet Vesper Strategy
+name: Mainnet Vesper Earn Strategy
 on:
   pull_request:
     paths:
@@ -30,7 +30,38 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  earn-vafrax-fraxbp-test:
+
+  vedai-wbtc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Earn Vesper DAI WBTC strategy
+        run: npm test -- --scope vesper-strategies -- test/mainnet/vesper/earn/vedai-wbtc.spec.js
+
+  veeth-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Earn Vesper ETH DAIP strategy
+        run: npm test -- --scope vesper-strategies -- test/mainnet/vesper/earn/veeth-dai.spec.js
+
+  vefrax-fraxbp-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
@@ -43,4 +74,19 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Earn Vesper FRAX FRAXBP strategy
-        run: npm test -- --scope vesper-strategies -- test/mainnet/vesper/earn/frax-fraxbp.spec.js
+        run: npm test -- --scope vesper-strategies -- test/mainnet/vesper/earn/vefrax-fraxbp.spec.js
+
+  vewbtc-dai-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Earn Vesper WBTC DAI strategy
+        run: npm test -- --scope vesper-strategies -- test/mainnet/vesper/earn/vewbtc-dai.spec.js

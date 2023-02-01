@@ -9,8 +9,9 @@ import "./Strategy.sol";
 
 abstract contract Earn is Strategy {
     using SafeERC20 for IERC20;
+    using SafeERC20 for IVesperPool;
 
-    address public immutable dripToken;
+    IERC20 public immutable dripToken;
 
     uint256 public dripPeriod = 48 hours;
     uint256 public totalEarned; // accounting total coin earned after fee. This amount is not reported to pool.
@@ -19,13 +20,15 @@ abstract contract Earn is Strategy {
 
     constructor(address dripToken_) {
         require(dripToken_ != address(0), "dripToken-zero");
-        dripToken = dripToken_;
+        dripToken = IERC20(dripToken_);
     }
 
     /// @dev Converts excess collateral earned to drip token
     function _convertCollateralToDrip(uint256 _collateralAmount) internal virtual returns (uint256 _amountOut) {
         if (_collateralAmount > 0) {
-            _amountOut = _swapExactInput(address(collateralToken), dripToken, _collateralAmount);
+            _swapExactInput(address(collateralToken), address(dripToken), _collateralAmount);
+            // balanceOf drip token will be considered as drip amount
+            _amountOut = dripToken.balanceOf(address(this));
         }
     }
 
@@ -36,17 +39,17 @@ abstract contract Earn is Strategy {
 
             address _dripContract = IVesperPool(pool).poolRewards();
             // Fetches which rewardToken collects the drip
-            address _growPool = IEarnDrip(_dripContract).growToken();
+            IVesperPool _growPool = IVesperPool(IEarnDrip(_dripContract).growToken());
             // Checks that the Grow Pool supports dripToken as underlying
-            if (_growPool != address(0) && address(IVesperPool(_growPool).token()) == dripToken) {
-                uint256 _growPoolBalanceBefore = IERC20(_growPool).balanceOf(address(this));
-                IVesperPool(_growPool).deposit(earned_);
-                uint256 _growPoolShares = IERC20(_growPool).balanceOf(address(this)) - _growPoolBalanceBefore;
-                IERC20(_growPool).safeTransfer(_dripContract, _growPoolShares);
-                IEarnDrip(_dripContract).notifyRewardAmount(_growPool, _growPoolShares, dripPeriod);
+            if (address(_growPool) != address(0) && _growPool.token() == dripToken) {
+                uint256 _growPoolBalanceBefore = _growPool.balanceOf(address(this));
+                _growPool.deposit(earned_);
+                uint256 _growPoolShares = _growPool.balanceOf(address(this)) - _growPoolBalanceBefore;
+                _growPool.safeTransfer(_dripContract, _growPoolShares);
+                IEarnDrip(_dripContract).notifyRewardAmount(address(_growPool), _growPoolShares, dripPeriod);
             } else {
-                IERC20(dripToken).safeTransfer(_dripContract, earned_);
-                IEarnDrip(_dripContract).notifyRewardAmount(dripToken, earned_, dripPeriod);
+                dripToken.safeTransfer(_dripContract, earned_);
+                IEarnDrip(_dripContract).notifyRewardAmount(address(dripToken), earned_, dripPeriod);
             }
         }
     }
@@ -75,9 +78,9 @@ abstract contract Earn is Strategy {
         address _growPool = IEarnDrip(IVesperPool(pool).poolRewards()).growToken();
         // Checks that the Grow Pool supports dripToken as underlying
         if (_growPool != address(0)) {
-            require(address(IVesperPool(_growPool).token()) == dripToken, "invalid-grow-pool");
-            IERC20(dripToken).safeApprove(_growPool, 0);
-            IERC20(dripToken).safeApprove(_growPool, MAX_UINT_VALUE);
+            require(IVesperPool(_growPool).token() == dripToken, "invalid-grow-pool");
+            dripToken.safeApprove(_growPool, 0);
+            dripToken.safeApprove(_growPool, MAX_UINT_VALUE);
         }
     }
 

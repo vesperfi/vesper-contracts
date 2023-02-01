@@ -48,15 +48,16 @@ contract CompoundXy is CompoundXyCore {
         }
     }
 
-    /// @notice Claim rewardToken and convert rewardToken into collateral token.
-    function _claimRewardsAndConvertTo(address _toToken) internal virtual override {
+    /// @dev Claim rewardToken and convert rewardToken into collateral token.
+    /// Overriding _claimAndSwapRewards will help child contract otherwise override _claimReward.
+    function _claimAndSwapRewards() internal virtual override {
         address[] memory _markets = new address[](2);
         _markets[0] = address(supplyCToken);
         _markets[1] = address(borrowCToken);
         comptroller.claimComp(address(this), _markets);
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
         if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, _toToken, _rewardAmount);
+            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
         }
     }
 

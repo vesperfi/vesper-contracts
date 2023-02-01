@@ -23,7 +23,7 @@ contract Ellipsis is Strategy {
         META_4_POOL
     }
 
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint256 internal constant MAX_BPS = 10_000;
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x31D236483A15F9B9dD60b36D4013D75e9dbF852b);
@@ -143,7 +143,23 @@ contract Ellipsis is Strategy {
         _amountOutMin = (masterOracle.quote(tokenIn_, tokenOut_, amountIn_) * (MAX_BPS - ellipsisSlippage)) / MAX_BPS;
     }
 
-    function _claimRewards() internal virtual {
+    /**
+     * @dev Ellipsis pool may have more than one reward token.
+     */
+    function _claimAndSwapRewards() internal override {
+        _claimRewards();
+        uint256 _rewardTokensLength = rewardTokens.length;
+        for (uint256 i; i < _rewardTokensLength; ++i) {
+            address _rewardToken = rewardTokens[i];
+            uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
+            if (_amountIn > 0) {
+                _safeSwapExactInput(_rewardToken, address(collateralToken), _amountIn);
+            }
+        }
+    }
+
+    /// @dev Return values are not being used hence returning 0
+    function _claimRewards() internal virtual override returns (address, uint256) {
         address[] memory _tokens = new address[](1);
         _tokens[0] = address(ellipsisLp);
         LP_STAKING.claim(address(this), _tokens);
@@ -151,25 +167,7 @@ contract Ellipsis is Strategy {
         if (rewardTokens.length > 1) {
             ellipsisLp.getReward();
         }
-    }
-
-    /**
-     * @notice Ellipsis pool may have more than one reward token. Child contract should override _claimRewards
-     */
-    function _claimRewardsAndConvertTo(address tokenOut_) internal virtual {
-        _claimRewards();
-        uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; ++i) {
-            address _rewardToken = rewardTokens[i];
-            uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
-            if (_amountIn > 0) {
-                // solhint-disable-next-line no-empty-blocks
-                try swapper.swapExactInput(_rewardToken, tokenOut_, _amountIn, 1, address(this)) {} catch {
-                    // Note: It may fail under some conditions
-                    // For instance: 'UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT'
-                }
-            }
-        }
+        return (address(0), 0);
     }
 
     function _deposit() internal {
@@ -220,8 +218,6 @@ contract Ellipsis is Strategy {
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _strategyDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         int128 _i = SafeCast.toInt128(int256(collateralIdx));
         uint256 _lpHere = lpBalanceHere();
@@ -342,10 +338,16 @@ contract Ellipsis is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @notice Ellipsis may update reward token on the fly hence update reward token here too.
-    /// @dev LpStaking only distribute EPX rewards other rewards can be distributed using lp
-    /// contract. It is quite possible to update rewardToken in LP by Ellipsis.
+    /**
+     * @notice Ellipsis may update reward token on the fly hence update reward token here too.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     * @dev LpStaking only distribute EPX rewards other rewards can be distributed using lp
+     * contract. It is quite possible to update rewardToken in LP by Ellipsis.
+     * @param rewardTokens_ Array of new reward tokens
+     */
     function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
+        // Claim rewards before updating the reward list.
+        _claimAndSwapRewards();
         rewardTokens = rewardTokens_;
         address _receiptToken = receiptToken;
         uint256 _rewardTokensLength = rewardTokens.length;

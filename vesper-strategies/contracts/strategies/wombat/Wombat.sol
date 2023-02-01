@@ -11,7 +11,7 @@ contract Wombat is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     IWombatPool public immutable wombatPool;
     IMasterWombat public immutable masterWombat;
@@ -45,6 +45,10 @@ contract Wombat is Strategy {
         wombatPool = wombatPool_;
         wombatSlippage = 1; // 0.01% Slippage
         NAME = name_;
+    }
+
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
     }
 
     function getStakedLp() public view returns (uint256 _lpStaked) {
@@ -83,8 +87,8 @@ contract Wombat is Strategy {
         _unstakeLP(getStakedLp());
     }
 
-    /// @notice Claim WOM and convert WOM into given token.
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {
+    /// @notice Claim rewards and swap into collateral.
+    function _claimAndSwapRewards() internal override {
         // Deposit 0 amount will trigger reward claim
         masterWombat.deposit(wombatPoolId, 0);
         uint256 _len = rewardTokens.length;
@@ -92,7 +96,7 @@ contract Wombat is Strategy {
             address _rewardToken = rewardTokens[i];
             uint256 _rewardAmount = IERC20(_rewardToken).balanceOf(address(this));
             if (_rewardAmount > 0) {
-                _safeSwapExactInput(_rewardToken, toToken_, _rewardAmount);
+                _safeSwapExactInput(_rewardToken, address(collateralToken), _rewardAmount);
             }
         }
     }
@@ -146,8 +150,6 @@ contract Wombat is Strategy {
     function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + _convertLpToCollateral(getTotalLp());
@@ -207,7 +209,7 @@ contract Wombat is Strategy {
     /// @notice Wombat protocol may have extra rewards and can be updated anytime.
     function refreshRewardTokens() external virtual onlyGovernor {
         // Claims all rewards, if any, before updating the reward list
-        _claimRewardsAndConvertTo(address(collateralToken));
+        _claimAndSwapRewards();
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);

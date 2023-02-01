@@ -16,7 +16,7 @@ contract AaveV3Xy is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
@@ -84,7 +84,9 @@ contract AaveV3Xy is Strategy {
         try AToken(receiptToken).getIncentivesController() returns (address _aaveIncentivesController) {
             address[] memory _rewardTokens = AaveIncentivesController(_aaveIncentivesController).getRewardsList();
             for (uint256 i; i < _rewardTokens.length; ++i) {
-                IERC20(_rewardTokens[i]).safeApprove(_swapper, _amount);
+                if (_rewardTokens[i] != address(collateralToken) && _rewardTokens[i] != borrowToken) {
+                    IERC20(_rewardTokens[i]).safeApprove(_swapper, _amount);
+                }
             }
             //solhint-disable no-empty-blocks
         } catch {}
@@ -168,13 +170,14 @@ contract AaveV3Xy is Strategy {
         }
     }
 
-    /// @notice Claim all rewards and convert to _toToken.
-    function _claimRewardsAndConvertTo(address _toToken) internal {
+    /// @dev Claim all rewards and convert to collateral.
+    /// Overriding _claimAndSwapRewards will help child contract otherwise override _claimReward.
+    function _claimAndSwapRewards() internal virtual override {
         (address[] memory _tokens, uint256[] memory _amounts) = AaveV3Incentive._claimRewards(receiptToken);
         uint256 _length = _tokens.length;
         for (uint256 i; i < _length; ++i) {
-            if (_amounts[i] > 0) {
-                _safeSwapExactInput(_tokens[i], _toToken, _amounts[i]);
+            if (_amounts[i] > 0 && _tokens[i] != address(collateralToken)) {
+                _safeSwapExactInput(_tokens[i], address(collateralToken), _amounts[i]);
             }
         }
     }
@@ -202,16 +205,13 @@ contract AaveV3Xy is Strategy {
     }
 
     /**
-     * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _borrowed = vdToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
         AaveLendingPool _aaveLendingPool = AaveLendingPool(aaveAddressProvider.getPool());
-        // Claim rewards and convert to collateral token
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         // _borrow increases every block. Convert collateral to borrowToken.
         if (_borrowed > _investedBorrowBalance) {

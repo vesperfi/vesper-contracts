@@ -16,7 +16,7 @@ contract AaveV2Leverage is Strategy, AaveV2Core, FlashLoanHelper {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowRatio = 5_000; // 50%
@@ -161,12 +161,9 @@ contract AaveV2Leverage is Strategy, AaveV2Core, FlashLoanHelper {
         }
     }
 
-    /// @notice Claim Aave rewards and convert to toToken_.
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {
-        uint256 _rewardAmount = _claimAave();
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
-        }
+    /// @dev Claim Aave rewards
+    function _claimRewards() internal override returns (address, uint256) {
+        return (AAVE, _claimAave());
     }
 
     /// @notice Deposit collateral in Aave and adjust borrow position
@@ -239,15 +236,11 @@ contract AaveV2Leverage is Strategy, AaveV2Core, FlashLoanHelper {
     }
 
     /**
-     * @notice Generate report for pools accounting and also send profit and any payback to pool.
-     * @dev Claim rewardToken and convert to collateral.
+     * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
     function _generateReport() internal returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         (, , , , uint256 _totalDebt, , , uint256 _debtRatio, ) = IVesperPool(pool).strategy(address(this));
-
-        // Claim rewardToken and convert to collateral token
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         (uint256 _supply, uint256 _borrow) = getPosition();
 

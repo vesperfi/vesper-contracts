@@ -12,7 +12,7 @@ const { shouldBehaveLikeAaveLeverageStrategy } = require('./aave-leverage')
 const { shouldBehaveLikeCrvStrategy } = require('./curve')
 const { shouldBehaveLikeConvexStrategy } = require('./convex')
 const { shouldBehaveLikeConvexForFraxStrategy } = require('./convex-for-frax')
-const { shouldBehaveLikeMakerStrategy } = require('./maker-strategy')
+const { shouldBehaveLikeMakerStrategy } = require('./maker')
 const { shouldBehaveLikeEarnVesperStrategy } = require('./earn-vesper-strategy')
 const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
 const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
@@ -22,11 +22,12 @@ const { shouldBehaveLikeEllipsisStrategy } = require('./ellipsis')
 const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
 const { shouldBehaveLikeWombatStrategy } = require('./wombat')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
+const { shouldTestAlphaHomoraRewards } = require('./alpha-homora-rewards')
+const { shouldTestStargateRewards } = require('./stargate-rewards')
 
-const { deposit } = require('vesper-commons/utils/poolOps')
+const { deposit, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const StrategyType = require('vesper-commons/utils/strategyTypes')
-const { adjustBalance } = require('vesper-commons/utils/balance')
 const ZERO_ADDRESS = ethers.constants.AddressZero
 function shouldBehaveLikeStrategy(index, type, strategyName) {
   let strategy, pool, feeCollector, collateralToken, accountant
@@ -50,6 +51,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.DOT_DOT]: shouldBehaveLikeDotDotStrategy,
     [StrategyType.WOMBAT]: shouldBehaveLikeWombatStrategy,
     [StrategyType.ALPACA]: shouldBehaveLikeAlpacaStrategy,
+    [StrategyType.ALPHA_HOMORA]: shouldTestAlphaHomoraRewards,
+    [StrategyType.STARGATE]: shouldTestStargateRewards,
   }
 
   const shouldBehaveLikeSpecificStrategy = behaviors[type]
@@ -159,9 +162,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         expect(totalDebtBefore, 'Total debt should be zero').to.be.equal(0)
         await strategy.rebalance()
         await mine(50)
-        // Send some collateral to strategy to generate profit.
-        const amount = ethers.utils.parseUnits('1000', await collateralToken.decimals())
-        await adjustBalance(collateralToken.address, strategy.address, amount)
+        // Generate profit
+        await makeStrategyProfitable(strategy, collateralToken)
         const data = await strategy.callStatic.rebalance()
         if ((await pool.name()).includes('Earn')) {
           // Earn strategies don't generate profit

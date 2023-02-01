@@ -29,12 +29,12 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
       collateralDecimal = await this.collateralToken.decimals()
       token = await getStrategyToken(this.strategies[strategyIndex])
       comp = await ethers.getContractAt('ERC20', await strategy.rewardToken())
-      comptroller = await ethers.getContractAt('Comptroller', await strategy.COMPTROLLER())
+      comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
     })
 
-    it('Should claim COMP when rebalance is called', async function () {
+    it('Should claim COMP', async function () {
       if (getChain() === 'mainnet' && (await comptroller.compSupplySpeeds(token.address)).gt(0)) {
-        await deposit(pool, collateralToken, 1, user1)
+        await deposit(pool, collateralToken, 100, user1)
         await strategy.rebalance()
         await token.exchangeRateCurrent()
         await helpers.mine(100)
@@ -42,10 +42,12 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
         // compAccrued is updated only when user do some activity. withdraw to trigger compAccrue update
         await pool.connect(user1).withdraw(withdrawAmount)
         const compAccruedBefore = await comptroller.compAccrued(strategy.address)
-        await strategy.rebalance()
+        expect(compAccruedBefore).gt(0, 'comp accrued should be > 0 before rebalance')
+
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
         const compAccruedAfter = await comptroller.compAccrued(strategy.address)
-        expect(compAccruedBefore).to.be.gt(0, 'comp accrued should be > 0 before rebalance')
-        expect(compAccruedAfter).to.be.equal(0, 'comp accrued should be 0 after rebalance')
+        expect(compAccruedAfter).eq(0, 'comp accrued should be 0 after rebalance')
       }
     })
 
@@ -59,7 +61,8 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
         expect(afterSwap).to.be.gt(0, 'COMP balance should increase on strategy address')
         await helpers.mine(100)
         await token.exchangeRateCurrent()
-        await strategy.rebalance()
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
         const compBalance = await comp.balanceOf(strategy.address)
         expect(compBalance).to.be.equal('0', 'COMP balance should be 0 on rebalance')
       }

@@ -44,6 +44,7 @@ async function shouldMigrateStrategies() {
     const amountBefore = await pool.balanceOf(user2.address)
     expect(amountBefore).to.be.gt(0, 'failed to deposit in pool')
     await rebalanceStrategy(newStrategy)
+    await increaseTimeIfNeeded(newStrategy)
     await pool.connect(user2).withdraw(amountBefore)
     const amountAfter = await pool.balanceOf(user2.address)
     expect(amountAfter).to.be.lt(amountBefore, "User's pool amount should decrease after withdraw")

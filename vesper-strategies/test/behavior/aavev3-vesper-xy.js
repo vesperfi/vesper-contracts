@@ -6,6 +6,8 @@ const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { BigNumber } = require('ethers')
 const { getStrategyToken } = require('vesper-commons/utils/setup')
+const { getChainData } = require('vesper-commons/utils/chains')
+const Address = getChainData().address
 
 // Aave V3 Vesper XY strategy specific tests
 function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
@@ -132,6 +134,22 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
       borrowBefore = borrowAfter
       borrowAfter = await assertCurrentBorrow()
       expect(borrowAfter).to.be.gt(borrowBefore, 'Borrowed is not correct')
+    })
+
+    it('Should claim and swap rewards to collateral', async function () {
+      const wavax = await ethers.getContractAt('ERC20', Address.NATIVE_TOKEN)
+      await deposit(pool, collateralToken, 10, user2)
+      await strategy.rebalance()
+      await mine(100)
+      const wavaxBefore = await wavax.balanceOf(strategy.address)
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
+      const wavaxAfter = await wavax.balanceOf(strategy.address)
+      if (collateralToken.address == wavax.address) {
+        expect(wavaxAfter).gt(wavaxBefore)
+      } else {
+        expect(wavaxAfter).eq(0)
+      }
     })
   })
 }

@@ -117,6 +117,38 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Venus_Vesper_Xy_BNB_BUSD: {
+    contract: 'VenusVesperXyBNB',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Venus.Unitroller,
+      rewardToken: Address.Venus.XVS,
+      receiptToken: Address.Venus.vBNB,
+      borrowCToken: Address.Venus.vBUSD,
+      vPool: Address.Vesper.vaBUSD,
+      strategyName: 'Venus_Vesper_Xy_BNB_BUSD',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Venus_Vesper_Xy_BUSD_BNB: {
+    contract: 'VenusVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Venus.Unitroller,
+      rewardToken: Address.Venus.XVS,
+      receiptToken: Address.Venus.vBUSD,
+      borrowCToken: Address.Venus.vBNB,
+      vPool: Address.Vesper.vaBNB,
+      strategyName: 'Venus_Vesper_Xy_BUSD_BNB',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Wombat_BUSD: {
     contract: 'Wombat',
     type: StrategyTypes.WOMBAT,

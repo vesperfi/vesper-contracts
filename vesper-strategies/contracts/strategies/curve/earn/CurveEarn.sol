@@ -39,6 +39,14 @@ contract CurveEarn is Curve, Earn {
         Curve._approveToken(_amount);
     }
 
+    function _claimAndSwapRewards() internal override(Curve, Strategy) {
+        return Curve._claimAndSwapRewards();
+    }
+
+    function _claimRewards() internal override(Curve, Strategy) returns (address, uint256) {
+        return Curve._claimRewards();
+    }
+
     function _rebalance()
         internal
         override(Strategy, Curve)

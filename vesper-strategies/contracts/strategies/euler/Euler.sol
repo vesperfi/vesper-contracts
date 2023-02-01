@@ -9,7 +9,7 @@ contract Euler is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     IEToken internal immutable eToken;
     address internal immutable euler;
@@ -25,7 +25,7 @@ contract Euler is Strategy {
     ) Strategy(pool_, swapper_, address(0)) {
         require(euler_ != address(0), "euler-protocol-address-is-null");
         require(eulerMarkets_ != address(0), "market-address-is-null");
-        receiptToken = IEulerMarkets(eulerMarkets_).underlyingToEToken(address(collateralToken));
+        receiptToken = _fetchReceiptToken(eulerMarkets_);
         require(receiptToken != address(0), "market-does-not-exist");
         eToken = IEToken(receiptToken);
         euler = euler_;
@@ -37,7 +37,8 @@ contract Euler is Strategy {
     }
 
     function tvl() external view override returns (uint256) {
-        return eToken.balanceOfUnderlying(address(this)) + collateralToken.balanceOf(address(this));
+        return
+            _getUnwrappedAmount(eToken.balanceOfUnderlying(address(this))) + collateralToken.balanceOf(address(this));
     }
 
     /// @dev Approve all required tokens
@@ -49,8 +50,17 @@ contract Euler is Strategy {
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
 
-    //solhint-disable-next-line no-empty-blocks
-    function _claimRewardsAndConvertTo(address toToken_) internal virtual {}
+    function _fetchReceiptToken(address eulerMarkets_) internal view virtual returns (address) {
+        return IEulerMarkets(eulerMarkets_).underlyingToEToken(address(collateralToken));
+    }
+
+    function _getWrappedAmount(uint256 unwrappedAmount_) internal view virtual returns (uint256) {
+        return unwrappedAmount_;
+    }
+
+    function _getUnwrappedAmount(uint256 wrappedAmount_) internal view virtual returns (uint256 _unwrapped) {
+        return wrappedAmount_;
+    }
 
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
@@ -59,10 +69,8 @@ contract Euler is Strategy {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
-        _claimRewardsAndConvertTo(address(collateralToken));
-
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
-        uint256 _totalCollateral = _collateralHere + eToken.balanceOfUnderlying(address(this));
+        uint256 _totalCollateral = _collateralHere + _getUnwrappedAmount(eToken.balanceOfUnderlying(address(this)));
         if (_totalCollateral > _totalDebt) {
             _profit = _totalCollateral - _totalDebt;
         } else {
@@ -84,17 +92,27 @@ contract Euler is Strategy {
         _collateralHere = collateralToken.balanceOf(address(this));
 
         if (_collateralHere > 0) {
-            eToken.deposit(SUB_ACCOUNT_ID, _collateralHere);
+            eToken.deposit(SUB_ACCOUNT_ID, _wrap(_collateralHere));
         }
     }
 
-    /// @dev Withdraw collateral here. Do not transfer to pool
+    function _unwrap(uint256 wrappedAmount_) internal virtual returns (uint256) {
+        return wrappedAmount_;
+    }
+
+    function _wrap(uint256 unwrappedAmount_) internal virtual returns (uint256) {
+        return unwrappedAmount_;
+    }
+
+    /// @dev Withdraw collateral here.
     function _withdrawHere(uint256 _amount) internal override {
         // Get minimum of _amount and collateral invested and available liquidity
         uint256 _withdrawAmount = Math.min(
-            _amount,
+            _getWrappedAmount(_amount),
             Math.min(eToken.balanceOfUnderlying(address(this)), eToken.totalSupplyUnderlying())
         );
         eToken.withdraw(SUB_ACCOUNT_ID, _withdrawAmount);
+        // Unwrap wrapped tokens
+        _unwrap(_withdrawAmount);
     }
 }

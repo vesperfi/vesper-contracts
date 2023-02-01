@@ -957,7 +957,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 1500, // 15%
+      crvSlippage: 2500, // 25%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1336,7 +1336,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 1500, // 15%
+      crvSlippage: 2500, // 25%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1354,7 +1354,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 1500, // 15%
+      crvSlippage: 2500, // 25%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1608,6 +1608,22 @@ const StrategyConfig = {
     },
     config: { ...config },
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
+  },
+
+  Maker_Vesper_RETH: {
+    contract: 'MakerVesper',
+    type: StrategyTypes.VESPER_MAKER,
+    constructorArgs: {
+      cm: Address.Vesper.COLLATERAL_MANAGER,
+      swapper,
+      receiptToken: Address.Vesper.vaDAI,
+      collateralType: ethers.utils.formatBytes32String('RETH-A'),
+      highWater: 250,
+      lowWater: 225,
+      strategyName: 'Maker_Vesper_RETH',
+    },
+    config: { ...config },
+    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_RETH_A } },
   },
 
   Maker_Vesper_LINK: {
@@ -1977,6 +1993,18 @@ const StrategyConfig = {
       euler: Address.Euler.Euler,
       eulerMarkets: Address.Euler.Markets,
       strategyName: 'Euler_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Euler_STETH: {
+    contract: 'EulerSTETH',
+    type: StrategyTypes.EULER,
+    constructorArgs: {
+      swapper,
+      euler: Address.Euler.Euler,
+      eulerMarkets: Address.Euler.Markets,
+      strategyName: 'Euler_STETH',
     },
     config: { ...config },
     setup: { ...setup },

@@ -14,7 +14,7 @@ abstract contract Maker is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     address internal constant DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     ICollateralManager public immutable cm;
@@ -120,7 +120,7 @@ abstract contract Maker is Strategy {
      * @notice Convert amount to wrapped (i.e. asset to shares)
      * @dev Only used when dealing with wrapped token as collateral (e.g. wstETH)
      */
-    function _convertToWrapped(uint256 _amount) internal virtual returns (uint256 _wrappedAmount) {
+    function _convertToWrapped(uint256 _amount) internal view virtual returns (uint256 _wrappedAmount) {
         _wrappedAmount = _amount;
     }
 

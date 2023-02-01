@@ -33,8 +33,11 @@ function shouldBehaveLikeWombatStrategy(strategyIndex) {
       expect(await strategy.getStakedLp()).gt(0)
     })
 
-    it('Should claim all rewards during rebalance', async function () {
+    it('Should claim and swap all reward tokens', async function () {
       const masterWombat = await ethers.getContractAt('IMasterWombat', await strategy.masterWombat())
+      const rewardTokens = await strategy.getRewardTokens()
+      expect(rewardTokens[0]).eq(Wombat.WOM)
+      const womb = await ethers.getContractAt('ERC20', rewardTokens[0])
       const pid = await strategy.wombatPoolId()
 
       // given
@@ -44,7 +47,7 @@ function shouldBehaveLikeWombatStrategy(strategyIndex) {
       await strategy.rebalance()
       expect(await strategy.getStakedLp()).gt(0)
 
-      // verify claimable is not zero
+      // verify claimable is zero
       let pendingTokens = await masterWombat.pendingTokens(pid, strategy.address)
       expect(pendingTokens.pendingRewards).eq(0)
       if (pendingTokens.pendingBonusRewards.length > 0) {
@@ -52,7 +55,8 @@ function shouldBehaveLikeWombatStrategy(strategyIndex) {
       }
       // Increase time to earn rewards
       await time.increase(time.duration.days(1))
-      // Read pendingTokens again
+
+      // Read pendingTokens again and verify claimable is non zero
       pendingTokens = await masterWombat.pendingTokens(pid, strategy.address)
       expect(pendingTokens.pendingRewards).gt(0)
       if (pendingTokens.pendingBonusRewards.length > 0) {
@@ -61,23 +65,29 @@ function shouldBehaveLikeWombatStrategy(strategyIndex) {
       }
 
       // when
-      await strategy.rebalance()
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      await strategy.claimAndSwapRewards(amountOut)
 
       // then claimable should be zero
       // Read pendingTokens again
       pendingTokens = await masterWombat.pendingTokens(pid, strategy.address)
-
       expect(pendingTokens.pendingRewards).eq(0)
       if (pendingTokens.pendingBonusRewards.length > 0) {
         pendingTokens.pendingBonusRewards.forEach(rewards => expect(rewards).eq(0))
       }
+
+      // then reward token balance should be zero.
+      expect(await womb.balanceOf(strategy.address)).eq(0)
     })
 
-    it('Should claim and refresh reward tokens', async function () {
+    it('Should claim and swap when refreshing reward tokens', async function () {
       const masterWombat = await ethers.getContractAt('IMasterWombat', await strategy.masterWombat())
       const pid = await strategy.wombatPoolId()
+
       // given, there is reward token, deposit and rebalance done
-      expect(await strategy.rewardTokens(0)).eq(Wombat.WOM)
+      const rewardTokens = await strategy.getRewardTokens()
+      expect(rewardTokens[0]).eq(Wombat.WOM)
+      const womb = await ethers.getContractAt('ERC20', rewardTokens[0])
       await deposit(pool, collateralToken, 10, alice)
       await strategy.rebalance()
       // increase time to earn reward
@@ -91,6 +101,7 @@ function shouldBehaveLikeWombatStrategy(strategyIndex) {
       // then
       pendingTokens = await masterWombat.pendingTokens(pid, strategy.address)
       expect(pendingTokens.pendingRewards).eq(0)
+      expect(await womb.balanceOf(strategy.address)).eq(0)
     })
   })
 }

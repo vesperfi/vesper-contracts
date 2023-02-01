@@ -16,7 +16,7 @@ contract Stargate is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.0.0";
+    string public constant VERSION = "5.1.0";
 
     /// @notice Address of Staking contract (MasterChef V2 behavior)
     IStargateLpStaking public immutable stargateLpStaking;
@@ -94,13 +94,10 @@ contract Stargate is Strategy {
     }
 
     /// @notice Claim rewardToken from LPStaking contract
-    function _claimRewardsAndConvertTo(address toToken_) internal {
+    function _claimRewards() internal override returns (address, uint256) {
         // 0 withdraw will trigger rewards claim
         stargateLpStaking.withdraw(stargateLpStakingPoolId, 0);
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, toToken_, _rewardAmount);
-        }
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /// @dev Converts a collateral amount in its relative shares of STG LP Token
@@ -145,9 +142,6 @@ contract Stargate is Strategy {
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
-
-        // Claim any reward we have.
-        _claimRewardsAndConvertTo(address(collateralToken));
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
 

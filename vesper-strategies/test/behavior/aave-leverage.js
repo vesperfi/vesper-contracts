@@ -6,16 +6,17 @@ const { ethers } = require('hardhat')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { getStrategyToken } = require('vesper-commons/utils/setup')
 const { deposit, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
-const { getChain } = require('vesper-commons/utils/chains')
-const address = require(`vesper-commons/config/${getChain()}/address`)
+const { shouldTestStkAaveRewards } = require('./stk-aave-rewards')
+const Address = require('vesper-commons/utils/chains').getChainData().address
+
 // Aave Leverage strategy specific tests
 function shouldBehaveLikeAaveLeverageStrategy(strategyIndex) {
   let strategy, pool, collateralToken, token, vdToken
   let governor, user1, user2
 
   async function isMarketExist() {
-    if (address.DyDx && address.DyDx.SOLO) {
-      const solo = await ethers.getContractAt('ISoloMargin', address.DyDx.SOLO)
+    if (Address.DyDx && Address.DyDx.SOLO) {
+      const solo = await ethers.getContractAt('ISoloMargin', Address.DyDx.SOLO)
       const totalMarkets = await solo.getNumMarkets()
 
       for (let i = 0; i < totalMarkets; i++) {
@@ -27,6 +28,8 @@ function shouldBehaveLikeAaveLeverageStrategy(strategyIndex) {
     }
     return false
   }
+  // Aave rewards test
+  shouldTestStkAaveRewards(strategyIndex)
 
   describe('AaveLeverageStrategy specific tests', function () {
     beforeEach(async function () {
