@@ -21,6 +21,10 @@ contract VesperEarn is Vesper, Earn {
         super._approveToken(amount_);
     }
 
+    function _claimRewards() internal override(Strategy, Vesper) returns (address, uint256) {
+        return Vesper._claimRewards();
+    }
+
     function _rebalance()
         internal
         override(Strategy, Vesper)

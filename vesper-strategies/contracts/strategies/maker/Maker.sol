@@ -120,7 +120,7 @@ abstract contract Maker is Strategy {
      * @notice Convert amount to wrapped (i.e. asset to shares)
      * @dev Only used when dealing with wrapped token as collateral (e.g. wstETH)
      */
-    function _convertToWrapped(uint256 _amount) internal virtual returns (uint256 _wrappedAmount) {
+    function _convertToWrapped(uint256 _amount) internal view virtual returns (uint256 _wrappedAmount) {
         _wrappedAmount = _amount;
     }
 

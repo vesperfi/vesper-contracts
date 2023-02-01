@@ -36,18 +36,6 @@ abstract contract Vesper is Strategy {
         return token_ == address(vToken) || token_ == address(collateralToken);
     }
 
-    /// @notice Claim VSP and convert to collateral token
-    function harvestVSP() external {
-        address _poolRewards = vToken.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _swapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
-    }
-
     /// @notice Returns collateral balance + collateral deposited to Vesper
     function tvl() external view override returns (uint256) {
         return collateralToken.balanceOf(address(this)) + _convertToAssets(vToken.balanceOf(address(this)));
@@ -64,6 +52,15 @@ abstract contract Vesper is Strategy {
 
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address _newStrategy) internal override {}
+
+    /// @notice Claim VSP rewards
+    function _claimRewards() internal virtual override returns (address, uint256) {
+        address _poolRewards = vToken.poolRewards();
+        if (_poolRewards != address(0)) {
+            IPoolRewards(_poolRewards).claimReward(address(this));
+        }
+        return (vsp, IERC20(vsp).balanceOf(address(this)));
+    }
 
     /// @dev Converts a share amount in its relative collateral for Vesper Grow Pool
     function _convertToAssets(uint256 shares_) internal view returns (uint256 _assets) {

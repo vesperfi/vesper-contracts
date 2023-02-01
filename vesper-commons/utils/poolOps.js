@@ -46,9 +46,9 @@ async function makeStrategyProfitable(strategy, token) {
   if (tokenDecimal > collateralDecimal) {
     // scale up
     tvl = ethers.utils.parseUnits(tvl.toString(), tokenDecimal - collateralDecimal)
-  } else {
+  } else if (tokenDecimal < collateralDecimal) {
     // scale down
-    BigNumber.from(ethers.utils.formatUnits(tvl, collateralDecimal - tokenDecimal).split('.')[0])
+    tvl = BigNumber.from(ethers.utils.formatUnits(tvl, collateralDecimal - tokenDecimal).split('.')[0])
   }
 
   // Increase balance of strategy by 5% of tvl
