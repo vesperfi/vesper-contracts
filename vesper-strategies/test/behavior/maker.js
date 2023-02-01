@@ -206,7 +206,13 @@ function shouldBehaveLikeMakerStrategy(index) {
         await accountant.updateDebtRatio(strategy.address, 0)
         const underwater = await strategy.isUnderwater()
         if (underwater) {
-          await strategy.resurface(ethers.constants.MaxUint256)
+          // resurface may fail for stETH due to collateral being off by few wei.
+          // Transfer some DAI to resolve underwater
+          if (collateralToken.address === Address.stETH) {
+            await adjustBalance(Address.DAI, strategy.address, ethers.utils.parseEther('50'))
+          } else {
+            await strategy.resurface(ethers.constants.MaxUint256)
+          }
         }
         await strategy.rebalance()
 
