@@ -79,7 +79,7 @@ contract Ellipsis is Strategy {
         ellipsisPoolType = ellipsisPoolType_;
         depositZap = depositZap_;
         masterOracle = IMasterOracle(masterOracle_);
-        rewardTokens.push(EPX);
+        rewardTokens = Ellipsis._getRewardTokens();
         NAME = name_;
     }
 
@@ -255,6 +255,27 @@ contract Ellipsis is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
+    /**
+     * @dev Prepare rewardToken array
+     * @return _rewardTokens The array of reward tokens (both base and extra rewards)
+     */
+    function _getRewardTokens() internal view virtual returns (address[] memory _rewardTokens) {
+        try ellipsisLp.rewardCount() returns (uint256 _len) {
+            // Meta and Factory pools
+            _rewardTokens = new address[](1 + _len);
+            _rewardTokens[0] = EPX;
+            for (uint256 i; i < _len; ++i) {
+                _rewardTokens[i + 1] = ellipsisLp.rewardTokens(i);
+            }
+            return _rewardTokens;
+        } catch {
+            // Base pools
+            _rewardTokens = new address[](1);
+            _rewardTokens[0] = EPX;
+            return _rewardTokens;
+        }
+    }
+
     function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) private view returns (uint256 _amountOut) {
         if (amountIn_ == 0) {
             return 0;
@@ -339,27 +360,15 @@ contract Ellipsis is Strategy {
      ***********************************************************************************************/
 
     /**
-     * @notice Ellipsis may update reward token on the fly hence update reward token here too.
+     * @notice Rewards token in gauge can be updated any time. This method refresh list.
      * It is recommended to claimAndSwapRewards before calling this function.
      * @dev LpStaking only distribute EPX rewards other rewards can be distributed using lp
      * contract. It is quite possible to update rewardToken in LP by Ellipsis.
-     * @param rewardTokens_ Array of new reward tokens
      */
-    function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
+    function setRewardTokens(address[] memory /*rewardTokens_*/) external virtual onlyGovernor {
         // Claim rewards before updating the reward list.
         _claimAndSwapRewards();
-        rewardTokens = rewardTokens_;
-        address _receiptToken = receiptToken;
-        uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; ++i) {
-            require(
-                rewardTokens_[i] != _receiptToken &&
-                    rewardTokens_[i] != address(collateralToken) &&
-                    rewardTokens_[i] != pool &&
-                    rewardTokens_[i] != address(ellipsisLp),
-                "Invalid reward token"
-            );
-        }
+        rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
     }

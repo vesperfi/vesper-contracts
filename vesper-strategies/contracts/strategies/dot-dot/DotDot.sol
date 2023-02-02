@@ -65,7 +65,7 @@ contract DotDot is Ellipsis {
      * @dev Prepare rewardToken array
      * @return _rewardTokens The array of reward tokens (both base and extra rewards)
      */
-    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
         uint256 _length = LP_DEPOSITOR.extraRewardsLength(address(ellipsisLp));
 
         _rewardTokens = new address[](_length + 2);
