@@ -328,6 +328,7 @@
           "implementation": "0xE244881025f8F5005985D60757CC95c8D667e493"
         },
         "strategies": {
+          "Alpha_Homora_DAI": "0x54ce999D8709DB87B211D3DD9a78dcDC2f9BAbcC",
           "Compound_Leverage_DAI": "0x01c48862AE9De8306ddE1C29c2c7131E40817B84",
           "Compound_Vesper_Xy_DAI_USDC": "0x5D69a654F6eB9aaf5738A05fd17bb1ad707AeA03",
           "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
@@ -751,6 +752,7 @@
         "strategies": {
           "AaveV2_Vesper_Xy_LINK_USDC": "0xc2262671A154cc29A0cf6783DaDB130F2cD80fb9",
           "CompoundLeverageStrategyLINK": "0x4634826b13A6f4edED44539a9AAE119438c1517b",
+          "CompoundV3_Vesper_Xy_LINK_USDC": "0xC8Ba54eA8cDE1726c5D7363eC318C51b897B2F1a",
           "VesperMakerStrategyLINK": "0x0827F18a1fAD688C5C720FC27Ef0cC00D6DAd19a"
         }
       }

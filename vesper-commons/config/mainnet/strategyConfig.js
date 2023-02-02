@@ -864,6 +864,19 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Alpha_Homora_DAI: {
+    contract: 'AlphaHomora',
+    type: StrategyTypes.ALPHA_HOMORA,
+    constructorArgs: {
+      swapper,
+      rewardToken: Address.Alpha.ALPHA,
+      receiptToken: Address.Alpha.ibDAIv2,
+      strategyName: 'Alpha_Homora_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Alpha_Homora_Earn_ETH_DAI: {
     contract: 'AlphaHomoraEarnETH',
     type: StrategyTypes.EARN_ALPHA_HOMORA,
@@ -2111,6 +2124,23 @@ const StrategyConfig = {
       vPool: Address.Vesper.vaUSDC,
       vsp: Address.Vesper.VSP,
       strategyName: 'CompoundV3_Vesper_Xy_ETH_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  CompoundV3_Vesper_Xy_LINK_USDC: {
+    contract: 'CompoundV3VesperXy',
+    type: StrategyTypes.COMPOUNDV3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.Compound.COMP,
+      comet: Address.CompoundV3.cUSDCv3,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'CompoundV3_Vesper_Xy_LINK_USDC',
     },
     config: { ...config },
     setup: { ...setup },

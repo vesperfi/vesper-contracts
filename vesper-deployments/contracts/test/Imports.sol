@@ -35,6 +35,8 @@ import "vesper-strategies/contracts/strategies/compound/avalanche/BenqiAVAX.sol"
 import "vesper-strategies/contracts/strategies/stargate/StargateETH.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperXy.sol";
 import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";
+import "vesper-strategies/contracts/strategies/alpha/AlphaHomora.sol";
+import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3VesperXy.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
