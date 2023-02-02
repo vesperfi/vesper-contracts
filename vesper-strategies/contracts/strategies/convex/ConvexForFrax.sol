@@ -25,7 +25,7 @@ contract ConvexForFrax is Curve {
     IStakingProxyConvex public immutable vault;
 
     /// @notice Convex Rewards contract
-    IMultiReward public immutable rewards;
+    IMultiReward public rewards;
 
     /// @notice FRAX staking period
     /// @dev Uses the `lock_time_min` by default. Use `updateLockPeriod` to update it if needed.
@@ -98,7 +98,7 @@ contract ConvexForFrax is Curve {
     }
 
     /// @notice Get reward tokens
-    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
         uint256 _extraRewardCount;
         uint256 _length = rewards.rewardTokenLength();
 

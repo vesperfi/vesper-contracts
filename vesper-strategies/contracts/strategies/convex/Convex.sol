@@ -12,7 +12,7 @@ contract Convex is Curve {
     address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
     IConvex public constant BOOSTER = IConvex(0xF403C135812408BFbE8713b5A23a04b3D48AAE31);
 
-    Rewards public immutable cvxCrvRewards;
+    Rewards public cvxCrvRewards;
     uint256 public immutable convexPoolId;
 
     struct ClaimableRewardInfo {
@@ -74,7 +74,7 @@ contract Convex is Curve {
      * In some cases, CVX is also added as extra reward, reason why we have to ensure to not add it twice
      * @return _rewardTokens The array of reward tokens (both base and extra rewards)
      */
-    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
         uint256 _extraRewardCount;
         uint256 _length = cvxCrvRewards.extraRewardsLength();
 

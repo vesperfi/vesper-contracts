@@ -119,7 +119,7 @@ contract Curve is Strategy {
         isFactoryPool = _crvLp == crvPool_;
         depositZap = depositZap_;
         masterOracle = IMasterOracle(masterOracle_);
-        rewardTokens.push(crvToken_);
+        rewardTokens = Curve._getRewardTokens();
         NAME = name_;
     }
 
@@ -341,6 +341,56 @@ contract Curve is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
     }
 
+    /**
+     * @dev Prepare rewardToken array
+     * @return _rewardTokens The array of reward tokens (both base and extra rewards)
+     */
+    function _getRewardTokens() internal view virtual returns (address[] memory _rewardTokens) {
+        _rewardTokens = new address[](1);
+        _rewardTokens[0] = CRV;
+
+        // If there is no gauge, CRV only
+        if (address(crvGauge) == address(0)) {
+            return _rewardTokens;
+        }
+
+        // If LiquidityGaugeReward, `rewarded_token` only
+        try ILiquidityGaugeReward(address(crvGauge)).rewarded_token() returns (address _rewardToken) {
+            _rewardTokens = new address[](2);
+            _rewardTokens[0] = CRV;
+            _rewardTokens[1] = _rewardToken;
+            return _rewardTokens;
+        } catch {}
+
+        // If LiquidityGaugeV2 or LiquidityGaugeV3, CRV + extra reward tokens
+        try ILiquidityGaugeV2(address(crvGauge)).reward_tokens(0) returns (address _rewardToken) {
+            // If no extra reward token, CRV only
+            if (_rewardToken == address(0)) {
+                return _rewardTokens;
+            }
+
+            try ILiquidityGaugeV2(address(crvGauge)).reward_count() returns (uint256 _len) {
+                _rewardTokens = new address[](1 + _len);
+                _rewardTokens[0] = CRV;
+                _rewardTokens[1] = _rewardToken;
+                for (uint256 i = 1; i < _len; ++i) {
+                    _rewardTokens[i + 1] = ILiquidityGaugeV2(address(crvGauge)).reward_tokens(i);
+                }
+                return _rewardTokens;
+            } catch {
+                // If doesn't implement `reward_count` assuming only one extra reward token
+                // E.g. stETH pool
+                _rewardTokens = new address[](2);
+                _rewardTokens[0] = CRV;
+                _rewardTokens[1] = _rewardToken;
+                return _rewardTokens;
+            }
+        } catch {}
+
+        // If LiquidityGauge, CRV only
+        return _rewardTokens;
+    }
+
     function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) private view returns (uint256 _amountOut) {
         if (amountIn_ == 0) {
             return 0;
@@ -461,23 +511,14 @@ contract Curve is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @dev Rewards token in gauge can be updated any time. Governor can set reward tokens
-    /// Different version of gauge has different method to read reward tokens better governor set it
-    function setRewardTokens(address[] memory rewardTokens_) external virtual onlyGovernor {
-        // Claim rewards before updating the reward list.
+    /**
+     * @notice Rewards token in gauge can be updated any time. This method refresh list.
+     * It is recommended to claimAndSwapRewards before calling this function.
+     */
+    function setRewardTokens(address[] memory /*rewardTokens_*/) external virtual onlyGovernor {
+        // Before updating the reward list, claim rewards and swap into collateral.
         _claimAndSwapRewards();
-        rewardTokens = rewardTokens_;
-        address _receiptToken = receiptToken;
-        uint256 _rewardTokensLength = rewardTokens.length;
-        for (uint256 i; i < _rewardTokensLength; ++i) {
-            require(
-                rewardTokens_[i] != _receiptToken &&
-                    rewardTokens_[i] != address(collateralToken) &&
-                    rewardTokens_[i] != pool &&
-                    rewardTokens_[i] != address(crvLp),
-                "Invalid reward token"
-            );
-        }
+        rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
     }

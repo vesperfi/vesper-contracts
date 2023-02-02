@@ -41,10 +41,7 @@ contract CurveAaveLendingPool is Curve {
             name_
         )
     {
-        // Actual reward from Curve is stkAAVE but we will be claiming AAVE from
-        // stkAAVE and then we will convert AAVE into Collateral, so internally
-        // reward token is AAVE
-        rewardTokens.push(address(AAVE));
+        rewardTokens = _getRewardTokens();
     }
 
     function canStartCooldown() external view returns (bool) {
@@ -87,5 +84,17 @@ contract CurveAaveLendingPool is Curve {
         (_rewardToken, _rewardAmount) = Curve._claimRewards();
         // Claim AAVE from stkAAVE or start cooldown for claim.
         _claimAave();
+    }
+
+    /**
+     * @dev Prepare rewardToken array
+     */
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
+        // Actual reward from Curve is stkAAVE but we will be claiming AAVE from
+        // stkAAVE and then we will convert AAVE into Collateral, so internally
+        // reward token is AAVE
+        _rewardTokens = new address[](2);
+        _rewardTokens[0] = CRV;
+        _rewardTokens[1] = address(AAVE);
     }
 }
