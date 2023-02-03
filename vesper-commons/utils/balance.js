@@ -69,6 +69,7 @@ const whales = {
   [Address.Euler.EUL]: '0xc697BB6625D9f7AdcF0fbf0cbd4DcF50D8716cd3',
   [Address.Stargate.STG]: '0x8A27E7e98f62295018611DD681Ec47C7d9FF633A',
   [Address.rETH]: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
+  [Address.cbETH]: '0xFA11D91e74fdD98F79E01582B9664143E1036931',
 
   // Avalanche
   [AvalancheAddress.Curve.CRV]: '0xabc000d88f23bb45525e447528dbf656a9d55bf5',
