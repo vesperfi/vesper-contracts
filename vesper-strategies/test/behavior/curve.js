@@ -49,7 +49,7 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
         // LiquidityGaugeReward
         ['Curve_sUSD_DAI']: [Address.Curve.CRV, Address.SNX],
         // LiquidityGaugeV2/V3 with extra reward tokens
-        ['Curve_mim_MIM']: [Address.Curve.CRV, Address.SPELL],
+        ['Curve_mim_MIM']: [Address.SPELL, Address.Curve.CRV],
         // LiquidityGaugeV2/V3 without extra reward tokens
         ['Curve_msUSD_USDC']: [Address.Curve.CRV],
         // LiquidityGaugeV2/V3 with one extra reward token (AAVE)

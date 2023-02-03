@@ -67,11 +67,11 @@ contract Curve is CurveBase {
 
             try ILiquidityGaugeV2(address(crvGauge)).reward_count() returns (uint256 _len) {
                 _rewardTokens = new address[](1 + _len);
-                _rewardTokens[0] = CRV;
-                _rewardTokens[1] = _rewardToken;
+                _rewardTokens[0] = _rewardToken;
                 for (uint256 i = 1; i < _len; ++i) {
-                    _rewardTokens[i + 1] = ILiquidityGaugeV2(address(crvGauge)).reward_tokens(i);
+                    _rewardTokens[i] = ILiquidityGaugeV2(address(crvGauge)).reward_tokens(i);
                 }
+                _rewardTokens[_len] = CRV;
                 return _rewardTokens;
             } catch {
                 // If doesn't implement `reward_count` assuming only one extra reward token

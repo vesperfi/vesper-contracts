@@ -223,7 +223,7 @@ async function configureSwapper(strategies, collateral) {
         pairs.push({ tokenIn: _rewardTokens[i], tokenOut: collateral })
       }
     }
-    if (strategyName.includes('Curve')) {
+    if (strategyName.includes('Curve') || strategyName.includes('Ellipsis')) {
       const rewardTokens = await strategy.instance.getRewardTokens()
       for (let i = 0; i < rewardTokens.length; i++) {
         pairs.push({ tokenIn: rewardTokens[i], tokenOut: collateral })

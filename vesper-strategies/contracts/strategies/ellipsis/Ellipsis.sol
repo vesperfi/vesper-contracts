@@ -43,10 +43,10 @@ contract Ellipsis is EllipsisBase {
         try ellipsisLp.rewardCount() returns (uint256 _len) {
             // Meta and Factory pools
             _rewardTokens = new address[](1 + _len);
-            _rewardTokens[0] = EPX;
             for (uint256 i; i < _len; ++i) {
-                _rewardTokens[i + 1] = ellipsisLp.rewardTokens(i);
+                _rewardTokens[i] = ellipsisLp.rewardTokens(i);
             }
+            _rewardTokens[_len] = EPX;
             return _rewardTokens;
         } catch {
             // Base pools

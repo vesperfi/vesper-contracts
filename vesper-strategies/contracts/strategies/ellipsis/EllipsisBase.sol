@@ -87,6 +87,10 @@ abstract contract EllipsisBase is Strategy {
         return token_ == address(ellipsisLp) || token_ == address(collateralToken);
     }
 
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
+    }
+
     // Gets LP value not staked in gauge
     function lpBalanceHere() public view virtual returns (uint256 _lpHere) {
         _lpHere = ellipsisLp.balanceOf(address(this));
