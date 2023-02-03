@@ -81,7 +81,7 @@ contract CurveAaveLendingPool is Curve {
     /// @dev Return values are not being used hence returning 0
     function _claimRewards() internal override returns (address _rewardToken, uint256 _rewardAmount) {
         // Claim rewards. It may include stkAave as rewards.
-        (_rewardToken, _rewardAmount) = Curve._claimRewards();
+        (_rewardToken, _rewardAmount) = CurveBase._claimRewards();
         // Claim AAVE from stkAAVE or start cooldown for claim.
         _claimAave();
     }

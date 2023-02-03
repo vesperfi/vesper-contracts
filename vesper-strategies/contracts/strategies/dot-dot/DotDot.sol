@@ -3,11 +3,11 @@
 pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../../interfaces/dot-dot/ILpDepositor.sol";
-import "../ellipsis/Ellipsis.sol";
+import "../ellipsis/EllipsisBase.sol";
 
 /// @title This strategy will deposit collateral token in a Ellipsis Pool and stake
 /// Ellipsis LP tokens in DotDot protocol to earn yield
-contract DotDot is Ellipsis {
+contract DotDot is EllipsisBase {
     using SafeERC20 for IEllipsisLp;
 
     address public constant DDD = 0x84c97300a190676a19D1E13115629A11f8482Bd1;
@@ -29,7 +29,7 @@ contract DotDot is Ellipsis {
         uint256 collateralIdx_,
         string memory name_
     )
-        Ellipsis(
+        EllipsisBase(
             pool_,
             ellipsisPool_,
             ellipsisPoolType_,
@@ -89,21 +89,5 @@ contract DotDot is Ellipsis {
         if (_amount > 0) {
             LP_DEPOSITOR.withdraw(address(this), address(ellipsisLp), _amount);
         }
-    }
-
-    /************************************************************************************************
-     *                          Governor/admin/keeper function                                      *
-     ***********************************************************************************************/
-
-    /**
-     * @notice DotDot can add new rewards. This method refresh list.
-     * It is recommended to claimAndSwapRewards before calling this function.
-     */
-    function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Before updating the reward list, claim rewards and swap into collateral.
-        _claimAndSwapRewards();
-        rewardTokens = _getRewardTokens();
-        _approveToken(0);
-        _approveToken(MAX_UINT_VALUE);
     }
 }
