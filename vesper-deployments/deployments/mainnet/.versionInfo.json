@@ -1,6 +1,6 @@
 {
   "PoolAccountant": {
-    "address": "0x12FDfFB52297A13A29041299Ad43458eBcFc89d7",
+    "address": "0xd66b769b99714E49D599D6eD6bC46A01FA409661",
     "version": "5.0.2"
   },
   "VPool": {
@@ -8,7 +8,7 @@
     "version": "5.0.2"
   },
   "PoolRewards": {
-    "address": "0x10fde8c254A100674439D707628569686c8580Fa",
+    "address": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d",
     "version": "4.0.0"
   }
 }
