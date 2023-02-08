@@ -156,19 +156,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         expect(collateralBalance, `${collateralName} balance of user is wrong`).to.closeTo(expectedCollateral, 5)
       })
 
-      it(`Should withdraw ${collateralName} using whitelistedWithdraw()`, async function () {
-        await rebalance(strategies)
-        const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
-        await increaseTimeIfNeeded(strategies[0])
-        const withdrawAmount = '10000000000000000'
-        await pool.connect(user1).whitelistedWithdraw(withdrawAmount)
-        const collateralBalance = await collateralToken.balanceOf(user1.address)
-        const totalDebt = await pool.totalDebt()
-        const totalDebtOfStrategies = await totalDebtOfAllStrategy(strategies, pool)
-        expect(totalDebtOfStrategies).to.be.equal(totalDebt, `${collateralName} totalDebt of strategies is wrong`)
-        expect(collateralBalance).to.be.gt(collateralBalanceBefore, 'Withdraw failed')
-      })
-
       it(`Should withdraw very small ${collateralName} after rebalance`, async function () {
         await rebalance(strategies)
         const collateralBalanceBefore = await collateralToken.balanceOf(user1.address)
@@ -220,31 +207,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
           expect(vPoolBalance).to.be.closeTo('0', dust, `${poolName} balance of user is wrong`)
           expect(collateralBalance).to.be.gte(depositAmount, `${collateralName} balance of user is wrong`)
         })
-      })
-    })
-
-    describe(`Multi transfer ${poolName} pool tokens`, function () {
-      it('Should transfer to multiple recipients', async function () {
-        await deposit(100, user1)
-        const user1Balance = await pool.balanceOf(user1.address)
-        const balanceBefore = await pool.balanceOf(user4.address)
-        expect(balanceBefore).to.be.equal(0, `${collateralName} balance should be 0`)
-        await pool
-          .connect(user1)
-          .multiTransfer([user3.address, user4.address], [user1Balance.div(3), user1Balance.div(4)])
-        return Promise.all([pool.balanceOf(user3.address), pool.balanceOf(user4.address)]).then(function ([
-          balance1,
-          balance2,
-        ]) {
-          expect(balance1).to.be.equal(user1Balance.div(3), `${collateralName} balance is wrong`)
-          expect(balance2).to.be.equal(user1Balance.div(4), `${collateralName} balance is wrong`)
-        })
-      })
-
-      it('Should have same size for recipients and amounts', async function () {
-        await deposit(10, user1)
-        const tx = pool.connect(user1).multiTransfer([user3.address, user4.address], [DECIMAL18])
-        await expect(tx).to.be.revertedWith('4')
       })
     })
 

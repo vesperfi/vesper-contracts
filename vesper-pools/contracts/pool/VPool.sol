@@ -87,7 +87,8 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @param _amount ERC20 token amount.
      */
     function depositAndClaim(uint256 _amount) external nonReentrant whenNotPaused {
-        _depositAndClaim(_amount);
+        _claimRewards(_msgSender());
+        _deposit(_amount);
     }
 
     /**
@@ -112,17 +113,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
 
     /**
      * @notice Withdraw collateral based on given shares and the current share price.
-     * Burn remaining shares and return collateral. Claim rewards if there is any
-     * @dev Deprecated method. Keeping this method here for backward compatibility.
-     * @param _shares Pool shares. It will be in 18 decimals.
-     */
-    function whitelistedWithdraw(uint256 _shares) external nonReentrant whenNotShutdown {
-        _claimRewards(_msgSender());
-        _withdraw(_shares);
-    }
-
-    /**
-     * @notice Withdraw collateral based on given shares and the current share price.
      * Burn remaining shares and return collateral.
      * @param _shares Pool shares. It will be in 18 decimals.
      */
@@ -136,22 +126,8 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @param _shares Pool shares. It will be in 18 decimals.
      */
     function withdrawAndClaim(uint256 _shares) external nonReentrant whenNotShutdown {
-        _withdrawAndClaim(_shares);
-    }
-
-    /**
-     * @notice Transfer tokens to multiple recipient
-     * @dev Address array and amount array are 1:1 and are in order.
-     * @param _recipients array of recipient addresses
-     * @param _amounts array of token amounts
-     * @return true/false
-     */
-    function multiTransfer(address[] calldata _recipients, uint256[] calldata _amounts) external returns (bool) {
-        require(_recipients.length == _amounts.length, Errors.INPUT_LENGTH_MISMATCH);
-        for (uint256 i = 0; i < _recipients.length; i++) {
-            require(transfer(_recipients[i], _amounts[i]), Errors.MULTI_TRANSFER_FAILED);
-        }
-        return true;
+        _claimRewards(_msgSender());
+        _withdraw(_shares);
     }
 
     /**
@@ -348,12 +324,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         emit Deposit(_msgSender(), _shares, _amount);
     }
 
-    /// @dev Deposit token and claim rewards if any
-    function _depositAndClaim(uint256 _amount) internal {
-        _claimRewards(_msgSender());
-        _deposit(_amount);
-    }
-
     /// @dev Update pool rewards of sender and receiver during transfer.
     function _transfer(address sender, address recipient, uint256 amount) internal override {
         if (poolRewards != address(0)) {
@@ -385,12 +355,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         _burn(_msgSender(), _shares);
         _afterBurning(_amountWithdrawn);
         emit Withdraw(_msgSender(), _shares, _amountWithdrawn);
-    }
-
-    /// @dev Withdraw collateral and claim rewards if any
-    function _withdrawAndClaim(uint256 _shares) internal {
-        _claimRewards(_msgSender());
-        _withdraw(_shares);
     }
 
     function _withdrawCollateral(uint256 _amount) internal {
