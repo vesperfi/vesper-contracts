@@ -20,7 +20,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    string public constant VERSION = "5.0.2";
+    string public constant VERSION = "5.1.0";
 
     uint256 public constant MAX_BPS = 10_000;
     // For simplicity we are assuming 365 days as 1 year
@@ -325,6 +325,8 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /// @dev Update pool rewards of sender and receiver during transfer.
+    /// @dev _beforeTokenTransfer can be used to replace _transfer and _updateRewards but that
+    /// will increase gas cost of deposit, withdraw and transfer.
     function _transfer(address sender, address recipient, uint256 amount) internal override {
         if (poolRewards != address(0)) {
             IPoolRewards(poolRewards).updateReward(sender);
@@ -360,7 +362,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     function _withdrawCollateral(uint256 _amount) internal {
         // Withdraw amount from queue
         uint256 _debt;
-        uint256 _balanceAfter;
         uint256 _balanceBefore;
         uint256 _amountWithdrawn;
         uint256 _totalAmountWithdrawn;
@@ -382,8 +383,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
             try IStrategy(_strategy).withdraw(_amountNeeded) {} catch {
                 continue;
             }
-            _balanceAfter = tokensHere();
-            _amountWithdrawn = _balanceAfter - _balanceBefore;
+            _amountWithdrawn = tokensHere() - _balanceBefore;
             // Adjusting totalDebt. Assuming that during next reportEarning(), strategy will report loss if amountWithdrawn < _amountNeeded
             IPoolAccountant(poolAccountant).decreaseDebt(_strategy, _amountWithdrawn);
             _totalAmountWithdrawn += _amountWithdrawn;
@@ -398,10 +398,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @dev Before burning hook.
      * withdraw amount from strategies
      */
-    function _beforeBurning(uint256 _share) private returns (uint256 _actualWithdrawn, bool _isPartial) {
-        uint256 _amount = (_share * pricePerShare()) / 1e18;
+    function _beforeBurning(uint256 _share) private returns (uint256 _amount, bool _isPartial) {
+        _amount = (_share * pricePerShare()) / 1e18;
         uint256 _tokensHere = tokensHere();
-        _actualWithdrawn = _amount;
         // Check for partial withdraw scenario
         // If we do not have enough tokens then withdraw whats needed from strategy
         if (_amount > _tokensHere) {
@@ -409,11 +408,11 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
             _withdrawCollateral(_amount - _tokensHere);
             _tokensHere = tokensHere();
             if (_amount > _tokensHere) {
-                _actualWithdrawn = _tokensHere;
+                _amount = _tokensHere;
                 _isPartial = true;
             }
         }
-        require(_actualWithdrawn > 0, Errors.INVALID_COLLATERAL_AMOUNT);
+        require(_amount > 0, Errors.INVALID_COLLATERAL_AMOUNT);
     }
 
     /**
