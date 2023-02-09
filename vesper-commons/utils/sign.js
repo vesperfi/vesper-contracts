@@ -21,8 +21,8 @@ async function getAccountData(mnemonic) {
   }
 }
 
-function getDomainSeparator(name, tokenAddress) {
-  return keccak256(
+const getDomainSeparator = (name, tokenAddress) =>
+  keccak256(
     defaultAbiCoder.encode(
       ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
       [
@@ -34,7 +34,6 @@ function getDomainSeparator(name, tokenAddress) {
       ],
     ),
   )
-}
 
 async function getPermitDigest(token, approve, nonce, deadline) {
   const name = await token.name()

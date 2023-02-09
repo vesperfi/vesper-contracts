@@ -20,7 +20,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    string public constant VERSION = "5.0.2";
+    string public constant VERSION = "5.1.0";
 
     uint256 public constant MAX_BPS = 10_000;
     // For simplicity we are assuming 365 days as 1 year
@@ -87,7 +87,8 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @param _amount ERC20 token amount.
      */
     function depositAndClaim(uint256 _amount) external nonReentrant whenNotPaused {
-        _depositAndClaim(_amount);
+        _claimRewards(_msgSender());
+        _deposit(_amount);
     }
 
     /**
@@ -112,17 +113,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
 
     /**
      * @notice Withdraw collateral based on given shares and the current share price.
-     * Burn remaining shares and return collateral. Claim rewards if there is any
-     * @dev Deprecated method. Keeping this method here for backward compatibility.
-     * @param _shares Pool shares. It will be in 18 decimals.
-     */
-    function whitelistedWithdraw(uint256 _shares) external nonReentrant whenNotShutdown {
-        _claimRewards(_msgSender());
-        _withdraw(_shares);
-    }
-
-    /**
-     * @notice Withdraw collateral based on given shares and the current share price.
      * Burn remaining shares and return collateral.
      * @param _shares Pool shares. It will be in 18 decimals.
      */
@@ -136,22 +126,8 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @param _shares Pool shares. It will be in 18 decimals.
      */
     function withdrawAndClaim(uint256 _shares) external nonReentrant whenNotShutdown {
-        _withdrawAndClaim(_shares);
-    }
-
-    /**
-     * @notice Transfer tokens to multiple recipient
-     * @dev Address array and amount array are 1:1 and are in order.
-     * @param _recipients array of recipient addresses
-     * @param _amounts array of token amounts
-     * @return true/false
-     */
-    function multiTransfer(address[] calldata _recipients, uint256[] calldata _amounts) external returns (bool) {
-        require(_recipients.length == _amounts.length, Errors.INPUT_LENGTH_MISMATCH);
-        for (uint256 i = 0; i < _recipients.length; i++) {
-            require(transfer(_recipients[i], _amounts[i]), Errors.MULTI_TRANSFER_FAILED);
-        }
-        return true;
+        _claimRewards(_msgSender());
+        _withdraw(_shares);
     }
 
     /**
@@ -348,13 +324,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         emit Deposit(_msgSender(), _shares, _amount);
     }
 
-    /// @dev Deposit token and claim rewards if any
-    function _depositAndClaim(uint256 _amount) internal {
-        _claimRewards(_msgSender());
-        _deposit(_amount);
-    }
-
     /// @dev Update pool rewards of sender and receiver during transfer.
+    /// @dev _beforeTokenTransfer can be used to replace _transfer and _updateRewards but that
+    /// will increase gas cost of deposit, withdraw and transfer.
     function _transfer(address sender, address recipient, uint256 amount) internal override {
         if (poolRewards != address(0)) {
             IPoolRewards(poolRewards).updateReward(sender);
@@ -387,16 +359,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         emit Withdraw(_msgSender(), _shares, _amountWithdrawn);
     }
 
-    /// @dev Withdraw collateral and claim rewards if any
-    function _withdrawAndClaim(uint256 _shares) internal {
-        _claimRewards(_msgSender());
-        _withdraw(_shares);
-    }
-
     function _withdrawCollateral(uint256 _amount) internal {
         // Withdraw amount from queue
         uint256 _debt;
-        uint256 _balanceAfter;
         uint256 _balanceBefore;
         uint256 _amountWithdrawn;
         uint256 _totalAmountWithdrawn;
@@ -418,8 +383,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
             try IStrategy(_strategy).withdraw(_amountNeeded) {} catch {
                 continue;
             }
-            _balanceAfter = tokensHere();
-            _amountWithdrawn = _balanceAfter - _balanceBefore;
+            _amountWithdrawn = tokensHere() - _balanceBefore;
             // Adjusting totalDebt. Assuming that during next reportEarning(), strategy will report loss if amountWithdrawn < _amountNeeded
             IPoolAccountant(poolAccountant).decreaseDebt(_strategy, _amountWithdrawn);
             _totalAmountWithdrawn += _amountWithdrawn;
@@ -434,10 +398,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      * @dev Before burning hook.
      * withdraw amount from strategies
      */
-    function _beforeBurning(uint256 _share) private returns (uint256 _actualWithdrawn, bool _isPartial) {
-        uint256 _amount = (_share * pricePerShare()) / 1e18;
+    function _beforeBurning(uint256 _share) private returns (uint256 _amount, bool _isPartial) {
+        _amount = (_share * pricePerShare()) / 1e18;
         uint256 _tokensHere = tokensHere();
-        _actualWithdrawn = _amount;
         // Check for partial withdraw scenario
         // If we do not have enough tokens then withdraw whats needed from strategy
         if (_amount > _tokensHere) {
@@ -445,11 +408,11 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
             _withdrawCollateral(_amount - _tokensHere);
             _tokensHere = tokensHere();
             if (_amount > _tokensHere) {
-                _actualWithdrawn = _tokensHere;
+                _amount = _tokensHere;
                 _isPartial = true;
             }
         }
-        require(_actualWithdrawn > 0, Errors.INVALID_COLLATERAL_AMOUNT);
+        require(_amount > 0, Errors.INVALID_COLLATERAL_AMOUNT);
     }
 
     /**

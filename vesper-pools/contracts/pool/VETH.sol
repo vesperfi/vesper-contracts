@@ -27,7 +27,8 @@ contract VETH is VPool {
     /// @dev Burns tokens/shares and returns the ETH value and claim rewards if any
     function withdrawETHAndClaim(uint256 _shares) external whenNotShutdown nonReentrant {
         withdrawInETH = true;
-        _withdrawAndClaim(_shares);
+        _claimRewards(_msgSender());
+        _withdraw(_shares);
         withdrawInETH = false;
     }
 

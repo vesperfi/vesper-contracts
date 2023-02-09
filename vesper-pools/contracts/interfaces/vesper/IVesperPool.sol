@@ -11,8 +11,6 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
 
     function deposit(uint256 _share) external;
 
-    function multiTransfer(address[] memory _recipients, uint256[] memory _amounts) external returns (bool);
-
     function excessDebt(address _strategy) external view returns (uint256);
 
     function poolAccountant() external view returns (address);
