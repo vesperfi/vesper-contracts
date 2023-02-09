@@ -43,7 +43,7 @@ contract PoolRewardsStorage {
 
 /// @title Distribute rewards based on vesper pool balance and supply
 contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolRewardsStorage {
-    string public constant VERSION = "4.0.0";
+    string public constant VERSION = "5.1.0";
     using SafeERC20 for IERC20;
 
     /**
@@ -53,10 +53,11 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
      */
     function initialize(address _pool, address[] memory _rewardTokens) public initializer {
         require(_pool != address(0), "pool-address-is-zero");
-        require(_rewardTokens.length != 0, "invalid-reward-tokens");
+        uint256 _len = _rewardTokens.length;
+        require(_len > 0, "invalid-reward-tokens");
         pool = _pool;
         rewardTokens = _rewardTokens;
-        for (uint256 i = 0; i < _rewardTokens.length; i++) {
+        for (uint256 i = 0; i < _len; i++) {
             isRewardToken[_rewardTokens[i]] = true;
         }
     }
@@ -106,13 +107,13 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
         uint256 _len = rewardTokens.length;
-        for (uint256 i = 0; i < _len; i++) {
+        for (uint256 i; i < _len; i++) {
             address _rewardToken = rewardTokens[i];
             _updateReward(_rewardToken, _account, _totalSupply, _balance);
 
             // Claim rewards
             uint256 _reward = rewards[_rewardToken][_account];
-            if (_reward != 0 && _reward <= IERC20(_rewardToken).balanceOf(address(this))) {
+            if (_reward > 0 && _reward <= IERC20(_rewardToken).balanceOf(address(this))) {
                 _claimReward(_rewardToken, _account, _reward);
                 emit RewardPaid(_account, _rewardToken, _reward);
             }
@@ -126,7 +127,7 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
         uint256 _len = rewardTokens.length;
-        for (uint256 i = 0; i < _len; i++) {
+        for (uint256 i; i < _len; i++) {
             _updateReward(rewardTokens[i], _account, _totalSupply, _balance);
         }
     }
@@ -141,12 +142,12 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
     ) external view virtual override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
-        uint256 _len = rewardTokens.length;
-        _claimableAmounts = new uint256[](_len);
-        for (uint256 i = 0; i < _len; i++) {
-            _claimableAmounts[i] = _claimable(rewardTokens[i], _account, _totalSupply, _balance);
-        }
         _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
+        _claimableAmounts = new uint256[](_len);
+        for (uint256 i; i < _len; i++) {
+            _claimableAmounts[i] = _claimable(_rewardTokens[i], _account, _totalSupply, _balance);
+        }
     }
 
     /// @notice Provides easy access to all rewardTokens
@@ -165,12 +166,12 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         override
         returns (address[] memory _rewardTokens, uint256[] memory _rewardForDuration)
     {
-        uint256 _len = rewardTokens.length;
-        _rewardForDuration = new uint256[](_len);
-        for (uint256 i = 0; i < _len; i++) {
-            _rewardForDuration[i] = rewardRates[rewardTokens[i]] * rewardDuration[rewardTokens[i]];
-        }
         _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
+        _rewardForDuration = new uint256[](_len);
+        for (uint256 i; i < _len; i++) {
+            _rewardForDuration[i] = rewardRates[_rewardTokens[i]] * rewardDuration[_rewardTokens[i]];
+        }
     }
 
     /**
@@ -185,12 +186,12 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         returns (address[] memory _rewardTokens, uint256[] memory _rewardPerTokenRate)
     {
         uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _len = rewardTokens.length;
-        _rewardPerTokenRate = new uint256[](_len);
-        for (uint256 i = 0; i < _len; i++) {
-            _rewardPerTokenRate[i] = _rewardPerToken(rewardTokens[i], _totalSupply);
-        }
         _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
+        _rewardPerTokenRate = new uint256[](_len);
+        for (uint256 i; i < _len; i++) {
+            _rewardPerTokenRate[i] = _rewardPerToken(_rewardTokens[i], _totalSupply);
+        }
     }
 
     function _claimable(
@@ -201,8 +202,8 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
     ) internal view returns (uint256) {
         uint256 _rewardPerTokenAvailable = _rewardPerToken(_rewardToken, _totalSupply) -
             userRewardPerTokenPaid[_rewardToken][_account];
-        uint256 _rewardsEarnedSinceLastUpdate = (_balance * _rewardPerTokenAvailable) / 1e18;
-        return rewards[_rewardToken][_account] + _rewardsEarnedSinceLastUpdate;
+        // claimable = rewards + rewards earned since last update
+        return rewards[_rewardToken][_account] + ((_balance * _rewardPerTokenAvailable) / 1e18);
     }
 
     function _claimReward(address _rewardToken, address _account, uint256 _reward) internal virtual {
@@ -221,13 +222,9 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         uint256 _totalSupply
     ) internal {
         uint256 _len = _rewardTokens.length;
-        uint256 _amountsLen = _rewardAmounts.length;
-        uint256 _durationsLen = _rewardDurations.length;
-        require(_len != 0, "invalid-reward-tokens");
-        require(_amountsLen != 0, "invalid-reward-amounts");
-        require(_durationsLen != 0, "invalid-reward-durations");
-        require(_len == _amountsLen && _len == _durationsLen, "array-length-mismatch");
-        for (uint256 i = 0; i < _len; i++) {
+        require(_len > 0, "invalid-reward-tokens");
+        require(_len == _rewardAmounts.length && _len == _rewardDurations.length, "array-length-mismatch");
+        for (uint256 i; i < _len; i++) {
             _notifyRewardAmount(_rewardTokens[i], _rewardAmounts[i], _rewardDurations[i], _totalSupply);
         }
     }
@@ -239,8 +236,8 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         uint256 _totalSupply
     ) internal {
         require(_rewardToken != address(0), "incorrect-reward-token");
-        require(_rewardAmount != 0, "incorrect-reward-amount");
-        require(_rewardDuration != 0, "incorrect-reward-duration");
+        require(_rewardAmount > 0, "incorrect-reward-amount");
+        require(_rewardDuration > 0, "incorrect-reward-duration");
         require(isRewardToken[_rewardToken], "invalid-reward-token");
 
         // Update rewards earned so far
@@ -254,8 +251,10 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
             rewardRates[_rewardToken] = (_rewardAmount + leftover) / _rewardDuration;
         }
         // Safety check
-        uint256 balance = IERC20(_rewardToken).balanceOf(address(this));
-        require(rewardRates[_rewardToken] <= (balance / _rewardDuration), "rewards-too-high");
+        require(
+            rewardRates[_rewardToken] <= (IERC20(_rewardToken).balanceOf(address(this)) / _rewardDuration),
+            "rewards-too-high"
+        );
         // Start new drip time
         rewardDuration[_rewardToken] = _rewardDuration;
         lastUpdateTime[_rewardToken] = block.timestamp;
@@ -269,9 +268,10 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         }
 
         uint256 _timeSinceLastUpdate = lastTimeRewardApplicable(_rewardToken) - lastUpdateTime[_rewardToken];
-        uint256 _rewardsSinceLastUpdate = _timeSinceLastUpdate * rewardRates[_rewardToken];
-        uint256 _rewardsPerTokenSinceLastUpdate = (_rewardsSinceLastUpdate * 1e18) / _totalSupply;
-        return rewardPerTokenStored[_rewardToken] + _rewardsPerTokenSinceLastUpdate;
+        // reward per token = rewardPerTokenStored + rewardPerToken since last update
+        return
+            rewardPerTokenStored[_rewardToken] +
+            ((_timeSinceLastUpdate * rewardRates[_rewardToken] * 1e18) / _totalSupply);
     }
 
     function _updateReward(address _rewardToken, address _account, uint256 _totalSupply, uint256 _balance) internal {
