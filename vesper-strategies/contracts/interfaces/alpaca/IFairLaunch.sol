@@ -19,6 +19,17 @@ interface IFairLaunch {
      */
     function userInfo(uint256 _pid, address _user) external view returns (UserInfo memory _userInfo);
 
+    // Info of each pool.
+    struct PoolInfo {
+        address stakeToken; // Address of Staking token contract.
+        uint256 allocPoint; // How many allocation points assigned to this pool. ALPACAs to distribute per block.
+        uint256 lastRewardBlock; // Last block number that ALPACAs distribution occurs.
+        uint256 accAlpacaPerShare; // Accumulated ALPACAs per share, times 1e12. See below.
+        uint256 accAlpacaPerShareTilBonusEnd; // Accumated ALPACAs per share until Bonus End.
+    }
+
+    function poolInfo(uint256 _pid) external view returns (PoolInfo memory _userInfo);
+
     function deposit(address _for, uint256 _pid, uint256 _amount) external;
 
     function harvest(uint256 _pid) external;
