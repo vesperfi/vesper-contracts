@@ -16,6 +16,21 @@ contract VETH is VPool {
         }
     }
 
+    /**
+     * @dev Receives ETH and grants new tokens/shares to the sender depending
+     * on the value of pool's share.
+     */
+    function deposit() public payable whenNotPaused nonReentrant {
+        _updateRewards(_msgSender());
+        _depositETH();
+    }
+
+    /// @dev Deposit ETH and claim rewards if any
+    function depositAndClaim() external payable whenNotPaused nonReentrant {
+        _claimRewards(_msgSender());
+        _depositETH();
+    }
+
     /// @dev Burns tokens/shares and returns the ETH value, after fee, of those.
     function withdrawETH(uint256 _shares) external whenNotShutdown nonReentrant {
         withdrawInETH = true;
@@ -44,21 +59,6 @@ contract VETH is VPool {
             super._afterBurning(_amount);
         }
         return _amount;
-    }
-
-    /**
-     * @dev Receives ETH and grants new tokens/shares to the sender depending
-     * on the value of pool's share.
-     */
-    function deposit() public payable whenNotPaused nonReentrant {
-        _updateRewards(_msgSender());
-        _depositETH();
-    }
-
-    /// @dev Deposit ETH and claim rewards if any
-    function depositAndClaim() external payable whenNotPaused nonReentrant {
-        _claimRewards(_msgSender());
-        _depositETH();
     }
 
     function _depositETH() internal {

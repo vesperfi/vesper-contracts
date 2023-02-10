@@ -70,6 +70,115 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         _;
     }
 
+    /**
+     * @notice Get available credit limit of strategy. This is the amount strategy can borrow from pool
+     * @dev Available credit limit is calculated based on current debt of pool and strategy, current debt limit of pool and strategy.
+     * credit available = min(pool's debt limit, strategy's debt limit, max debt per rebalance)
+     * when some strategy do not pay back outstanding debt, this impact credit line of other strategy if totalDebt of pool >= debtLimit of pool
+     * @param _strategy Strategy address
+     */
+    function availableCreditLimit(address _strategy) external view returns (uint256) {
+        return _availableCreditLimit(_strategy);
+    }
+
+    /**
+     * @notice Debt above current debt limit
+     * @param _strategy Address of strategy
+     */
+    function excessDebt(address _strategy) external view returns (uint256) {
+        return _excessDebt(_strategy);
+    }
+
+    /// @notice Return strategies array
+    function getStrategies() external view returns (address[] memory) {
+        return strategies;
+    }
+
+    /// @notice Return withdrawQueue
+    function getWithdrawQueue() external view returns (address[] memory) {
+        return withdrawQueue;
+    }
+
+    /**
+     * @notice Get total debt of given strategy
+     * @param _strategy Strategy address
+     */
+    function totalDebtOf(address _strategy) external view returns (uint256) {
+        return strategy[_strategy].totalDebt;
+    }
+
+    function _availableCreditLimit(address _strategy) internal view returns (uint256) {
+        if (IVesperPool(pool).stopEverything()) {
+            return 0;
+        }
+        uint256 _totalValue = IVesperPool(pool).totalValue();
+        uint256 _maxDebt = (strategy[_strategy].debtRatio * _totalValue) / MAX_BPS;
+        uint256 _currentDebt = strategy[_strategy].totalDebt;
+        if (_currentDebt >= _maxDebt) {
+            return 0;
+        }
+        uint256 _poolDebtLimit = (totalDebtRatio * _totalValue) / MAX_BPS;
+        if (totalDebt >= _poolDebtLimit) {
+            return 0;
+        }
+        uint256 _available = _maxDebt - _currentDebt;
+        _available = _min(_min(IVesperPool(pool).tokensHere(), _available), _poolDebtLimit - totalDebt);
+        return _available;
+    }
+
+    function _excessDebt(address _strategy) internal view returns (uint256) {
+        uint256 _currentDebt = strategy[_strategy].totalDebt;
+        if (IVesperPool(pool).stopEverything()) {
+            return _currentDebt;
+        }
+        uint256 _maxDebt = (strategy[_strategy].debtRatio * IVesperPool(pool).totalValue()) / MAX_BPS;
+        return _currentDebt > _maxDebt ? (_currentDebt - _maxDebt) : 0;
+    }
+
+    function _min(uint256 a, uint256 b) internal pure returns (uint256) {
+        return a < b ? a : b;
+    }
+
+    /// @notice Recalculate pool external deposit fee.
+    /// @dev As it uses state variables for calculation, make sure to call it only after updating state variables.
+    function _recalculatePoolExternalDepositFee() internal {
+        uint256 _len = strategies.length;
+        uint256 _externalDepositFee;
+
+        // calculate poolExternalDepositFee and weightedFee for each strategy
+        if (totalDebtRatio > 0) {
+            for (uint256 i; i < _len; i++) {
+                _externalDepositFee +=
+                    (strategy[strategies[i]].externalDepositFee * strategy[strategies[i]].debtRatio) /
+                    totalDebtRatio;
+            }
+        }
+
+        // Update externalDepositFee and emit event
+        emit UpdatedPoolExternalDepositFee(externalDepositFee, externalDepositFee = _externalDepositFee);
+    }
+
+    /**
+     * @dev When strategy report loss, its debtRatio decreases to get fund back quickly.
+     * Reduction is debt ratio is reduction in credit limit
+     */
+    function _reportLoss(address _strategy, uint256 _loss) internal {
+        require(strategy[_strategy].totalDebt >= _loss, Errors.LOSS_TOO_HIGH);
+        strategy[_strategy].totalLoss += _loss;
+        strategy[_strategy].totalDebt -= _loss;
+        totalDebt -= _loss;
+        uint256 _deltaDebtRatio = _min(
+            (_loss * MAX_BPS) / IVesperPool(pool).totalValue(),
+            strategy[_strategy].debtRatio
+        );
+        strategy[_strategy].debtRatio -= _deltaDebtRatio;
+        totalDebtRatio -= _deltaDebtRatio;
+    }
+
+    /************************************************************************************************
+     *                                     Authorized function                                      *
+     ***********************************************************************************************/
+
     ////////////////////////////// Only Governor //////////////////////////////
 
     /**
@@ -216,6 +325,19 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     //////////////////////////////// Only Pool ////////////////////////////////
 
     /**
+     * @notice Decrease debt of strategy, also decrease totalDebt
+     * @dev In case of withdraw from strategy, pool will decrease debt by amount withdrawn
+     * @param _strategy Strategy Address
+     * @param _decreaseBy Amount by which strategy debt will be decreased
+     */
+    function decreaseDebt(address _strategy, uint256 _decreaseBy) external onlyPool {
+        // A strategy may send more than its debt. This should never fail
+        _decreaseBy = _min(strategy[_strategy].totalDebt, _decreaseBy);
+        strategy[_strategy].totalDebt -= _decreaseBy;
+        totalDebt -= _decreaseBy;
+    }
+
+    /**
      * @notice Migrate existing strategy to new strategy.
      * @dev Migrating strategy aka old and new strategy should be of same type.
      * @dev New strategy will replace old strategy in strategy mapping,
@@ -314,123 +436,5 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         emit LossReported(_strategy, _loss);
     }
 
-    /**
-     * @notice Decrease debt of strategy, also decrease totalDebt
-     * @dev In case of withdraw from strategy, pool will decrease debt by amount withdrawn
-     * @param _strategy Strategy Address
-     * @param _decreaseBy Amount by which strategy debt will be decreased
-     */
-    function decreaseDebt(address _strategy, uint256 _decreaseBy) external onlyPool {
-        // A strategy may send more than its debt. This should never fail
-        _decreaseBy = _min(strategy[_strategy].totalDebt, _decreaseBy);
-        strategy[_strategy].totalDebt -= _decreaseBy;
-        totalDebt -= _decreaseBy;
-    }
-
     ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * @notice Get available credit limit of strategy. This is the amount strategy can borrow from pool
-     * @dev Available credit limit is calculated based on current debt of pool and strategy, current debt limit of pool and strategy.
-     * credit available = min(pool's debt limit, strategy's debt limit, max debt per rebalance)
-     * when some strategy do not pay back outstanding debt, this impact credit line of other strategy if totalDebt of pool >= debtLimit of pool
-     * @param _strategy Strategy address
-     */
-    function availableCreditLimit(address _strategy) external view returns (uint256) {
-        return _availableCreditLimit(_strategy);
-    }
-
-    /**
-     * @notice Debt above current debt limit
-     * @param _strategy Address of strategy
-     */
-    function excessDebt(address _strategy) external view returns (uint256) {
-        return _excessDebt(_strategy);
-    }
-
-    /// @notice Return strategies array
-    function getStrategies() external view returns (address[] memory) {
-        return strategies;
-    }
-
-    /// @notice Return withdrawQueue
-    function getWithdrawQueue() external view returns (address[] memory) {
-        return withdrawQueue;
-    }
-
-    /**
-     * @notice Get total debt of given strategy
-     * @param _strategy Strategy address
-     */
-    function totalDebtOf(address _strategy) external view returns (uint256) {
-        return strategy[_strategy].totalDebt;
-    }
-
-    /// @notice Recalculate pool external deposit fee.
-    /// @dev As it uses state variables for calculation, make sure to call it only after updating state variables.
-    function _recalculatePoolExternalDepositFee() internal {
-        uint256 _len = strategies.length;
-        uint256 _externalDepositFee;
-
-        // calculate poolExternalDepositFee and weightedFee for each strategy
-        if (totalDebtRatio > 0) {
-            for (uint256 i; i < _len; i++) {
-                _externalDepositFee +=
-                    (strategy[strategies[i]].externalDepositFee * strategy[strategies[i]].debtRatio) /
-                    totalDebtRatio;
-            }
-        }
-
-        // Update externalDepositFee and emit event
-        emit UpdatedPoolExternalDepositFee(externalDepositFee, externalDepositFee = _externalDepositFee);
-    }
-
-    /**
-     * @dev When strategy report loss, its debtRatio decreases to get fund back quickly.
-     * Reduction is debt ratio is reduction in credit limit
-     */
-    function _reportLoss(address _strategy, uint256 _loss) internal {
-        require(strategy[_strategy].totalDebt >= _loss, Errors.LOSS_TOO_HIGH);
-        strategy[_strategy].totalLoss += _loss;
-        strategy[_strategy].totalDebt -= _loss;
-        totalDebt -= _loss;
-        uint256 _deltaDebtRatio = _min(
-            (_loss * MAX_BPS) / IVesperPool(pool).totalValue(),
-            strategy[_strategy].debtRatio
-        );
-        strategy[_strategy].debtRatio -= _deltaDebtRatio;
-        totalDebtRatio -= _deltaDebtRatio;
-    }
-
-    function _availableCreditLimit(address _strategy) internal view returns (uint256) {
-        if (IVesperPool(pool).stopEverything()) {
-            return 0;
-        }
-        uint256 _totalValue = IVesperPool(pool).totalValue();
-        uint256 _maxDebt = (strategy[_strategy].debtRatio * _totalValue) / MAX_BPS;
-        uint256 _currentDebt = strategy[_strategy].totalDebt;
-        if (_currentDebt >= _maxDebt) {
-            return 0;
-        }
-        uint256 _poolDebtLimit = (totalDebtRatio * _totalValue) / MAX_BPS;
-        if (totalDebt >= _poolDebtLimit) {
-            return 0;
-        }
-        uint256 _available = _maxDebt - _currentDebt;
-        _available = _min(_min(IVesperPool(pool).tokensHere(), _available), _poolDebtLimit - totalDebt);
-        return _available;
-    }
-
-    function _excessDebt(address _strategy) internal view returns (uint256) {
-        uint256 _currentDebt = strategy[_strategy].totalDebt;
-        if (IVesperPool(pool).stopEverything()) {
-            return _currentDebt;
-        }
-        uint256 _maxDebt = (strategy[_strategy].debtRatio * IVesperPool(pool).totalValue()) / MAX_BPS;
-        return _currentDebt > _maxDebt ? (_currentDebt - _maxDebt) : 0;
-    }
-
-    function _min(uint256 a, uint256 b) internal pure returns (uint256) {
-        return a < b ? a : b;
-    }
 }

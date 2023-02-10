@@ -68,35 +68,21 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
     }
 
     /**
-     * @notice Notify that reward is added. Only authorized caller can call
-     * @dev Also updates reward rate and reward earning period.
-     * @param _rewardTokens Tokens being rewarded
-     * @param _rewardAmounts Rewards amount for token on same index in rewardTokens array
-     * @param _rewardDurations Duration for which reward will be distributed
+     * @notice Returns claimable reward amount.
+     * @return _rewardTokens Array of tokens being rewarded
+     * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
      */
-    function notifyRewardAmount(
-        address[] memory _rewardTokens,
-        uint256[] memory _rewardAmounts,
-        uint256[] memory _rewardDurations
-    ) external virtual override onlyAuthorized {
-        _notifyRewardAmount(_rewardTokens, _rewardAmounts, _rewardDurations, IERC20(pool).totalSupply());
-    }
-
-    function notifyRewardAmount(
-        address _rewardToken,
-        uint256 _rewardAmount,
-        uint256 _rewardDuration
-    ) external virtual override onlyAuthorized {
-        _notifyRewardAmount(_rewardToken, _rewardAmount, _rewardDuration, IERC20(pool).totalSupply());
-    }
-
-    /// @notice Add new reward token in existing rewardsToken array
-    function addRewardToken(address _newRewardToken) external onlyAuthorized {
-        require(_newRewardToken != address(0), "reward-token-address-zero");
-        require(!isRewardToken[_newRewardToken], "reward-token-already-exist");
-        emit RewardTokenAdded(_newRewardToken, rewardTokens);
-        rewardTokens.push(_newRewardToken);
-        isRewardToken[_newRewardToken] = true;
+    function claimable(
+        address _account
+    ) external view virtual override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
+        uint256 _totalSupply = IERC20(pool).totalSupply();
+        uint256 _balance = IERC20(pool).balanceOf(_account);
+        _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
+        _claimableAmounts = new uint256[](_len);
+        for (uint256 i; i < _len; i++) {
+            _claimableAmounts[i] = _claimable(_rewardTokens[i], _account, _totalSupply, _balance);
+        }
     }
 
     /**
@@ -117,36 +103,6 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
                 _claimReward(_rewardToken, _account, _reward);
                 emit RewardPaid(_account, _rewardToken, _reward);
             }
-        }
-    }
-
-    /**
-     * @notice Updated reward for given account.
-     */
-    function updateReward(address _account) external override {
-        uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
-        uint256 _len = rewardTokens.length;
-        for (uint256 i; i < _len; i++) {
-            _updateReward(rewardTokens[i], _account, _totalSupply, _balance);
-        }
-    }
-
-    /**
-     * @notice Returns claimable reward amount.
-     * @return _rewardTokens Array of tokens being rewarded
-     * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
-     */
-    function claimable(
-        address _account
-    ) external view virtual override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
-        uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
-        _rewardTokens = rewardTokens;
-        uint256 _len = _rewardTokens.length;
-        _claimableAmounts = new uint256[](_len);
-        for (uint256 i; i < _len; i++) {
-            _claimableAmounts[i] = _claimable(_rewardTokens[i], _account, _totalSupply, _balance);
         }
     }
 
@@ -191,6 +147,18 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         _rewardPerTokenRate = new uint256[](_len);
         for (uint256 i; i < _len; i++) {
             _rewardPerTokenRate[i] = _rewardPerToken(_rewardTokens[i], _totalSupply);
+        }
+    }
+
+    /**
+     * @notice Updated reward for given account.
+     */
+    function updateReward(address _account) external override {
+        uint256 _totalSupply = IERC20(pool).totalSupply();
+        uint256 _balance = IERC20(pool).balanceOf(_account);
+        uint256 _len = rewardTokens.length;
+        for (uint256 i; i < _len; i++) {
+            _updateReward(rewardTokens[i], _account, _totalSupply, _balance);
         }
     }
 
@@ -282,5 +250,41 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
             rewards[_rewardToken][_account] = _claimable(_rewardToken, _account, _totalSupply, _balance);
             userRewardPerTokenPaid[_rewardToken][_account] = _rewardPerTokenStored;
         }
+    }
+
+    /************************************************************************************************
+     *                                     Authorized function                                      *
+     ***********************************************************************************************/
+
+    /// @notice Add new reward token in existing rewardsToken array
+    function addRewardToken(address _newRewardToken) external onlyAuthorized {
+        require(_newRewardToken != address(0), "reward-token-address-zero");
+        require(!isRewardToken[_newRewardToken], "reward-token-already-exist");
+        emit RewardTokenAdded(_newRewardToken, rewardTokens);
+        rewardTokens.push(_newRewardToken);
+        isRewardToken[_newRewardToken] = true;
+    }
+
+    /**
+     * @notice Notify that reward is added. Only authorized caller can call
+     * @dev Also updates reward rate and reward earning period.
+     * @param _rewardTokens Tokens being rewarded
+     * @param _rewardAmounts Rewards amount for token on same index in rewardTokens array
+     * @param _rewardDurations Duration for which reward will be distributed
+     */
+    function notifyRewardAmount(
+        address[] memory _rewardTokens,
+        uint256[] memory _rewardAmounts,
+        uint256[] memory _rewardDurations
+    ) external virtual override onlyAuthorized {
+        _notifyRewardAmount(_rewardTokens, _rewardAmounts, _rewardDurations, IERC20(pool).totalSupply());
+    }
+
+    function notifyRewardAmount(
+        address _rewardToken,
+        uint256 _rewardAmount,
+        uint256 _rewardDuration
+    ) external virtual override onlyAuthorized {
+        _notifyRewardAmount(_rewardToken, _rewardAmount, _rewardDuration, IERC20(pool).totalSupply());
     }
 }
