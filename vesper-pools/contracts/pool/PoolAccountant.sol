@@ -14,7 +14,7 @@ import "./PoolAccountantStorage.sol";
 contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     using SafeERC20 for IERC20;
 
-    string public constant VERSION = "5.0.2";
+    string public constant VERSION = "5.1.0";
     uint256 public constant MAX_BPS = 10_000;
 
     event EarningReported(
@@ -126,7 +126,7 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         address[] memory _withdrawQueue = new address[](strategies.length);
         uint256 j;
         // After above update, withdrawQueue.length > strategies.length
-        for (uint256 i = 0; i < withdrawQueue.length; i++) {
+        for (uint256 i; i < withdrawQueue.length; i++) {
             if (withdrawQueue[i] != _strategy) {
                 _withdrawQueue[j] = withdrawQueue[i];
                 j++;
@@ -172,7 +172,7 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @dev Transfer given ERC20 token to pool
      * @param _fromToken Token address to sweep
      */
-    function sweepERC20(address _fromToken) external virtual onlyKeeper {
+    function sweep(address _fromToken) external virtual onlyKeeper {
         IERC20(_fromToken).safeTransfer(pool, IERC20(_fromToken).balanceOf(address(this)));
     }
 
@@ -207,7 +207,7 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     function updateWithdrawQueue(address[] memory _withdrawQueue) external onlyMaintainer {
         uint256 _length = _withdrawQueue.length;
         require(_length == withdrawQueue.length && _length == strategies.length, Errors.INPUT_LENGTH_MISMATCH);
-        for (uint256 i = 0; i < _length; i++) {
+        for (uint256 i; i < _length; i++) {
             require(strategy[_withdrawQueue[i]].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         }
         withdrawQueue = _withdrawQueue;
@@ -242,13 +242,13 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
         // Strategies and withdrawQueue has same length but we still want
         // to iterate over them in different loop.
-        for (uint256 i = 0; i < strategies.length; i++) {
+        for (uint256 i; i < strategies.length; i++) {
             if (strategies[i] == _old) {
                 strategies[i] = _new;
                 break;
             }
         }
-        for (uint256 i = 0; i < withdrawQueue.length; i++) {
+        for (uint256 i; i < withdrawQueue.length; i++) {
             if (withdrawQueue[i] == _old) {
                 withdrawQueue[i] = _new;
                 break;
@@ -272,22 +272,22 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     ) external onlyPool returns (uint256 _actualPayback, uint256 _creditLine) {
         require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         require(IVesperPool(pool).token().balanceOf(_strategy) >= (_profit + _payback), Errors.INSUFFICIENT_BALANCE);
-        if (_loss != 0) {
+        if (_loss > 0) {
             _reportLoss(_strategy, _loss);
         }
 
         uint256 _overLimitDebt = _excessDebt(_strategy);
         _actualPayback = _min(_overLimitDebt, _payback);
-        if (_actualPayback != 0) {
+        if (_actualPayback > 0) {
             strategy[_strategy].totalDebt -= _actualPayback;
             totalDebt -= _actualPayback;
         }
         _creditLine = _availableCreditLimit(_strategy);
-        if (_creditLine != 0) {
+        if (_creditLine > 0) {
             strategy[_strategy].totalDebt += _creditLine;
             totalDebt += _creditLine;
         }
-        if (_profit != 0) {
+        if (_profit > 0) {
             strategy[_strategy].totalProfit += _profit;
         }
         strategy[_strategy].lastRebalance = block.timestamp;
@@ -373,8 +373,8 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         uint256 _externalDepositFee;
 
         // calculate poolExternalDepositFee and weightedFee for each strategy
-        if (totalDebtRatio != 0) {
-            for (uint256 i = 0; i < _len; i++) {
+        if (totalDebtRatio > 0) {
+            for (uint256 i; i < _len; i++) {
                 _externalDepositFee +=
                     (strategy[strategies[i]].externalDepositFee * strategy[strategies[i]].debtRatio) /
                     totalDebtRatio;
@@ -390,8 +390,7 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * Reduction is debt ratio is reduction in credit limit
      */
     function _reportLoss(address _strategy, uint256 _loss) internal {
-        uint256 _currentDebt = strategy[_strategy].totalDebt;
-        require(_currentDebt >= _loss, Errors.LOSS_TOO_HIGH);
+        require(strategy[_strategy].totalDebt >= _loss, Errors.LOSS_TOO_HIGH);
         strategy[_strategy].totalLoss += _loss;
         strategy[_strategy].totalDebt -= _loss;
         totalDebt -= _loss;

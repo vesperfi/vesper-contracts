@@ -35,16 +35,16 @@ contract VesperEarnDrip is PoolRewards {
     ) external view override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
         uint256 _balance = IERC20(pool).balanceOf(_account);
-        uint256 _len = rewardTokens.length;
+        _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
         _claimableAmounts = new uint256[](_len);
-        for (uint256 i = 0; i < _len; i++) {
-            uint256 _claimableAmount = _claimable(rewardTokens[i], _account, _totalSupply, _balance);
-            if (rewardTokens[i] == growToken) {
+        for (uint256 i; i < _len; i++) {
+            uint256 _claimableAmount = _claimable(_rewardTokens[i], _account, _totalSupply, _balance);
+            if (_rewardTokens[i] == growToken) {
                 _claimableAmount = _calculateRewardInDripToken(growToken, _claimableAmount);
             }
             _claimableAmounts[i] = _claimableAmount;
         }
-        _rewardTokens = rewardTokens;
     }
 
     /**
@@ -86,7 +86,7 @@ contract VesperEarnDrip is PoolRewards {
             // Calculate reward in drip token
             uint256 _rewardInDripToken = _calculateRewardInDripToken(_rewardToken, _reward);
             // If reward in drip token is non zero
-            if (_rewardInDripToken != 0) {
+            if (_rewardInDripToken > 0) {
                 // Mark reward as claimed
                 rewards[_rewardToken][_account] = 0;
 

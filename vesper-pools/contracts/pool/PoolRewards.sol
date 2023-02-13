@@ -57,7 +57,7 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         require(_len > 0, "invalid-reward-tokens");
         pool = _pool;
         rewardTokens = _rewardTokens;
-        for (uint256 i = 0; i < _len; i++) {
+        for (uint256 i; i < _len; i++) {
             isRewardToken[_rewardTokens[i]] = true;
         }
     }
