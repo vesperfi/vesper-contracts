@@ -74,6 +74,37 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /**
+     * @notice Get available credit limit of strategy. This is the amount strategy can borrow from pool
+     * @dev Available credit limit is calculated based on current debt of pool and strategy, current debt limit of pool and strategy.
+     * credit available = min(pool's debt limit, strategy's debt limit, max debt per rebalance)
+     * when some strategy do not pay back outstanding debt, this impact credit line of other strategy if totalDebt of pool >= debtLimit of pool
+     * @param _strategy Strategy address
+     */
+    function availableCreditLimit(address _strategy) external view returns (uint256) {
+        return IPoolAccountant(poolAccountant).availableCreditLimit(_strategy);
+    }
+
+    /**
+     * @notice Calculate how much shares user will get for given amount. Also return externalDepositFee if any.
+     * @param _amount Collateral amount
+     * @return _shares Amount of share that user will get
+     * @dev Amount should be >= minimum deposit limit which default to 1
+     */
+    function calculateMintage(uint256 _amount) public view returns (uint256 _shares) {
+        require(_amount >= minDepositLimit, Errors.INVALID_COLLATERAL_AMOUNT);
+        uint256 _externalDepositFee = (_amount * IPoolAccountant(poolAccountant).externalDepositFee()) / MAX_BPS;
+        _shares = _calculateShares(_amount - _externalDepositFee);
+    }
+
+    /**
+     * @notice Calculate universal fee for calling strategy. This is only strategy function.
+     * @dev Earn strategies will call this during rebalance.
+     */
+    function calculateUniversalFee(uint256 _profit) external view returns (uint256 _fee) {
+        return _calculateUniversalFee(_msgSender(), _profit);
+    }
+
+    /**
      * @notice Deposit ERC20 tokens and receive pool shares depending on the current share price.
      * @param _amount ERC20 token amount.
      */
@@ -112,22 +143,30 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /**
-     * @notice Withdraw collateral based on given shares and the current share price.
-     * Burn remaining shares and return collateral.
-     * @param _shares Pool shares. It will be in 18 decimals.
+     * @notice Debt above current debt limit
+     * @param _strategy Address of strategy
      */
-    function withdraw(uint256 _shares) external nonReentrant whenNotShutdown {
-        _updateRewards(_msgSender());
-        _withdraw(_shares);
+    function excessDebt(address _strategy) external view returns (uint256) {
+        return IPoolAccountant(poolAccountant).excessDebt(_strategy);
+    }
+
+    function getStrategies() external view returns (address[] memory) {
+        return IPoolAccountant(poolAccountant).getStrategies();
+    }
+
+    function getWithdrawQueue() public view returns (address[] memory) {
+        return IPoolAccountant(poolAccountant).getWithdrawQueue();
     }
 
     /**
-     * @notice Withdraw collateral and claim rewards if any
-     * @param _shares Pool shares. It will be in 18 decimals.
+     * @notice Get price per share
+     * @dev Return value will be in token defined decimals.
      */
-    function withdrawAndClaim(uint256 _shares) external nonReentrant whenNotShutdown {
-        _claimRewards(_msgSender());
-        _withdraw(_shares);
+    function pricePerShare() public view returns (uint256) {
+        if (totalSupply() == 0 || totalValue() == 0) {
+            return 10 ** IERC20Metadata(address(token)).decimals();
+        }
+        return (totalValue() * 1e18) / totalSupply();
     }
 
     /**
@@ -182,91 +221,6 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         }
     }
 
-    /**
-     * @dev Transfer given ERC20 token to governor
-     * @param _fromToken Token address to sweep
-     */
-    function sweepERC20(address _fromToken) external onlyKeeper {
-        require(_fromToken != address(token), Errors.NOT_ALLOWED_TO_SWEEP);
-        IERC20(_fromToken).safeTransfer(governor, IERC20(_fromToken).balanceOf(address(this)));
-    }
-
-    /**
-     * @notice Get available credit limit of strategy. This is the amount strategy can borrow from pool
-     * @dev Available credit limit is calculated based on current debt of pool and strategy, current debt limit of pool and strategy.
-     * credit available = min(pool's debt limit, strategy's debt limit, max debt per rebalance)
-     * when some strategy do not pay back outstanding debt, this impact credit line of other strategy if totalDebt of pool >= debtLimit of pool
-     * @param _strategy Strategy address
-     */
-    function availableCreditLimit(address _strategy) external view returns (uint256) {
-        return IPoolAccountant(poolAccountant).availableCreditLimit(_strategy);
-    }
-
-    /**
-     * @notice Calculate universal fee for calling strategy. This is only strategy function.
-     * @dev Earn strategies will call this during rebalance.
-     */
-    function calculateUniversalFee(uint256 _profit) external view returns (uint256 _fee) {
-        return _calculateUniversalFee(_msgSender(), _profit);
-    }
-
-    /**
-     * @notice Debt above current debt limit
-     * @param _strategy Address of strategy
-     */
-    function excessDebt(address _strategy) external view returns (uint256) {
-        return IPoolAccountant(poolAccountant).excessDebt(_strategy);
-    }
-
-    function getStrategies() external view returns (address[] memory) {
-        return IPoolAccountant(poolAccountant).getStrategies();
-    }
-
-    /// @notice Get total debt of pool
-    function totalDebt() external view returns (uint256) {
-        return IPoolAccountant(poolAccountant).totalDebt();
-    }
-
-    /**
-     * @notice Get total debt of given strategy
-     * @param _strategy Strategy address
-     */
-    function totalDebtOf(address _strategy) external view returns (uint256) {
-        return IPoolAccountant(poolAccountant).totalDebtOf(_strategy);
-    }
-
-    /// @notice Get total debt ratio. Total debt ratio helps us keep buffer in pool
-    function totalDebtRatio() external view returns (uint256) {
-        return IPoolAccountant(poolAccountant).totalDebtRatio();
-    }
-
-    /**
-     * @notice Calculate how much shares user will get for given amount. Also return externalDepositFee if any.
-     * @param _amount Collateral amount
-     * @return _shares Amount of share that user will get
-     * @dev Amount should be >= minimum deposit limit which default to 1
-     */
-    function calculateMintage(uint256 _amount) public view returns (uint256 _shares) {
-        require(_amount >= minDepositLimit, Errors.INVALID_COLLATERAL_AMOUNT);
-        uint256 _externalDepositFee = (_amount * IPoolAccountant(poolAccountant).externalDepositFee()) / MAX_BPS;
-        _shares = _calculateShares(_amount - _externalDepositFee);
-    }
-
-    function getWithdrawQueue() public view returns (address[] memory) {
-        return IPoolAccountant(poolAccountant).getWithdrawQueue();
-    }
-
-    /**
-     * @notice Get price per share
-     * @dev Return value will be in token defined decimals.
-     */
-    function pricePerShare() public view returns (uint256) {
-        if (totalSupply() == 0 || totalValue() == 0) {
-            return 10 ** IERC20Metadata(address(token)).decimals();
-        }
-        return (totalValue() * 1e18) / totalSupply();
-    }
-
     function strategy(
         address _strategy
     )
@@ -292,6 +246,24 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         return token.balanceOf(address(this));
     }
 
+    /// @notice Get total debt of pool
+    function totalDebt() external view returns (uint256) {
+        return IPoolAccountant(poolAccountant).totalDebt();
+    }
+
+    /**
+     * @notice Get total debt of given strategy
+     * @param _strategy Strategy address
+     */
+    function totalDebtOf(address _strategy) external view returns (uint256) {
+        return IPoolAccountant(poolAccountant).totalDebtOf(_strategy);
+    }
+
+    /// @notice Get total debt ratio. Total debt ratio helps us keep buffer in pool
+    function totalDebtRatio() external view returns (uint256) {
+        return IPoolAccountant(poolAccountant).totalDebtRatio();
+    }
+
     /**
      * @notice Returns sum of token locked in other contracts and token stored in the pool.
      * It will be in token defined decimals.
@@ -301,12 +273,85 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /**
+     * @notice Withdraw collateral based on given shares and the current share price.
+     * Burn remaining shares and return collateral.
+     * @param _shares Pool shares. It will be in 18 decimals.
+     */
+    function withdraw(uint256 _shares) external nonReentrant whenNotShutdown {
+        _updateRewards(_msgSender());
+        _withdraw(_shares);
+    }
+
+    /**
+     * @notice Withdraw collateral and claim rewards if any
+     * @param _shares Pool shares. It will be in 18 decimals.
+     */
+    function withdrawAndClaim(uint256 _shares) external nonReentrant whenNotShutdown {
+        _claimRewards(_msgSender());
+        _withdraw(_shares);
+    }
+
+    /**
      * @dev Hook that is called just after burning tokens.
      * @param _amount Collateral amount in collateral token defined decimals.
      */
     function _afterBurning(uint256 _amount) internal virtual returns (uint256) {
         token.safeTransfer(_msgSender(), _amount);
         return _amount;
+    }
+
+    /**
+     * @dev Before burning hook.
+     * withdraw amount from strategies
+     */
+    function _beforeBurning(uint256 _share) private returns (uint256 _amount, bool _isPartial) {
+        _amount = (_share * pricePerShare()) / 1e18;
+        uint256 _tokensHere = tokensHere();
+        // Check for partial withdraw scenario
+        // If we do not have enough tokens then withdraw whats needed from strategy
+        if (_amount > _tokensHere) {
+            // Strategy may withdraw partial
+            _withdrawCollateral(_amount - _tokensHere);
+            _tokensHere = tokensHere();
+            if (_amount > _tokensHere) {
+                _amount = _tokensHere;
+                _isPartial = true;
+            }
+        }
+        require(_amount > 0, Errors.INVALID_COLLATERAL_AMOUNT);
+    }
+
+    /**
+     * @dev Calculate shares to mint/burn based on the current share price and given amount.
+     * @param _amount Collateral amount in collateral token defined decimals.
+     * @return share amount in 18 decimal
+     */
+    function _calculateShares(uint256 _amount) private view returns (uint256) {
+        uint256 _share = ((_amount * 1e18) / pricePerShare());
+        return _amount > ((_share * pricePerShare()) / 1e18) ? _share + 1 : _share;
+    }
+
+    /**
+     * @dev Calculate universal fee based on strategy's TVL, profit earned and duration between rebalance and now.
+     */
+    function _calculateUniversalFee(address _strategy, uint256 _profit) private view returns (uint256 _fee) {
+        // Calculate universal fee
+        (, , , uint256 _lastRebalance, uint256 _totalDebt, , , , ) = IPoolAccountant(poolAccountant).strategy(
+            _strategy
+        );
+        return _calculateUniversalFee(_lastRebalance, _totalDebt, _profit);
+    }
+
+    function _calculateUniversalFee(
+        uint256 _lastRebalance,
+        uint256 _totalDebt,
+        uint256 _profit
+    ) private view returns (uint256 _fee) {
+        _fee = (universalFee * (block.timestamp - _lastRebalance) * _totalDebt) / (MAX_BPS * ONE_YEAR);
+        uint256 _maxFee = (_profit * maxProfitAsFee) / MAX_BPS;
+        if (_fee > _maxFee) {
+            _fee = _maxFee;
+        }
     }
 
     /// @notice claim rewards of account
@@ -394,59 +439,9 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         }
     }
 
-    /**
-     * @dev Before burning hook.
-     * withdraw amount from strategies
-     */
-    function _beforeBurning(uint256 _share) private returns (uint256 _amount, bool _isPartial) {
-        _amount = (_share * pricePerShare()) / 1e18;
-        uint256 _tokensHere = tokensHere();
-        // Check for partial withdraw scenario
-        // If we do not have enough tokens then withdraw whats needed from strategy
-        if (_amount > _tokensHere) {
-            // Strategy may withdraw partial
-            _withdrawCollateral(_amount - _tokensHere);
-            _tokensHere = tokensHere();
-            if (_amount > _tokensHere) {
-                _amount = _tokensHere;
-                _isPartial = true;
-            }
-        }
-        require(_amount > 0, Errors.INVALID_COLLATERAL_AMOUNT);
-    }
-
-    /**
-     * @dev Calculate shares to mint/burn based on the current share price and given amount.
-     * @param _amount Collateral amount in collateral token defined decimals.
-     * @return share amount in 18 decimal
-     */
-    function _calculateShares(uint256 _amount) private view returns (uint256) {
-        uint256 _share = ((_amount * 1e18) / pricePerShare());
-        return _amount > ((_share * pricePerShare()) / 1e18) ? _share + 1 : _share;
-    }
-
-    /**
-     * @dev Calculate universal fee based on strategy's TVL, profit earned and duration between rebalance and now.
-     */
-    function _calculateUniversalFee(address _strategy, uint256 _profit) private view returns (uint256 _fee) {
-        // Calculate universal fee
-        (, , , uint256 _lastRebalance, uint256 _totalDebt, , , , ) = IPoolAccountant(poolAccountant).strategy(
-            _strategy
-        );
-        return _calculateUniversalFee(_lastRebalance, _totalDebt, _profit);
-    }
-
-    function _calculateUniversalFee(
-        uint256 _lastRebalance,
-        uint256 _totalDebt,
-        uint256 _profit
-    ) private view returns (uint256 _fee) {
-        _fee = (universalFee * (block.timestamp - _lastRebalance) * _totalDebt) / (MAX_BPS * ONE_YEAR);
-        uint256 _maxFee = (_profit * maxProfitAsFee) / MAX_BPS;
-        if (_fee > _maxFee) {
-            _fee = _maxFee;
-        }
-    }
+    /************************************************************************************************
+     *                                     Authorized function                                      *
+     ***********************************************************************************************/
 
     ////////////////////////////// Only Governor //////////////////////////////
 
@@ -487,6 +482,16 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     }
 
     /**
+     * @notice Update pool rewards address for this pool
+     * @param _newPoolRewards new pool rewards address
+     */
+    function updatePoolRewards(address _newPoolRewards) external onlyGovernor {
+        require(_newPoolRewards != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
+        emit UpdatedPoolRewards(poolRewards, _newPoolRewards);
+        poolRewards = _newPoolRewards;
+    }
+
+    /**
      * @notice Update universal fee for this pool
      * @dev Format: 1500 = 15% fee, 100 = 1%
      * @param _newUniversalFee new universal fee
@@ -497,17 +502,16 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
         universalFee = _newUniversalFee;
     }
 
+    ///////////////////////////// Only Keeper ///////////////////////////////
     /**
-     * @notice Update pool rewards address for this pool
-     * @param _newPoolRewards new pool rewards address
+     * @dev Transfer given ERC20 token to governor
+     * @param _fromToken Token address to sweep
      */
-    function updatePoolRewards(address _newPoolRewards) external onlyGovernor {
-        require(_newPoolRewards != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
-        emit UpdatedPoolRewards(poolRewards, _newPoolRewards);
-        poolRewards = _newPoolRewards;
+    function sweepERC20(address _fromToken) external onlyKeeper {
+        require(_fromToken != address(token), Errors.NOT_ALLOWED_TO_SWEEP);
+        IERC20(_fromToken).safeTransfer(governor, IERC20(_fromToken).balanceOf(address(this)));
     }
 
-    ///////////////////////////// Only Keeper ///////////////////////////////
     function pause() external onlyKeeper {
         _pause();
     }
