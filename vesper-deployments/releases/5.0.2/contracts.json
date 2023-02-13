@@ -183,6 +183,7 @@
         },
         "strategies": {
           "AaveV2_Vesper_Xy_ETH_DAI": "0x9A1a37e573dEd585299FdDbe99Ca43853DD21d9D",
+          "AaveV3_Vesper_Xy_ETH_DAI": "0xaB1A2802F0Ba6F958009DE8739250e04BAE67E3b",
           "AlphaLendStrategyETH": "0xeCe0f32840280aD0069Dd89Ad97Ad6dF1bB0fF2A",
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
