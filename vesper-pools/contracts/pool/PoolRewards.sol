@@ -48,17 +48,17 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
 
     /**
      * @dev Called by proxy to initialize this contract
-     * @param _pool Vesper pool address
-     * @param _rewardTokens Array of reward token addresses
+     * @param pool_ Vesper pool address
+     * @param rewardTokens_ Array of reward token addresses
      */
-    function initialize(address _pool, address[] memory _rewardTokens) public initializer {
-        require(_pool != address(0), "pool-address-is-zero");
-        uint256 _len = _rewardTokens.length;
+    function initialize(address pool_, address[] memory rewardTokens_) public initializer {
+        require(pool_ != address(0), "pool-address-is-zero");
+        uint256 _len = rewardTokens_.length;
         require(_len > 0, "invalid-reward-tokens");
-        pool = _pool;
-        rewardTokens = _rewardTokens;
+        pool = pool_;
+        rewardTokens = rewardTokens_;
         for (uint256 i; i < _len; i++) {
-            isRewardToken[_rewardTokens[i]] = true;
+            isRewardToken[rewardTokens_[i]] = true;
         }
     }
 
@@ -73,15 +73,15 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
      * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
      */
     function claimable(
-        address _account
+        address account_
     ) external view virtual override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
+        uint256 _balance = IERC20(pool).balanceOf(account_);
         _rewardTokens = rewardTokens;
         uint256 _len = _rewardTokens.length;
         _claimableAmounts = new uint256[](_len);
         for (uint256 i; i < _len; i++) {
-            _claimableAmounts[i] = _claimable(_rewardTokens[i], _account, _totalSupply, _balance);
+            _claimableAmounts[i] = _claimable(_rewardTokens[i], account_, _totalSupply, _balance);
         }
     }
 
@@ -89,19 +89,19 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
      * @notice Claim earned rewards.
      * @dev This function will claim rewards for all tokens being rewarded
      */
-    function claimReward(address _account) external virtual override nonReentrant {
+    function claimReward(address account_) external virtual override nonReentrant {
         uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
+        uint256 _balance = IERC20(pool).balanceOf(account_);
         uint256 _len = rewardTokens.length;
         for (uint256 i; i < _len; i++) {
             address _rewardToken = rewardTokens[i];
-            _updateReward(_rewardToken, _account, _totalSupply, _balance);
+            _updateReward(_rewardToken, account_, _totalSupply, _balance);
 
             // Claim rewards
-            uint256 _reward = rewards[_rewardToken][_account];
+            uint256 _reward = rewards[_rewardToken][account_];
             if (_reward > 0 && _reward <= IERC20(_rewardToken).balanceOf(address(this))) {
-                _claimReward(_rewardToken, _account, _reward);
-                emit RewardPaid(_account, _rewardToken, _reward);
+                _claimReward(_rewardToken, account_, _reward);
+                emit RewardPaid(account_, _rewardToken, _reward);
             }
         }
     }
@@ -112,8 +112,8 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
     }
 
     /// @notice Returns timestamp of last reward update
-    function lastTimeRewardApplicable(address _rewardToken) public view override returns (uint256) {
-        return block.timestamp < periodFinish[_rewardToken] ? block.timestamp : periodFinish[_rewardToken];
+    function lastTimeRewardApplicable(address rewardToken_) public view override returns (uint256) {
+        return block.timestamp < periodFinish[rewardToken_] ? block.timestamp : periodFinish[rewardToken_];
     }
 
     function rewardForDuration()
@@ -153,102 +153,102 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
     /**
      * @notice Updated reward for given account.
      */
-    function updateReward(address _account) external override {
+    function updateReward(address account_) external override {
         uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
+        uint256 _balance = IERC20(pool).balanceOf(account_);
         uint256 _len = rewardTokens.length;
         for (uint256 i; i < _len; i++) {
-            _updateReward(rewardTokens[i], _account, _totalSupply, _balance);
+            _updateReward(rewardTokens[i], account_, _totalSupply, _balance);
         }
     }
 
     function _claimable(
-        address _rewardToken,
-        address _account,
-        uint256 _totalSupply,
-        uint256 _balance
+        address rewardToken_,
+        address account_,
+        uint256 totalSupply_,
+        uint256 balance_
     ) internal view returns (uint256) {
-        uint256 _rewardPerTokenAvailable = _rewardPerToken(_rewardToken, _totalSupply) -
-            userRewardPerTokenPaid[_rewardToken][_account];
+        uint256 _rewardPerTokenAvailable = _rewardPerToken(rewardToken_, totalSupply_) -
+            userRewardPerTokenPaid[rewardToken_][account_];
         // claimable = rewards + rewards earned since last update
-        return rewards[_rewardToken][_account] + ((_balance * _rewardPerTokenAvailable) / 1e18);
+        return rewards[rewardToken_][account_] + ((balance_ * _rewardPerTokenAvailable) / 1e18);
     }
 
-    function _claimReward(address _rewardToken, address _account, uint256 _reward) internal virtual {
+    function _claimReward(address rewardToken_, address account_, uint256 reward_) internal virtual {
         // Mark reward as claimed
-        rewards[_rewardToken][_account] = 0;
+        rewards[rewardToken_][account_] = 0;
         // Transfer reward
-        IERC20(_rewardToken).safeTransfer(_account, _reward);
+        IERC20(rewardToken_).safeTransfer(account_, reward_);
     }
 
     // There are scenarios when extending contract will override external methods and
     // end up calling internal function. Hence providing internal functions
     function _notifyRewardAmount(
-        address[] memory _rewardTokens,
-        uint256[] memory _rewardAmounts,
-        uint256[] memory _rewardDurations,
-        uint256 _totalSupply
+        address[] memory rewardTokens_,
+        uint256[] memory rewardAmounts_,
+        uint256[] memory rewardDurations_,
+        uint256 totalSupply_
     ) internal {
-        uint256 _len = _rewardTokens.length;
+        uint256 _len = rewardTokens_.length;
         require(_len > 0, "invalid-reward-tokens");
-        require(_len == _rewardAmounts.length && _len == _rewardDurations.length, "array-length-mismatch");
+        require(_len == rewardAmounts_.length && _len == rewardDurations_.length, "array-length-mismatch");
         for (uint256 i; i < _len; i++) {
-            _notifyRewardAmount(_rewardTokens[i], _rewardAmounts[i], _rewardDurations[i], _totalSupply);
+            _notifyRewardAmount(rewardTokens_[i], rewardAmounts_[i], rewardDurations_[i], totalSupply_);
         }
     }
 
     function _notifyRewardAmount(
-        address _rewardToken,
-        uint256 _rewardAmount,
-        uint256 _rewardDuration,
-        uint256 _totalSupply
+        address rewardToken_,
+        uint256 rewardAmount_,
+        uint256 rewardDuration_,
+        uint256 totalSupply_
     ) internal {
-        require(_rewardToken != address(0), "incorrect-reward-token");
-        require(_rewardAmount > 0, "incorrect-reward-amount");
-        require(_rewardDuration > 0, "incorrect-reward-duration");
-        require(isRewardToken[_rewardToken], "invalid-reward-token");
+        require(rewardToken_ != address(0), "incorrect-reward-token");
+        require(rewardAmount_ > 0, "incorrect-reward-amount");
+        require(rewardDuration_ > 0, "incorrect-reward-duration");
+        require(isRewardToken[rewardToken_], "invalid-reward-token");
 
         // Update rewards earned so far
-        rewardPerTokenStored[_rewardToken] = _rewardPerToken(_rewardToken, _totalSupply);
-        if (block.timestamp >= periodFinish[_rewardToken]) {
-            rewardRates[_rewardToken] = _rewardAmount / _rewardDuration;
+        rewardPerTokenStored[rewardToken_] = _rewardPerToken(rewardToken_, totalSupply_);
+        if (block.timestamp >= periodFinish[rewardToken_]) {
+            rewardRates[rewardToken_] = rewardAmount_ / rewardDuration_;
         } else {
-            uint256 remainingPeriod = periodFinish[_rewardToken] - block.timestamp;
+            uint256 remainingPeriod = periodFinish[rewardToken_] - block.timestamp;
 
-            uint256 leftover = remainingPeriod * rewardRates[_rewardToken];
-            rewardRates[_rewardToken] = (_rewardAmount + leftover) / _rewardDuration;
+            uint256 leftover = remainingPeriod * rewardRates[rewardToken_];
+            rewardRates[rewardToken_] = (rewardAmount_ + leftover) / rewardDuration_;
         }
         // Safety check
         require(
-            rewardRates[_rewardToken] <= (IERC20(_rewardToken).balanceOf(address(this)) / _rewardDuration),
+            rewardRates[rewardToken_] <= (IERC20(rewardToken_).balanceOf(address(this)) / rewardDuration_),
             "rewards-too-high"
         );
         // Start new drip time
-        rewardDuration[_rewardToken] = _rewardDuration;
-        lastUpdateTime[_rewardToken] = block.timestamp;
-        periodFinish[_rewardToken] = block.timestamp + _rewardDuration;
-        emit RewardAdded(_rewardToken, _rewardAmount, _rewardDuration);
+        rewardDuration[rewardToken_] = rewardDuration_;
+        lastUpdateTime[rewardToken_] = block.timestamp;
+        periodFinish[rewardToken_] = block.timestamp + rewardDuration_;
+        emit RewardAdded(rewardToken_, rewardAmount_, rewardDuration_);
     }
 
-    function _rewardPerToken(address _rewardToken, uint256 _totalSupply) internal view returns (uint256) {
-        if (_totalSupply == 0) {
-            return rewardPerTokenStored[_rewardToken];
+    function _rewardPerToken(address rewardToken_, uint256 totalSupply_) internal view returns (uint256) {
+        if (totalSupply_ == 0) {
+            return rewardPerTokenStored[rewardToken_];
         }
 
-        uint256 _timeSinceLastUpdate = lastTimeRewardApplicable(_rewardToken) - lastUpdateTime[_rewardToken];
+        uint256 _timeSinceLastUpdate = lastTimeRewardApplicable(rewardToken_) - lastUpdateTime[rewardToken_];
         // reward per token = rewardPerTokenStored + rewardPerToken since last update
         return
-            rewardPerTokenStored[_rewardToken] +
-            ((_timeSinceLastUpdate * rewardRates[_rewardToken] * 1e18) / _totalSupply);
+            rewardPerTokenStored[rewardToken_] +
+            ((_timeSinceLastUpdate * rewardRates[rewardToken_] * 1e18) / totalSupply_);
     }
 
-    function _updateReward(address _rewardToken, address _account, uint256 _totalSupply, uint256 _balance) internal {
-        uint256 _rewardPerTokenStored = _rewardPerToken(_rewardToken, _totalSupply);
-        rewardPerTokenStored[_rewardToken] = _rewardPerTokenStored;
-        lastUpdateTime[_rewardToken] = lastTimeRewardApplicable(_rewardToken);
-        if (_account != address(0)) {
-            rewards[_rewardToken][_account] = _claimable(_rewardToken, _account, _totalSupply, _balance);
-            userRewardPerTokenPaid[_rewardToken][_account] = _rewardPerTokenStored;
+    function _updateReward(address rewardToken_, address account_, uint256 totalSupply_, uint256 balance_) internal {
+        uint256 _rewardPerTokenStored = _rewardPerToken(rewardToken_, totalSupply_);
+        rewardPerTokenStored[rewardToken_] = _rewardPerTokenStored;
+        lastUpdateTime[rewardToken_] = lastTimeRewardApplicable(rewardToken_);
+        if (account_ != address(0)) {
+            rewards[rewardToken_][account_] = _claimable(rewardToken_, account_, totalSupply_, balance_);
+            userRewardPerTokenPaid[rewardToken_][account_] = _rewardPerTokenStored;
         }
     }
 
@@ -257,34 +257,34 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
      ***********************************************************************************************/
 
     /// @notice Add new reward token in existing rewardsToken array
-    function addRewardToken(address _newRewardToken) external onlyAuthorized {
-        require(_newRewardToken != address(0), "reward-token-address-zero");
-        require(!isRewardToken[_newRewardToken], "reward-token-already-exist");
-        emit RewardTokenAdded(_newRewardToken, rewardTokens);
-        rewardTokens.push(_newRewardToken);
-        isRewardToken[_newRewardToken] = true;
+    function addRewardToken(address newRewardToken_) external onlyAuthorized {
+        require(newRewardToken_ != address(0), "reward-token-address-zero");
+        require(!isRewardToken[newRewardToken_], "reward-token-already-exist");
+        emit RewardTokenAdded(newRewardToken_, rewardTokens);
+        rewardTokens.push(newRewardToken_);
+        isRewardToken[newRewardToken_] = true;
     }
 
     /**
      * @notice Notify that reward is added. Only authorized caller can call
      * @dev Also updates reward rate and reward earning period.
-     * @param _rewardTokens Tokens being rewarded
-     * @param _rewardAmounts Rewards amount for token on same index in rewardTokens array
-     * @param _rewardDurations Duration for which reward will be distributed
+     * @param rewardTokens_ Tokens being rewarded
+     * @param rewardAmounts_ Rewards amount for token on same index in rewardTokens array
+     * @param rewardDurations_ Duration for which reward will be distributed
      */
     function notifyRewardAmount(
-        address[] memory _rewardTokens,
-        uint256[] memory _rewardAmounts,
-        uint256[] memory _rewardDurations
+        address[] memory rewardTokens_,
+        uint256[] memory rewardAmounts_,
+        uint256[] memory rewardDurations_
     ) external virtual override onlyAuthorized {
-        _notifyRewardAmount(_rewardTokens, _rewardAmounts, _rewardDurations, IERC20(pool).totalSupply());
+        _notifyRewardAmount(rewardTokens_, rewardAmounts_, rewardDurations_, IERC20(pool).totalSupply());
     }
 
     function notifyRewardAmount(
-        address _rewardToken,
-        uint256 _rewardAmount,
-        uint256 _rewardDuration
+        address rewardToken_,
+        uint256 rewardAmount_,
+        uint256 rewardDuration_
     ) external virtual override onlyAuthorized {
-        _notifyRewardAmount(_rewardToken, _rewardAmount, _rewardDuration, IERC20(pool).totalSupply());
+        _notifyRewardAmount(rewardToken_, rewardAmount_, rewardDuration_, IERC20(pool).totalSupply());
     }
 }
