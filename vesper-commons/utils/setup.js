@@ -201,13 +201,15 @@ async function configureSwapper(strategies, collateral) {
   const pairs = []
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
+    const strategyName = await strategy.instance.NAME()
     const rewardToken =
       (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
     if (rewardToken) {
       pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
+    } else if (chain === 'mainnet' && strategyName.includes('Alpha')) {
+      pairs.push({ tokenIn: Address.Alpha.ALPHA, tokenOut: collateral })
     }
 
-    const strategyName = await strategy.instance.NAME()
     if (strategyName.includes('AaveV3')) {
       // get reward token list from AaveIncentivesController
       const aToken = await ethers.getContractAt(
