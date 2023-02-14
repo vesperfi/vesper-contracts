@@ -136,7 +136,7 @@ abstract contract Strategy is IStrategy, Context {
      * @notice sweep given token to feeCollector of strategy
      * @param _fromToken token address to sweep
      */
-    function sweepERC20(address _fromToken) external override onlyKeeper {
+    function sweep(address _fromToken) external override onlyKeeper {
         require(feeCollector != address(0), "fee-collector-not-set");
         require(_fromToken != address(collateralToken), "not-allowed-to-sweep-collateral");
         require(!isReservedToken(_fromToken), "not-allowed-to-sweep");
