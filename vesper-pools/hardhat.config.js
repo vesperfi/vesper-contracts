@@ -64,6 +64,8 @@ module.exports = {
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS === 'true',
+    noColors: true,
+    outputFile: 'gas-report.txt',
   },
   solidity: {
     version: '0.8.9',

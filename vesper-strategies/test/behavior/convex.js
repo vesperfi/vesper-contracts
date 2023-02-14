@@ -51,7 +51,7 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       expect(strategy.rewardTokens(1)).revertedWithoutReason()
 
       // when
-      await strategy.setRewardTokens([])
+      await strategy.refetchRewardTokens([])
 
       // then
       // build expected tokens list (can't have duplicated items)

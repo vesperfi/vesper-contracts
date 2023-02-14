@@ -33,6 +33,38 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       isConvex = this.strategies[strategyIndex].type.toUpperCase().includes('CONVEX')
     })
 
+    it('Should get reward tokens', async function () {
+      const { strategyName } = this.strategies[strategyIndex].constructorArgs
+
+      const rewardTokens = await strategy.getRewardTokens()
+
+      if (getChain() !== 'mainnet') {
+        return
+      }
+
+      // Note: Cover several gauge scenarios
+      const expected = {
+        // LiquidityGauge
+        ['Curve_y_DAI']: [Address.Curve.CRV],
+        // LiquidityGaugeReward
+        ['Curve_sUSD_DAI']: [Address.Curve.CRV, Address.SNX],
+        // LiquidityGaugeV2/V3 with extra reward tokens
+        ['Curve_mim_MIM']: [Address.SPELL, Address.Curve.CRV],
+        // LiquidityGaugeV2/V3 without extra reward tokens
+        ['Curve_msUSD_USDC']: [Address.Curve.CRV],
+        // LiquidityGaugeV2/V3 with one extra reward token (AAVE)
+        ['Curve_aave_DAI']: [Address.Curve.CRV, Address.Aave.AAVE],
+      }
+
+      const expectedRewardTokens = expected[strategyName]
+
+      if (!expectedRewardTokens) {
+        return
+      }
+
+      expect(rewardTokens).deep.eq(expectedRewardTokens)
+    })
+
     it('Should get total value in LPs', async function () {
       await deposit(pool, collateralToken, 1, alice)
       await strategy.rebalance()

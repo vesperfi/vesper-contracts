@@ -36,6 +36,10 @@ function shouldBehaveLikeAlpacaStrategy(strategyIndex) {
       const strategySigner = await unlock(strategy.address)
       const fairLaunch = await ethers.getContractAt('IFairLaunch', await strategy.fairLaunch(), strategySigner)
       const poolId = await strategy.poolId()
+      // Return if no rewards
+      if ((await fairLaunch.poolInfo(poolId)).allocPoint == 0) {
+        return
+      }
       // given
       await deposit(pool, collateralToken, 100, alice)
       await strategy.rebalance()

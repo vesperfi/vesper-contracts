@@ -3,10 +3,10 @@
 pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../../interfaces/convex/IConvexForCurve.sol";
-import "../../strategies/curve/Curve.sol";
+import "../../strategies/curve/CurveBase.sol";
 
 // Convex Strategies common variables and helper functions
-contract Convex is Curve {
+contract Convex is CurveBase {
     using SafeERC20 for IERC20;
 
     address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
@@ -33,7 +33,7 @@ contract Convex is Curve {
         uint256 convexPoolId_,
         string memory name_
     )
-        Curve(
+        CurveBase(
             pool_,
             crvPool_,
             curvePoolType_,
@@ -74,7 +74,7 @@ contract Convex is Curve {
      * In some cases, CVX is also added as extra reward, reason why we have to ensure to not add it twice
      * @return _rewardTokens The array of reward tokens (both base and extra rewards)
      */
-    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
         uint256 _extraRewardCount;
         uint256 _length = cvxCrvRewards.extraRewardsLength();
 
@@ -124,17 +124,5 @@ contract Convex is Curve {
         if (_amount > 0) {
             require(cvxCrvRewards.withdrawAndUnwrap(_amount, false), "withdraw-and-unwrap-failed");
         }
-    }
-
-    /**
-     * @notice convex pool can add new rewards. This method refresh list.
-     * It is recommended to claimAndSwapRewards before calling this function.
-     */
-    function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Before updating the reward list, claim rewards and swap into collateral.
-        _claimAndSwapRewards();
-        rewardTokens = _getRewardTokens();
-        _approveToken(0);
-        _approveToken(MAX_UINT_VALUE);
     }
 }

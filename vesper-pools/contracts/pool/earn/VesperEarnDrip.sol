@@ -31,49 +31,35 @@ contract VesperEarnDrip is PoolRewards {
      * @return _claimableAmounts Array of claimable for token on same index in rewardTokens
      */
     function claimable(
-        address _account
+        address account_
     ) external view override returns (address[] memory _rewardTokens, uint256[] memory _claimableAmounts) {
         uint256 _totalSupply = IERC20(pool).totalSupply();
-        uint256 _balance = IERC20(pool).balanceOf(_account);
-        uint256 _len = rewardTokens.length;
+        uint256 _balance = IERC20(pool).balanceOf(account_);
+        _rewardTokens = rewardTokens;
+        uint256 _len = _rewardTokens.length;
         _claimableAmounts = new uint256[](_len);
-        for (uint256 i = 0; i < _len; i++) {
-            uint256 _claimableAmount = _claimable(rewardTokens[i], _account, _totalSupply, _balance);
-            if (rewardTokens[i] == growToken) {
+        for (uint256 i; i < _len; i++) {
+            uint256 _claimableAmount = _claimable(_rewardTokens[i], account_, _totalSupply, _balance);
+            if (_rewardTokens[i] == growToken) {
                 _claimableAmount = _calculateRewardInDripToken(growToken, _claimableAmount);
             }
             _claimableAmounts[i] = _claimableAmount;
         }
-        _rewardTokens = rewardTokens;
     }
 
-    /**
-     * @dev Notify that reward is added.
-     * Also updates reward rate and reward earning period.
-     */
-    function notifyRewardAmount(
-        address _rewardToken,
-        uint256 _rewardAmount,
-        uint256 _rewardDuration
-    ) external override {
-        (bool isStrategy, , , , , , , , ) = IVesperPool(pool).strategy(msg.sender);
-        require(
-            msg.sender == IVesperPool(pool).governor() || (isRewardToken[_rewardToken] && isStrategy),
-            "not-authorized"
-        );
-        super._notifyRewardAmount(_rewardToken, _rewardAmount, _rewardDuration, IVesperPool(pool).totalSupply());
-    }
-
-    /**
-     * @notice Defines which rewardToken is a growToken
-     * @dev growToken is used to check whether to call withdraw
-     * from Grow Pool or not
-     */
-    function updateGrowToken(address _newGrowToken) external onlyAuthorized {
-        require(_newGrowToken != address(0), "grow-token-address-zero");
-        require(isRewardToken[_newGrowToken], "grow-token-not-reward-token");
-        emit GrowTokenUpdated(growToken, _newGrowToken);
-        growToken = _newGrowToken;
+    /// @dev Here _rewardToken AKA growToken is Vesper Grow Pool which can be V2 or V3 pool.
+    /// V2 and V3 pool has different signature to read price per share
+    function _calculateRewardInDripToken(address rewardToken_, uint256 reward_) private view returns (uint256) {
+        uint256 _pricePerShare;
+        // Try reading price per share using V3 pool signature, if this fails catch block will execute
+        try IVesperPool(rewardToken_).pricePerShare() returns (uint256 _pricePerShareV3) {
+            _pricePerShare = _pricePerShareV3;
+        } catch {
+            // If try fails, read price per share using V2 pool signature
+            _pricePerShare = IVesperPoolV2(rewardToken_).getPricePerShare();
+        }
+        // Calculate reward in dripToken, as _reward is share of Grow Pool AKA growToken AKA _rewardToken
+        return (_pricePerShare * reward_) / 1e18;
     }
 
     /**
@@ -81,46 +67,64 @@ contract VesperEarnDrip is PoolRewards {
      * @dev Withdraws from the Grow Pool and transfers the amount to _account
      * @dev Claim rewards only if reward in dripToken is non zero
      */
-    function _claimReward(address _rewardToken, address _account, uint256 _reward) internal override {
-        if (_rewardToken == growToken) {
+    function _claimReward(address rewardToken_, address account_, uint256 reward_) internal override {
+        if (rewardToken_ == growToken) {
             // Calculate reward in drip token
-            uint256 _rewardInDripToken = _calculateRewardInDripToken(_rewardToken, _reward);
+            uint256 _rewardInDripToken = _calculateRewardInDripToken(rewardToken_, reward_);
             // If reward in drip token is non zero
-            if (_rewardInDripToken != 0) {
+            if (_rewardInDripToken > 0) {
                 // Mark reward as claimed
-                rewards[_rewardToken][_account] = 0;
+                rewards[rewardToken_][account_] = 0;
 
                 // Automatically unwraps the Grow Pool token AKA _rewardToken into the dripToken
-                IERC20 _dripToken = IVesperPool(_rewardToken).token();
+                IERC20 _dripToken = IVesperPool(rewardToken_).token();
                 uint256 _dripBalanceBefore = _dripToken.balanceOf(address(this));
-                IVesperPool(_rewardToken).withdraw(_reward);
+                IVesperPool(rewardToken_).withdraw(reward_);
                 uint256 _dripTokenAmount = _dripToken.balanceOf(address(this)) - _dripBalanceBefore;
                 if (address(_dripToken) == address(WETH)) {
                     WETH.withdraw(_dripTokenAmount);
-                    Address.sendValue(payable(_account), _dripTokenAmount);
+                    Address.sendValue(payable(account_), _dripTokenAmount);
                 } else {
-                    _dripToken.safeTransfer(_account, _dripTokenAmount);
+                    _dripToken.safeTransfer(account_, _dripTokenAmount);
                 }
-                emit DripRewardPaid(_account, address(_dripToken), _dripTokenAmount);
+                emit DripRewardPaid(account_, address(_dripToken), _dripTokenAmount);
             }
         } else {
             // Behave as normal PoolRewards, no unwrap needed
-            super._claimReward(_rewardToken, _account, _reward);
+            super._claimReward(rewardToken_, account_, reward_);
         }
     }
 
-    /// @dev Here _rewardToken AKA growToken is Vesper Grow Pool which can be V2 or V3 pool.
-    /// V2 and V3 pool has different signature to read price per share
-    function _calculateRewardInDripToken(address _rewardToken, uint256 _reward) private view returns (uint256) {
-        uint256 _pricePerShare;
-        // Try reading price per share using V3 pool signature, if this fails catch block will execute
-        try IVesperPool(_rewardToken).pricePerShare() returns (uint256 _pricePerShareV3) {
-            _pricePerShare = _pricePerShareV3;
-        } catch {
-            // If try fails, read price per share using V2 pool signature
-            _pricePerShare = IVesperPoolV2(_rewardToken).getPricePerShare();
-        }
-        // Calculate reward in dripToken, as _reward is share of Grow Pool AKA growToken AKA _rewardToken
-        return (_pricePerShare * _reward) / 1e18;
+    /************************************************************************************************
+     *                                     Authorized function                                      *
+     ***********************************************************************************************/
+
+    /**
+     * @notice Notify that reward is added.
+     * Also updates reward rate and reward earning period.
+     */
+    function notifyRewardAmount(
+        address rewardToken_,
+        uint256 rewardAmount_,
+        uint256 rewardDuration_
+    ) external override {
+        (bool isStrategy, , , , , , , , ) = IVesperPool(pool).strategy(msg.sender);
+        require(
+            msg.sender == IVesperPool(pool).governor() || (isRewardToken[rewardToken_] && isStrategy),
+            "not-authorized"
+        );
+        super._notifyRewardAmount(rewardToken_, rewardAmount_, rewardDuration_, IVesperPool(pool).totalSupply());
+    }
+
+    /**
+     * @notice Defines which rewardToken is a growToken
+     * @dev growToken is used to check whether to call withdraw
+     * from Grow Pool or not
+     */
+    function updateGrowToken(address newGrowToken_) external onlyAuthorized {
+        require(newGrowToken_ != address(0), "grow-token-address-zero");
+        require(isRewardToken[newGrowToken_], "grow-token-not-reward-token");
+        emit GrowTokenUpdated(growToken, newGrowToken_);
+        growToken = newGrowToken_;
     }
 }

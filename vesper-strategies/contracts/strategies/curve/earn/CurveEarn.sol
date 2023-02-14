@@ -35,21 +35,21 @@ contract CurveEarn is Curve, Earn {
         Earn(dripToken_)
     {}
 
-    function _approveToken(uint256 _amount) internal virtual override(Strategy, Curve) {
-        Curve._approveToken(_amount);
+    function _approveToken(uint256 _amount) internal virtual override(Strategy, CurveBase) {
+        CurveBase._approveToken(_amount);
     }
 
-    function _claimAndSwapRewards() internal override(Curve, Strategy) {
-        return Curve._claimAndSwapRewards();
+    function _claimAndSwapRewards() internal override(CurveBase, Strategy) {
+        return CurveBase._claimAndSwapRewards();
     }
 
-    function _claimRewards() internal override(Curve, Strategy) returns (address, uint256) {
-        return Curve._claimRewards();
+    function _claimRewards() internal override(CurveBase, Strategy) returns (address, uint256) {
+        return CurveBase._claimRewards();
     }
 
     function _rebalance()
         internal
-        override(Strategy, Curve)
+        override(Strategy, CurveBase)
         returns (uint256 _profit, uint256 _loss, uint256 _payback)
     {
         (_profit, , _payback) = _generateReport();

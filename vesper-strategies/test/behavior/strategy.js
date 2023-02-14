@@ -77,18 +77,18 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         const token = await (await ethers.getContractFactory('MockToken', owner)).deploy()
         const tokenBalance = ethers.utils.parseEther('10')
         await token.mint(strategy.address, tokenBalance)
-        await strategy.sweepERC20(token.address)
+        await strategy.sweep(token.address)
         const erc20BalanceFeeCollector = await token.balanceOf(feeCollector)
         expect(erc20BalanceFeeCollector).to.be.equal(tokenBalance, 'ERC20 token balance is wrong')
       })
 
       it('Should not sweep collateral token', async function () {
-        await expect(strategy.sweepERC20(collateralToken.address)).to.be.revertedWith('not-allowed-to-sweep-collateral')
+        await expect(strategy.sweep(collateralToken.address)).to.be.revertedWith('not-allowed-to-sweep-collateral')
       })
 
       it('Should not sweep reserved token', async function () {
         const reservedToken = await strategy.token()
-        await expect(strategy.sweepERC20(reservedToken)).to.be.revertedWith('not-allowed-to-sweep')
+        await expect(strategy.sweep(reservedToken)).to.be.revertedWith('not-allowed-to-sweep')
       })
     })
 

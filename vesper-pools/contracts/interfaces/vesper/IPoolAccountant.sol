@@ -3,29 +3,29 @@
 pragma solidity 0.8.9;
 
 interface IPoolAccountant {
-    function decreaseDebt(address _strategy, uint256 _decreaseBy) external;
+    function decreaseDebt(address strategy_, uint256 decreaseBy_) external;
 
-    function migrateStrategy(address _old, address _new) external;
+    function migrateStrategy(address old_, address new_) external;
 
     function reportEarning(
-        address _strategy,
-        uint256 _profit,
-        uint256 _loss,
-        uint256 _payback
+        address strategy_,
+        uint256 profit_,
+        uint256 loss_,
+        uint256 payback_
     ) external returns (uint256 _actualPayback, uint256 _creditLine);
 
-    function reportLoss(address _strategy, uint256 _loss) external;
+    function reportLoss(address strategy_, uint256 loss_) external;
 
-    function availableCreditLimit(address _strategy) external view returns (uint256);
+    function availableCreditLimit(address strategy_) external view returns (uint256);
 
-    function excessDebt(address _strategy) external view returns (uint256);
+    function excessDebt(address strategy_) external view returns (uint256);
 
     function getStrategies() external view returns (address[] memory);
 
     function getWithdrawQueue() external view returns (address[] memory);
 
     function strategy(
-        address _strategy
+        address strategy_
     )
         external
         view
@@ -45,7 +45,7 @@ interface IPoolAccountant {
 
     function totalDebt() external view returns (uint256);
 
-    function totalDebtOf(address _strategy) external view returns (uint256);
+    function totalDebtOf(address strategy_) external view returns (uint256);
 
     function totalDebtRatio() external view returns (uint256);
 }
