@@ -829,7 +829,6 @@ const StrategyConfig = {
     type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibDPIv2,
       strategyName: 'Alpha_Homora_DPI',
     },
@@ -842,7 +841,6 @@ const StrategyConfig = {
     type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibETHv2,
       nativeToken: Address.NATIVE_TOKEN,
       strategyName: 'Alpha_Homora_ETH',
@@ -856,7 +854,6 @@ const StrategyConfig = {
     type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibUSDCv2,
       strategyName: 'Alpha_Homora_USDC',
     },
@@ -869,7 +866,6 @@ const StrategyConfig = {
     type: StrategyTypes.ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibDAIv2,
       strategyName: 'Alpha_Homora_DAI',
     },
@@ -882,7 +878,6 @@ const StrategyConfig = {
     type: StrategyTypes.EARN_ALPHA_HOMORA,
     constructorArgs: {
       swapper,
-      rewardToken: Address.Alpha.ALPHA,
       receiptToken: Address.Alpha.ibETHv2,
       dripToken: Address.DAI,
       nativeToken: Address.NATIVE_TOKEN,

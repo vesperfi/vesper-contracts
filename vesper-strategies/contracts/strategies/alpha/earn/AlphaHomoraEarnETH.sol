@@ -12,12 +12,11 @@ contract AlphaHomoraEarnETH is AlphaHomoraEarn {
     constructor(
         address pool_,
         address swapper_,
-        address rewardToken_,
         address receiptToken_,
         address dripToken_,
         address nativeToken_,
         string memory name_
-    ) AlphaHomoraEarn(pool_, swapper_, rewardToken_, receiptToken_, dripToken_, name_) {
+    ) AlphaHomoraEarn(pool_, swapper_, receiptToken_, dripToken_, name_) {
         require(nativeToken_ != address(0), "native-token-is-null");
         nativeToken = nativeToken_;
     }

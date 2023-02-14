@@ -201,13 +201,15 @@ async function configureSwapper(strategies, collateral) {
   const pairs = []
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
+    const strategyName = await strategy.instance.NAME()
     const rewardToken =
       (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
     if (rewardToken) {
       pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
+    } else if (chain === 'mainnet' && strategyName.includes('Alpha')) {
+      pairs.push({ tokenIn: Address.Alpha.ALPHA, tokenOut: collateral })
     }
 
-    const strategyName = await strategy.instance.NAME()
     if (strategyName.includes('AaveV3')) {
       // get reward token list from AaveIncentivesController
       const aToken = await ethers.getContractAt(
@@ -518,6 +520,12 @@ async function setupVPool(obj, poolData, options = {}) {
   if (obj.snapshotRestorer) {
     await obj.snapshotRestorer.restore()
   } else {
+    const users = await ethers.getSigners()
+    const nonce = await ethers.provider.getTransactionCount(users[0].address)
+    const newNonce = Math.floor(Math.random() * 10) + nonce
+    // update deployer nonce to avoid address collision
+    await helpers.setNonce(users[0].address, newNonce)
+
     obj.strategies = strategies
     obj.pool = await deployContract(poolConfig.contractName, poolConfig.poolParams)
     obj.accountant = await deployContract(PoolAccountant)

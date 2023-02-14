@@ -14,11 +14,10 @@ contract AlphaHomoraETH is AlphaHomora {
     constructor(
         address pool_,
         address swapper_,
-        address rewardToken_,
         address receiptToken_,
         address nativeToken_,
         string memory name_
-    ) AlphaHomora(pool_, swapper_, rewardToken_, receiptToken_, name_) {
+    ) AlphaHomora(pool_, swapper_, receiptToken_, name_) {
         require(nativeToken_ != address(0), "native-token-is-null");
         nativeToken = nativeToken_;
     }

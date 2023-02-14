@@ -13,21 +13,17 @@ contract AlphaHomora is Strategy {
     string public NAME;
     string public constant VERSION = "5.1.0";
 
-    address public immutable rewardToken;
     ISafeBox internal immutable safeBox;
 
     constructor(
         address pool_,
         address swapper_,
-        address rewardToken_,
         address receiptToken_,
         string memory name_
     ) Strategy(pool_, swapper_, receiptToken_) {
-        require(rewardToken_ != address(0), "reward-token-is-null");
         require(receiptToken_ != address(0), "receipt-token-is-null");
 
         safeBox = ISafeBox(receiptToken_);
-        rewardToken = rewardToken_;
         _setupCheck(pool_);
         NAME = name_;
     }
@@ -51,16 +47,10 @@ contract AlphaHomora is Strategy {
     function _approveToken(uint256 amount_) internal virtual override {
         super._approveToken(amount_);
         collateralToken.safeApprove(address(safeBox), amount_);
-        IERC20(rewardToken).safeApprove(address(swapper), amount_);
     }
 
     // solhint-disable no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
-
-    function _claimRewards() internal virtual override returns (address, uint256) {
-        // Claim is being done by claimReward() public function
-        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
-    }
 
     function _convertToCollateral(uint256 ibAmount_) internal view returns (uint256) {
         return ((ibAmount_ * safeBox.cToken().exchangeRateStored()) / 1e18);
