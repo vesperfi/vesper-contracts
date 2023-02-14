@@ -37,11 +37,11 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     /**
      * @dev This init function meant to be called after proxy deployment.
      * @dev DO NOT CALL it with proxy deploy
-     * @param _pool Address of Vesper pool proxy
+     * @param pool_ Address of Vesper pool proxy
      */
-    function init(address _pool) public initializer {
-        require(_pool != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
-        pool = _pool;
+    function init(address pool_) public initializer {
+        require(pool_ != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
+        pool = pool_;
     }
 
     modifier onlyGovernor() {
@@ -75,18 +75,18 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @dev Available credit limit is calculated based on current debt of pool and strategy, current debt limit of pool and strategy.
      * credit available = min(pool's debt limit, strategy's debt limit, max debt per rebalance)
      * when some strategy do not pay back outstanding debt, this impact credit line of other strategy if totalDebt of pool >= debtLimit of pool
-     * @param _strategy Strategy address
+     * @param strategy_ Strategy address
      */
-    function availableCreditLimit(address _strategy) external view returns (uint256) {
-        return _availableCreditLimit(_strategy);
+    function availableCreditLimit(address strategy_) external view returns (uint256) {
+        return _availableCreditLimit(strategy_);
     }
 
     /**
      * @notice Debt above current debt limit
-     * @param _strategy Address of strategy
+     * @param strategy_ Address of strategy
      */
-    function excessDebt(address _strategy) external view returns (uint256) {
-        return _excessDebt(_strategy);
+    function excessDebt(address strategy_) external view returns (uint256) {
+        return _excessDebt(strategy_);
     }
 
     /// @notice Return strategies array
@@ -101,19 +101,19 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
     /**
      * @notice Get total debt of given strategy
-     * @param _strategy Strategy address
+     * @param strategy_ Strategy address
      */
-    function totalDebtOf(address _strategy) external view returns (uint256) {
-        return strategy[_strategy].totalDebt;
+    function totalDebtOf(address strategy_) external view returns (uint256) {
+        return strategy[strategy_].totalDebt;
     }
 
-    function _availableCreditLimit(address _strategy) internal view returns (uint256) {
+    function _availableCreditLimit(address strategy_) internal view returns (uint256) {
         if (IVesperPool(pool).stopEverything()) {
             return 0;
         }
         uint256 _totalValue = IVesperPool(pool).totalValue();
-        uint256 _maxDebt = (strategy[_strategy].debtRatio * _totalValue) / MAX_BPS;
-        uint256 _currentDebt = strategy[_strategy].totalDebt;
+        uint256 _maxDebt = (strategy[strategy_].debtRatio * _totalValue) / MAX_BPS;
+        uint256 _currentDebt = strategy[strategy_].totalDebt;
         if (_currentDebt >= _maxDebt) {
             return 0;
         }
@@ -126,12 +126,12 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
         return _available;
     }
 
-    function _excessDebt(address _strategy) internal view returns (uint256) {
-        uint256 _currentDebt = strategy[_strategy].totalDebt;
+    function _excessDebt(address strategy_) internal view returns (uint256) {
+        uint256 _currentDebt = strategy[strategy_].totalDebt;
         if (IVesperPool(pool).stopEverything()) {
             return _currentDebt;
         }
-        uint256 _maxDebt = (strategy[_strategy].debtRatio * IVesperPool(pool).totalValue()) / MAX_BPS;
+        uint256 _maxDebt = (strategy[strategy_].debtRatio * IVesperPool(pool).totalValue()) / MAX_BPS;
         return _currentDebt > _maxDebt ? (_currentDebt - _maxDebt) : 0;
     }
 
@@ -162,16 +162,16 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @dev When strategy report loss, its debtRatio decreases to get fund back quickly.
      * Reduction is debt ratio is reduction in credit limit
      */
-    function _reportLoss(address _strategy, uint256 _loss) internal {
-        require(strategy[_strategy].totalDebt >= _loss, Errors.LOSS_TOO_HIGH);
-        strategy[_strategy].totalLoss += _loss;
-        strategy[_strategy].totalDebt -= _loss;
-        totalDebt -= _loss;
+    function _reportLoss(address strategy_, uint256 loss_) internal {
+        require(strategy[strategy_].totalDebt >= loss_, Errors.LOSS_TOO_HIGH);
+        strategy[strategy_].totalLoss += loss_;
+        strategy[strategy_].totalDebt -= loss_;
+        totalDebt -= loss_;
         uint256 _deltaDebtRatio = _min(
-            (_loss * MAX_BPS) / IVesperPool(pool).totalValue(),
-            strategy[_strategy].debtRatio
+            (loss_ * MAX_BPS) / IVesperPool(pool).totalValue(),
+            strategy[strategy_].debtRatio
         );
-        strategy[_strategy].debtRatio -= _deltaDebtRatio;
+        strategy[strategy_].debtRatio -= _deltaDebtRatio;
         totalDebtRatio -= _deltaDebtRatio;
     }
 
@@ -185,16 +185,16 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @notice Add strategy. Once strategy is added it can call rebalance and
      * borrow fund from pool and invest that fund in provider/lender.
      * @dev Recalculate pool level external deposit fee after all state variables are updated.
-     * @param _strategy Strategy address
-     * @param _debtRatio Pool fund allocation to this strategy
-     * @param _externalDepositFee External deposit fee of strategy
+     * @param strategy_ Strategy address
+     * @param debtRatio_ Pool fund allocation to this strategy
+     * @param externalDepositFee_ External deposit fee of strategy
      */
-    function addStrategy(address _strategy, uint256 _debtRatio, uint256 _externalDepositFee) public onlyGovernor {
-        require(_strategy != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
-        require(!strategy[_strategy].active, Errors.STRATEGY_IS_ACTIVE);
-        totalDebtRatio = totalDebtRatio + _debtRatio;
+    function addStrategy(address strategy_, uint256 debtRatio_, uint256 externalDepositFee_) public onlyGovernor {
+        require(strategy_ != address(0), Errors.INPUT_ADDRESS_IS_ZERO);
+        require(!strategy[strategy_].active, Errors.STRATEGY_IS_ACTIVE);
+        totalDebtRatio = totalDebtRatio + debtRatio_;
         require(totalDebtRatio <= MAX_BPS, Errors.DEBT_RATIO_LIMIT_REACHED);
-        require(_externalDepositFee <= MAX_BPS, Errors.FEE_LIMIT_REACHED);
+        require(externalDepositFee_ <= MAX_BPS, Errors.FEE_LIMIT_REACHED);
         StrategyConfig memory newStrategy = StrategyConfig({
             active: true,
             interestFee: 0, // Obsolete
@@ -203,13 +203,13 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
             totalDebt: 0,
             totalLoss: 0,
             totalProfit: 0,
-            debtRatio: _debtRatio,
-            externalDepositFee: _externalDepositFee
+            debtRatio: debtRatio_,
+            externalDepositFee: externalDepositFee_
         });
-        strategy[_strategy] = newStrategy;
-        strategies.push(_strategy);
-        withdrawQueue.push(_strategy);
-        emit StrategyAdded(_strategy, _debtRatio, _externalDepositFee);
+        strategy[strategy_] = newStrategy;
+        strategies.push(strategy_);
+        withdrawQueue.push(strategy_);
+        emit StrategyAdded(strategy_, debtRatio_, externalDepositFee_);
 
         // Recalculate pool level externalDepositFee. This should be called at the end of function
         _recalculatePoolExternalDepositFee();
@@ -222,15 +222,15 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * Strategy can be removed only after it has paid all debt.
      * Use migrate strategy if debt is not paid and want to upgrade strategy.
      */
-    function removeStrategy(uint256 _index) external onlyGovernor {
-        address _strategy = strategies[_index];
+    function removeStrategy(uint256 index_) external onlyGovernor {
+        address _strategy = strategies[index_];
         require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         require(strategy[_strategy].totalDebt == 0, Errors.TOTAL_DEBT_IS_NOT_ZERO);
         // Adjust totalDebtRatio
         totalDebtRatio -= strategy[_strategy].debtRatio;
         // Remove strategy
         delete strategy[_strategy];
-        strategies[_index] = strategies[strategies.length - 1];
+        strategies[index_] = strategies[strategies.length - 1];
         strategies.pop();
         address[] memory _withdrawQueue = new address[](strategies.length);
         uint256 j;
@@ -250,16 +250,16 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
     /**
      * @notice Update external deposit fee of strategy and recalculate pool level external deposit fee.
-     * @param _strategy Strategy address for which external deposit fee is being updated
-     * @param _externalDepositFee New external deposit fee
+     * @param strategy_ Strategy address for which external deposit fee is being updated
+     * @param externalDepositFee_ New external deposit fee
      */
-    function updateExternalDepositFee(address _strategy, uint256 _externalDepositFee) external onlyGovernor {
-        require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
-        require(_externalDepositFee <= MAX_BPS, Errors.FEE_LIMIT_REACHED);
-        uint256 _oldExternalDepositFee = strategy[_strategy].externalDepositFee;
+    function updateExternalDepositFee(address strategy_, uint256 externalDepositFee_) external onlyGovernor {
+        require(strategy[strategy_].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+        require(externalDepositFee_ <= MAX_BPS, Errors.FEE_LIMIT_REACHED);
+        uint256 _oldExternalDepositFee = strategy[strategy_].externalDepositFee;
         // Write to storage
-        strategy[_strategy].externalDepositFee = _externalDepositFee;
-        emit UpdatedExternalDepositFee(_strategy, _oldExternalDepositFee, _externalDepositFee);
+        strategy[strategy_].externalDepositFee = externalDepositFee_;
+        emit UpdatedExternalDepositFee(strategy_, _oldExternalDepositFee, externalDepositFee_);
 
         // Recalculate pool level externalDepositFee.
         _recalculatePoolExternalDepositFee();
@@ -279,10 +279,10 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
     /**
      * @dev Transfer given ERC20 token to pool
-     * @param _fromToken Token address to sweep
+     * @param fromToken_ Token address to sweep
      */
-    function sweep(address _fromToken) external virtual onlyKeeper {
-        IERC20(_fromToken).safeTransfer(pool, IERC20(_fromToken).balanceOf(address(this)));
+    function sweep(address fromToken_) external virtual onlyKeeper {
+        IERC20(fromToken_).safeTransfer(pool, IERC20(fromToken_).balanceOf(address(this)));
     }
 
     ///////////////////////////// Only Maintainer /////////////////////////////
@@ -290,17 +290,17 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @notice Update debt ratio.
      * @dev A strategy is retired when debtRatio is 0
      * @dev As debtRatio impacts pool level external deposit fee hence recalculate it after updating debtRatio.
-     * @param _strategy Strategy address for which debt ratio is being updated
-     * @param _debtRatio New debt ratio
+     * @param strategy_ Strategy address for which debt ratio is being updated
+     * @param debtRatio_ New debt ratio
      */
-    function updateDebtRatio(address _strategy, uint256 _debtRatio) external onlyMaintainer {
-        require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+    function updateDebtRatio(address strategy_, uint256 debtRatio_) external onlyMaintainer {
+        require(strategy[strategy_].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         // Update totalDebtRatio
-        totalDebtRatio = (totalDebtRatio - strategy[_strategy].debtRatio) + _debtRatio;
+        totalDebtRatio = (totalDebtRatio - strategy[strategy_].debtRatio) + debtRatio_;
         require(totalDebtRatio <= MAX_BPS, Errors.DEBT_RATIO_LIMIT_REACHED);
-        emit UpdatedStrategyDebtRatio(_strategy, strategy[_strategy].debtRatio, _debtRatio);
+        emit UpdatedStrategyDebtRatio(strategy_, strategy[strategy_].debtRatio, debtRatio_);
         // Write to storage
-        strategy[_strategy].debtRatio = _debtRatio;
+        strategy[strategy_].debtRatio = debtRatio_;
         // Recalculate pool level externalDepositFee.
         _recalculatePoolExternalDepositFee();
     }
@@ -311,15 +311,15 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @dev Pool always keep some buffer amount to satisfy withdrawal request, any withdrawal
      * request higher than buffer will withdraw from withdraw queue. So withdrawQueue[0] will
      * be the first strategy where withdrawal request will be send.
-     * @param _withdrawQueue Ordered list of strategy.
+     * @param withdrawQueue_ Ordered list of strategy.
      */
-    function updateWithdrawQueue(address[] memory _withdrawQueue) external onlyMaintainer {
-        uint256 _length = _withdrawQueue.length;
+    function updateWithdrawQueue(address[] memory withdrawQueue_) external onlyMaintainer {
+        uint256 _length = withdrawQueue_.length;
         require(_length == withdrawQueue.length && _length == strategies.length, Errors.INPUT_LENGTH_MISMATCH);
         for (uint256 i; i < _length; i++) {
-            require(strategy[_withdrawQueue[i]].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+            require(strategy[withdrawQueue_[i]].active, Errors.STRATEGY_IS_NOT_ACTIVE);
         }
-        withdrawQueue = _withdrawQueue;
+        withdrawQueue = withdrawQueue_;
     }
 
     //////////////////////////////// Only Pool ////////////////////////////////
@@ -327,14 +327,14 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
     /**
      * @notice Decrease debt of strategy, also decrease totalDebt
      * @dev In case of withdraw from strategy, pool will decrease debt by amount withdrawn
-     * @param _strategy Strategy Address
-     * @param _decreaseBy Amount by which strategy debt will be decreased
+     * @param strategy_ Strategy Address
+     * @param decreaseBy_ Amount by which strategy debt will be decreased
      */
-    function decreaseDebt(address _strategy, uint256 _decreaseBy) external onlyPool {
+    function decreaseDebt(address strategy_, uint256 decreaseBy_) external onlyPool {
         // A strategy may send more than its debt. This should never fail
-        _decreaseBy = _min(strategy[_strategy].totalDebt, _decreaseBy);
-        strategy[_strategy].totalDebt -= _decreaseBy;
-        totalDebt -= _decreaseBy;
+        decreaseBy_ = _min(strategy[strategy_].totalDebt, decreaseBy_);
+        strategy[strategy_].totalDebt -= decreaseBy_;
+        totalDebt -= decreaseBy_;
     }
 
     /**
@@ -342,83 +342,83 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
      * @dev Migrating strategy aka old and new strategy should be of same type.
      * @dev New strategy will replace old strategy in strategy mapping,
      * strategies array, withdraw queue.
-     * @param _old Address of strategy being migrated
-     * @param _new Address of new strategy
+     * @param old_ Address of strategy being migrated
+     * @param new_ Address of new strategy
      */
-    function migrateStrategy(address _old, address _new) external onlyPool {
-        require(strategy[_old].active, Errors.STRATEGY_IS_NOT_ACTIVE);
-        require(!strategy[_new].active, Errors.STRATEGY_IS_ACTIVE);
+    function migrateStrategy(address old_, address new_) external onlyPool {
+        require(strategy[old_].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+        require(!strategy[new_].active, Errors.STRATEGY_IS_ACTIVE);
         StrategyConfig memory _newStrategy = StrategyConfig({
             active: true,
             interestFee: 0, // Obsolete
             debtRate: 0, // Obsolete
-            lastRebalance: strategy[_old].lastRebalance,
-            totalDebt: strategy[_old].totalDebt,
+            lastRebalance: strategy[old_].lastRebalance,
+            totalDebt: strategy[old_].totalDebt,
             totalLoss: 0,
             totalProfit: 0,
-            debtRatio: strategy[_old].debtRatio,
-            externalDepositFee: strategy[_old].externalDepositFee
+            debtRatio: strategy[old_].debtRatio,
+            externalDepositFee: strategy[old_].externalDepositFee
         });
-        delete strategy[_old];
-        strategy[_new] = _newStrategy;
+        delete strategy[old_];
+        strategy[new_] = _newStrategy;
 
         // Strategies and withdrawQueue has same length but we still want
         // to iterate over them in different loop.
         for (uint256 i; i < strategies.length; i++) {
-            if (strategies[i] == _old) {
-                strategies[i] = _new;
+            if (strategies[i] == old_) {
+                strategies[i] = new_;
                 break;
             }
         }
         for (uint256 i; i < withdrawQueue.length; i++) {
-            if (withdrawQueue[i] == _old) {
-                withdrawQueue[i] = _new;
+            if (withdrawQueue[i] == old_) {
+                withdrawQueue[i] = new_;
                 break;
             }
         }
-        emit StrategyMigrated(_old, _new);
+        emit StrategyMigrated(old_, new_);
     }
 
     /**
      * @dev Strategy call this in regular interval.
-     * @param _profit yield generated by strategy. Strategy get performance fee on this amount
-     * @param _loss  Reduce debt ,also reduce debtRatio, increase loss in record.
-     * @param _payback strategy willing to payback outstanding above debtLimit. no performance fee on this amount.
+     * @param profit_ yield generated by strategy. Strategy get performance fee on this amount
+     * @param loss_  Reduce debt ,also reduce debtRatio, increase loss in record.
+     * @param payback_ strategy willing to payback outstanding above debtLimit. no performance fee on this amount.
      *  when governance has reduced debtRatio of strategy, strategy will report profit and payback amount separately.
      */
     function reportEarning(
-        address _strategy,
-        uint256 _profit,
-        uint256 _loss,
-        uint256 _payback
+        address strategy_,
+        uint256 profit_,
+        uint256 loss_,
+        uint256 payback_
     ) external onlyPool returns (uint256 _actualPayback, uint256 _creditLine) {
-        require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
-        require(IVesperPool(pool).token().balanceOf(_strategy) >= (_profit + _payback), Errors.INSUFFICIENT_BALANCE);
-        if (_loss > 0) {
-            _reportLoss(_strategy, _loss);
+        require(strategy[strategy_].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+        require(IVesperPool(pool).token().balanceOf(strategy_) >= (profit_ + payback_), Errors.INSUFFICIENT_BALANCE);
+        if (loss_ > 0) {
+            _reportLoss(strategy_, loss_);
         }
 
-        uint256 _overLimitDebt = _excessDebt(_strategy);
-        _actualPayback = _min(_overLimitDebt, _payback);
+        uint256 _overLimitDebt = _excessDebt(strategy_);
+        _actualPayback = _min(_overLimitDebt, payback_);
         if (_actualPayback > 0) {
-            strategy[_strategy].totalDebt -= _actualPayback;
+            strategy[strategy_].totalDebt -= _actualPayback;
             totalDebt -= _actualPayback;
         }
-        _creditLine = _availableCreditLimit(_strategy);
+        _creditLine = _availableCreditLimit(strategy_);
         if (_creditLine > 0) {
-            strategy[_strategy].totalDebt += _creditLine;
+            strategy[strategy_].totalDebt += _creditLine;
             totalDebt += _creditLine;
         }
-        if (_profit > 0) {
-            strategy[_strategy].totalProfit += _profit;
+        if (profit_ > 0) {
+            strategy[strategy_].totalProfit += profit_;
         }
-        strategy[_strategy].lastRebalance = block.timestamp;
+        strategy[strategy_].lastRebalance = block.timestamp;
         emit EarningReported(
-            _strategy,
-            _profit,
-            _loss,
+            strategy_,
+            profit_,
+            loss_,
             _actualPayback,
-            strategy[_strategy].totalDebt,
+            strategy[strategy_].totalDebt,
             totalDebt,
             _creditLine
         );
@@ -427,13 +427,13 @@ contract PoolAccountant is Initializable, Context, PoolAccountantStorageV2 {
 
     /**
      * @notice Update strategy loss.
-     * @param _strategy Strategy which incur loss
-     * @param _loss Loss of strategy
+     * @param strategy_ Strategy which incur loss
+     * @param loss_ Loss of strategy
      */
-    function reportLoss(address _strategy, uint256 _loss) external onlyPool {
-        require(strategy[_strategy].active, Errors.STRATEGY_IS_NOT_ACTIVE);
-        _reportLoss(_strategy, _loss);
-        emit LossReported(_strategy, _loss);
+    function reportLoss(address strategy_, uint256 loss_) external onlyPool {
+        require(strategy[strategy_].active, Errors.STRATEGY_IS_NOT_ACTIVE);
+        _reportLoss(strategy_, loss_);
+        emit LossReported(strategy_, loss_);
     }
 
     ///////////////////////////////////////////////////////////////////////////

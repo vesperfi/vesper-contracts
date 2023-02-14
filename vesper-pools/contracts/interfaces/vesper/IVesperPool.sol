@@ -7,36 +7,36 @@ import "./IGovernable.sol";
 import "./IPausable.sol";
 
 interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
-    function calculateUniversalFee(uint256 _profit) external view returns (uint256 _fee);
+    function calculateUniversalFee(uint256 profit_) external view returns (uint256 _fee);
 
-    function deposit(uint256 _share) external;
+    function deposit(uint256 collateralAmount_) external;
 
-    function excessDebt(address _strategy) external view returns (uint256);
+    function excessDebt(address strategy_) external view returns (uint256);
 
     function poolAccountant() external view returns (address);
 
     function poolRewards() external view returns (address);
 
-    function reportEarning(uint256 _profit, uint256 _loss, uint256 _payback) external;
+    function reportEarning(uint256 profit_, uint256 loss_, uint256 payback_) external;
 
-    function reportLoss(uint256 _loss) external;
+    function reportLoss(uint256 loss_) external;
 
-    function sweepERC20(address _fromToken) external;
+    function sweepERC20(address fromToken_) external;
 
-    function withdraw(uint256 _amount) external;
+    function withdraw(uint256 share_) external;
 
     function keepers() external view returns (address[] memory);
 
-    function isKeeper(address _address) external view returns (bool);
+    function isKeeper(address address_) external view returns (bool);
 
     function maintainers() external view returns (address[] memory);
 
-    function isMaintainer(address _address) external view returns (bool);
+    function isMaintainer(address address_) external view returns (bool);
 
     function pricePerShare() external view returns (uint256);
 
     function strategy(
-        address _strategy
+        address strategy_
     )
         external
         view
@@ -56,7 +56,7 @@ interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
 
     function tokensHere() external view returns (uint256);
 
-    function totalDebtOf(address _strategy) external view returns (uint256);
+    function totalDebtOf(address strategy_) external view returns (uint256);
 
     function totalValue() external view returns (uint256);
 
