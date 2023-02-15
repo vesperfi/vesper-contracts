@@ -1,0 +1,1012 @@
+{
+  "version": "5.1.0",
+  "networks": {
+    "polygon": {
+      "vmatic": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0x329846f9e19dAa7fD9844065a62eD01BCf63Cf69",
+          "implementation": "0x02a21E69336CEC0c2905b517ef57B3Eb9a611E21",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0x00a0cDd869D255F27559056d2542286067A7e799",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x768159FF4086dF9214e1dd62778A53F210609200",
+          "proxy": "0x9927A742001ffF5763100542EFF5bACBA9b078D7",
+          "implementation": "0xB0175D9223f9662a616415F76b4C667F5D6f4500"
+        },
+        "strategies": {
+          "AaveStrategyPolygonWMATIC": "0x2B63A64693fb0ade57ac5C364861c14a56f427bB"
+        }
+      },
+      "vdai": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0x0701bfE50Ca516140E047Ea53388DD6B8f3DB557",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0x27F981D6e31c03308a68E0Cf7642babC005690dc",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x768159FF4086dF9214e1dd62778A53F210609200",
+          "proxy": "0xCE774a71fB63dD92C32D41b2B7ef7e83894b19d8",
+          "implementation": "0x592ECAbF3E4aff0b321AB980bBFAb8af0fB494D9"
+        },
+        "strategies": {
+          "AaveStrategyPolygonDAI": "0x4a4A54e2F8bCAFDbE426f4c45Ec9F9E64f411101"
+        }
+      },
+      "vweth": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0xD66FDcA0b120427C90C0318a454b37B88a3Aa40F",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0x97F0E53A61943d8a74978A256fF008B66B639920",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x768159FF4086dF9214e1dd62778A53F210609200",
+          "proxy": "0xD911e197f8e4797061817dDbf11a93d8D4573d97",
+          "implementation": "0xBf6CcBBFa9D488A944E7637531102b490112Ad07"
+        },
+        "strategies": {
+          "AaveStrategyPolygonWETH": "0x95d10DD75756671F866a09dc9F61F9286c7e1D7D"
+        }
+      },
+      "vusdc": {
+        "pool": {
+          "proxyAdmin": "0x3F7C06b73c97D09163bDb6b04D17F2d5D9B278FE",
+          "proxy": "0xF8ea0eE6818C6CF798a1b208139f6b56563F6067",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x18658B466023A73C4448b054169Fa9aE1f6EA1A8",
+            "proxy": "0x334fA95235Ff746AD8f7CD93C9dD4021D14cABD7",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x768159FF4086dF9214e1dd62778A53F210609200",
+          "proxy": "0x723613b48e405eE32BBe38b53aDa6bC2119c63e5",
+          "implementation": "0x3CFcED99229Deb4393847758B6FeaE55C5Fe7cE3"
+        },
+        "strategies": {
+          "AaveStrategyPolygonUSDC": "0x961575De98664eFD828a6AEa0f9cC8A5CD840494"
+        }
+      },
+      "vwbtc": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0x36366EA27B777622017d3583060ee64BB49eDbE5",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0x7d1e43F34DbaB8468bF617baCb00B0B561eee6Be",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x768159FF4086dF9214e1dd62778A53F210609200",
+          "proxy": "0x850C8829395400E57919364762A0ccaB918185ff",
+          "implementation": "0x3e6Ce80B248Ab484f36ED8e3Bb479b2A43F0790F"
+        },
+        "strategies": {
+          "AaveStrategyPolygonWBTC": "0xB79D6c3A7C0740eAe4daDa70B50B35A3640D1eaF"
+        }
+      },
+      "vedai_weth": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0x1A3a83d1a9a667c61DF54b109ed88da58022f12b",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0xaD744253BD488B109435463Be50AbB24FfA3FA65",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xEbedFD259c9FB1F5c0ab9A9f24E79F8d80E29B23",
+          "proxy": "0xfE711bE66DEF585c90671b6eB767a3979cdfe007",
+          "implementation": "0x7F896DDe137fBFc0347854fAa02E243aD6F2bE93"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIWETH": "0x041550d216B0Eec58D2Cbc34798b26ba2c0f2b37"
+        }
+      },
+      "vedai_wbtc": {
+        "pool": {
+          "proxyAdmin": "0x97d3511e2c2aAB79c25EAA996f7763dcCFB5b28a",
+          "proxy": "0x148a829492bEc827FE9638c690Ee6A71De6f1736",
+          "implementation": "0x2c7c495624f8E665d3B3AEfFF29747D82A793884",
+          "poolAccountant": {
+            "proxyAdmin": "0x98a24645F5B82F71089B1df930d73dD013C02b3e",
+            "proxy": "0x3Ad8cA4b9c651D75368812F6a0F3F18282381c28",
+            "implementation": "0x5854F253ba3bb9CE22A8d9a8e2A3059d719204AC"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xEbedFD259c9FB1F5c0ab9A9f24E79F8d80E29B23",
+          "proxy": "0x3Ff584482b8D537a1D85AC539306964E5Cc0c576",
+          "implementation": "0xABf9B38a967595eDC38D0E97CE2Eb213e445BF45"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIWBTC": "0x40971A53fa57b3D26bF0c98075f81955dE78b61F"
+        }
+      }
+    },
+    "mainnet": {
+      "vasteth": {
+        "pool": {
+          "proxyAdmin": "0xA1d7046fDda8ec7758B687b88B6803ef7A9Aa3EE",
+          "proxy": "0x4Dbe3f01aBe271D3E65432c74851625a8c30Aa7B",
+          "implementation": "0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8",
+          "poolAccountant": {
+            "proxyAdmin": "0x4889f992220345DC3E4375C933AB441e5513F9C1",
+            "proxy": "0x5524263bFFaA482d7e7EA922BA1602a825833ca7",
+            "implementation": "0x12FDfFB52297A13A29041299Ad43458eBcFc89d7"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xC2228B31ED970e9eaF8acd40e3DADE805937Cc7b",
+          "proxy": "0x2cb31dccb77c7f8099e0b83fc241de9d6C406046",
+          "implementation": "0x10fde8c254A100674439D707628569686c8580Fa"
+        },
+        "strategies": {
+          "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
+        }
+      },
+      "vaeth": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xd1C117319B3595fbc39b471AB1fd485629eb05F2",
+          "implementation": "0xf296B1113CC49Ae4c6890E7B5dD3bed780407487",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xFe888E56CbE72868683844e4B5f93ce330f6556F",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x51EEf73abf5d4AC5F41De131591ed82c27a7Be3D",
+          "implementation": "0x08BCa8c3789F35F9c482991FbABaC54fC9042b89"
+        },
+        "strategies": {
+          "AaveV2_Vesper_Xy_ETH_DAI": "0x9A1a37e573dEd585299FdDbe99Ca43853DD21d9D",
+          "AaveV3_Vesper_Xy_ETH_DAI": "0xaB1A2802F0Ba6F958009DE8739250e04BAE67E3b",
+          "AlphaLendStrategyETH": "0xeCe0f32840280aD0069Dd89Ad97Ad6dF1bB0fF2A",
+          "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
+          "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
+          "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
+          "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
+          "Euler_Vesper_Xy_ETH_DAI": "0x46667F3771514E7D76c3948AcAD6DdA378db63f5",
+          "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
+          "RariFuseStrategy": "0x4769f18ba364658bf98Bf74606ef2f8cfB17D425",
+          "RariFuseStrategyETH": "0x67893865686C22f0a243114B0893De65117d2f3b",
+          "Stargate_ETH": "0xd21105aCf65386A10A8BDaaeD68D6f03068248B3",
+          "VesperAaveXYStrategyETH_FEI": "0xA14D4c41b989DC4Ae20150AA2Ec7A6C6B5622406",
+          "VesperCompoundXYStrategyETH_LINK": "0xd50A7D1Bf1fC1624F26B5Bb75EB13b4C8d81e367",
+          "VesperIronBankXYStrategyETH_DAI": "0x79D198221D0BB53a1f03491aE902Eb0dac63828A",
+          "VesperMakerStrategyETH": "0xc5cdf8cbe886fc5c1ef5cd4fdd599c975ec6bb54"
+        }
+      },
+      "vawbtc": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x01e1d41C1159b745298724c5Fd3eAfF3da1C6efD",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xb2A27aC2E362c37030F3c703B02007CE2b43257A",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0x30D63c7651D7Ed798Af5385f4d5Fc9a3d966bB45",
+          "implementation": "0xe583A2e073b5CC3853fAda6E33fC2F6F4e29a0bB"
+        },
+        "strategies": {
+          "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
+          "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
+          "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
+          "CrvsBTCStrategyWBTC": "0x867FC11B40351451d1dc3114A4204B2444b94B32",
+          "RariFuseStrategy": "0x2962741a2aec7627F64E77a5808A025F49ea17DA",
+          "VesperAaveXYStrategyWBTC_FEI": "0xd30dC2DC7b25196eDd8b6DA0e92c00F762Ce71B5",
+          "VesperCompoundXYStrategyWBTC_LINK": "0x22D37D12EA1a3F18B8D4E2e3be844B6205590f1f",
+          "VesperCompoundXYStrategyWBTC_USDC": "0x0EE5F180868fb3a2c3A6D6b956d365879d826130",
+          "VesperMakerStrategyWBTC": "0x70900C53202297Bd7Cd4ED1635486D84E3982484"
+        }
+      },
+      "vafrax": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xc14900dFB1Aa54e7674e1eCf9ce02b3b35157ba5",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xC0A7EB8B23512ecD0e9F8f51e3FAe7Cf9530b212",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0xf1D4EB7183bA624a4a198376560DF0De20d99941",
+          "implementation": "0x92574eD22C0b3961e240dBa1EbA02F6f30fd066C"
+        },
+        "strategies": {
+          "ConvexForFrax_dolafraxbp_FRAX": "0xDA91f27C301a1831e8df3E2D35627eA1A3067d2F",
+          "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
+          "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
+          "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
+          "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
+          "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
+          "RariFuseStrategy#6": "0x463C835f2959c52F99D65b5E712F3806c7E6A46F",
+          "RariFuseStrategy#7": "0xf95fb643c7b26afe64a6daf7e2b84d9eda6559bb",
+          "Stargate_FRAX": "0x3AfB216035709B3FdDBF17b195d19C1986Efe46d"
+        }
+      },
+      "vefrax_fraxbp": {
+        "pool": {
+          "proxyAdmin": "0xA1d7046fDda8ec7758B687b88B6803ef7A9Aa3EE",
+          "proxy": "0xecd7790FD35e5f529a63cf3E058b555F2Ff23234",
+          "implementation": "0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8",
+          "poolAccountant": {
+            "proxyAdmin": "0x4889f992220345DC3E4375C933AB441e5513F9C1",
+            "proxy": "0xbF2e3F32422F8F770F04663FB56A957130940c1B",
+            "implementation": "0x6218F149C5BbCc719E4Fddc60c9E8F0D97e633Da"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xC2228B31ED970e9eaF8acd40e3DADE805937Cc7b",
+          "proxy": "0x285a45c29a738DbC5Bc092DAED3efa5c579F6DBb",
+          "implementation": "0x311B514E369EAC678d25a6b54BDcdF621f8CeE4d"
+        },
+        "strategies": {
+          "Vesper_Earn_FRAX_FRAXBP": "0x15911b4B6fBDb83967919E2e2CD6259d7E703F8A"
+        }
+      },
+      "veth": {
+        "pool": {
+          "proxyAdmin": "0x582Ebf6D677d54d54BD26980d076047fcb9E0446",
+          "proxy": "0x951397286E4b78aE5827502ed494d7902D3CCA8C",
+          "implementation": "0xf296B1113CC49Ae4c6890E7B5dD3bed780407487",
+          "poolAccountant": {
+            "proxyAdmin": "0xcE91056e4C9A12871D66Fa17F2Ff2f9237Fdf13e",
+            "proxy": "0x4f746BAa8775A5cB7C69bD79B4d4ebC203CFefe0",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "strategies": {
+          "Aave_V2_ETH": "0xE5eF7F0835213E820b1eC86Ce10Fb78eDD32aF6E",
+          "CompoundStrategyETH": "0x69ea3FE4a34dD1d9c9B9cC0a3eB48e86fc18Af22"
+        }
+      },
+      "vdai": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xB4eDcEFd59750144882170FCc52ffeD40BfD5f7d",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x13c88a2dA8E83BA6933fD3Aa51e008986B91b1Fd",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0x8a36F26FD4b94392Cc967037DdbD6Af5a2F6fBB7",
+          "implementation": "0x6d7746336DeF5Dd009CEe7cef9A0331495e64153"
+        },
+        "strategies": {
+          "CompoundStrategyDAI": "0x9ce483DBE7C810A7DE7fCB78e61cD13Cec4A0914"
+        }
+      },
+      "vadai": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x0538C8bAc84E95A9dF8aC10Aad17DbE81b9E36ee",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x2337c59180357cE1d771Da2B2dF56A91e7c442c0",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x35864296944119F72AA1B468e13449222f3f0E67",
+          "implementation": "0xE244881025f8F5005985D60757CC95c8D667e493"
+        },
+        "strategies": {
+          "Alpha_Homora_DAI": "0x54ce999D8709DB87B211D3DD9a78dcDC2f9BAbcC",
+          "Compound_Leverage_DAI": "0x01c48862AE9De8306ddE1C29c2c7131E40817B84",
+          "Compound_Vesper_Xy_DAI_USDC": "0x5D69a654F6eB9aaf5738A05fd17bb1ad707AeA03",
+          "ConvexStrategyDAI": "0x6897d2cBf66e317bdE74595C455BeE09cf144136",
+          "Convex_dola_DAI": "0x269041586AB615Cd19E8CbFABC7C45CdA8179289",
+          "Euler_Vesper_Xy_DAI_USDC": "0xf1886Aa6F728D9006141644207ebC7f4090c17Ad",
+          "RariFuseStrategy": "0x863FB34417f6a13e6179d946Eb3e2c03157d8f42",
+          "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
+          "Stargate_DAI": "0xE053E3CC956D2A835B504E932c5DCd789bF0a6aA",
+          "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
+        }
+      },
+      "veeth_dai": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xA89566489E932a2d334b9eFF7884Feb21a07d2B3",
+          "implementation": "0xf296B1113CC49Ae4c6890E7B5dD3bed780407487",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xfb7fa759Fb93e56e1dCd2f0Cd7098369c624eB44",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0xb37eb47cc76C03C6A0C02C8DaED5dB18b96A2448",
+          "implementation": "0x456e0F103B2D2ec2ECe21b2853a6768c3cdAf8C9"
+        },
+        "strategies": {
+          "EarnAaveMakerStrategyETH": "0x87201Cd1ad8c0e98d0f1C67aEbD3922E46F9dA0C",
+          "EarnCompoundMakerStrategyETH": "0x235A6DCe7D40fa5b0157F55Dda0693dcAc4Ea932",
+          "EarnCompoundStrategyETH": "0x1E10aad97f2312B0b02424e628397B0ADD536D8b",
+          "EarnVesperMakerStrategyETH": "0xDa538530bFF65cDfDb507670E0DAd17E54362C59",
+          "EarnVesperStrategyETHDAI": "0x58DDe7CE67099C797f247dfB6f76dDF3235CDEbf"
+        }
+      },
+      "vewbtc_dai": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x7a74B6D3A07D3249Ea2FBb58e47F0DaF6d6a2ebf",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x11aAb1b00c62EA9528c3286C53c2308Aad6f64ea",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0x92659c1293f74d76249a72601C9Bf36bf6d738cA",
+          "implementation": "0xacff2dc81fc8a99ec310E35DB006e36FC947F351"
+        },
+        "strategies": {
+          "EarnVesperMakerStrategyWBTC": "0x2740B8b29B229bD690252DBc5590A5c7416e44DC",
+          "Vesper_Earn_WBTC_DAI": "0xFd3783586aBDE50E7b03C171bd1062354641F661"
+        }
+      },
+      "velink_dai": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x252c805e999115158174dFC997BF5C1342aaDfF2",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x4D25E00be9bF9C7F21F6a5DC1f6638Ca4d2c5a24",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0xB2205B87e81C91539fF510Bd6E1dDBCc19BfA8C2",
+          "implementation": "0xD36AA46c07cc83939A33B1bdc88AEd37c233f3CB"
+        },
+        "strategies": {
+          "EarnVesperStrategyLINKDAI": "0xa609820289b0E976B43583b292f21B883563e20E"
+        }
+      },
+      "vedai_wbtc": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x35B225880df01cde935Db463D0e70a9e737D516E",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x75619E9F479f9415630d21dDc99919da47c0a737",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0x7465E30ed5487d62a158625cf38Ae0E9a5Ea733B",
+          "implementation": "0xf336F4620c20416D9Def439EE98bbf8557623b01"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIWBTC": "0x9B11078F5e8345d074498a83C4f9824942F796d3"
+        }
+      },
+      "vedai_eth": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xabfF8F065318a8CF0dE66Bd1E90E976381859Ef0",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x6f466F8bf346b10D28d13379bBa420748dAEA70f",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0x228cDF26FDC1c648590895a0e81f2b9e76B1B3D2",
+          "implementation": "0x1c282eF2a23CF5C40DAF482785B0188ce3A3eaad"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIWETH": "0xD9e153F629A55992f5Fc699442e50E386e3336B0"
+        }
+      },
+      "vedai_dpi": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xe4Fe646A43DAEC8323922cA3e4Fe782d70805d93",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x8b41B47078dc38Be3d1eecf5A3d9B241ebAECdA1",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0xf6aa8d4F13feAF94a5F558c07D75580B3C9Ccc9E",
+          "implementation": "0xef5D81CAF50A54F9185E5b1EF2036193F8f7A53a"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIDPI": "0x612fD30e2d7dd963a1513CBf781eB5dFE8A55Fb8"
+        }
+      },
+      "vedai_link": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x83A99dAFf5f84B278D3150A36385fCDf04a0fecf",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xA34dc8502D6E6C2031834608156A064991825E72",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0x6c2b3d52262a049831E8055482631f6bfEa54300",
+          "implementation": "0x4bc77Ce73DE82138d7A1c6444a861B0689ff5EF7"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAILINK": "0xA95CcFAf088a3C3a9181915a0af3fb182055bD4a"
+        }
+      },
+      "vedai_vsp": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x8209f3a03730c035163B4414c1545a3137D5B402",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x92d10283E3f1e894B5eA9C69fee98d6848f179Ef",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x525fd19d7E9B5191C27EC61B0b59c150c1FD9E2D",
+          "implementation": "0x88d54BE256Fc0C16B996E6f7eF18e8478fe06AFB"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIVSP": "0xDc1046DBb73E7BE8C0B2B72A4987522D425bc93C"
+        }
+      },
+      "vedai_shib": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x6F8D5FD58F5F825FdBF4f3301c0BDd361653488c",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xA9e886c5B439143126B49E3c3a4777eb77e33240",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xd9A5df2877a42460E9055C4134946668dfcf51f8",
+          "proxy": "0x27723DeA17309EDb527c2Dd85ca5734648a3b2d9",
+          "implementation": "0x9b6CA96D2Ea9F3011D3E78bAF0D12fE27636eAF5"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAISHIB": "0x62514F46A2c55aaE92a56Cd6f90510Dbabe18438"
+        }
+      },
+      "vedai_punk": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xeBcF77CCE55ed6091F82aEE3c5539841E4D75F49",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x745c1085657035AD04C7F87438C13d525a5bD70D",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xe1444fEA423Bf8614c6E731C5BD5e45602AE6afC",
+          "proxy": "0x02c4Ca1773d3F5E33A307512bb6141e0e09b5f0a",
+          "implementation": "0xC51bcc7499D699908C439fe85ab7fFABbeB65000"
+        },
+        "strategies": {
+          "EarnVesperStrategyDAIPUNK": "0x3E281c4289b69573F0bD01Ab51C18A4f8144046f"
+        }
+      },
+      "veusdc_lmr": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xA7C21fD948c44830541b8561B31ABDe09CC32719",
+          "implementation": "0xC882316b15b0dec45Fdb4550167CDAf7D58433CC",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x102507268748Cca215871f571F0bAFC7f5842428",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0xf5aE3095be887004A5df20ef6f2786563836aCCA",
+          "implementation": "0xFC667c88bC4a114b10235C9085601869d0820AcE"
+        },
+        "strategies": {
+          "EarnVesperStrategyUSDCLMR": "0x6d94ce384cf6b51F93F8c702b039333fC95d66A5"
+        }
+      },
+      "vlink": {
+        "pool": {
+          "proxyAdmin": "0x582Ebf6D677d54d54BD26980d076047fcb9E0446",
+          "proxy": "0xd11d9B4C0B3BD5ec324123B241fB07af19CaEAc5",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xcE91056e4C9A12871D66Fa17F2Ff2f9237Fdf13e",
+            "proxy": "0x0FAE214B4e023E0FD5005F1Be17e03a5eeff6e56",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xa6d77CC044Bc3F32d055bb993E9CC8E9BdaB9A29",
+          "proxy": "0x10c72FDedd8eb17916c362C33C0C453928761919",
+          "implementation": "0x877d05e606b9b8A572F8fa084b62506741D05bE9"
+        },
+        "strategies": {
+          "CompoundStrategyLINK": "0x49c58698d08123f4993525CB898B494881f04e22"
+        }
+      },
+      "vusdc": {
+        "pool": {
+          "proxyAdmin": "0x582Ebf6D677d54d54BD26980d076047fcb9E0446",
+          "proxy": "0xc1eFBeE3a8daBD30D1d789138bc6Ea43A399C335",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xcE91056e4C9A12871D66Fa17F2Ff2f9237Fdf13e",
+            "proxy": "0x542FFaFFF05e076478b62871f7ff2E156fa3D919",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "strategies": {
+          "CompoundStrategyUSDC": "0xEADf9078361564a41907ba5d177E465d111B2D2D"
+        }
+      },
+      "vausdc": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xa8b607Aa09B6A2E306F93e74c282Fb13f6A80452",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xa9aF8f4202996528D23d913378F92EF932eeE400",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x2F59B0F98A08E733C66dFB42Bd8E366dC2cfedA6",
+          "implementation": "0x7a75d934ecd0Dffae11592E7E6955C8186273b1c"
+        },
+        "strategies": {
+          "ConvexForFrax_dolafraxbp_USDC": "0xeE44D248248E1b0bBE313003a41016db004326EB",
+          "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
+          "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
+          "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
+          "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
+          "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
+        }
+      },
+      "vafei": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x2B6c40Ef15Db0D78D08A7D1b4E12d57E88a3e324",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x7F896DDe137fBFc0347854fAa02E243aD6F2bE93",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x40971A53fa57b3D26bF0c98075f81955dE78b61F",
+          "implementation": "0xbE33791F85f3CCFd6C5aA6f8Fd5540F14D3574ad"
+        },
+        "strategies": {
+          "AaveStrategyFEI": "0xD5b60408f4513B112C7138a45b02C280249aCfb2",
+          "Convex_d3pool_FEI": "0xD9700EA432950E804923067D10dD815F03B68347",
+          "RariFuseStrategy#18": "0xf5A66196306855821159e41f4dDbb71Ae5663825",
+          "RariFuseStrategy#27": "0x187C51C9803424efe1Cbe62cFFc0D99B6912c0F6",
+          "RariFuseStrategy#6": "0x0a46A9716b4632A57863d52123c5c10FDF9e10F8"
+        }
+      },
+      "vaalusd": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x8BCdd6a8168d658dFA19721eaB7470e43398Db25",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0xe25d8F3F659E2a44602eC91538F9818793fd844F",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x19A02f3512BdF78114B3c50f7d22a34b1B2798cA",
+          "proxy": "0xeF8737Ec1180ddaD26438e4675bCFE9773A0E8c8",
+          "implementation": "0x72DCF9bA5F5E124b393A659F1629DEf439fF1b56"
+        },
+        "strategies": {
+          "Convex_d3pool_AlUSD": "0xA7b8Bf67A4E0c4435DC43AA9B5266d3960a8E777",
+          "RariFuseStrategy#18": "0xf4BB5824F3e5b6314e1c0A8BE60c733B3dB53786",
+          "RariFuseStrategy#6": "0x8B3AC0f18Eae871b83b9212345E736735e6604d6",
+          "RariFuseStrategy#7": "0xc6e5505d7C501D51e9d69669b1C393079Fc426D0"
+        }
+      },
+      "vadpi": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x9b91ab47cefC35dbe4DDCC7983fFA1fB40795663",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x4E713d74957C167f2Ddbdca46DadD51946c80fE9",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x23C901667706116B4a7c87B4A2eFe7185B849175",
+          "implementation": "0x77898fAC78B6931107C2ee00f0Dab51Cb0cB91f8"
+        },
+        "strategies": {
+          "AaveStrategyDPI": "0x09c21F950ECB6b714E08D4411764C5036E53EBA9",
+          "AlphaLendStrategyDPI": "0xef9a768880b4996cddB8C24a26F4b00d6e8ed35E"
+        }
+      },
+      "vamusd": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0x83c608b3997db00B5C6D93746785857Cd22d4495",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x963a9593C9fb4dE39C94452d3De437E8Ab1F7074",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x968d6024e32d30a7334Ffc5373CcD97a3d199E94",
+          "implementation": "0x233ADa5Dd2941AD71aD40e059878660fFA958319"
+        },
+        "strategies": {
+          "Convex_musd_MUSD": "0x0D58D1F0F183120dE7cbCD2a131b7aA519caf304"
+        }
+      },
+      "vaape": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xA5Bc6eB0A7E6738e2F2Ac6c92280b32771aC52Ad",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x88dF6adBecDFB7A58cB4C27f59eee1bDF7d113Dd",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x41f4e1Fdafecc84c13488d6DBC1C623fffF73EAc",
+          "implementation": "0xa163dc188e14c3B3c8f3FBa6F4351Ea5147ad9aC"
+        },
+        "strategies": {
+          "RariFuseStrategyAPE#127": "0xb436d8a2e3e23aF57040B2dA8E01463c818e0999"
+        }
+      },
+      "valink": {
+        "pool": {
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
+          "proxy": "0xef4F4604106de23CDadfEAE08fcC34602cB475C1",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
+            "proxy": "0x85B6944d2b0A69E781777833b3964a911EeC6167",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x6671745A4Ff7a3358BEae215495040179a881942",
+          "proxy": "0x68E031E6C68786cc25F0941a2F37E21BbCcBB4CB",
+          "implementation": "0x53D885224789AdBB56dC93071A878bac7FB80fAB"
+        },
+        "strategies": {
+          "AaveV2_Vesper_Xy_LINK_USDC": "0xc2262671A154cc29A0cf6783DaDB130F2cD80fb9",
+          "CompoundLeverageStrategyLINK": "0x4634826b13A6f4edED44539a9AAE119438c1517b",
+          "CompoundV3_Vesper_Xy_LINK_USDC": "0xC8Ba54eA8cDE1726c5D7363eC318C51b897B2F1a",
+          "VesperMakerStrategyLINK": "0x0827F18a1fAD688C5C720FC27Ef0cC00D6DAd19a"
+        }
+      },
+      "vareth": {
+        "pool": {
+          "proxyAdmin": "0xa924b6725f7eA2650c6E3F09eb0d36a76486c5B0",
+          "proxy": "0xDD9F61a85fFE73E41eF889817972f0B0AaE6D6Dd",
+          "implementation": "0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8",
+          "poolAccountant": {
+            "proxyAdmin": "0xB5144e9EAD98D7c0B47B7549f3b2E0b89eB585C6",
+            "proxy": "0x751E5E3F4b22641d693593cFf60932980386D23a",
+            "implementation": "0xd66b769b99714E49D599D6eD6bC46A01FA409661"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x655845AC2Db0c1955815bDc33F0270bC37e03D23",
+          "proxy": "0x6Dc34784c84b74dC928b5977812F4603E56DeF93",
+          "implementation": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d"
+        },
+        "strategies": {
+          "Maker_Vesper_RETH": "0xd08CFE37f44f2f9AFda5F8788cb856C63EA7c078"
+        }
+      },
+      "vacbeth": {
+        "pool": {
+          "proxyAdmin": "0xa924b6725f7eA2650c6E3F09eb0d36a76486c5B0",
+          "proxy": "0x650CD45DEdb19c33160Acc522aD1a82D9701036a",
+          "implementation": "0x91f92F75E547Db066c39DEa4d4a8B45f4B8EDE4a",
+          "poolAccountant": {
+            "proxyAdmin": "0xB5144e9EAD98D7c0B47B7549f3b2E0b89eB585C6",
+            "proxy": "0xBDF903d93f5625950670f487dB4d9157062474FA",
+            "implementation": "0x2a7534a2A4293068931e7D287EfBcE7889031794"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x655845AC2Db0c1955815bDc33F0270bC37e03D23",
+          "proxy": "0x5323427696CBce0e15d2e21627E8Aa646a5F5D83",
+          "implementation": "0x90bb3E3AA5Fa88f0a83Dcb9485f65D2592f4307E"
+        },
+        "strategies": {
+          "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
+        }
+      }
+    },
+    "avalanche": {
+      "vadaie": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0x5323F445A8665239222b117aE095423a238F5706",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x1450E77CA4a646676A051118320efe3ed1c4831b",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x371eabb194C5e9B462C134cBcD699Ef3cb0d4468",
+          "implementation": "0x1b6C5BDdAf46F5E28a4B2730f64CA060E2325513"
+        },
+        "strategies": {
+          "AaveStrategyAvalancheDAI": "0x867E89E47b7c252F4D991DF75eBd2CFD9188B929",
+          "AlphaLendAvalancheStrategyDAI": "0x8D460b5FDaBE2ef4CB2DA6dd78d574E580DFF2ed",
+          "BenqiCompoundLeverageStrategyAvalancheDAI": "0xBb4fCEf90D4259F476Ccb3BB7bc4842355B46c76",
+          "BenqiCompoundStrategyAvalancheDAI": "0x847930F3DffC03043a6f59064B049c1Ff128f56A",
+          "TraderJoeLeverageStrategyDAI": "0xfec82b66Bc1DBAacCa637ce151b89F5b872f6d7E",
+          "TraderJoeStrategyDAI": "0x0E95a8a4566b0324ad511108a83C47d78b554fAf"
+        }
+      },
+      "vawethe": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0x2B6c40Ef15Db0D78D08A7D1b4E12d57E88a3e324",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x7F896DDe137fBFc0347854fAa02E243aD6F2bE93",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x9001633faa986Ec2fc8eb8e3EAea3a3642ea5946",
+          "implementation": "0x161B4cba576112a3a3A3c358c1915C3b157BEC19"
+        },
+        "strategies": {
+          "AaveStrategyAvalancheWETH": "0x0a46A9716b4632A57863d52123c5c10FDF9e10F8",
+          "AlphaLendAvalancheStrategyWETH": "0x3038a73c79963f25d4b9ba4bEF0c349cD2679154",
+          "BenqiCompoundLeverageStrategyAvalancheWETH": "0x589E116B1B9Ec445145e2FB20468222cd2DAEe00",
+          "BenqiCompoundStrategyAvalancheWETH": "0x85E646909D6a1E251a0b7f24909a03931A708463",
+          "TraderJoeCompoundLeverageStrategyAvalancheWETH": "0xDdC5295D733023C7b117290929D8A06e2c55Dca0",
+          "TraderJoeCompoundStrategyAvalancheWETH": "0xC00fAe34553dbF360Dc8E2a90fd25b4BbBD3977f",
+          "TraderJoeLeverageStrategyWETH": "0xa2276B9799F35f216e4354B81Ba02957A575Eae8"
+        }
+      },
+      "vawbtce": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0xba3Fb2277c7b33D1C3E1b558cf8060bc7443b13d",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x1BeC55fe2C2bFB140507E190C3A5e74FBc9B5322",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x53D574e6CCA7aD67f2b6fBa9EeCE3744952BE639",
+          "implementation": "0x6637d1520D356699d4AD3A26d732E8A7f3bF49D3"
+        },
+        "strategies": {
+          "AaveStrategyAvalancheWBTC": "0x604af53401f7e84C3c332CB3C64a3FfE48A68cBf",
+          "AlphaLendAvalancheStrategyWBTC": "0xE72591e01123ebb866a24727bdfFfcE19BD4Fb36",
+          "BenqiCompoundLeverageStrategyAvalancheWBTC": "0x9519Ec6402304Fe66d09Ee6ADE655Aa989D0239C",
+          "BenqiCompoundStrategyAvalancheWBTC": "0xFd01E8Db5fB5B170E9d290ab24Ae63df0b26A317",
+          "BenqiLeverageStrategyWBTC": "0x109749106926E097C3a7809392FFE6350cF6fc05",
+          "BenqiStrategyWBTC": "0x8C7244b9321cBAEe8C1a3E28dEBd8a8BB3f1DBcd",
+          "TraderJoeCompoundStrategyAvalancheWBTC": "0xBDdb3D0CD69Ff81E46ccb283C128D9C5C50C8840",
+          "TraderJoeLeverageStrategyWBTC": "0xf9E141376579866b4d7040A114dfdFb61bB4764a",
+          "VesperTraderJoeXYStrategyWBTC_USDCe": "0xc7FA34ef87ad08bDCE50f5CB4d68da1BaE39c657",
+          "VesperTraderJoeXYStrategyWBTC_WETH": "0x9E372716651b890fF6B2B32a8cEa04D901948918"
+        }
+      },
+      "vaavax": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0xEa94eBB08E9604AFD225f2c61fa61401F1ed1047",
+          "implementation": "0x69e35c5c52a7b009B27d1Da1e547daCeA068a935",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x3cd21EBAAf08c1D04F2943C6BCB1759018b95Fc6",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x7b766D8c537ea47f8FFaf13d8dce7A0d89ab5259",
+          "implementation": "0x3c5e955B91F38CfcE898b10384E308d85C24D894"
+        },
+        "strategies": {
+          "AaveStrategyAvalancheAVAX": "0x93bD05BA341B9f40C232cA9C05e5F28e3aa917D2",
+          "AaveV3_Vesper_Xy_AVAX_DAIe": "0x2C56fc3E0a4075dD43691143Ad5b70b00c46e7ed",
+          "AlphaLendAvalancheStrategyAVAX": "0xBa6D61020067E296BA1bf4C5A4CE728e50d4a835",
+          "BenqiCompoundLeverageStrategyAvalancheAVAX": "0x2727c4de420d94013b5cbcbec4e73b7893c4f818",
+          "BenqiCompoundStrategyAvalancheAVAX": "0x2Da7b2c35A6a4e5C41C95027ab090bc3Ee6263ff",
+          "Benqi_AVAX": "0x8E16465e07d39B8E93935a01bF8d9554699307BF",
+          "TraderJoeCompoundLeverageStrategyAvalancheAVAX": "0x00fB8B4987b867F941985449AfA16F818750d60C",
+          "TraderJoeCompoundStrategyAvalancheAVAX": "0xaAA36344B8A82F82F74f4Be1bdD7AA13D41853A4",
+          "TraderJoeLeverageStrategyAVAX": "0xE9bBDCFA94E25AB786050c5bde06A613BBef9EF9"
+        }
+      },
+      "vausdce": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0xdBDA0B497BbF4dbaDD58E84BBebD32e43e0a1332",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x2b6e15924F936b2310b6F074A1634B32b5ac31eD",
+          "implementation": "0xAe03688106b119a6Fa9D52024413A1BD029408E6"
+        },
+        "strategies": {
+          "AaveStrategyAvalancheUSDC": "0x718E58C448116FE7315caEE135b12793AFc4FDf4",
+          "AlphaLendAvalancheStrategyUSDC": "0x76C78059581891Eb96eEf286d223015936bC6972",
+          "BenqiCompoundLeverageStrategyAvalancheUSDC": "0x570d1Baa39809aca59b51202179e1E5d8A08D993",
+          "BenqiCompoundStrategyAvalancheUSDC": "0x182F72FfDB674250746A103272bbFBCA56d4510C",
+          "TraderJoeLeverageStrategyUSDC": "0xF2d1eF29da4eebD2EF7903DAA39eC1EBc3967e90",
+          "TraderJoeStrategyUSDC": "0xA9E120c1d9b32E957d0ba0e6c601C9b6Bf6fcDf9"
+        }
+      },
+      "vausdc": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0x4378041dceF18713CE30E36A6b9c8aA41C0dB631",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x861Ab730B483904B28C56416fc7D08F75cd758ae",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x657A0a7BcE6C881278bFA4C23b3b7284F1Fb5078",
+          "implementation": "0xCF15Af3677171DBBD7844B721c010a59e1e60201"
+        },
+        "strategies": {
+          "AlphaLendAvalancheStrategyUSDC_N": "0x468E9DA5e22baf34a2E89dd8438AFC5558eEdBEA",
+          "BenqiLeverageStrategyUSDCN": "0x0844913292bB5953Eda9904aa5Dde7ba43659274",
+          "BenqiStrategyUSDCN": "0x0b9b5723861b491B75c5Ba6b7722b5479c47Ec0e",
+          "Stargate_USDC": "0x03Bbb5D31A0E10135F31DDe035342bd9242e70a8"
+        }
+      },
+      "vaqi": {
+        "pool": {
+          "proxyAdmin": "0x2f4F85be85245c91779C3e36cBddf87b4eD73E3d",
+          "proxy": "0x4b915EaB9d1dd1def39E1E8aF16CB6A28375e5F6",
+          "implementation": "0x2f12dfb525564055B4A007B0b15eA5CD0BfF986C",
+          "poolAccountant": {
+            "proxyAdmin": "0x6959CEACE5574A57cFBD1ac4654C7c2fb74Af4d2",
+            "proxy": "0x23eEF1D32CEC3289DaF8854d05754A29b16f4f37",
+            "implementation": "0xed6673F4bFaDD4D269BE68C7dbCC516218C0baD9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xB6D75A53442844e8F1eed35d7A65225c57B282EB",
+          "proxy": "0x25c173c236a6f0bCa04c9BB50B4F877082CbefFE",
+          "implementation": "0xD0bCa9fDEf17D4dD9F7F1b69AB27DCC298f3d52c"
+        },
+        "strategies": {
+          "BenqiCompoundStrategyAvalancheQI": "0x95ADd6A66bED963CcdA6fCc11ae109400E1b1743"
+        }
+      }
+    },
+    "bsc": {
+      "vabnb": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xdAa2a8AF96f8Df51ED989E9D1fd3F86DF1EE882e",
+          "implementation": "0x2bCb97e729a1c85E7e3EED73E0AC08E36C18940D",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0xFdcb4cc4a75235f53Db7a3dF3e0e839f421c072f",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BNB": "0x2dBE5137541A704666b68D9751F728685893Aff4"
+        }
+      },
+      "vabusd": {
+        "pool": {
+          "proxyAdmin": "0x522040e6738Ac009da4FC11b2aE25aD4C4079ca9",
+          "proxy": "0xa77f218cf8B28BddB2039eC1Cd2986548aecE76b",
+          "implementation": "0x0Ec1CC407F01952F9AFD5bF79EEc4c32Aa925401",
+          "poolAccountant": {
+            "proxyAdmin": "0x28b3214684Dc4044e4Eaf7248FbB384192256BB5",
+            "proxy": "0x54072A3d881DaD78015aA96e0caaCA6bC116EA5D",
+            "implementation": "0xb09806846f4291417Ce7E776DE9474432fA2DD44"
+          }
+        },
+        "strategies": {
+          "Venus_BUSD": "0x810B916Ff0CDc1AF652f1b29Cd7342F3896742D4"
+        }
+      }
+    }
+  }
+}
