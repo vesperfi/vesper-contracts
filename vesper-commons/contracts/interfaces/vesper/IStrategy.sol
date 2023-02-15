@@ -5,7 +5,7 @@ pragma solidity 0.8.9;
 interface IStrategy {
     function rebalance() external returns (uint256 _profit, uint256 _loss, uint256 _payback);
 
-    function sweepERC20(address _fromToken) external;
+    function sweep(address _fromToken) external;
 
     function withdraw(uint256 _amount) external;
 

@@ -190,6 +190,7 @@ function sanityTestOfAStrategy() {
   })
 }
 
-describe('Mainnet Strategy sanity test', function () {
+// eslint-disable-next-line mocha/no-skipped-tests
+xdescribe('Mainnet Strategy sanity test', function () {
   sanityTestOfAStrategy()
 })

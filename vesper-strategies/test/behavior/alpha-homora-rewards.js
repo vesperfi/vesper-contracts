@@ -26,8 +26,8 @@ function shouldTestAlphaHomoraRewards(strategyIndex) {
       // Get some ALPHA at strategy address
       await adjustBalance(alpha.address, strategy.address, ethers.utils.parseEther('10'))
       expect(await alpha.balanceOf(strategy.address)).gt(0)
-      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
-      await strategy.claimAndSwapRewards(amountOut)
+      const amountOut = await strategy.callStatic.swapToCollateral(alpha.address, 1)
+      await strategy.swapToCollateral(alpha.address, amountOut)
       expect(await alpha.balanceOf(strategy.address)).eq(0)
     })
   })

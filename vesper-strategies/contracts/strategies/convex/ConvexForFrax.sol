@@ -3,13 +3,13 @@
 pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../../interfaces/convex/IConvexForFrax.sol";
-import "../../strategies/curve/Curve.sol";
+import "../../strategies/curve/CurveBase.sol";
 
 /**
  * @title Convex for Frax strategy
  * @dev This strategy only supports Curve deposits
  */
-contract ConvexForFrax is Curve {
+contract ConvexForFrax is CurveBase {
     using SafeERC20 for IERC20;
 
     IVaultRegistry public constant VAULT_REGISTRY = IVaultRegistry(0x569f5B842B5006eC17Be02B8b94510BA8e79FbCa);
@@ -53,7 +53,7 @@ contract ConvexForFrax is Curve {
         uint256 convexPoolId_,
         string memory name_
     )
-        Curve(
+        CurveBase(
             pool_,
             crvPool_,
             curvePoolType_,
@@ -98,7 +98,7 @@ contract ConvexForFrax is Curve {
     }
 
     /// @notice Get reward tokens
-    function _getRewardTokens() private view returns (address[] memory _rewardTokens) {
+    function _getRewardTokens() internal view override returns (address[] memory _rewardTokens) {
         uint256 _extraRewardCount;
         uint256 _length = rewards.rewardTokenLength();
 
@@ -163,18 +163,6 @@ contract ConvexForFrax is Curve {
         if (_amount > 0) {
             _unstakeAllLp();
         }
-    }
-
-    /**
-     * @notice convex pool can add new rewards. This method refresh list.
-     * It is recommended to claimAndSwapRewards before calling this function.
-     */
-    function setRewardTokens(address[] memory /*_rewardTokens*/) external override onlyKeeper {
-        // Before updating the reward list, claim rewards and swap into collateral.
-        _claimAndSwapRewards();
-        rewardTokens = _getRewardTokens();
-        _approveToken(0);
-        _approveToken(MAX_UINT_VALUE);
     }
 
     /// @notice Update `lockPeriod` param

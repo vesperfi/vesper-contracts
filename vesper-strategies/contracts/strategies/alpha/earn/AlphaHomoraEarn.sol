@@ -13,20 +13,15 @@ contract AlphaHomoraEarn is AlphaHomora, Earn {
     constructor(
         address pool_,
         address swapper_,
-        address rewardToken_,
         address receiptToken_,
         address dripToken_,
         string memory name_
-    ) AlphaHomora(pool_, swapper_, rewardToken_, receiptToken_, name_) Earn(dripToken_) {}
+    ) AlphaHomora(pool_, swapper_, receiptToken_, name_) Earn(dripToken_) {}
 
     /// @notice Approve all required tokens
     function _approveToken(uint256 amount_) internal override(Strategy, AlphaHomora) {
         AlphaHomora._approveToken(amount_);
         collateralToken.safeApprove(address(swapper), amount_);
-    }
-
-    function _claimRewards() internal override(AlphaHomora, Strategy) returns (address, uint256) {
-        return AlphaHomora._claimRewards();
     }
 
     /**

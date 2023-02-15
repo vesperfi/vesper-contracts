@@ -59,7 +59,7 @@ const deployFunction = async function (hre) {
 
   if (strategyAlias.toUpperCase().includes('CONVEX')) {
     await sleep(5000)
-    await execute(strategyAlias, { from: deployer, log: true }, 'setRewardTokens', [])
+    await execute(strategyAlias, { from: deployer, log: true }, 'refetchRewardTokens', [])
   }
 
   const strategyVersion = await read(strategyAlias, {}, 'VERSION')

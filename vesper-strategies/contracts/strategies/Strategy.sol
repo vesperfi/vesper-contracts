@@ -115,11 +115,28 @@ abstract contract Strategy is IStrategy, Context {
         require(_keepers.remove(_keeperAddress), "remove-keeper-failed");
     }
 
+    /// @notice onlyKeeper:: Swap given token into collateral token.
+    function swapToCollateral(IERC20 _tokenIn, uint256 _minAmountOut) external onlyKeeper returns (uint256 _amountOut) {
+        require(address(_tokenIn) != address(collateralToken), "not-allowed-to-sweep-collateral");
+        require(!isReservedToken(address(_tokenIn)), "not-allowed-to-sweep");
+        uint256 _collateralBefore = collateralToken.balanceOf(address(this));
+        uint256 _amountIn = _tokenIn.balanceOf(address(this));
+        if (_amountIn > 0) {
+            if (_amountIn > _tokenIn.allowance(address(this), address(swapper))) {
+                _tokenIn.safeApprove(address(swapper), 0);
+                _tokenIn.safeApprove(address(swapper), MAX_UINT_VALUE);
+            }
+            _swapExactInput(address(_tokenIn), address(collateralToken), _amountIn);
+        }
+        _amountOut = collateralToken.balanceOf(address(this)) - _collateralBefore;
+        require(_amountOut >= _minAmountOut, "not-enough-amountOut");
+    }
+
     /**
      * @notice sweep given token to feeCollector of strategy
      * @param _fromToken token address to sweep
      */
-    function sweepERC20(address _fromToken) external override onlyKeeper {
+    function sweep(address _fromToken) external override onlyKeeper {
         require(feeCollector != address(0), "fee-collector-not-set");
         require(_fromToken != address(collateralToken), "not-allowed-to-sweep-collateral");
         require(!isReservedToken(_fromToken), "not-allowed-to-sweep");
