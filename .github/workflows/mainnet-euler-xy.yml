@@ -74,3 +74,18 @@ jobs:
 
       - name: Running Euler Vesper XY strategy for VADAI pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/euler/xy/vesper/vadai.spec.js
+
+  vacbeth-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Euler Vesper XY strategy for VACBETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/euler/xy/vesper/vacbeth.spec.js
