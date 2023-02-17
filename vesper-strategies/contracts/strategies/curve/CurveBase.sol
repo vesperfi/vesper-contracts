@@ -373,17 +373,11 @@ abstract contract CurveBase is Strategy {
             return 0;
         }
 
-        if (curvePoolType == PoolType.PLAIN_4_POOL) {
+        if (curvePoolType == PoolType.PLAIN_4_POOL || (curvePoolType == PoolType.META_4_POOL && !isFactoryPool)) {
             return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
         }
-        if (curvePoolType == PoolType.META_3_POOL) {
+        if (curvePoolType == PoolType.META_3_POOL || curvePoolType == PoolType.META_4_POOL) {
             return IDepositZap3x(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
-        }
-        if (curvePoolType == PoolType.META_4_POOL) {
-            if (isFactoryPool) {
-                return IDepositZap4x(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
-            }
-            return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
         }
 
         return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
