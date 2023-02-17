@@ -377,7 +377,7 @@ abstract contract CurveBase is Strategy {
             return IDeposit4x(depositZap).calc_withdraw_one_coin(amountIn_, toIdx_);
         }
         if (curvePoolType == PoolType.META_3_POOL || curvePoolType == PoolType.META_4_POOL) {
-            return IDepositZap3x(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
+            return IDepositZap(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
         }
 
         return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
