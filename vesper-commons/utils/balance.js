@@ -4,6 +4,7 @@ const hre = require('hardhat')
 const Address = require('../config/mainnet/address')
 const AvalancheAddress = require('../config/avalanche/address')
 const PolygonAddress = require('../config/polygon/address')
+const OptimismAddress = require('../config/optimism/address')
 const BscAddress = require('../config/bsc/address')
 const ethers = hre.ethers
 const helpers = require('@nomicfoundation/hardhat-network-helpers')
@@ -56,6 +57,10 @@ const slots = {
   [PolygonAddress.WBTC]: 0,
   [PolygonAddress.WETH]: 0,
   [PolygonAddress.NATIVE_TOKEN]: 3, // WMATIC
+
+  // Optimism addresses
+  [OptimismAddress.NATIVE_TOKEN]: 3, // WETH
+  [OptimismAddress.Curve.CRV]: 0,
 }
 
 // Some tokens, specially rebase tokens, uses dynamic storage or multi storage hence

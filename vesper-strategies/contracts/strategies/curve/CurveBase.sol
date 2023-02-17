@@ -94,13 +94,20 @@ abstract contract CurveBase is Strategy {
                 );
             } else {
                 require(collateralIdx_ < _factory.get_n_coins(crvPool_), "invalid-collateral");
-                require(
-                    _factory.get_coins(crvPool_)[collateralIdx_] == address(collateralToken),
-                    "collateral-mismatch"
-                );
+                address _coinFromCrvPool = _factory.get_coins(crvPool_)[collateralIdx_];
+                // For wrapped collateral, factory may return wrapped/native token.
+                if (_coinFromCrvPool == ETH) _coinFromCrvPool = address(collateralToken);
+                require(_coinFromCrvPool == address(collateralToken), "collateral-mismatch");
             }
             _crvLp = crvPool_;
-            _crvGauge = _factory.get_gauge(crvPool_);
+
+            // Note: OP sETH/ETH has gauge but `factory` contract is returning null
+            // See more: https://github.com/bloqpriv/vesper-contracts/issues/475
+            if (crvPool_ == 0x7Bc5728BC2b59B45a58d9A576E2Ffc5f0505B35E) {
+                _crvGauge = 0xCB8883D1D8c560003489Df43B30612AAbB8013bb;
+            } else {
+                _crvGauge = _factory.get_gauge(crvPool_);
+            }
         }
 
         require(crvPool_ != address(0), "pool-is-null");
@@ -218,53 +225,73 @@ abstract contract CurveBase is Strategy {
         _stakeAllLp();
     }
 
-    function _depositTo2PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo2PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[2] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
-        IStableSwap2x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
+        IStableSwap2x(crvPool).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo2LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo2LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[2] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: Using use_underlying = true to deposit underlying instead of IB token
-        IStableSwap2xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
+        IStableSwap2xUnderlying(crvPool).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+            _depositAmounts,
+            lpAmountOutMin_,
+            true
+        );
     }
 
-    function _depositTo3PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo3PlainPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[3] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
-        IStableSwap3x(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_);
+        IStableSwap3x(crvPool).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo3LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo3LendingPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[3] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: Using use_underlying = true to deposit underlying instead of IB token
-        IStableSwap3xUnderlying(crvPool).add_liquidity(_depositAmounts, lpAmountOutMin_, true);
+        IStableSwap3xUnderlying(crvPool).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+            _depositAmounts,
+            lpAmountOutMin_,
+            true
+        );
     }
 
-    function _depositTo4PlainOrMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo4PlainOrMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[4] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
-        IDeposit4x(depositZap).add_liquidity(_depositAmounts, lpAmountOutMin_);
+        IDeposit4x(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(_depositAmounts, lpAmountOutMin_);
     }
 
-    function _depositTo3FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo3FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[3] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: The function below won't return a reason when reverting due to slippage
-        IDepositZap3x(depositZap).add_liquidity(address(crvPool), _depositAmounts, lpAmountOutMin_);
+        IDepositZap3x(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+            address(crvPool),
+            _depositAmounts,
+            lpAmountOutMin_
+        );
     }
 
-    function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_) private {
+    function _depositTo4FactoryMetaPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[4] memory _depositAmounts;
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: The function below won't return a reason when reverting due to slippage
-        IDepositZap4x(depositZap).add_liquidity(address(crvPool), _depositAmounts, lpAmountOutMin_);
+        IDepositZap4x(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+            address(crvPool),
+            _depositAmounts,
+            lpAmountOutMin_
+        );
     }
 
-    function _depositToCurve(uint256 coinAmountIn_) private {
+    function _depositToCurve(uint256 coinAmountIn_) internal virtual {
+        _depositToCurve(coinAmountIn_, false);
+    }
+
+    function _depositToCurve(uint256 coinAmountIn_, bool useEth_) internal virtual {
         if (coinAmountIn_ == 0) {
             return;
         }
@@ -272,28 +299,28 @@ abstract contract CurveBase is Strategy {
         uint256 _lpAmountOutMin = _calculateAmountOutMin(address(collateralToken), address(crvLp), coinAmountIn_);
 
         if (curvePoolType == PoolType.PLAIN_2_POOL) {
-            return _depositTo2PlainPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo2PlainPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.LENDING_2_POOL) {
-            return _depositTo2LendingPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo2LendingPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.PLAIN_3_POOL) {
-            return _depositTo3PlainPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo3PlainPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.LENDING_3_POOL) {
-            return _depositTo3LendingPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo3LendingPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.PLAIN_4_POOL) {
-            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.META_3_POOL) {
-            return _depositTo3FactoryMetaPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo3FactoryMetaPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
         if (curvePoolType == PoolType.META_4_POOL) {
             if (isFactoryPool) {
-                return _depositTo4FactoryMetaPool(coinAmountIn_, _lpAmountOutMin);
+                return _depositTo4FactoryMetaPool(coinAmountIn_, _lpAmountOutMin, useEth_);
             }
-            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin);
+            return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
 
         revert("deposit-to-curve-failed");
@@ -417,28 +444,24 @@ abstract contract CurveBase is Strategy {
         uint256 _minCoinAmountOut = _calculateAmountOutMin(address(crvLp), address(collateralToken), lpToBurn_);
 
         if (curvePoolType == PoolType.PLAIN_2_POOL || curvePoolType == PoolType.PLAIN_3_POOL) {
-            return _withdrawFromPlainPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
-        }
-        if (curvePoolType == PoolType.LENDING_2_POOL) {
-            return _withdrawFrom2LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
-        }
-        if (curvePoolType == PoolType.LENDING_3_POOL) {
-            return _withdrawFrom3LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
-        }
-        if (curvePoolType == PoolType.PLAIN_4_POOL) {
-            return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
-        }
-        if (curvePoolType == PoolType.META_3_POOL) {
-            return _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
-        }
-        if (curvePoolType == PoolType.META_4_POOL) {
+            _withdrawFromPlainPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else if (curvePoolType == PoolType.LENDING_2_POOL) {
+            _withdrawFrom2LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else if (curvePoolType == PoolType.LENDING_3_POOL) {
+            _withdrawFrom3LendingPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else if (curvePoolType == PoolType.PLAIN_4_POOL) {
+            _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else if (curvePoolType == PoolType.META_3_POOL) {
+            _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else if (curvePoolType == PoolType.META_4_POOL) {
             if (isFactoryPool) {
-                return _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+                _withdrawFrom3FactoryMetaOr4FactoryMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+            } else {
+                _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
             }
-            return _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
+        } else {
+            revert("withdraw-from-curve-failed");
         }
-
-        revert("withdraw-from-curve-failed");
     }
 
     function _withdrawHere(uint256 coinAmountOut_) internal override {
