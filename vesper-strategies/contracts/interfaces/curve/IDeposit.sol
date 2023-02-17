@@ -19,7 +19,7 @@ interface IDeposit3x {
 }
 
 interface IDeposit4x {
-    function add_liquidity(uint256[4] memory _amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(uint256[4] memory _amounts, uint256 _min_mint_amount) external payable;
 
     function remove_liquidity(uint256 _amount, uint256[4] memory _min_amounts) external;
 

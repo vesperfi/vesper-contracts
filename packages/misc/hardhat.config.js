@@ -51,6 +51,12 @@ module.exports = {
       gas: 8000000,
       accounts: { mnemonic: process.env.MNEMONIC || junk },
     },
+    optimism: {
+      url: process.env.NODE_URL,
+      chainId: 10,
+      gas: 8000000,
+      accounts: { mnemonic: process.env.MNEMONIC || junk },
+    },
   },
   contractSizer: {
     alphaSort: true,

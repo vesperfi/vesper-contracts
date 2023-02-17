@@ -49,7 +49,7 @@ interface IStableSwapUnderlying is IStableSwap {
 interface IStableSwap2x is IStableSwap {
     function calc_token_amount(uint256[2] memory _amounts, bool is_deposit) external view returns (uint256);
 
-    function add_liquidity(uint256[2] memory _amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(uint256[2] memory _amounts, uint256 _min_mint_amount) external payable;
 
     function remove_liquidity(uint256 _amount, uint256[2] memory _min_amounts) external;
 
@@ -62,7 +62,7 @@ interface IStableSwap2x is IStableSwap {
 interface IStableSwap3x is IStableSwap {
     function calc_token_amount(uint256[3] memory _amounts, bool is_deposit) external view returns (uint256);
 
-    function add_liquidity(uint256[3] memory _amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(uint256[3] memory _amounts, uint256 _min_mint_amount) external payable;
 
     function remove_liquidity(uint256 _amount, uint256[3] memory _min_amounts) external;
 
@@ -75,7 +75,7 @@ interface IStableSwap3x is IStableSwap {
 interface IStableSwap4x is IStableSwap {
     function calc_token_amount(uint256[4] memory _amounts, bool is_deposit) external view returns (uint256);
 
-    function add_liquidity(uint256[4] memory _amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(uint256[4] memory _amounts, uint256 _min_mint_amount) external payable;
 
     function remove_liquidity(uint256 _amount, uint256[4] memory _min_amounts) external;
 
@@ -86,7 +86,7 @@ interface IStableSwap4x is IStableSwap {
 }
 
 interface IStableSwap2xUnderlying is IStableSwap2x, IStableSwapUnderlying {
-    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
+    function add_liquidity(uint256[2] calldata amounts, uint256 min_mint_amount, bool use_underlying) external payable;
 
     function remove_liquidity_imbalance(
         uint256[2] calldata amounts,
@@ -98,7 +98,7 @@ interface IStableSwap2xUnderlying is IStableSwap2x, IStableSwapUnderlying {
 }
 
 interface IStableSwap3xUnderlying is IStableSwap3x, IStableSwapUnderlying {
-    function add_liquidity(uint256[3] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
+    function add_liquidity(uint256[3] calldata amounts, uint256 min_mint_amount, bool use_underlying) external payable;
 
     function remove_liquidity_imbalance(
         uint256[3] calldata amounts,
@@ -110,7 +110,7 @@ interface IStableSwap3xUnderlying is IStableSwap3x, IStableSwapUnderlying {
 }
 
 interface IStableSwap4xUnderlying is IStableSwap4x, IStableSwapUnderlying {
-    function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount, bool use_underlying) external;
+    function add_liquidity(uint256[4] calldata amounts, uint256 min_mint_amount, bool use_underlying) external payable;
 
     function remove_liquidity_imbalance(
         uint256[4] calldata amounts,

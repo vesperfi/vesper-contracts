@@ -115,6 +115,9 @@ async function setDefaultRouting(swapperAddress, pairs) {
     case 'bsc':
       defaultExchange = ExchangeType.PANCAKE_SWAP
       break
+    case 'optimism':
+      defaultExchange = ExchangeType.UNISWAP_V3
+      break
     default:
       defaultExchange = ExchangeType.UNISWAP_V2
   }
@@ -164,6 +167,16 @@ async function setDefaultRouting(swapperAddress, pairs) {
         )
         exchange = ExchangeType.UNISWAP_V3
       }
+    } else if (chain == 'optimism') {
+      if (pair.tokenOut === Address.NATIVE_TOKEN) {
+        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, Address.NATIVE_TOKEN])
+      } else {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address', 'uint24', 'address'],
+          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+        )
+      }
+      exchange = ExchangeType.UNISWAP_V3
     } else if (chain !== 'bsc') {
       if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(

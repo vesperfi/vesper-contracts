@@ -15,7 +15,11 @@ interface IDepositZap3x is IDepositZap {
         bool is_deposit
     ) external view returns (uint256);
 
-    function add_liquidity(address _pool, uint256[3] memory _deposit_amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(
+        address _pool,
+        uint256[3] memory _deposit_amounts,
+        uint256 _min_mint_amount
+    ) external payable;
 
     function remove_liquidity(address _pool, uint256 _burn_amount, uint256[3] memory _min_amounts) external;
 }
@@ -27,7 +31,7 @@ interface IDepositZap4x is IDepositZap {
         bool is_deposit
     ) external view returns (uint256);
 
-    function add_liquidity(address _pool, uint256[4] memory _amounts, uint256 _min_mint_amount) external;
+    function add_liquidity(address _pool, uint256[4] memory _amounts, uint256 _min_mint_amount) external payable;
 
     function remove_liquidity(address _pool, uint256 _amount, uint256[4] memory _min_amounts) external;
 }
