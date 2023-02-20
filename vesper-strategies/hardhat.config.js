@@ -76,6 +76,11 @@ module.exports = {
       gas: 8000000,
       accounts,
     },
+    optimism: {
+      url: process.env.NODE_URL,
+      chainId: 10,
+      gas: 8000000,
+    },
   },
   paths: {
     sources: process.env.SOURCES_DIR || './contracts',
