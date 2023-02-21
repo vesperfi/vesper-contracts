@@ -34,6 +34,23 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Curve_sUSD_USDC: {
+    contract: 'Curve',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.SUSD_POOL,
+      curvePoolType: CurvePoolTypes.META_4_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOL_DEPOSIT_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 250, // 2.5%
+      masterOracle,
+      swapper,
+      collateralIdx: 2,
+      strategyName: 'Curve_sUSD_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
