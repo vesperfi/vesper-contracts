@@ -37,4 +37,6 @@ interface IPoolRewards {
         external
         view
         returns (address[] memory _rewardTokens, uint256[] memory _rewardPerTokenRate);
+
+    function getRewardTokens() external view returns (address[] memory);
 }

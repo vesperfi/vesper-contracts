@@ -6,7 +6,7 @@ const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { BigNumber } = require('ethers')
 const { getStrategyToken } = require('vesper-commons/utils/setup')
-const { getChainData } = require('vesper-commons/utils/chains')
+const { getChain, getChainData } = require('vesper-commons/utils/chains')
 const Address = getChainData().address
 
 // Aave V3 Vesper XY strategy specific tests
@@ -33,13 +33,19 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
     const collateralFactor = (await protocolDataProvider.getReserveConfigurationData(collateralToken.address)).ltv
     const totalDebt = await token.balanceOf(strategy.address)
 
-    const collateralForBorrow = totalDebt.mul(collateralPrice).mul(collateralFactor).div(maxBps).div(collateralDecimal)
-    const maxBorrowPossibleInBorrowToken = collateralForBorrow.mul(borrowTokenDecimal).div(borrowTokenPrice)
+    const collateralForBorrow = totalDebt
+      .mul(collateralPrice)
+      .mul(collateralFactor)
+      .div(maxBps)
+      .div(BigNumber.from((10 ** collateralDecimal).toString()))
+
+    const maxBorrowPossibleInBorrowToken = collateralForBorrow
+      .mul(BigNumber.from((10 ** borrowTokenDecimal).toString()))
+      .div(borrowTokenPrice)
 
     const borrowUpperBound = maxBorrowPossibleInBorrowToken.mul(await strategy.maxBorrowLimit()).div(maxBps)
     const borrowLowerBound = maxBorrowPossibleInBorrowToken.mul(await strategy.minBorrowLimit()).div(maxBps)
     const borrowed = await vdToken.balanceOf(strategy.address)
-
     expect(borrowed).to.be.lt(borrowUpperBound, 'Borrow more than max limit')
     expect(borrowed).to.be.closeTo(
       borrowLowerBound,
@@ -142,10 +148,10 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
       await strategy.rebalance()
       await mine(100)
       const wavaxBefore = await wavax.balanceOf(strategy.address)
-      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(0)
       await strategy.claimAndSwapRewards(amountOut)
       const wavaxAfter = await wavax.balanceOf(strategy.address)
-      if (collateralToken.address == wavax.address) {
+      if (getChain() !== 'optimism' && collateralToken.address == wavax.address) {
         expect(wavaxAfter).gt(wavaxBefore)
       } else {
         expect(wavaxAfter).eq(0)
