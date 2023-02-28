@@ -16,6 +16,20 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  AaveV3_Vesper_Xy_ETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptWETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_ETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
   Curve_sETH_ETH: {
     contract: 'CurveETH',
     type: StrategyTypes.CURVE,

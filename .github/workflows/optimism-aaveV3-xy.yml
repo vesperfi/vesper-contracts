@@ -1,0 +1,48 @@
+name: Optimism Aave V3 XY Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/optimism-aaveV3-xy.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/aave/v3/AaveV3.sol"
+      - "vesper-strategies/contracts/strategies/aave/v3/AaveV3Incentive.sol"
+      - "vesper-strategies/contracts/strategies/aave/v3/AaveV3Xy.sol"
+      - "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperXy.sol"
+      - "vesper-strategies/test/behavior/aavev3-vesper-xy.js"
+      - "vesper-strategies/test/optimism/aave/v3/xy/**/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vaeth-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Aave V3 Vesper strategy for VAETH pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/aave/v3/xy/vesper/vaeth.spec.js

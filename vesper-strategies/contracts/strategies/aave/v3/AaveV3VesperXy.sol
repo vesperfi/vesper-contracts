@@ -11,8 +11,8 @@ contract AaveV3VesperXy is AaveV3Xy {
 
     // Destination Grow Pool for borrowed Token
     IVesperPool public immutable vPool;
-    // VSP token address
-    address public immutable vsp;
+    // reward token address
+    address public rewardToken;
 
     constructor(
         address _pool,
@@ -21,13 +21,14 @@ contract AaveV3VesperXy is AaveV3Xy {
         address _borrowToken,
         address _aaveAddressProvider,
         address _vPool,
-        address _vspAddress,
         string memory _name
     ) AaveV3Xy(_pool, _swapper, _receiptToken, _borrowToken, _aaveAddressProvider, _name) {
-        require(_vspAddress != address(0), "invalid-vsp-address");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);
-        vsp = _vspAddress;
+        address _poolRewards = vPool.poolRewards();
+        if (_poolRewards != address(0)) {
+            rewardToken = IPoolRewards(_poolRewards).getRewardTokens()[0]; // mostly it is VSP
+        }
     }
 
     /// @notice After borrowing Y, deposit to Vesper Pool
@@ -39,7 +40,9 @@ contract AaveV3VesperXy is AaveV3Xy {
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(borrowToken).safeApprove(address(vPool), _amount);
-        IERC20(vsp).safeApprove(address(swapper), _amount);
+        if (rewardToken != address(0)) {
+            IERC20(rewardToken).safeApprove(address(swapper), _amount);
+        }
     }
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
@@ -57,9 +60,11 @@ contract AaveV3VesperXy is AaveV3Xy {
         if (_poolRewards != address(0)) {
             IPoolRewards(_poolRewards).claimReward(address(this));
         }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
+        if (rewardToken != address(0)) {
+            uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
+            if (_rewardAmount > 0) {
+                _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
+            }
         }
     }
 

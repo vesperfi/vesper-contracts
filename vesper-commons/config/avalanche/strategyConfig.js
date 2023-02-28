@@ -38,7 +38,6 @@ const StrategyConfig = {
       borrowToken: Address.DAIe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaDAIe,
-      vsp: Address.Vesper.VSP,
       strategyName: 'AaveV3_Vesper_Xy_ETH_DAIe',
     },
     config: { ...config }, // Shallow copy
@@ -54,7 +53,6 @@ const StrategyConfig = {
       borrowToken: Address.DAIe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaDAIe,
-      vsp: Address.Vesper.VSP,
       strategyName: 'AaveV3_Vesper_Xy_AVAX_DAIe',
     },
     config: { ...config }, // Shallow copy

@@ -1021,6 +1021,7 @@
           }
         },
         "strategies": {
+          "AaveV3_Vesper_Xy_ETH_USDC": "0x5cd23c6fCC61fa33Fc36ABCf696129A85a99DB31",
           "Curve_sETH_ETH": "0xb1458639956402B3f96E514f5A7dbe1bbC58A981"
         }
       },
