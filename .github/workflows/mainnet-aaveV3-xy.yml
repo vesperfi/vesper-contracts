@@ -46,3 +46,18 @@ jobs:
 
       - name: Running Aave V3 Vesper strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v3/xy/vesper/vaeth.spec.js
+
+  vacbeth-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Aave V3 Vesper strategy for VACBETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/aave/v3/xy/vesper/vacbeth.spec.js
