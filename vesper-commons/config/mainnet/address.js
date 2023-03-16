@@ -52,6 +52,7 @@ const Address = {
     V3: {
       AddressProvider: '0x2f39d218133AFaB8F2B819B1066c7E434Ad94E9e',
       aWETH: '0x4d5F47FA6A74757f35C14fD3a6Ef8E3C9BC514E8',
+      acbETH: '0x977b6fc5dE62598B08C85AC8Cf2b745874E8b78c',
     },
   },
   Alpha: {

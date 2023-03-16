@@ -240,6 +240,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_CBETH_DAI: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.DAI,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaDAI,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_DAI',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
   // Aave V1 strategy
   AaveV1StrategyUSDC: {
     contract: 'AaveV1Strategy',
