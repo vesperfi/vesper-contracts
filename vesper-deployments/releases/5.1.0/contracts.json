@@ -794,7 +794,8 @@
           "implementation": "0x90bb3E3AA5Fa88f0a83Dcb9485f65D2592f4307E"
         },
         "strategies": {
-          "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
+          "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609",
+          "AaveV3_Vesper_Xy_CBETH_DAI":"0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C"
         }
       }
     },
