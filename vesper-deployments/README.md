@@ -1,6 +1,13 @@
 # Vesper Deployments
 This module helps in deploying Vesper pools, accountant, rewards and strategy contracts.
 
+## Setup env
+Below env vars are required for deployment. Add these in `.env` or export as env variables.
+```env
+NODE_URL
+MNEMONIC
+MAINNET_ETHERSCAN_API_KEY
+```
 ## Deploy
 
 Deployment will be done via custom `hardhat task deploy-core-contracts` which behind the scene uses deploy scripts created using `hardhat-deploy`
@@ -73,13 +80,20 @@ Deployment will be done via custom `hardhat task deploy-core-contracts` which be
    npm run deploy -- --pool VDAI --network localhost --release 5.0.0 --deploy-params '{"tags": "deploy-vPool", "gasprice": "25000000000"}'
   ```
 
- ```
-
- * Deploy `upgrader` contracts 
+* Deploy `upgrader` contracts 
   mandatory param `name`, supported values : `PoolAccountantUpgrader`, `PoolRewardsUpgrader`, `VPoolUpgrader`
-  optional param `--target-chain`, values :  `polygon`, `mainnet`, `avalanche`, `arbitrium`
- 
- ```bash
+  optional param `--target-chain`, values :  `polygon`, `mainnet`, `avalanche`, `arbitrium` 
+  ```bash
   npm run deploy-upgrader -- --name PoolAccountantUpgrader --network localhost
   npm run deploy-upgrader -- --name PoolRewardsUpgrader --network localhost --target-chain polygon
- ```
+  ```
+
+## Verify
+
+In order to verify deployed contract on etherscan we are using `hardhat verify` plugin.
+> Env var `MAINNET_ETHERSCAN_API_KEY` is required.
+
+**Usage**
+```bash
+npm run verify -- --network mainnet DEPLOYED_CONTRACT_ADDRESS ["CONSTRUCTOR_ARGS_IF_ANY"]
+```
