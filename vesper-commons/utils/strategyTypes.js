@@ -38,6 +38,7 @@ const StrategyType = {
   DOT_DOT: 'dotDot',
   WOMBAT: 'wombat',
   ALPACA: 'alpaca',
+  FRAX_LEND: 'fraxLend',
 }
 
 module.exports = Object.freeze(StrategyType)
