@@ -7,7 +7,7 @@ import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 import "../Strategy.sol";
 import "../../interfaces/frax-lend/IFraxLend.sol";
 
-// solhint-disable no-empty-blocks
+// solhint-disable var-name-mixedcase
 
 /// @title This strategy will deposit collateral token in FraxLend and based on position it will
 /// borrow Frax and supplied borrowed tokens to Vesper pool.

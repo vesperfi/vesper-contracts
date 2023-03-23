@@ -4,6 +4,8 @@ pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+// solhint-disable var-name-mixedcase
+
 interface IFraxLend is IERC20 {
     struct ExchangeRateInfo {
         uint32 lastTimestamp;
