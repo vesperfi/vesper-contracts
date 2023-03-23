@@ -165,7 +165,7 @@ contract FraxLendVesperXy is Strategy {
         if (_borrowed > _borrowUpperBound) {
             // If borrow > upperBound then it is greater than lowerBound too.
             _repayAmount = _borrowed - _borrowLowerBound;
-        } else if (_borrowLowerBound > _borrowed) {
+        } else if (_borrowed < _borrowLowerBound) {
             _borrowAmount = _borrowLowerBound - _borrowed;
             uint256 _availableLiquidity = _getAvailableLiquidity();
             if (_borrowAmount > _availableLiquidity) {
@@ -183,7 +183,7 @@ contract FraxLendVesperXy is Strategy {
         return (vsp, IERC20(vsp).balanceOf(address(this)));
     }
 
-    /// @dev Deposit collateral in Compound V3 and adjust borrow position
+    /// @dev Deposit collateral in protocol and adjust borrow position
     function _deposit() internal {
         uint256 _collateralBalance = collateralToken.balanceOf(address(this));
         (uint256 _borrowAmount, uint256 _repayAmount) = _calculateBorrowPosition(_collateralBalance, 0);
@@ -195,14 +195,12 @@ contract FraxLendVesperXy is Strategy {
             if (_collateralBalance > 0) {
                 fraxLend.addCollateral(_collateralBalance, address(this));
             }
-        } else {
+        } else if (_borrowAmount > 0) {
             // Happy path, mint more borrow more
-            if (_borrowAmount > 0) {
-                // borrowAsset will deposit collateral and then borrow FRAX
-                fraxLend.borrowAsset(_borrowAmount, _collateralBalance, address(this));
-                // Deposit all borrow token, FRAX, we have.
-                vPool.deposit(IERC20(borrowToken).balanceOf(address(this)));
-            }
+            // borrowAsset will deposit collateral and then borrow FRAX
+            fraxLend.borrowAsset(_borrowAmount, _collateralBalance, address(this));
+            // Deposit all borrow token, FRAX, we have.
+            vPool.deposit(IERC20(borrowToken).balanceOf(address(this)));
         }
     }
 
@@ -238,7 +236,7 @@ contract FraxLendVesperXy is Strategy {
         if (_yTokensBorrowed > _totalYTokens) {
             _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
         } else {
-            // When _yTokensInProtocol exceeds _yTokensBorrowed from Compound
+            // When _yTokensInProtocol exceeds _yTokensBorrowed from protocol
             // then we have profit from investing borrow tokens. _yTokensHere is profit.
             if (_yTokensInProtocol > _yTokensBorrowed) {
                 _withdrawY(_yTokensInProtocol - _yTokensBorrowed);
@@ -260,11 +258,8 @@ contract FraxLendVesperXy is Strategy {
         }
         uint256 _profitAndExcessDebt = _profit + _excessDebt;
         if (_collateralHere < _profitAndExcessDebt) {
-            uint256 _totalAmountToWithdraw = _profitAndExcessDebt - _collateralHere;
-            if (_totalAmountToWithdraw > 0) {
-                _withdrawHere(_totalAmountToWithdraw);
-                _collateralHere = collateralToken.balanceOf(address(this));
-            }
+            _withdrawHere(_profitAndExcessDebt - _collateralHere);
+            _collateralHere = collateralToken.balanceOf(address(this));
         }
 
         // Set actual payback first and then profit. Make sure _collateralHere >= _payback + profit.
@@ -356,7 +351,7 @@ contract FraxLendVesperXy is Strategy {
      ***********************************************************************************************/
     /**
      * @notice Recover extra borrow tokens from strategy
-     * @dev If we get liquidation in Compound, we will have borrowToken sitting in strategy.
+     * @dev If we get liquidation in protocol, we will have borrowToken sitting in strategy.
      * This function allows to recover idle borrow token amount.
      * @param _amountToRecover Amount of borrow token we want to recover in 1 call.
      *      Set it 0 to recover all available borrow tokens
