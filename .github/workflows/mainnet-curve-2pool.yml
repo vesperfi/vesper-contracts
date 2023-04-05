@@ -10,6 +10,7 @@ on:
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/curve/Curve.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurveBase.sol"
       - "vesper-strategies/contracts/strategies/curve/2pool/*.sol"
       - "vesper-strategies/test/mainnet/curve/2pool/*.js"
 

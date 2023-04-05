@@ -61,6 +61,7 @@ const slots = {
   // Optimism addresses
   [OptimismAddress.NATIVE_TOKEN]: 3, // WETH
   [OptimismAddress.Curve.CRV]: 0,
+  [OptimismAddress.USDC]: 0,
 }
 
 // Some tokens, specially rebase tokens, uses dynamic storage or multi storage hence

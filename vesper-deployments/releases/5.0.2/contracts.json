@@ -183,6 +183,7 @@
         },
         "strategies": {
           "AaveV2_Vesper_Xy_ETH_DAI": "0x9A1a37e573dEd585299FdDbe99Ca43853DD21d9D",
+          "AaveV3_Vesper_Xy_ETH_DAI": "0xaB1A2802F0Ba6F958009DE8739250e04BAE67E3b",
           "AlphaLendStrategyETH": "0xeCe0f32840280aD0069Dd89Ad97Ad6dF1bB0fF2A",
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
@@ -754,6 +755,26 @@
           "CompoundLeverageStrategyLINK": "0x4634826b13A6f4edED44539a9AAE119438c1517b",
           "CompoundV3_Vesper_Xy_LINK_USDC": "0xC8Ba54eA8cDE1726c5D7363eC318C51b897B2F1a",
           "VesperMakerStrategyLINK": "0x0827F18a1fAD688C5C720FC27Ef0cC00D6DAd19a"
+        }
+      },
+      "vareth": {
+        "pool": {
+          "proxyAdmin": "0xa924b6725f7eA2650c6E3F09eb0d36a76486c5B0",
+          "proxy": "0xDD9F61a85fFE73E41eF889817972f0B0AaE6D6Dd",
+          "implementation": "0xd948ba1B50C474199DB204Ef128BA413c49Fd9b8",
+          "poolAccountant": {
+            "proxyAdmin": "0xB5144e9EAD98D7c0B47B7549f3b2E0b89eB585C6",
+            "proxy": "0x751E5E3F4b22641d693593cFf60932980386D23a",
+            "implementation": "0xd66b769b99714E49D599D6eD6bC46A01FA409661"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x655845AC2Db0c1955815bDc33F0270bC37e03D23",
+          "proxy": "0x6Dc34784c84b74dC928b5977812F4603E56DeF93",
+          "implementation": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d"
+        },
+        "strategies": {
+          "Maker_Vesper_RETH": "0xd08CFE37f44f2f9AFda5F8788cb856C63EA7c078"
         }
       }
     },

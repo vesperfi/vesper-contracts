@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable complexity */
 'use strict'
 
@@ -13,7 +14,7 @@ function sleep(ms) {
 }
 
 const deployFunction = async function (hre) {
-  const { getNamedAccounts, deployments, poolConfig, strategyConfig, targetChain, multisigNonce = 0 } = hre
+  const { getNamedAccounts, deployments, poolConfig, strategyConfig, targetChain, multisigNonce = 0, run } = hre
   if (!strategyConfig) {
     throw new Error('Strategy configuration object is not created.')
   }
@@ -45,6 +46,10 @@ const deployFunction = async function (hre) {
     args: constructorArgs,
     waitConfirmations,
   })
+
+  console.log('Verifying source code on etherscan')
+  await run('verify', { address: deployed.address, constructorArgsParams: constructorArgs, noCompile: true })
+
   const setup = strategyConfig.setup
 
   // Execute setup transactions

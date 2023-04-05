@@ -225,6 +225,36 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_ETH_DAI: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aWETH,
+      borrowToken: Address.DAI,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaDAI,
+      strategyName: 'AaveV3_Vesper_Xy_ETH_DAI',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
+  AaveV3_Vesper_Xy_CBETH_DAI: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.DAI,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaDAI,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_DAI',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
   // Aave V1 strategy
   AaveV1StrategyUSDC: {
     contract: 'AaveV1Strategy',
@@ -1937,8 +1967,8 @@ const StrategyConfig = {
       stargateRouter: Address.Stargate.router,
       stargateLp: Address.Stargate.usdcLP,
       stargateLpStaking: Address.Stargate.lpStaking,
-      stargatePoolId: 1, // USDC LP Pool ID
-      stargateLpStakingPoolId: 0, // Staking Contract pool ID
+      stargatePoolId: '1', // USDC LP Pool ID
+      stargateLpStakingPoolId: '0', // Staking Contract pool ID
       strategyName: 'Stargate_USDC',
     },
     config: { ...config },

@@ -11,6 +11,7 @@ on:
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/curve/Curve.sol"
+      - "vesper-strategies/contracts/strategies/curve/CurveBase.sol"
       - "vesper-strategies/contracts/strategies/convex/Convex.sol"
       - "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol"
       - "vesper-strategies/test/mainnet/convex/convex_for_frax/3pool/*.js"

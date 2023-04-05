@@ -16,6 +16,20 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  AaveV3_Vesper_Xy_ETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptWETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_ETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
   Curve_sETH_ETH: {
     contract: 'CurveETH',
     type: StrategyTypes.CURVE,
@@ -30,6 +44,23 @@ const StrategyConfig = {
       collateralIdx: 0,
       strategyName: 'Curve_sETH_ETH',
       wethLike: Address.WETH,
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Curve_sUSD_USDC: {
+    contract: 'Curve',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.SUSD_POOL,
+      curvePoolType: CurvePoolTypes.META_4_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOL_DEPOSIT_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 250, // 2.5%
+      masterOracle,
+      swapper,
+      collateralIdx: 2,
+      strategyName: 'Curve_sUSD_USDC',
     },
     config: { ...config },
     setup: { ...setup },
