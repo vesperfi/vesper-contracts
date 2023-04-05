@@ -76,10 +76,14 @@ module.exports = {
   namedAccounts: {
     deployer: process.env.DEPLOYER || 0,
   },
-
   contractSizer: {
     alphaSort: true,
     runOnCompile: true,
+  },
+  etherscan: {
+    apiKey: {
+      mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS === 'true',

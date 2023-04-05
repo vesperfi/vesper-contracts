@@ -623,7 +623,7 @@
           "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
-          "Stargate_USDC": "0x9720Ee436C14dA0f78c026C2784C3d557c1F476e"
+          "Stargate_USDC": "0xE27e8095B33FBCBB480AAC5E6e6dA94FbAf2965B"
         }
       },
       "vafei": {
@@ -795,7 +795,7 @@
         },
         "strategies": {
           "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609",
-          "AaveV3_Vesper_Xy_CBETH_DAI":"0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C"
+          "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C"
         }
       }
     },
