@@ -3,6 +3,7 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IVesperPool.sol";
+import "../../VesperRewards.sol";
 import "./AaveV2Xy.sol";
 
 /// @title Deposit Collateral in Aave and earn interest by depositing borrowed token in a Vesper Pool.
@@ -11,8 +12,6 @@ contract AaveV2VesperXy is AaveV2Xy {
 
     // Destination Grow Pool for borrowed Token
     IVesperPool public immutable vPool;
-    // VSP token address
-    address public immutable vsp;
 
     constructor(
         address _pool,
@@ -21,32 +20,10 @@ contract AaveV2VesperXy is AaveV2Xy {
         address _receiptToken,
         address _borrowToken,
         address _vPool,
-        address _vspAddress,
         string memory _name
     ) AaveV2Xy(_pool, _swapper, _rewardToken, _receiptToken, _borrowToken, _name) {
-        require(_vspAddress != address(0), "invalid-vsp-address");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);
-        vsp = _vspAddress;
-    }
-
-    /// @dev Claim AAVE and VSP and swap to collateral
-    function _claimAndSwapRewards() internal override {
-        // Claim and swap AAVE
-        uint256 _aaveAmount = _claimAave();
-        if (_aaveAmount > 0) {
-            _safeSwapExactInput(AAVE, address(collateralToken), _aaveAmount);
-        }
-
-        // Claim and swap VSP
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
     }
 
     /// @notice After borrowing Y, deposit to Vesper Pool
@@ -58,12 +35,22 @@ contract AaveV2VesperXy is AaveV2Xy {
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(borrowToken).safeApprove(address(vPool), _amount);
-        IERC20(vsp).safeApprove(address(swapper), _amount);
+        VesperRewards._approveToken(vPool, swapper, _amount);
     }
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 _amount) internal virtual override {
         _withdrawFromVesperPool(_amount);
+    }
+
+    /// @dev Claim AAVE and VSP and swap to collateral
+    function _claimAndSwapRewards() internal override {
+        // Claim and swap AAVE
+        uint256 _aaveAmount = _claimAave();
+        if (_aaveAmount > 0) {
+            _safeSwapExactInput(AAVE, address(collateralToken), _aaveAmount);
+        }
+        VesperRewards._claimAndSwapRewards(vPool, swapper, address(collateralToken));
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool

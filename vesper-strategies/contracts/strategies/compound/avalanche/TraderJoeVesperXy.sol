@@ -3,6 +3,7 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
+import "../../VesperRewards.sol";
 import "./TraderJoeXy.sol";
 
 /// @title Deposit Collateral in Benqi and earn interest by depositing borrowed token in a Vesper Pool.
@@ -11,8 +12,6 @@ contract TraderJoeVesperXy is TraderJoeXy {
 
     // Destination Grow Pool for borrowed Token
     IVesperPool public immutable vPool;
-    // VSP token address
-    address public immutable vsp;
 
     constructor(
         address _pool,
@@ -22,13 +21,10 @@ contract TraderJoeVesperXy is TraderJoeXy {
         address _receiptToken,
         address _borrowCToken,
         address _vPool,
-        address _vsp,
         string memory _name
     ) TraderJoeXy(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _name) {
-        require(_vsp != address(0), "vsp-address-is-zero");
         require(address(IVesperPool(_vPool).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(_vPool);
-        vsp = _vsp;
     }
 
     /// @notice Gets amount of borrowed Y collateral in strategy + Y collateral amount deposited in vPool
@@ -48,7 +44,7 @@ contract TraderJoeVesperXy is TraderJoeXy {
     function _approveToken(uint256 _amount) internal override {
         super._approveToken(_amount);
         IERC20(borrowToken).safeApprove(address(vPool), _amount);
-        IERC20(vsp).safeApprove(address(swapper), _amount);
+        VesperRewards._approveToken(vPool, swapper, _amount);
     }
 
     /// @dev Before repaying Y, withdraw it from Vesper Pool
@@ -60,16 +56,8 @@ contract TraderJoeVesperXy is TraderJoeXy {
     function _claimAndSwapRewards() internal override {
         // Claim and swap TraderJoe rewards
         TraderJoeXy._claimAndSwapRewards();
-
-        // Claim and swap VSP
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
+        // Claim and swap rewards from Vesper
+        VesperRewards._claimAndSwapRewards(vPool, swapper, address(collateralToken));
     }
 
     /// @dev Borrowed Y balance deposited in Vesper Pool
