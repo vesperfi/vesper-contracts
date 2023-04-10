@@ -17,21 +17,8 @@ contract CompoundVesperXyETH is CompoundVesperXy {
         address _receiptToken,
         address _borrowCToken,
         address _vPool,
-        address _vspAddress,
         string memory _name
-    )
-        CompoundVesperXy(
-            _pool,
-            _swapper,
-            _comptroller,
-            _rewardToken,
-            _receiptToken,
-            _borrowCToken,
-            _vPool,
-            _vspAddress,
-            _name
-        )
-    {}
+    ) CompoundVesperXy(_pool, _swapper, _comptroller, _rewardToken, _receiptToken, _borrowCToken, _vPool, _name) {}
 
     /// @dev Unwrap ETH and supply in Compound
     function _mintX(uint256 _amount) internal override {

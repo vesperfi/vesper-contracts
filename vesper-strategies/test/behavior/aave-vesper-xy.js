@@ -17,10 +17,15 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
   async function assertCurrentBorrow() {
     const aaveAddressProvider = await ethers.getContractAt('PoolAddressesProvider', Address.Aave.AddressProvider)
     const aaveLendingPool = await ethers.getContractAt('AaveLendingPool', await strategy.aaveLendingPool())
+    const protocolDataProvider = await ethers.getContractAt(
+      'AaveProtocolDataProvider',
+      await strategy.aaveProtocolDataProvider(),
+    )
     const aaveOracle = await ethers.getContractAt('AaveOracle', await aaveAddressProvider.getPriceOracle())
     const strategyAccountData = await aaveLendingPool.getUserAccountData(strategy.address)
+    const borrowTokenObj = await ethers.getContractAt('ERC20', borrowToken)
     const borrowTokenPrice = await aaveOracle.getAssetPrice(borrowToken)
-    const borrowTokenDecimal = await (await ethers.getContractAt('ERC20', borrowToken)).decimals()
+    const borrowTokenDecimal = await borrowTokenObj.decimals()
     const maxBorrowPossibleETH = strategyAccountData.totalDebtETH.add(strategyAccountData.availableBorrowsETH)
     const maxBorrowPossibleInBorrowToken = maxBorrowPossibleETH
       .mul(ethers.utils.parseUnits('1', borrowTokenDecimal))
@@ -28,12 +33,20 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
     const borrowUpperBound = maxBorrowPossibleInBorrowToken.mul(await strategy.maxBorrowLimit()).div(maxBps)
     const borrowLowerBound = maxBorrowPossibleInBorrowToken.mul(await strategy.minBorrowLimit()).div(maxBps)
     const borrowed = await vdToken.balanceOf(strategy.address)
-    expect(borrowed).to.be.lt(borrowUpperBound, 'Borrow more than max limit')
-    expect(borrowed).to.be.closeTo(
-      borrowLowerBound,
-      borrowLowerBound.mul(1).div(1000),
-      'borrowed is too much deviated from minBorrowLimit',
-    )
+    const aBorrowToken = (await protocolDataProvider.getReserveTokensAddresses(borrowToken)).aTokenAddress
+
+    const availableLiquidity = await borrowTokenObj.balanceOf(aBorrowToken)
+    // If liquidity is zero that means rebalance already borrowed all and hence borrowed > 0
+    if (availableLiquidity.eq(0)) {
+      expect(borrowed).gt(0)
+    } else {
+      expect(borrowed).to.be.lt(borrowUpperBound, 'Borrow more than max limit')
+      expect(borrowed).to.be.closeTo(
+        borrowLowerBound,
+        borrowLowerBound.mul(1).div(1000),
+        'borrowed is too much deviated from minBorrowLimit',
+      )
+    }
     return strategyAccountData
   }
 
@@ -64,7 +77,7 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
     })
 
     it('Should adjust borrow to keep it within defined limits', async function () {
-      await deposit(pool, collateralToken, 100, user1)
+      await deposit(pool, collateralToken, 10, user1)
       await strategy.connect(governor).rebalance()
       const accountDataBefore = await assertCurrentBorrow()
       await mine(100)
@@ -109,7 +122,7 @@ function shouldBehaveLikeAaveVesperXY(strategyIndex) {
     })
 
     it('Should repay and borrow more based on updated borrow limit', async function () {
-      await deposit(pool, collateralToken, 100, user1)
+      await deposit(pool, collateralToken, 10, user1)
       await strategy.connect(governor).rebalance()
       await mine(100)
       await strategy.connect(governor).updateBorrowLimit(8000, 9000)

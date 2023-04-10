@@ -117,7 +117,7 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
     })
 
     it('Should adjust borrow to keep it within defined limits', async function () {
-      await deposit(pool, collateralToken, 100, user1)
+      await deposit(pool, collateralToken, 10, user1)
       await strategy.rebalance()
       await mine(100)
 
@@ -149,7 +149,7 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
     })
 
     it('Should update borrow limit', async function () {
-      await deposit(pool, collateralToken, 100, user1)
+      await deposit(pool, collateralToken, 10, user1)
       await strategy.rebalance()
       await mine(100)
       await strategy.updateBorrowLimit(5000, 6000)

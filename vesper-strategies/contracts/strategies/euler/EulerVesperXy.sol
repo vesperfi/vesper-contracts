@@ -5,6 +5,7 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 import "vesper-pools/contracts/Errors.sol";
 import "../../interfaces/euler/IEuler.sol";
+import "../VesperRewards.sol";
 import "./EulerXy.sol";
 
 // solhint-disable no-empty-blocks
@@ -15,8 +16,6 @@ contract EulerVesperXy is EulerXy {
 
     // Destination Grow Pool for borrowed Token
     IVesperPool public immutable vPool;
-    // VSP token address
-    address public immutable vsp;
 
     constructor(
         address pool_,
@@ -28,7 +27,6 @@ contract EulerVesperXy is EulerXy {
         address rewardToken_,
         address borrowToken_,
         address vPool_,
-        address vsp_,
         string memory name_
     )
         EulerXy(
@@ -43,10 +41,8 @@ contract EulerVesperXy is EulerXy {
             name_
         )
     {
-        require(vsp_ != address(0), "vsp-address-is-zero");
         require(address(IVesperPool(vPool_).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(vPool_);
-        vsp = vsp_;
     }
 
     /// @notice After borrowing Y, deposit to Vesper Pool
@@ -58,7 +54,7 @@ contract EulerVesperXy is EulerXy {
     function _approveToken(uint256 amount_) internal virtual override {
         super._approveToken(amount_);
         IERC20(borrowToken).safeApprove(address(vPool), amount_);
-        IERC20(vsp).safeApprove(address(swapper), amount_);
+        VesperRewards._approveToken(vPool, swapper, amount_);
     }
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
@@ -76,16 +72,8 @@ contract EulerVesperXy is EulerXy {
         if (_eulAmount > 0) {
             _safeSwapExactInput(rewardToken, address(collateralToken), _eulAmount);
         }
-
-        // Claim and swap VSP
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
+        // Claim and swap rewards from Vesper
+        VesperRewards._claimAndSwapRewards(vPool, swapper, address(collateralToken));
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool

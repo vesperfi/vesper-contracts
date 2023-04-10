@@ -3,6 +3,7 @@
 pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
+import "../../VesperRewards.sol";
 import "./CompoundV3Xy.sol";
 
 /// @title Deposit Collateral in Compound and earn interest by depositing borrowed token in a Vesper Pool.
@@ -11,8 +12,6 @@ contract CompoundV3VesperXy is CompoundV3Xy {
 
     // Destination Grow Pool for borrowed Token
     IVesperPool public immutable vPool;
-    // VSP token address
-    address public immutable vsp;
 
     constructor(
         address pool_,
@@ -22,13 +21,10 @@ contract CompoundV3VesperXy is CompoundV3Xy {
         address comet_,
         address borrowToken_,
         address vPool_,
-        address vsp_,
         string memory name_
     ) CompoundV3Xy(pool_, swapper_, compRewards_, rewardToken_, comet_, borrowToken_, name_) {
-        require(vsp_ != address(0), "vsp-address-is-zero");
         require(address(IVesperPool(vPool_).token()) == borrowToken, "invalid-grow-pool");
         vPool = IVesperPool(vPool_);
-        vsp = vsp_;
     }
 
     /// @notice Gets amount of borrowed Y collateral in strategy + Y collateral amount deposited in vPool
@@ -48,23 +44,15 @@ contract CompoundV3VesperXy is CompoundV3Xy {
     function _approveToken(uint256 amount_) internal override {
         super._approveToken(amount_);
         IERC20(borrowToken).safeApprove(address(vPool), amount_);
-        IERC20(vsp).safeApprove(address(swapper), amount_);
+        VesperRewards._approveToken(vPool, swapper, amount_);
     }
 
     /// @dev Claim Compound and VSP rewards and convert to collateral token.
     function _claimAndSwapRewards() internal override {
         // Claim and swap Compound rewards
         CompoundV3Xy._claimAndSwapRewards();
-
-        // Claim and swap VSP
-        address _poolRewards = vPool.poolRewards();
-        if (_poolRewards != address(0)) {
-            IPoolRewards(_poolRewards).claimReward(address(this));
-        }
-        uint256 _vspAmount = IERC20(vsp).balanceOf(address(this));
-        if (_vspAmount > 0) {
-            _safeSwapExactInput(vsp, address(collateralToken), _vspAmount);
-        }
+        // Claim and swap rewards from Vesper
+        VesperRewards._claimAndSwapRewards(vPool, swapper, address(collateralToken));
     }
 
     function _getYTokensInProtocol() internal view override returns (uint256) {

@@ -202,6 +202,9 @@ const Address = {
     FRAXBP_POOL: '0x13Cc34Aa8037f722405285AD2C82FE570bfa2bdc',
     FRAXBP_LP: '0x927E6f04609A45B107C789aF34BA90Ebbf479f7f',
   },
+  FraxLend: {
+    WETH_FRAX: '0x794F6B13FBd7EB7ef10d1ED205c9a416910207Ff',
+  },
 }
 
 module.exports = Object.freeze(Address)
