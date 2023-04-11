@@ -4,8 +4,9 @@ pragma solidity 0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "./IGovernable.sol";
+import "./IPausable.sol";
 
-interface IVesperPool is IGovernable, IERC20Metadata {
+interface IVesperPool is IGovernable, IPausable, IERC20Metadata {
     function calculateUniversalFee(uint256 _profit) external view returns (uint256 _fee);
 
     function deposit() external payable;
