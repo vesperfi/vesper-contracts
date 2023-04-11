@@ -863,8 +863,9 @@ describe('RevenueSplitter', function () {
       })
 
       it('should not allow to add vToken using non owner', async function () {
-        await expect(psContract.connect(user6).addVToken(vaETH.address, ZERO_ADDRESS)).to.be.revertedWith(
-          'not-governor',
+        await expect(psContract.connect(user6).addVToken(vaETH.address, ZERO_ADDRESS)).to.be.revertedWithCustomError(
+          psContract,
+          'SenderIsNotGovernor',
         )
       })
 
@@ -905,7 +906,10 @@ describe('RevenueSplitter', function () {
       })
 
       it('should not allow to remove vToken using non owner', async function () {
-        await expect(psContract.connect(user6).removeVToken(vaETH.address)).to.be.revertedWith('not-governor')
+        await expect(psContract.connect(user6).removeVToken(vaETH.address)).to.be.revertedWithCustomError(
+          psContract,
+          'SenderIsNotGovernor',
+        )
       })
 
       it('should toggle auto top-up to true', async function () {
@@ -930,7 +934,10 @@ describe('RevenueSplitter', function () {
       })
 
       it('should not allow auto top-up toggle via non owner', async function () {
-        await expect(psContract.connect(user6).toggleAutoTopUp()).to.be.revertedWith('not-governor')
+        await expect(psContract.connect(user6).toggleAutoTopUp()).to.be.revertedWithCustomError(
+          psContract,
+          'SenderIsNotGovernor',
+        )
       })
 
       it('should toggle top-up status to true', async function () {
@@ -990,7 +997,7 @@ describe('RevenueSplitter', function () {
         const transferAmount = BN.from(asset1Amount).div(2)
         await expect(
           psContract.connect(user6).transfer(vaETH.address, VESPER_DEPLOYER, transferAmount),
-        ).to.be.revertedWith('not-governor')
+        ).to.be.revertedWithCustomError(psContract, 'SenderIsNotGovernor')
       })
 
       it('should not transfer more than available balance', async function () {

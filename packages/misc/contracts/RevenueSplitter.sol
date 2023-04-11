@@ -7,9 +7,9 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "./Governable.sol";
+import "./access/Governable.sol";
 import "./interfaces/chainlink/IAggregatorV3.sol";
-import "./interfaces/vesper/IVesperPool.sol";
+import "./interfaces/IVesperPool.sol";
 
 /**
  * @title RevenueSplitter
@@ -70,13 +70,14 @@ contract RevenueSplitter is Governable {
         // solhint-disable-next-line max-line-length
         require(_payees.length == _share.length, "payees-and-share-length-mismatch");
         require(_payees.length > 0, "no-payees");
+        __Governable_init();
         for (uint256 i = 0; i < _payees.length; i++) {
             _addPayee(_payees[i], _share[i]);
         }
     }
 
     //solhint-disable no-empty-blocks
-    receive() external payable {}
+    receive() external payable override {}
 
     /**
      * @dev Transfer of ERC20 token(s) to `payee` based on share and their previous withdrawals.
