@@ -1040,6 +1040,21 @@
         "strategies": {
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544"
         }
+      },
+      "vaop": {
+        "pool": {
+          "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
+          "proxy": "0x19382707d5a47E74f60053b652Ab34b6e30Febad",
+          "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
+          "poolAccountant": {
+            "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
+            "proxy": "0x7b8A1D28Ef8d09b442c6070316D92401fBAD36BF",
+            "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
+          }
+        },
+        "strategies": {
+          "AaveV3_Vesper_Xy_OP_USDC": "0xd7c751fA32590451548B100C4f6442F062C9bc8E"
+        }
       }
     }
   }
