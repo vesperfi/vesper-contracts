@@ -2044,6 +2044,35 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  FraxLend_Vesper_Xy_ETH_FRAX: {
+    contract: 'FraxLendVesperXy',
+    type: StrategyTypes.FRAX_LEND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.FraxLend.WETH_FRAX,
+      borrowToken: Address.FRAX,
+      vPool: Address.Vesper.vaFRAX,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'FraxLend_Vesper_Xy_ETH_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  FraxLend_Vesper_Xy_WBTC_FRAX: {
+    contract: 'FraxLendVesperXy',
+    type: StrategyTypes.FRAX_LEND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.FraxLend.WBTC_FRAX,
+      borrowToken: Address.FRAX,
+      vPool: Address.Vesper.vaFRAX,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'FraxLend_Vesper_Xy_WBTC_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

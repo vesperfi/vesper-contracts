@@ -4,7 +4,34 @@ pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+// solhint-disable var-name-mixedcase
+
 interface IFraxLend is IERC20 {
+    struct ExchangeRateInfo {
+        uint32 lastTimestamp;
+        uint224 exchangeRate; // collateral:asset ratio. i.e. how much collateral to buy 1e18 asset
+    }
+
+    /// @notice Stores information about the current exchange rate. Collateral:Asset ratio
+    /// @dev Struct packed to save SLOADs. Amount of Collateral Token to buy 1e18 Asset Token
+    function exchangeRateInfo() external view returns (ExchangeRateInfo memory);
+
+    function getConstants()
+        external
+        pure
+        returns (
+            uint256 _LTV_PRECISION,
+            uint256 _LIQ_PRECISION,
+            uint256 _UTIL_PREC,
+            uint256 _FEE_PRECISION,
+            uint256 _EXCHANGE_PRECISION,
+            uint64 _DEFAULT_INT,
+            uint16 _DEFAULT_PROTOCOL_FEE,
+            uint256 _MAX_PROTOCOL_FEE
+        );
+
+    function maxLTV() external view returns (uint256);
+
     /// @notice The ```toAssetAmount``` function converts a given number of shares to an asset amount
     /// @param _shares Shares of asset (fToken)
     /// @param _roundUp Whether to round up after division
@@ -17,8 +44,16 @@ interface IFraxLend is IERC20 {
     /// @return The number of shares (fTokens)
     function toAssetShares(uint256 _amount, bool _roundUp) external view returns (uint256);
 
-    /// @notice Stores the balance of collateral for each user
-    function userCollateralBalance(address _user) external view returns (uint256);
+    /// @notice The ```toBorrowAmount``` function converts a given amount of borrow debt into the number of shares
+    /// @param _shares Shares of borrow
+    /// @param _roundUp Whether to roundup during division
+    /// @return The amount of asset
+    function toBorrowAmount(uint256 _shares, bool _roundUp) external view returns (uint256);
+
+    /// @notice The ```toBorrowShares``` function converts a given amount of borrow debt into the number of shares
+    /// @param _amount Amount of borrow
+    /// @param _roundUp Whether to roundup during division
+    function toBorrowShares(uint256 _amount, bool _roundUp) external view returns (uint256);
 
     struct VaultAccount {
         uint128 amount; // Total amount, analogous to market cap
@@ -28,6 +63,21 @@ interface IFraxLend is IERC20 {
     function totalAsset() external view returns (VaultAccount memory);
 
     function totalBorrow() external view returns (VaultAccount memory);
+
+    // total amount of collateral in contract
+    function totalCollateral() external view returns (uint256);
+
+    /// @notice Stores the balance of collateral for each user
+    function userCollateralBalance(address _user) external view returns (uint256);
+
+    /// @notice Stores the balance of borrow shares for each user
+    function userBorrowShares(address _user) external view returns (uint256);
+
+    /// @notice The ```addInterest``` function is a public implementation of _addInterest and allows 3rd parties to trigger interest accrual
+    /// @return _interestEarned The amount of interest accrued by all borrowers
+    function addInterest()
+        external
+        returns (uint256 _interestEarned, uint256 _feesAmount, uint256 _feesShare, uint64 _newRate);
 
     /// @notice The ```deposit``` function allows a user to Lend Assets by specifying the amount of Asset Tokens to lend
     /// @dev Caller must invoke ```ERC20.approve``` on the Asset Token contract prior to calling function
