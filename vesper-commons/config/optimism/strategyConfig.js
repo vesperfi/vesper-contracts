@@ -5,7 +5,7 @@ const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
 const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
-const swapper = Address.Vesper.Swapper
+const swapper = Address.Vesper.newSwapper
 const masterOracle = Address.Vesper.MasterOracle
 const config = { debtRatio: 0, externalDepositFee: 0 }
 
