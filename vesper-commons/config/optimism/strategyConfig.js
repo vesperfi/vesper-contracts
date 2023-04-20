@@ -5,7 +5,7 @@ const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
 const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
-const swapper = Address.Vesper.Swapper
+const swapper = Address.Vesper.newSwapper
 const masterOracle = Address.Vesper.MasterOracle
 const config = { debtRatio: 0, externalDepositFee: 0 }
 
@@ -40,6 +40,20 @@ const StrategyConfig = {
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_OP_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+  AaveV3_Vesper_Xy_wstETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptwstETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_wstETH_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },

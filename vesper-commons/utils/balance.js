@@ -88,6 +88,9 @@ const whales = {
   [BscAddress.Ellipsis.EPX]: '0xF977814e90dA44bFA03b6295A0616a897441aceC',
   [BscAddress.Alpaca.ALPACA]: '0xb7d85ab25b9d478961face285fa3d8aaecad24a9',
   [BscAddress.Stargate.STG]: '0x6e690075eedBC52244Dd4822D9F7887d4f27442F',
+
+  // Optimism
+  [OptimismAddress.wstETH]: '0xb90b9b1f91a01ea22a182cd84c1e22222e39b415',
 }
 
 /**
