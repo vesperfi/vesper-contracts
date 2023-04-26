@@ -76,6 +76,24 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Curve_wstETH_ETH: {
+    contract: 'CurveETH',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.WSTETH_ETH_POOL,
+      curvePoolType: CurvePoolTypes.PLAIN_2_POOL,
+      crvDeposit: ethers.constants.AddressZero,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      swapper,
+      collateralIdx: 0,
+      strategyName: 'Curve_wstETH_ETH',
+      wethLike: Address.WETH,
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Curve_sUSD_USDC: {
     contract: 'Curve',
     type: StrategyTypes.CURVE,
