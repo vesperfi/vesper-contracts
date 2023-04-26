@@ -1039,6 +1039,7 @@
           }
         },
         "strategies": {
+          "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544"
         }
       },
