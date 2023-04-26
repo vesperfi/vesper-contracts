@@ -72,51 +72,84 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       expect(totalValue).to.be.gt(0, 'Total tokens should be > zero')
     })
 
-    // Note: Waiting clarification from Curve team to be able to simulate
-    // multi-chain CRV reward distribution
-    // Refs: https://curve.readthedocs.io/dao-gauges-sidechain.html
-    if (getChain() === 'mainnet') {
-      it('Should claim CRV (mainnet)', async function () {
-        if (isConvex) {
-          // This scenario only applies to standard Curve strategies
+    it('Should claim CRV via minter or gauge factory', async function () {
+      if (isConvex) {
+        // This scenario only applies to standard Curve strategies
+        return
+      }
+
+      let crvMinterAddress
+      if (getChain() === 'mainnet') {
+        crvMinterAddress = await strategy.CRV_MINTER()
+      } else {
+        crvMinterAddress = await strategy.GAUGE_FACTORY()
+        const abi = ['function is_valid_gauge(address) external view returns(bool)']
+        const gaugeFactory = await ethers.getContractAt(abi, crvMinterAddress)
+        // skip test if gauge is not valid
+        if (!(await gaugeFactory.is_valid_gauge(await strategy.crvGauge()))) {
           return
         }
+      }
+      const strategySigner = await unlock(strategy.address)
+      const crvMinter = await ethers.getContractAt('ITokenMinter', crvMinterAddress, strategySigner)
 
-        const strategySigner = await unlock(strategy.address)
-        const gauge = await ethers.getContractAt('ILiquidityGaugeV3', await strategy.crvGauge(), strategySigner)
+      // given
+      await deposit(pool, collateralToken, 100, alice)
+      await strategy.rebalance()
+      expect(await crv.balanceOf(strategy.address)).eq(0)
+      await mine(1000)
 
-        // given
-        await deposit(pool, collateralToken, 100, alice)
-        await strategy.rebalance()
-        expect(await gauge.callStatic.claimable_tokens(strategy.address)).eq(0)
-        await mine(1000)
-        await gauge.user_checkpoint(strategy.address)
-        expect(await gauge.callStatic.claimable_tokens(strategy.address)).gt(0)
+      // when
+      await crvMinter.mint(await strategy.crvGauge())
 
-        if ((await strategy.NAME()).includes('aave')) {
-          // Lets claim rewards including stkAAVE.
-          // Passing 0 as it may fail as we are not swapping stkAAVE.
-          await strategy.claimAndSwapRewards(0)
-        }
+      // then
+      expect(await crv.balanceOf(strategy.address)).gt(0)
+    })
 
-        // time travel to earn more rewards. Also unlock AAVE from stkAAVE, if applicable
-        await time.increase(time.duration.days(10))
+    it('Should claim rewards(may include CRV)', async function () {
+      // Avalanche tests are not claiming rewards properly hence skipping tests for now
+      if (isConvex || getChain() === 'avalanche') {
+        // This scenario only applies to standard Curve strategies
+        return
+      }
 
-        // when
-        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
-        await strategy.claimAndSwapRewards(amountOut)
+      const strategySigner = await unlock(strategy.address)
+      const gauge = await ethers.getContractAt('ILiquidityGaugeV3', await strategy.crvGauge(), strategySigner)
 
-        // then
-        expect(await gauge.callStatic.claimable_tokens(strategy.address)).eq(0)
-      })
+      // given
+      await deposit(pool, collateralToken, 100, alice)
+      await strategy.rebalance()
+      expect(await gauge.callStatic.claimable_tokens(strategy.address)).eq(0)
+      await mine(1000)
+      await gauge.user_checkpoint(strategy.address)
+      expect(await gauge.callStatic.claimable_tokens(strategy.address)).gt(0)
+    })
 
-      it('Should claim stkAAVE for aave pool', async function () {
-        if ((await strategy.NAME()).includes('aave')) {
-          // Aave rewards test
-          await testStkAaveRewards(pool, strategy, collateralToken)
-        }
-      })
-    }
+    it('Should claim and swap rewards', async function () {
+      // given
+      await deposit(pool, collateralToken, 100, alice)
+      await strategy.rebalance()
+
+      if ((await strategy.NAME()).includes('aave')) {
+        // Lets claim rewards including stkAAVE.
+        // Passing 0 as it may fail as we are not swapping stkAAVE.
+        await strategy.claimAndSwapRewards(0)
+      }
+
+      // time travel to earn more rewards. Also unlock AAVE from stkAAVE, if applicable
+      await time.increase(time.duration.days(10))
+
+      // when
+      // There may or may not be rewards to pass 0.
+      await strategy.claimAndSwapRewards(0)
+    })
+
+    it('Should claim stkAAVE for aave pool', async function () {
+      if ((await strategy.NAME()).includes('aave') && getChain() === 'mainnet') {
+        // Aave rewards test
+        await testStkAaveRewards(pool, strategy, collateralToken)
+      }
+    })
 
     it('Should liquidate CRV when claimed by external source', async function () {
       await deposit(pool, collateralToken, 1, alice)

@@ -13,6 +13,7 @@ import "../../interfaces/curve/ITokenMinter.sol";
 import "../../interfaces/curve/IMetapoolFactory.sol";
 import "../../interfaces/curve/IRegistry.sol";
 import "../../interfaces/curve/IAddressProvider.sol";
+import "../../interfaces/curve/ILiquidityGaugeFactory.sol";
 import "../../interfaces/one-oracle/IMasterOracle.sol";
 import "../Strategy.sol";
 
@@ -34,6 +35,8 @@ abstract contract CurveBase is Strategy {
     string public constant VERSION = "5.1.0";
     uint256 internal constant MAX_BPS = 10_000;
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
+    ILiquidityGaugeFactory public constant GAUGE_FACTORY =
+        ILiquidityGaugeFactory(0xabC000d88f23Bb45525E447528DBF656A9D55bf5); // Act as CRV_MINTER on side chains
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
 
@@ -213,9 +216,12 @@ abstract contract CurveBase is Strategy {
     /// @dev Return values are not being used hence returning 0
     function _claimRewards() internal virtual override returns (address, uint256) {
         if (block.chainid == 1) {
-            // Side-chains don't have minter contract
             CRV_MINTER.mint(address(crvGauge));
+        } else if (GAUGE_FACTORY.is_valid_gauge(address(crvGauge))) {
+            // On side chain gauge factory can mint CRV reward but only for valid gauge.
+            GAUGE_FACTORY.mint(address(crvGauge));
         }
+        // solhint-disable-next-line no-empty-blocks
         try crvGauge.claim_rewards() {} catch {
             // This call may fail in some scenarios
             // e.g. 3Crv gauge doesn't have such function
