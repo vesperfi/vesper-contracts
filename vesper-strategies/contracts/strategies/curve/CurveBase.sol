@@ -94,21 +94,14 @@ abstract contract CurveBase is Strategy {
                 _verifyCollateral(_factory.get_coins(crvPool_)[collateralIdx_]);
             }
             _crvLp = crvPool_;
-
-            // Note: OP sETH/ETH has gauge but `factory` contract is returning null
-            // See more: https://github.com/bloqpriv/vesper-contracts/issues/475
-            if (crvPool_ == 0x7Bc5728BC2b59B45a58d9A576E2Ffc5f0505B35E) {
-                _crvGauge = 0xCB8883D1D8c560003489Df43B30612AAbB8013bb;
-            } else if (crvPool_ == 0x061b87122Ed14b9526A813209C8a59a633257bAb) {
-                // sUSD Synthetix Optimism pool
-                _crvGauge = 0xc5aE4B5F86332e70f3205a8151Ee9eD9F71e0797;
-            } else {
-                _crvGauge = _factory.get_gauge(crvPool_);
-            }
+            _crvGauge = _factory.get_gauge(crvPool_);
         }
 
         require(crvPool_ != address(0), "pool-is-null");
         require(_crvLp != address(0), "lp-is-null");
+        if (_crvGauge == address(0)) {
+            _crvGauge = GAUGE_FACTORY.get_gauge_from_lp_token(_crvLp);
+        }
         require(_crvGauge != address(0), "gauge-is-null");
 
         CRV = crvToken_;
