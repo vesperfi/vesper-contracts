@@ -80,10 +80,7 @@ abstract contract CurveBase is Strategy {
         if (_crvLp != address(0)) {
             // Get data from Registry contract
             require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
-            require(
-                _registry.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
-                "collateral-mismatch"
-            );
+            _verifyCollateral(_registry.get_underlying_coins(crvPool_)[collateralIdx_]);
             _crvGauge = _registry.get_gauges(crvPool_)[0];
         } else {
             // Get data from Factory contract
@@ -91,16 +88,10 @@ abstract contract CurveBase is Strategy {
 
             if (_factory.is_meta(crvPool_)) {
                 require(collateralIdx_ < _factory.get_meta_n_coins(crvPool_)[1], "invalid-collateral");
-                require(
-                    _factory.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
-                    "collateral-mismatch"
-                );
+                _verifyCollateral(_factory.get_underlying_coins(crvPool_)[collateralIdx_]);
             } else {
                 require(collateralIdx_ < _factory.get_n_coins(crvPool_), "invalid-collateral");
-                address _coinFromCrvPool = _factory.get_coins(crvPool_)[collateralIdx_];
-                // For wrapped collateral, factory may return wrapped/native token.
-                if (_coinFromCrvPool == ETH) _coinFromCrvPool = address(collateralToken);
-                require(_coinFromCrvPool == address(collateralToken), "collateral-mismatch");
+                _verifyCollateral(_factory.get_coins(crvPool_)[collateralIdx_]);
             }
             _crvLp = crvPool_;
 
@@ -414,6 +405,10 @@ abstract contract CurveBase is Strategy {
         if (amount_ > 0) {
             crvGauge.withdraw(amount_);
         }
+    }
+
+    function _verifyCollateral(address collateralFromCurve_) internal view virtual {
+        require(collateralFromCurve_ == address(collateralToken), "collateral-mismatch");
     }
 
     function _withdrawFromPlainPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
