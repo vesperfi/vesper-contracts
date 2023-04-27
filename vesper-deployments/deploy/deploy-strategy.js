@@ -47,9 +47,6 @@ const deployFunction = async function (hre) {
     waitConfirmations,
   })
 
-  console.log('Verifying source code on etherscan')
-  await run('verify', { address: deployed.address, constructorArgsParams: constructorArgs, noCompile: true })
-
   const setup = strategyConfig.setup
 
   // Execute setup transactions
@@ -141,6 +138,13 @@ const deployFunction = async function (hre) {
     console.log('Sending multisig tx')
     await proposeMultiTxn(address.MultiSig.safe, targetChain, deployer, multisigNonce, bundleTxs, address.MultiSend)
   }
+
+  console.log('Verifying source code on etherscan')
+  await run('verify', {
+    address: deployed.address,
+    constructorArgsParams: constructorArgs.map(val => val.toString()),
+    noCompile: true,
+  })
 }
 module.exports = deployFunction
 module.exports.tags = ['deploy-strategy']
