@@ -30,7 +30,7 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  susd-pool-usdc-test:
+  vausdc-susd-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
@@ -42,5 +42,5 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running Curve strategy for VAUSDC pool using sUSD Curve 4pool
-        run: npm test -- --scope vesper-strategies -- test/optimism/curve/4pool/susd-pool-usdc.spec.js
+      - name: Running Curve strategy for VAUSDC pool using sUSD Synthetix 4pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/curve/4pool/vausdc-susd.spec.js

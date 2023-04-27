@@ -111,6 +111,23 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Curve_FRAXBP_USDC: {
+    contract: 'Curve',
+    type: StrategyTypes.CURVE,
+    constructorArgs: {
+      crvPool: Address.Curve.FRAXBP_POOL,
+      curvePoolType: CurvePoolTypes.PLAIN_2_POOL,
+      depositZap: ethers.constants.AddressZero,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 250, // 2.5%
+      masterOracle,
+      swapper,
+      collateralIdx: 1,
+      strategyName: 'Curve_FRAXBP_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
