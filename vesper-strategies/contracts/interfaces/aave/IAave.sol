@@ -4,6 +4,12 @@ pragma solidity 0.8.9;
 
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+interface PoolAddressesProviderV3 {
+    function getPool() external view returns (AaveLendingPool);
+
+    function getPoolDataProvider() external view returns (AaveProtocolDataProvider);
+}
+
 // @dev Interface support both Aave v2 and v3 methods
 interface PoolAddressesProvider {
     function getPool() external view returns (address);
