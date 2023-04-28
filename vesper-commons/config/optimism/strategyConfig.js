@@ -154,6 +154,48 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Sonne_Leverage_ETH: {
+    contract: 'SonneLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Sonne.soWETH,
+      strategyName: 'Sonne_Leverage_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Sonne_Leverage_OP: {
+    contract: 'SonneLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Sonne.soOP,
+      strategyName: 'Sonne_Leverage_OP',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Sonne_Leverage_USDC: {
+    contract: 'SonneLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Sonne.soUSDC,
+      strategyName: 'Sonne_Leverage_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
