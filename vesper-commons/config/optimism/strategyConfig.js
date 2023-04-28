@@ -128,6 +128,32 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Sonne_USDC: {
+    contract: 'Sonne',
+    type: StrategyTypes.COMPOUND,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.soUSDC,
+      strategyName: 'Sonne_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Sonne_WETH: {
+    contract: 'Sonne',
+    type: StrategyTypes.COMPOUND,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.soWETH,
+      strategyName: 'Sonne_WETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
