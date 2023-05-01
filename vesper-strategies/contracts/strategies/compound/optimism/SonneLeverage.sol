@@ -9,10 +9,8 @@ import "../../AaveFlashLoanHelper.sol";
 
 // solhint-disable no-empty-blocks
 
-contract CompoundLikeLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
+contract SonneLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     using SafeERC20 for IERC20;
-
-    address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
 
     constructor(
         address _pool,
@@ -33,27 +31,15 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     /// @notice Approve all required tokens
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
-        IERC20(WAVAX).safeApprove(address(swapper), _amount);
         AaveFlashLoanHelper._approveToken(address(collateralToken), _amount);
     }
 
-    /// @dev Claim Protocol rewards + AVAX and convert them into collateral token.
-    function _claimAndSwapRewards() internal override {
+    /// @notice Claim comp
+    function _claimRewards() internal override returns (address, uint256) {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
-        ComptrollerMultiReward(address(comptroller)).claimReward(0, address(this), _markets); // Claim protocol rewards
-        ComptrollerMultiReward(address(comptroller)).claimReward(1, address(this), _markets); // Claim native AVAX (optional)
-        uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
-        }
-        uint256 _avaxRewardAmount = address(this).balance;
-        if (_avaxRewardAmount > 0) {
-            TokenLike(WAVAX).deposit{value: _avaxRewardAmount}();
-            if (address(collateralToken) != WAVAX) {
-                _safeSwapExactInput(WAVAX, address(collateralToken), _avaxRewardAmount);
-            }
-        }
+        comptroller.claimComp(address(this), _markets);
+        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
     }
 
     /**
