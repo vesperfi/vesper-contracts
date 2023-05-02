@@ -38,6 +38,7 @@ import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";
 import "vesper-strategies/contracts/strategies/alpha/AlphaHomora.sol";
 import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3VesperXy.sol";
 import "vesper-strategies/contracts/strategies/curve/CurveETH.sol";
+import "vesper-strategies/contracts/strategies/compound/optimism/Sonne.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
