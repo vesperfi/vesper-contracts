@@ -210,6 +210,20 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Sonne_Leverage_wstETH: {
+    contract: 'SonneLeverage',
+    type: StrategyTypes.COMPOUND_LEVERAGE,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      receiptToken: Address.Sonne.sowstETH,
+      strategyName: 'Sonne_Leverage_wstETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
