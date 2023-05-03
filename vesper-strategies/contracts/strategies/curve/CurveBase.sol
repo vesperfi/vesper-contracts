@@ -13,6 +13,7 @@ import "../../interfaces/curve/ITokenMinter.sol";
 import "../../interfaces/curve/IMetapoolFactory.sol";
 import "../../interfaces/curve/IRegistry.sol";
 import "../../interfaces/curve/IAddressProvider.sol";
+import "../../interfaces/curve/ILiquidityGaugeFactory.sol";
 import "../../interfaces/one-oracle/IMasterOracle.sol";
 import "../Strategy.sol";
 
@@ -34,6 +35,8 @@ abstract contract CurveBase is Strategy {
     string public constant VERSION = "5.1.0";
     uint256 internal constant MAX_BPS = 10_000;
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
+    ILiquidityGaugeFactory public constant GAUGE_FACTORY =
+        ILiquidityGaugeFactory(0xabC000d88f23Bb45525E447528DBF656A9D55bf5); // Act as CRV_MINTER on side chains
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
     uint256 private constant FACTORY_ADDRESS_ID = 3;
 
@@ -77,10 +80,7 @@ abstract contract CurveBase is Strategy {
         if (_crvLp != address(0)) {
             // Get data from Registry contract
             require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
-            require(
-                _registry.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
-                "collateral-mismatch"
-            );
+            _verifyCollateral(_registry.get_underlying_coins(crvPool_)[collateralIdx_]);
             _crvGauge = _registry.get_gauges(crvPool_)[0];
         } else {
             // Get data from Factory contract
@@ -88,33 +88,20 @@ abstract contract CurveBase is Strategy {
 
             if (_factory.is_meta(crvPool_)) {
                 require(collateralIdx_ < _factory.get_meta_n_coins(crvPool_)[1], "invalid-collateral");
-                require(
-                    _factory.get_underlying_coins(crvPool_)[collateralIdx_] == address(collateralToken),
-                    "collateral-mismatch"
-                );
+                _verifyCollateral(_factory.get_underlying_coins(crvPool_)[collateralIdx_]);
             } else {
                 require(collateralIdx_ < _factory.get_n_coins(crvPool_), "invalid-collateral");
-                address _coinFromCrvPool = _factory.get_coins(crvPool_)[collateralIdx_];
-                // For wrapped collateral, factory may return wrapped/native token.
-                if (_coinFromCrvPool == ETH) _coinFromCrvPool = address(collateralToken);
-                require(_coinFromCrvPool == address(collateralToken), "collateral-mismatch");
+                _verifyCollateral(_factory.get_coins(crvPool_)[collateralIdx_]);
             }
             _crvLp = crvPool_;
-
-            // Note: OP sETH/ETH has gauge but `factory` contract is returning null
-            // See more: https://github.com/bloqpriv/vesper-contracts/issues/475
-            if (crvPool_ == 0x7Bc5728BC2b59B45a58d9A576E2Ffc5f0505B35E) {
-                _crvGauge = 0xCB8883D1D8c560003489Df43B30612AAbB8013bb;
-            } else if (crvPool_ == 0x061b87122Ed14b9526A813209C8a59a633257bAb) {
-                // sUSD Synthetix Optimism pool
-                _crvGauge = 0xc5aE4B5F86332e70f3205a8151Ee9eD9F71e0797;
-            } else {
-                _crvGauge = _factory.get_gauge(crvPool_);
-            }
+            _crvGauge = _factory.get_gauge(crvPool_);
         }
 
         require(crvPool_ != address(0), "pool-is-null");
         require(_crvLp != address(0), "lp-is-null");
+        if (_crvGauge == address(0)) {
+            _crvGauge = GAUGE_FACTORY.get_gauge_from_lp_token(_crvLp);
+        }
         require(_crvGauge != address(0), "gauge-is-null");
 
         CRV = crvToken_;
@@ -213,9 +200,12 @@ abstract contract CurveBase is Strategy {
     /// @dev Return values are not being used hence returning 0
     function _claimRewards() internal virtual override returns (address, uint256) {
         if (block.chainid == 1) {
-            // Side-chains don't have minter contract
             CRV_MINTER.mint(address(crvGauge));
+        } else if (GAUGE_FACTORY.is_valid_gauge(address(crvGauge))) {
+            // On side chain gauge factory can mint CRV reward but only for valid gauge.
+            GAUGE_FACTORY.mint(address(crvGauge));
         }
+        // solhint-disable-next-line no-empty-blocks
         try crvGauge.claim_rewards() {} catch {
             // This call may fail in some scenarios
             // e.g. 3Crv gauge doesn't have such function
@@ -408,6 +398,10 @@ abstract contract CurveBase is Strategy {
         if (amount_ > 0) {
             crvGauge.withdraw(amount_);
         }
+    }
+
+    function _verifyCollateral(address collateralFromCurve_) internal view virtual {
+        require(collateralFromCurve_ == address(collateralToken), "collateral-mismatch");
     }
 
     function _withdrawFromPlainPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {

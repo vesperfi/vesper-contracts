@@ -13,6 +13,30 @@ if (process.env.RUN_CONTRACT_SIZER === 'true') {
   require('hardhat-contract-sizer')
 }
 
+// Hardhat do not support adding chainId at runtime. Only way to set it in hardhat-config.js
+// More info https://github.com/NomicFoundation/hardhat/issues/2167
+// To avoid creating a new ENV VAR to store chainId, this function resolves it based on provider url
+function resolveChainId() {
+  const nodeUrl = process.env.NODE_URL || 'http://localhost:8545'
+  if (['eth.connect', 'eth.mainnet', 'mainnet.infura'].some(v => nodeUrl.includes(v))) {
+    return 1
+  }
+  if (nodeUrl.includes('avax')) {
+    return 43114
+  }
+  if (nodeUrl.includes('bsc')) {
+    return 56
+  }
+  if (['optimism', 'opt'].some(v => nodeUrl.includes(v))) {
+    return 10
+  }
+  if (nodeUrl.includes('polygon')) {
+    return 137
+  }
+
+  return 31337
+}
+
 const url = process.env.NODE_URL || 'http://localhost:8545'
 const mnemonic = process.env.MNEMONIC || 'test test test test test test test test test test test junk'
 const accounts = { mnemonic }
@@ -24,6 +48,7 @@ module.exports = {
       saveDeployments: true,
       timeout: 1000000,
       accounts,
+      chainId: resolveChainId(),
     },
     hardhat: {
       initialBaseFeePerGas: 0,
@@ -32,6 +57,7 @@ module.exports = {
         blockNumber: process.env.BLOCK_NUMBER ? parseInt(process.env.BLOCK_NUMBER) : undefined,
       },
       saveDeployments: true,
+      chainId: resolveChainId(),
     },
     mainnet: {
       url,
@@ -83,6 +109,7 @@ module.exports = {
   etherscan: {
     apiKey: {
       mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
+      optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY,
     },
   },
   gasReporter: {

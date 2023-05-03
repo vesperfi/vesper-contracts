@@ -159,7 +159,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
       })
 
       it('Should generate profit after rebalance', async function () {
-        await deposit(pool, collateralToken, '1000', user1)
+        await deposit(pool, collateralToken, '100', user1)
         const totalDebtBefore = await pool.totalDebtOf(strategy.address)
         expect(totalDebtBefore, 'Total debt should be zero').to.be.equal(0)
         await strategy.rebalance()

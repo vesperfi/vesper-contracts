@@ -24,6 +24,12 @@ const PoolConfig = {
     setup: { ...setup },
     rewards: { ...rewards },
   },
+  vawstETH: {
+    contractName: 'VPool',
+    poolParams: ['vawstETH Pool', 'vawstETH', Address.wstETH],
+    setup: { ...setup },
+    rewards: { ...rewards },
+  },
 }
 
 module.exports = Object.freeze(PoolConfig)

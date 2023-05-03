@@ -2,26 +2,29 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { BigNumber } = ethers.BigNumber
+const BigNumber = ethers.BigNumber
 const { unlock } = require('vesper-commons/utils/setup')
 const { deposit } = require('vesper-commons/utils/poolOps')
 
 function sanityTestOfPool(poolAddress) {
-  let pool
+  let pool, accountant, governor
   let collateralToken
   let users
+
   const strategies = []
 
   beforeEach(async function () {
     pool = await ethers.getContractAt('VPool', poolAddress)
+    governor = await unlock(await pool.governor())
     const _strategies = await pool.getStrategies()
     for (const _strategy of _strategies) {
-      const instance = await ethers.getContractAt('Strategy', _strategy)
+      const instance = await ethers.getContractAt('IStrategy', _strategy)
       strategies.push(instance)
     }
     users = await ethers.getSigners()
     const collateralTokenAddress = await pool.token()
-    collateralToken = await ethers.getContractAt('TokenLikeTest', collateralTokenAddress)
+    collateralToken = await ethers.getContractAt('ERC20', collateralTokenAddress)
+    accountant = await ethers.getContractAt('PoolAccountant', await pool.poolAccountant())
   })
 
   it('Should deposit => rebalance => withdraw', async function () {
@@ -33,8 +36,13 @@ function sanityTestOfPool(poolAddress) {
         break
       }
     }
-    const keeperList = await ethers.getContractAt('IAddressList', await strategy.keepers())
-    const keeper = await unlock((await keeperList.at(0))[0])
+    // If all strategies has 0 debtRatio then strategy will be undefined
+    if (!strategy) {
+      strategy = strategies[0]
+      await accountant.connect(governor).updateDebtRatio(strategy.address, 9000)
+    }
+    const keeperList = await strategy.keepers()
+    const keeper = await unlock(keeperList[0])
     await strategy.connect(keeper).rebalance()
     await deposit(pool, collateralToken, 100, users[0])
     let balance = await pool.balanceOf(users[0].address)

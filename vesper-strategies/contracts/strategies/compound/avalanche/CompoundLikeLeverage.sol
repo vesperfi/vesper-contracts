@@ -5,11 +5,11 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/interfaces/token/IToken.sol";
 import "../CompoundLeverageBase.sol";
 import "../../../interfaces/compound/IComptrollerMultiReward.sol";
-import "../../AvalancheFlashLoanHelper.sol";
+import "../../AaveFlashLoanHelper.sol";
 
 // solhint-disable no-empty-blocks
 
-contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper {
+contract CompoundLikeLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     using SafeERC20 for IERC20;
 
     address internal constant WAVAX = 0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7;
@@ -24,7 +24,7 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
         string memory _name
     )
         CompoundLeverageBase(_pool, _swapManager, _comptroller, _rewardToken, _receiptToken, _name)
-        AvalancheFlashLoanHelper(_aaveAddressesProvider)
+        AaveFlashLoanHelper(_aaveAddressesProvider)
     {}
 
     //solhint-disable-next-line no-empty-blocks
@@ -34,7 +34,7 @@ contract CompoundLikeLeverage is CompoundLeverageBase, AvalancheFlashLoanHelper 
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         IERC20(WAVAX).safeApprove(address(swapper), _amount);
-        AvalancheFlashLoanHelper._approveToken(address(collateralToken), _amount);
+        AaveFlashLoanHelper._approveToken(address(collateralToken), _amount);
     }
 
     /// @dev Claim Protocol rewards + AVAX and convert them into collateral token.

@@ -548,7 +548,10 @@ async function setupVPool(obj, poolData, options = {}) {
     await createStrategies(obj, options)
     await addStrategies(obj)
     const collateralTokenAddress = await obj.pool.token()
-    await configureSwapper(obj.strategies, collateralTokenAddress)
+
+    if (chain !== 'optimism') {
+      await configureSwapper(obj.strategies, collateralTokenAddress)
+    }
     await configureOracles(obj.strategies)
     obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
     // Save snapshot restorer to restore snapshot and take new one

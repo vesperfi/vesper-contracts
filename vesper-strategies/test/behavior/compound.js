@@ -13,7 +13,7 @@ const { getChain } = require('vesper-commons/utils/chains')
 
 // Compound strategy specific tests
 function shouldBehaveLikeCompoundStrategy(strategyIndex) {
-  let strategy, user1, pool, collateralToken, token, comp, comptroller, collateralDecimal
+  let strategy, user1, pool, collateralToken, token, rewardToken, comptroller, collateralDecimal
 
   function convertFrom18(amount) {
     const divisor = ethers.utils.parseEther('1').div('10').pow(collateralDecimal)
@@ -28,12 +28,15 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
       collateralToken = this.collateralToken
       collateralDecimal = await this.collateralToken.decimals()
       token = await getStrategyToken(this.strategies[strategyIndex])
-      comp = await ethers.getContractAt('ERC20', await strategy.rewardToken())
+      rewardToken = await ethers.getContractAt('ERC20', await strategy.rewardToken())
       comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
     })
 
-    it('Should claim COMP', async function () {
-      if (getChain() === 'mainnet' && (await comptroller.compSupplySpeeds(token.address)).gt(0)) {
+    it('Should claim rewards', async function () {
+      if (
+        (getChain() === 'mainnet' || getChain() === 'optimism') &&
+        (await comptroller.compSupplySpeeds(token.address)).gt(0)
+      ) {
         await deposit(pool, collateralToken, 100, user1)
         await strategy.rebalance()
         await token.exchangeRateCurrent()
@@ -51,20 +54,20 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
       }
     })
 
-    it('Should liquidate COMP when claimed by external source', async function () {
-      if (getChain() === 'mainnet') {
+    it('Should liquidate rewardToken when claimed by external source', async function () {
+      if (getChain() === 'mainnet' || getChain() === 'optimism') {
         await deposit(pool, collateralToken, 1, user1)
         await strategy.rebalance()
         const balance = ethers.utils.parseEther('10')
-        await adjustBalance(comp.address, strategy.address, balance)
-        const afterSwap = await comp.balanceOf(strategy.address)
-        expect(afterSwap).to.be.gt(0, 'COMP balance should increase on strategy address')
+        await adjustBalance(rewardToken.address, strategy.address, balance)
+        const afterSwap = await rewardToken.balanceOf(strategy.address)
+        expect(afterSwap).to.be.gt(0, 'reward balance should increase on strategy address')
         await helpers.mine(100)
         await token.exchangeRateCurrent()
         const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
         await strategy.claimAndSwapRewards(amountOut)
-        const compBalance = await comp.balanceOf(strategy.address)
-        expect(compBalance).to.be.equal('0', 'COMP balance should be 0 on rebalance')
+        const compBalance = await rewardToken.balanceOf(strategy.address)
+        expect(compBalance).to.be.equal('0', 'reward balance should be 0 on rebalance')
       }
     })
 
@@ -96,18 +99,19 @@ function shouldBehaveLikeCompoundStrategy(strategyIndex) {
 
     it('Should be able to withdraw amount when low liquidity for ERC20 cToken', async function () {
       if (
-        getChain() === 'mainnet' &&
-        collateralToken.address !== address.WETH &&
-        (token.address === address.Compound.cETH ||
-          token.address === address.Inverse.anETH ||
-          token.address === address.Drops.dETH)
+        getChain() === 'optimism' ||
+        (getChain() === 'mainnet' &&
+          collateralToken.address !== address.WETH &&
+          (token.address === address.Compound.cETH ||
+            token.address === address.Inverse.anETH ||
+            token.address === address.Drops.dETH))
       ) {
         const cToken = await ethers.getContractAt('CToken', token.address)
         const balance = ethers.utils.parseEther('10')
         adjustBalance(collateralToken.address, user1.address, balance)
         await collateralToken.connect(user1).approve(pool.address, balance)
         // deposit half of swapped amount in pool.
-        await pool.connect(user1).deposit(balance.div(2))
+        await deposit(pool, collateralToken, balance.div(2), user1)
 
         const tokenBalanceBeforeWithdraw = await collateralToken.balanceOf(user1.address)
         const withdrawAmount = await pool.balanceOf(user1.address)

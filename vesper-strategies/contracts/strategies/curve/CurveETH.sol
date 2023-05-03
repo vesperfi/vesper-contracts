@@ -9,6 +9,7 @@ import "vesper-pools/contracts/interfaces/token/IToken.sol";
 contract CurveETH is Curve {
     using SafeERC20 for IERC20;
 
+    // solhint-disable-next-line var-name-mixedcase
     TokenLike public immutable WETH;
 
     constructor(
@@ -52,6 +53,10 @@ contract CurveETH is Curve {
         WETH.withdraw(coinAmountIn_);
 
         super._depositToCurve(coinAmountIn_, true);
+    }
+
+    function _verifyCollateral(address collateralFromCurve_) internal view override {
+        require(collateralFromCurve_ == address(collateralToken) || collateralFromCurve_ == ETH, "collateral-mismatch");
     }
 
     /**

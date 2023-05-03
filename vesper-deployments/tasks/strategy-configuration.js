@@ -2,31 +2,15 @@
 const fs = require('fs')
 const copy = require('recursive-copy')
 
-// Validate given values exists in given object
+// Validate each key has a value
 function validateObject(object) {
   for (const [key, value] of Object.entries(object)) {
-    if (value === undefined || value === '') {
+    if (value instanceof Object) {
+      // recursive call
+      validateObject(value)
+    } else if (value === undefined || value === '') {
       throw new Error(`Value is missing for key ${key} in strategy config`)
     }
-  }
-}
-
-function validateStrategyConfig(strategyName, strategyConfig) {
-  const topLevelKeys = ['contract', 'type', 'constructorArgs', 'config']
-  // Validate top level properties in config object
-  validateObject(strategyConfig, topLevelKeys)
-  // Validate Strategy config. It will be added in PoolAccountant
-  const configKeys = ['debtRatio']
-  validateObject(strategyConfig.config, configKeys)
-  // Validate constructor args
-  validateObject(strategyConfig.constructorArgs)
-  // Validate setup config
-  const setupKeys = ['feeCollector', 'keepers']
-  validateObject(strategyConfig.setup, setupKeys)
-  // Validate Maker config
-  if (strategyName.includes('Maker')) {
-    const makerKeys = ['gemJoin']
-    validateObject(strategyConfig.setup.maker, makerKeys)
   }
 }
 
@@ -60,7 +44,7 @@ task('strategy-configuration', 'Prepare strategy configuration for deployment')
       throw new Error(`Missing strategy configuration in ${fileName}.js`)
     }
 
-    validateStrategyConfig(strategyName, config)
+    validateObject(config)
 
     config.alias = strategyName
     console.log(

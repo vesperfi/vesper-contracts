@@ -1,0 +1,76 @@
+name: Optimism Sonne Leverage Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/optimism-sonne-leverage.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/compound/optimism/SonneLeverage.sol"
+      - "vesper-strategies/contracts/strategies/compound/CompoundLeverageBase.sol"
+      - "vesper-strategies/contracts/AaveFlashLoanHelper.sol"
+      - "vesper-strategies/test/behavior/compound-leverage.js"
+      - "vesper-strategies/test/optimism/sonne/leverage/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+  vaeth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Sonne Leverage strategy for VAETH pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/sonne/leverage/vaeth.spec.js
+
+  vaop-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Sonne Leverage strategy for VAOP pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/sonne/leverage/vaop.spec.js
+
+  vausdc-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Sonne Leverage strategy for VAUSDC pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/sonne/leverage/vausdc.spec.js

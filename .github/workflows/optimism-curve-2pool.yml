@@ -31,7 +31,7 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  ren-pool-wbtc-test:
+  vaeth-seth-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
@@ -44,4 +44,34 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Curve strategy for VAETH pool using seth/eth
-        run: npm test -- --scope vesper-strategies -- test/optimism/curve/2pool/seth-pool-eth.spec.js
+        run: npm test -- --scope vesper-strategies -- test/optimism/curve/2pool/vaeth-seth.spec.js
+
+  vaeth-wsteth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAETH pool using wsteth 2pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/curve/2pool/vaeth-wsteth.spec.js
+
+  vausdc-fraxbp-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Curve strategy for VAUSDC pool using fraxbp
+        run: npm test -- --scope vesper-strategies -- test/optimism/curve/2pool/vausdc-fraxbp.spec.js
