@@ -17,7 +17,7 @@ describe('Operator', function () {
     ;[governor, alice] = await ethers.getSigners()
     strategy = await ethers.getContractAt('IStrategyTest', AaveV2Strategy)
     const contractFactory = await ethers.getContractFactory('Operator', governor)
-    operator = await contractFactory.deploy('Vesper Keeper')
+    operator = await contractFactory.deploy()
   })
 
   context('Manage operators', function () {

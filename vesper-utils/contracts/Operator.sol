@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
-import "./access/Governable.sol";
+import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/structs/EnumerableSetUpgradeable.sol";
+import {Governable} from "./access/Governable.sol";
 
 error AddressIsNull();
 error NotAnOperator();
@@ -11,6 +11,7 @@ error NotAnOperator();
 contract Operator is Governable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
 
+    // solhint-disable-next-line var-name-mixedcase
     string public NAME;
 
     EnumerableSetUpgradeable.AddressSet internal _operators; // List of operator addresses
@@ -20,8 +21,7 @@ contract Operator is Governable {
         _;
     }
 
-    constructor(string memory name_) {
-        NAME = name_;
+    constructor() {
         _disableInitializers();
     }
 

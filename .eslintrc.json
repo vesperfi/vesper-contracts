@@ -60,7 +60,8 @@
     "max-len": ["error", { "code": 120 }],
     "prettier/prettier": ["error", { "trailingComma": "all" }],
     "semi": ["error", "never"],
-    "quotes": ["error", "single", { "avoidEscape": true }]
+    "quotes": ["error", "single", { "avoidEscape": true }],
+    "sort-keys":"off"
   },
   "plugins": ["prettier"]
 }
