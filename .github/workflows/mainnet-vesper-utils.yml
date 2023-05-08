@@ -1,12 +1,12 @@
-name: Revenue Splitter Tests
+name: Vesper Utils module tests
 on:
   pull_request:
     paths:
-      - ".github/workflows/mainnet-revenue-splitter.yml"
+      - ".github/workflows/mainnet-vesper-utils.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/test/utils/setup.js"
-      - "packages/misc/contracts/RevenueSplitter.sol"
-      - "packages/misc/test/revenue-splitter.js"
+      - "vesper-utils/contracts/*.sol"
+      - "vesper-utils/test/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
@@ -25,7 +25,7 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  revenue-splitter-test:
+  vesper-utils-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
@@ -37,5 +37,5 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running Revenue Splitter Tests
-        run: npm test -- --scope misc -- test/revenue-splitter.js
+      - name: Running Vesper Utils Tests
+        run: npm test -- --scope vesper-utils
