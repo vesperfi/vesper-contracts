@@ -21,11 +21,7 @@ function getReleaseData(network) {
   return _.merge({}, ...data)
 }
 
-task('create-release', 'Create release file from deploy data').setAction(async function (hre) {
-  if (hre.network.name === 'hardhat') {
-    return
-  }
-
+task('create-release', 'Create release file from deploy data').setAction(async function () {
   const networksDir = './deployments'
   const releaseDir = 'releases/'
   const releaseFile = `${releaseDir}/contracts.json`
