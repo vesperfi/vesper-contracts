@@ -14,8 +14,11 @@
     "compile": "hardhat compile",
     "build": "npm run clean && npm run compile",
     "coverage": "hardhat coverage",
+    "deploy": "hardhat deploy",
     "fork": "hardhat node --no-deploy",
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "release": "hardhat create-release",
+    "verify": "hardhat verify"
   },
   "devDependencies": {
     "@openzeppelin/contracts": "^4.7.3",

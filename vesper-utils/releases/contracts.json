@@ -1,0 +1,8 @@
+{
+  "optimism": {
+    "DefaultProxyAdmin": "0x5aDd2f7eBb50246CD8694da0fB106eEAca3312e0",
+    "Keeper": "0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83",
+    "Keeper_Proxy": "0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83",
+    "Operator": "0x8eBe970BEEDfE7616A50DE707aD53199068261dC"
+  }
+}

@@ -17,7 +17,7 @@ describe('Operator', function () {
     ;[governor, alice] = await ethers.getSigners()
     strategy = await ethers.getContractAt('IStrategyTest', AaveV2Strategy)
     const contractFactory = await ethers.getContractFactory('Operator', governor)
-    operator = await contractFactory.deploy('Vesper Keeper')
+    operator = await contractFactory.deploy()
   })
 
   context('Manage operators', function () {
@@ -43,16 +43,22 @@ describe('Operator', function () {
       await strategy.connect(poolGovernor).addKeeper(operator.address)
     })
 
-    it('approveToken  via execute', async function () {
+    it('should call approveToken', async function () {
       const data = strategy.interface.encodeFunctionData('approveToken', [0])
       await operator.execute(strategy.address, data)
     })
 
-    it('claimAndSwapRewards via execute', async function () {
+    it('should call claimAndSwapRewards', async function () {
       const data = strategy.interface.encodeFunctionData('claimAndSwapRewards', [0])
       const returnData = await operator.callStatic.execute(strategy.address, data)
       expect(BigNumber.from(returnData)).gte(0)
       await operator.execute(strategy.address, data)
+    })
+
+    it('should revert claimAndSwapRewards', async function () {
+      const data = strategy.interface.encodeFunctionData('claimAndSwapRewards', [100])
+      const tx = operator.callStatic.execute(strategy.address, data)
+      await expect(tx).to.revertedWith('not-enough-amountOut')
     })
   })
 })
