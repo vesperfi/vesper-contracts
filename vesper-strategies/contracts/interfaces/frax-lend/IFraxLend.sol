@@ -12,6 +12,10 @@ interface IFraxLend is IERC20 {
         uint224 exchangeRate; // collateral:asset ratio. i.e. how much collateral to buy 1e18 asset
     }
 
+    function asset() external view returns (address);
+
+    function collateralContract() external view returns (address);
+
     /// @notice Stores information about the current exchange rate. Collateral:Asset ratio
     /// @dev Struct packed to save SLOADs. Amount of Collateral Token to buy 1e18 Asset Token
     function exchangeRateInfo() external view returns (ExchangeRateInfo memory);

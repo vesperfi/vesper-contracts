@@ -54,6 +54,7 @@ contract FraxLendVesperXy is Strategy {
         require(frax_ != address(0), "frax-address-is-null");
         require(vsp_ != address(0), "vsp-address-is-null");
         require(address(IVesperPool(vPool_).token()) == frax_, "invalid-grow-pool");
+        require(IFraxLend(fraxLend_).collateralContract() == address(collateralToken), "collateral-mismatch");
         fraxLend = IFraxLend(fraxLend_);
         borrowToken = frax_;
         vPool = IVesperPool(vPool_);
@@ -106,10 +107,7 @@ contract FraxLendVesperXy is Strategy {
         fraxLend.addInterest();
         _repay(_borrowedFromFraxLend());
 
-        fraxLend.removeCollateral(
-            Math.min(fraxLend.userCollateralBalance(address(this)), fraxLend.totalCollateral()),
-            address(this)
-        );
+        fraxLend.removeCollateral(fraxLend.userCollateralBalance(address(this)), address(this));
     }
 
     function _borrowedFromFraxLend() internal view returns (uint256) {

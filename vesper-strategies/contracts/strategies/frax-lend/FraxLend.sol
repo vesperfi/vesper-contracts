@@ -22,6 +22,7 @@ contract FraxLend is Strategy {
         string memory name_
     ) Strategy(pool_, swapper_, receiptToken_) {
         require(receiptToken_ != address(0), "frax-lend-address-is-null");
+        require(IFraxLend(receiptToken_).asset() == address(collateralToken), "collateral-mismatch");
         fraxLend = IFraxLend(receiptToken_);
         NAME = name_;
     }
