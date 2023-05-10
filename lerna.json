@@ -5,7 +5,8 @@
     "vesper-pools",
     "vesper-strategies",
     "vesper-deployments",
-    "vesper-utils"
+    "vesper-utils",
+    "vesper-erc4626-wrapper"
   ],
   "useNx": false,
   "version": "independent"

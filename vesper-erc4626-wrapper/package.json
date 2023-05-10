@@ -1,0 +1,28 @@
+{
+  "name": "vesper-erc4626-wrapper",
+  "version": "5.0.0",
+  "description": "Vesper ERC4626 wrapper contracts",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "npm run clean && npm run compile",
+    "coverage": "hardhat coverage",
+    "deploy": "hardhat deploy",
+    "fork": "hardhat node --no-deploy",
+    "test": "hardhat test",
+    "release": "hardhat create-release",
+    "verify": "hardhat verify"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts-upgradeable": "4.8.2",
+    "vesper-pools": "^5.0.2",
+    "vesper-commons": "^1.0.0"
+  }
+}
