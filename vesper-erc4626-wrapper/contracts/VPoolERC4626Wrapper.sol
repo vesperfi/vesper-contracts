@@ -66,28 +66,23 @@ contract VPoolERC4626Wrapper is ERC4626 {
             return;
         }
 
-        uint256 _vTokenBalanceBefore = vToken.balanceOf(address(this));
         _poolRewards.claimReward(address(this));
 
         address[] memory _rewardTokens = _poolRewards.getRewardTokens();
         uint256 _length = _rewardTokens.length;
         for (uint256 i; i < _length; ++i) {
             address _token = _rewardTokens[i];
-            uint256 _balance = IERC20(_token).balanceOf(address(this));
+            require(_token != address(vToken), "vpool-as-reward-not-supported");
 
-            if (_token == address(vToken)) {
-                _balance -= _vTokenBalanceBefore;
-            }
+            uint256 _balance = IERC20(_token).balanceOf(address(this));
 
             if (_balance > 0) {
                 if (!_wrapperRewards.isRewardToken(_token)) {
                     _wrapperRewards.addRewardToken(_token);
                 }
 
-                uint256 _periodFinish = _poolRewards.periodFinish(_token);
-                uint256 _duration = (_periodFinish > block.timestamp) ? _periodFinish - block.timestamp : 1;
                 IERC20(_token).safeTransfer(address(_wrapperRewards), _balance);
-                _wrapperRewards.notifyRewardAmount(_token, _balance, _duration);
+                _wrapperRewards.notifyRewardAmount(_token, _balance, 15 days);
             }
         }
     }
