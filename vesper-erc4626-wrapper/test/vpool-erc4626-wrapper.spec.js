@@ -241,6 +241,7 @@ describe('VPoolERC4626Wrapper', function () {
 
       it('updateRewards', async function () {
         // when
+        await wvaDAI.dripToWrapperRewards()
         await wvaDAI.updateRewards(wallet.address)
         await time.increase(await wrapperPoolRewards.periodFinish(vsp.address))
 
@@ -253,6 +254,7 @@ describe('VPoolERC4626Wrapper', function () {
       it('claimReward', async function () {
         // given
         await time.increase(time.duration.days(30))
+        await wvaDAI.dripToWrapperRewards()
         await wvaDAI.updateRewards(wallet.address)
         await time.increase(await wrapperPoolRewards.periodFinish(vsp.address))
         const { _claimableAmounts } = await wrapperPoolRewards.claimable(wallet.address)

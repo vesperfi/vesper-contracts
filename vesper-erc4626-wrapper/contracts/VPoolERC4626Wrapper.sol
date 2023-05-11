@@ -55,6 +55,43 @@ contract VPoolERC4626Wrapper is ERC4626 {
         return assets_ > ((_share * _pricePerShare) / 1e18) ? _share + 1 : _share;
     }
 
+    function dripToWrapperRewards() external {
+        IPoolRewards _wrapperRewards = IPoolRewards(wrapperRewards);
+        if (address(_wrapperRewards) == address(0)) {
+            return;
+        }
+
+        IPoolRewards _poolRewards = IPoolRewards(vToken.poolRewards());
+        if (address(_poolRewards) == address(0)) {
+            return;
+        }
+
+        uint256 _vTokenBalanceBefore = vToken.balanceOf(address(this));
+        _poolRewards.claimReward(address(this));
+
+        address[] memory _rewardTokens = _poolRewards.getRewardTokens();
+        uint256 _length = _rewardTokens.length;
+        for (uint256 i; i < _length; ++i) {
+            address _token = _rewardTokens[i];
+            uint256 _balance = IERC20(_token).balanceOf(address(this));
+
+            if (_token == address(vToken)) {
+                _balance -= _vTokenBalanceBefore;
+            }
+
+            if (_balance > 0) {
+                if (!_wrapperRewards.isRewardToken(_token)) {
+                    _wrapperRewards.addRewardToken(_token);
+                }
+
+                uint256 _periodFinish = _poolRewards.periodFinish(_token);
+                uint256 _duration = (_periodFinish > block.timestamp) ? _periodFinish - block.timestamp : 1;
+                IERC20(_token).safeTransfer(address(_wrapperRewards), _balance);
+                _wrapperRewards.notifyRewardAmount(_token, _balance, _duration);
+            }
+        }
+    }
+
     function governor() public view returns (address) {
         return vToken.governor();
     }
@@ -116,45 +153,7 @@ contract VPoolERC4626Wrapper is ERC4626 {
     function updateRewards(address account_) public {
         IPoolRewards _wrapperRewards = wrapperRewards;
         if (address(_wrapperRewards) != address(0)) {
-            _dripToWrapperRewards();
             _wrapperRewards.updateReward(account_);
-        }
-    }
-
-    function _dripToWrapperRewards() private {
-        IPoolRewards _wrapperRewards = IPoolRewards(wrapperRewards);
-        if (address(_wrapperRewards) == address(0)) {
-            return;
-        }
-
-        IPoolRewards _poolRewards = IPoolRewards(vToken.poolRewards());
-        if (address(_poolRewards) == address(0)) {
-            return;
-        }
-
-        uint256 _vTokenBalanceBefore = vToken.balanceOf(address(this));
-        _poolRewards.claimReward(address(this));
-
-        address[] memory _rewardTokens = _poolRewards.getRewardTokens();
-        uint256 _length = _rewardTokens.length;
-        for (uint256 i; i < _length; ++i) {
-            address _token = _rewardTokens[i];
-            uint256 _balance = IERC20(_token).balanceOf(address(this));
-
-            if (_token == address(vToken)) {
-                _balance -= _vTokenBalanceBefore;
-            }
-
-            if (_balance > 0) {
-                if (!_wrapperRewards.isRewardToken(_token)) {
-                    _wrapperRewards.addRewardToken(_token);
-                }
-
-                uint256 _periodFinish = _poolRewards.periodFinish(_token);
-                uint256 _duration = (_periodFinish > block.timestamp) ? _periodFinish - block.timestamp : 1;
-                IERC20(_token).safeTransfer(address(_wrapperRewards), _balance);
-                _wrapperRewards.notifyRewardAmount(_token, _balance, _duration);
-            }
         }
     }
 
