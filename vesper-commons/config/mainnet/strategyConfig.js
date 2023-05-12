@@ -664,69 +664,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Alpha_Homora_DPI: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibDPIv2,
-      strategyName: 'Alpha_Homora_DPI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_ETH: {
-    contract: 'AlphaHomoraETH',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibETHv2,
-      nativeToken: Address.NATIVE_TOKEN,
-      strategyName: 'Alpha_Homora_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_USDC: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibUSDCv2,
-      strategyName: 'Alpha_Homora_USDC',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_DAI: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibDAIv2,
-      strategyName: 'Alpha_Homora_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_Earn_ETH_DAI: {
-    contract: 'AlphaHomoraEarnETH',
-    type: StrategyTypes.EARN_ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibETHv2,
-      dripToken: Address.DAI,
-      nativeToken: Address.NATIVE_TOKEN,
-      strategyName: 'Alpha_Homora_Earn_ETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Convex_ren_WBTC: {
     contract: 'Convex',
     type: StrategyTypes.CONVEX,
