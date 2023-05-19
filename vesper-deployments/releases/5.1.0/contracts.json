@@ -1025,7 +1025,8 @@
           "AaveV3_Vesper_Xy_ETH_USDC": "0x5cd23c6fCC61fa33Fc36ABCf696129A85a99DB31",
           "Curve_sETH_ETH": "0x7f29188Ef5fB39E11da6c131BeDa2c3ca9475c58",
           "Curve_wstETH_ETH": "0x6aFf1846413Bf15a8D7E72C799b96Bf37E424b13",
-          "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22"
+          "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
+          "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45"
         }
       },
       "vausdc": {
@@ -1042,6 +1043,7 @@
         "strategies": {
           "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544",
+          "Sonne_Leverage_USDC": "0x2eeFbB883B6a1B64a75B2aA18cD4DfBE19E684a3",
           "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76"
         }
       },
@@ -1058,6 +1060,7 @@
         },
         "strategies": {
           "AaveV3_Vesper_Xy_OP_USDC": "0xd7c751fA32590451548B100C4f6442F062C9bc8E",
+          "Sonne_Leverage_OP": "0xA18019E62f266C2E17e33398448e4105324e0d0F",
           "Sonne_OP": "0xe98c509f6C8bEbdd62bEEdF78b4D276bb41f2913"
         }
       },
@@ -1071,6 +1074,9 @@
             "proxy": "0xaDcE6FDdD868E865E4D56000832791fdeb29eeda",
             "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
           }
+        },
+        "strategies": {
+          "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA"
         }
       }
     }

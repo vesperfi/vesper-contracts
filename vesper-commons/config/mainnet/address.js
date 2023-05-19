@@ -204,6 +204,7 @@ const Address = {
   },
   FraxLend: {
     WETH_FRAX: '0x794F6B13FBd7EB7ef10d1ED205c9a416910207Ff',
+    WBTC_FRAX: '0x32467a5fc2d72D21E8DCe990906547A2b012f382',
   },
 }
 

@@ -2,7 +2,6 @@
 const StrategyType = {
   AAVE: 'aave',
   AAVE_V1: 'aaveV1',
-  ALPHA_HOMORA: 'alphaHomora',
   COMPOUND: 'compound',
   TRADER_JOE: 'traderJoe',
   AAVE_MAKER: 'aaveMaker',
@@ -17,7 +16,6 @@ const StrategyType = {
   EARN_COMPOUND: 'earnCompound',
   EARN_AAVE: 'earnAave',
   EARN_RARI_FUSE: 'earnRariFuse',
-  EARN_ALPHA_HOMORA: 'earnAlphaHomora',
   EARN_YEARN: 'earnYearn',
   EARN_CURVE: 'earnCurve',
   EARN_VESPER: 'earnVesper',
@@ -39,6 +37,7 @@ const StrategyType = {
   WOMBAT: 'wombat',
   ALPACA: 'alpaca',
   FRAX_LEND: 'fraxLend',
+  FRAX_LEND_VESPER_XY: 'fraxLendVesperXY',
 }
 
 module.exports = Object.freeze(StrategyType)

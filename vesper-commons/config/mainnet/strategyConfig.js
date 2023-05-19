@@ -664,69 +664,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Alpha_Homora_DPI: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibDPIv2,
-      strategyName: 'Alpha_Homora_DPI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_ETH: {
-    contract: 'AlphaHomoraETH',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibETHv2,
-      nativeToken: Address.NATIVE_TOKEN,
-      strategyName: 'Alpha_Homora_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_USDC: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibUSDCv2,
-      strategyName: 'Alpha_Homora_USDC',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_DAI: {
-    contract: 'AlphaHomora',
-    type: StrategyTypes.ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibDAIv2,
-      strategyName: 'Alpha_Homora_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Alpha_Homora_Earn_ETH_DAI: {
-    contract: 'AlphaHomoraEarnETH',
-    type: StrategyTypes.EARN_ALPHA_HOMORA,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Alpha.ibETHv2,
-      dripToken: Address.DAI,
-      nativeToken: Address.NATIVE_TOKEN,
-      strategyName: 'Alpha_Homora_Earn_ETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Convex_ren_WBTC: {
     contract: 'Convex',
     type: StrategyTypes.CONVEX,
@@ -2040,6 +1977,35 @@ const StrategyConfig = {
       swapper,
       receiptToken: Address.FraxLend.WETH_FRAX,
       strategyName: 'FraxLend_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  FraxLend_Vesper_Xy_ETH_FRAX: {
+    contract: 'FraxLendVesperXy',
+    type: StrategyTypes.FRAX_LEND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.FraxLend.WETH_FRAX,
+      borrowToken: Address.FRAX,
+      vPool: Address.Vesper.vaFRAX,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'FraxLend_Vesper_Xy_ETH_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  FraxLend_Vesper_Xy_WBTC_FRAX: {
+    contract: 'FraxLendVesperXy',
+    type: StrategyTypes.FRAX_LEND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.FraxLend.WBTC_FRAX,
+      borrowToken: Address.FRAX,
+      vPool: Address.Vesper.vaFRAX,
+      vsp: Address.Vesper.VSP,
+      strategyName: 'FraxLend_Vesper_Xy_WBTC_FRAX',
     },
     config: { ...config },
     setup: { ...setup },

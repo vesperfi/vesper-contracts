@@ -22,8 +22,8 @@ const { shouldBehaveLikeEllipsisStrategy } = require('./ellipsis')
 const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
 const { shouldBehaveLikeWombatStrategy } = require('./wombat')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
-const { shouldTestAlphaHomoraRewards } = require('./alpha-homora-rewards')
 const { shouldTestStargateRewards } = require('./stargate-rewards')
+const { shouldBehaveLikeFraxLendVesperXyStrategy } = require('./frax-lend-vesper-xy')
 
 const { deposit, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
@@ -51,8 +51,8 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.DOT_DOT]: shouldBehaveLikeDotDotStrategy,
     [StrategyType.WOMBAT]: shouldBehaveLikeWombatStrategy,
     [StrategyType.ALPACA]: shouldBehaveLikeAlpacaStrategy,
-    [StrategyType.ALPHA_HOMORA]: shouldTestAlphaHomoraRewards,
     [StrategyType.STARGATE]: shouldTestStargateRewards,
+    [StrategyType.FRAX_LEND_VESPER_XY]: shouldBehaveLikeFraxLendVesperXyStrategy,
   }
 
   const shouldBehaveLikeSpecificStrategy = behaviors[type]

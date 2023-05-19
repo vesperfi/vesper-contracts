@@ -9,7 +9,7 @@ import "../dependencies/openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../interfaces/vesper/IPoolRewards.sol";
 import "../interfaces/vesper/IVesperPool.sol";
 
-contract PoolRewardsStorage {
+abstract contract PoolRewardsStorage is IPoolRewards {
     /// Vesper pool address
     address public pool;
 
@@ -42,7 +42,7 @@ contract PoolRewardsStorage {
 }
 
 /// @title Distribute rewards based on vesper pool balance and supply
-contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolRewardsStorage {
+contract PoolRewards is Initializable, ReentrancyGuard, PoolRewardsStorage {
     string public constant VERSION = "5.1.0";
     using SafeERC20 for IERC20;
 
@@ -62,7 +62,7 @@ contract PoolRewards is Initializable, IPoolRewards, ReentrancyGuard, PoolReward
         }
     }
 
-    modifier onlyAuthorized() {
+    modifier onlyAuthorized() virtual {
         require(msg.sender == IVesperPool(pool).governor(), "not-authorized");
         _;
     }

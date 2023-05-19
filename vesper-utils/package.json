@@ -1,0 +1,28 @@
+{
+  "name": "vesper-utils",
+  "version": "5.0.0",
+  "description": "Vesper utility contracts excluding pools or strategies",
+  "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "solhint": "solhint './contracts/**/*.sol'",
+    "solhint:fix": "prettier --write 'contracts/**/*.sol'",
+    "hardhat": "hardhat",
+    "clean": "hardhat clean",
+    "compile": "hardhat compile",
+    "build": "npm run clean && npm run compile",
+    "coverage": "hardhat coverage",
+    "deploy": "hardhat deploy",
+    "fork": "hardhat node --no-deploy",
+    "test": "hardhat test",
+    "release": "hardhat create-release",
+    "verify": "hardhat verify"
+  },
+  "devDependencies": {
+    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts-upgradeable": "4.8.2",
+    "vesper-commons": "^1.0.0"
+  }
+}
