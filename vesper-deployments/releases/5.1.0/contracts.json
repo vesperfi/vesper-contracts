@@ -1012,14 +1012,19 @@
     "optimism": {
       "vaeth": {
         "pool": {
-          "proxyAdmin": "0x1aF1055214d6A2FD8dbC8e257610c81516f838Be",
+          "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0xCcF3d1AcF799bAe67F6e354d685295557cf64761",
           "implementation": "0x655952146E18ec662bF2BC7cC3d85247fd5d86D4",
           "poolAccountant": {
-            "proxyAdmin": "0xAf245C4Fb15Cb8f9cE72E387F71F0eEB418e7BE9",
+            "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0x59e9117a1106EDd3b3CfEE71eb2FE502f356482D",
             "implementation": "0x1BdA287BF5d14b70C0A2805bc15049C9fA43B428"
           }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x973b9A7D490f06FEa3dd06432Cea3b097E9Cecb9",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
           "AaveV3_Vesper_Xy_ETH_USDC": "0x5cd23c6fCC61fa33Fc36ABCf696129A85a99DB31",
@@ -1031,14 +1036,19 @@
       },
       "vausdc": {
         "pool": {
-          "proxyAdmin": "0x1aF1055214d6A2FD8dbC8e257610c81516f838Be",
+          "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0x539505Dde2B9771dEBE0898a84441c5E7fDF6BC0",
           "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
           "poolAccountant": {
-            "proxyAdmin": "0xAf245C4Fb15Cb8f9cE72E387F71F0eEB418e7BE9",
+            "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0x476F833357961bF4Dc144d13C0A6326E54b94dA9",
             "implementation": "0x1BdA287BF5d14b70C0A2805bc15049C9fA43B428"
           }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x6104D21888CD996918C8cbA7480C71271DEE3120",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
           "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
@@ -1058,6 +1068,11 @@
             "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
           }
         },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0xE91172020777b03a94627dBe0b94c6b8389Fb99C",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
+        },
         "strategies": {
           "AaveV3_Vesper_Xy_OP_USDC": "0xd7c751fA32590451548B100C4f6442F062C9bc8E",
           "Sonne_Leverage_OP": "0xA18019E62f266C2E17e33398448e4105324e0d0F",
@@ -1074,6 +1089,11 @@
             "proxy": "0xaDcE6FDdD868E865E4D56000832791fdeb29eeda",
             "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
           }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x94E38F592d92964ebe0684A65F1318b91Dc54E9e",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
           "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA"
