@@ -1970,13 +1970,13 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  FraxLend_FRAX: {
+  FraxLend_CRV_FRAX: {
     contract: 'FraxLend',
     type: StrategyTypes.FRAX_LEND,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.WETH_FRAX,
-      strategyName: 'FraxLend_FRAX',
+      receiptToken: Address.FraxLend.CRV_FRAX,
+      strategyName: 'FraxLend_CRV_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
