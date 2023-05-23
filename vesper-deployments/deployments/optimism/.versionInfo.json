@@ -10,5 +10,9 @@
   "VPool": {
     "address": "0x5c39Cd35889247D30090eF004d05580356791183",
     "version": "5.1.0"
+  },
+  "PoolRewards": {
+    "address": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B",
+    "version": "5.1.0"
   }
 }
