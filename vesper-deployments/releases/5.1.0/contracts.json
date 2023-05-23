@@ -249,6 +249,7 @@
           "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
           "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
+          "FraxLend_CRV_FRAX": "0x9ce5FcF17E5aD2e4dc6cD402FCE2DC22D78f4Fbb",
           "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
           "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
           "RariFuseStrategy#6": "0x463C835f2959c52F99D65b5E712F3806c7E6A46F",
