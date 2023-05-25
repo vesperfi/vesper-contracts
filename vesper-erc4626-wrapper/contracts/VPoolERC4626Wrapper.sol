@@ -13,7 +13,7 @@ import {IPoolAccountant} from "vesper-pools/contracts/interfaces/vesper/IPoolAcc
 contract VPoolERC4626Wrapper is ERC4626 {
     using SafeERC20 for IERC20;
 
-    uint256 constant MAX_BPS = 10000;
+    uint256 internal constant MAX_BPS = 10000;
 
     IVesperPool public vToken;
 
@@ -135,6 +135,10 @@ contract VPoolERC4626Wrapper is ERC4626 {
         uint256 _fee = IPoolAccountant(vToken.poolAccountant()).externalDepositFee();
         uint256 _assetsToCollect = (assets * _fee) / MAX_BPS;
         return convertToShares(assets - _assetsToCollect);
+    }
+
+    function previewRedeem(uint256 shares) public view virtual override returns (uint256) {
+        return convertToAssets(shares);
     }
 
     function previewWithdraw(uint256 assets_) public view virtual override returns (uint256) {
