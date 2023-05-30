@@ -8,9 +8,8 @@ import {IVesperPool} from "vesper-pools/contracts/interfaces/vesper/IVesperPool.
 import {IPoolRewards} from "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 import {IPoolAccountant} from "vesper-pools/contracts/interfaces/vesper/IPoolAccountant.sol";
 
-/// @title VesperERC4626
-/// @notice ERC4626 wrapper for Vesper Finance
-contract VPoolERC4626Wrapper is ERC4626 {
+/// @title ERC4626 Wrapper for pools of Vesper Finance
+contract VPoolWrapper is ERC4626 {
     using SafeERC20 for IERC20;
 
     uint256 internal constant MAX_BPS = 10000;
