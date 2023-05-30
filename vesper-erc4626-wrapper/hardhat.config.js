@@ -15,23 +15,22 @@ if (process.env.RUN_CONTRACT_SIZER === 'true') {
 function resolveChainId() {
   const nodeUrl = process.env.NODE_URL || 'http://localhost:8545'
   if (['eth.connect', 'eth.mainnet', 'mainnet.infura'].some(v => nodeUrl.includes(v))) {
-    return 1
+    return { chainId: 1, deploy: ['deploy/mainnet'] }
   }
   if (nodeUrl.includes('avax')) {
-    return 43114
-  }
-  if (nodeUrl.includes('bsc')) {
-    return 56
+    return { chainId: 43114, deploy: ['deploy/avalanche'] }
   }
   if (['optimism', 'opt'].some(v => nodeUrl.includes(v))) {
-    return 10
+    return { chainId: 10, deploy: ['deploy/optimism'] }
   }
   if (nodeUrl.includes('polygon')) {
-    return 137
+    return { chainId: 137, deploy: ['deploy/polygon'] }
   }
 
   return 31337
 }
+
+const { chainId, deploy } = resolveChainId()
 
 const url = process.env.NODE_URL || 'http://localhost:8545'
 const mnemonic = process.env.MNEMONIC || 'test test test test test test test test test test test junk'
@@ -44,7 +43,8 @@ module.exports = {
       saveDeployments: true,
       timeout: 1000000,
       accounts,
-      chainId: resolveChainId(),
+      chainId,
+      deploy,
     },
     hardhat: {
       initialBaseFeePerGas: 0,
@@ -53,37 +53,42 @@ module.exports = {
         blockNumber: process.env.BLOCK_NUMBER ? parseInt(process.env.BLOCK_NUMBER) : undefined,
       },
       saveDeployments: true,
-      chainId: resolveChainId(),
+      chainId,
     },
     mainnet: {
       url,
       chainId: 1,
       gas: 6700000,
       accounts,
+      deploy,
     },
     polygon: {
       url,
       chainId: 137,
       gas: 11700000,
       accounts,
+      deploy,
     },
     avalanche: {
       url,
       chainId: 43114,
       gas: 8000000,
       accounts,
+      deploy,
     },
     bsc: {
       url,
       chainId: 56,
       gas: 8000000,
       accounts,
+      deploy,
     },
     optimism: {
       url,
       chainId: 10,
       gas: 8000000,
       accounts,
+      deploy,
     },
   },
   namedAccounts: {
