@@ -15,12 +15,13 @@ const deployFunction = async function (hre) {
   const { deploy } = deployments
   const { deployer } = await getNamedAccounts()
 
-  const VPoolWrapperProxy = await deploy(VPoolWrapper, {
+  const VPoolWrapperProxy = await deploy('vaUSDCWrapper', {
     from: deployer,
     log: true,
     proxy: {
       proxyContract: 'OpenZeppelinTransparentProxy',
       viaAdminContract: VPoolWrapperUpgrader,
+      implementationName: VPoolWrapper,
       execute: {
         init: {
           methodName: 'initialize',
@@ -30,13 +31,14 @@ const deployFunction = async function (hre) {
     },
   })
 
-  await deploy(PoolRewardsWrapper, {
+  const RewardsWrapperProxy = await deploy('vaUSDCRewardsWrapper', {
     from: deployer,
     log: true,
     // proxy deployment
     proxy: {
       proxyContract: 'OpenZeppelinTransparentProxy',
       viaAdminContract: PoolRewardsWrapperUpgrader,
+      implementationName: PoolRewardsWrapper,
       execute: {
         init: {
           methodName: 'initialize',
@@ -48,6 +50,7 @@ const deployFunction = async function (hre) {
 
   console.log('Verifying source code on etherscan')
   await run('verify', { address: VPoolWrapperProxy.address, noCompile: true })
+  await run('verify', { address: RewardsWrapperProxy.address, noCompile: true })
 }
 
 module.exports = deployFunction
