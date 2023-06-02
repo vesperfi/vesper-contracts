@@ -9,7 +9,7 @@ const { address: Address } = require('vesper-commons/utils/chains').getChainData
 
 const { parseEther } = ethers.utils
 
-describe('VPoolERC4626Wrapper', function () {
+describe('VPool ERC4626 Wrapper', function () {
   let proxyAdmin
   let wallet
   let vsp
@@ -27,16 +27,16 @@ describe('VPoolERC4626Wrapper', function () {
     poolRewards = await ethers.getContractAt('IPoolRewards', await vaDAI.poolRewards(), wallet)
     poolAccountant = await ethers.getContractAt('PoolAccountant', await vaDAI.poolAccountant(), wallet)
 
-    const wrapperFactory = await ethers.getContractFactory('VPoolERC4626Wrapper', wallet)
+    const wrapperFactory = await ethers.getContractFactory('VPoolWrapper', wallet)
     const wvaDaiImpl = await wrapperFactory.deploy()
 
     const proxyFactory = await ethers.getContractFactory('TransparentUpgradeableProxy', wallet)
     const wvaDaiProxy = await proxyFactory.deploy(wvaDaiImpl.address, proxyAdmin.address, '0x')
 
-    wvaDAI = await ethers.getContractAt('VPoolERC4626Wrapper', wvaDaiProxy.address, wallet)
+    wvaDAI = await ethers.getContractAt('VPoolWrapper', wvaDaiProxy.address, wallet)
     await wvaDAI.initialize(vaDAI.address)
 
-    const wrapperPoolRewardsFactory = await ethers.getContractFactory('VPoolERC4626WrapperRewards', wallet)
+    const wrapperPoolRewardsFactory = await ethers.getContractFactory('PoolRewardsWrapper', wallet)
     wrapperPoolRewards = await wrapperPoolRewardsFactory.deploy()
     await wrapperPoolRewards.initialize(wvaDAI.address, [vsp.address])
 
