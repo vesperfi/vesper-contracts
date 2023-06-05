@@ -289,7 +289,7 @@
           }
         },
         "strategies": {
-          "Aave_V2_ETH": "0xE5eF7F0835213E820b1eC86Ce10Fb78eDD32aF6E",
+          "Aave_V2_ETH": "0x017CBF62b53313d5eE3aD1288daA95CD39AA11fE",
           "CompoundStrategyETH": "0x69ea3FE4a34dD1d9c9B9cC0a3eB48e86fc18Af22"
         }
       },
