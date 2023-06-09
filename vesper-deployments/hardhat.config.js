@@ -8,6 +8,7 @@ require('./tasks/create-release')
 require('./tasks/deploy-core-contracts')
 require('./tasks/strategy-configuration')
 require('./tasks/hardhat-hook')
+require('./tasks/verify-admin')
 
 if (process.env.RUN_CONTRACT_SIZER === 'true') {
   require('hardhat-contract-sizer')
