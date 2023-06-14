@@ -51,6 +51,10 @@ const Address = {
     vaUSDC: '0x539505Dde2B9771dEBE0898a84441c5E7fDF6BC0',
     vawstETH: '0xdd63ae655b388Cd782681b7821Be37fdB6d0E78d',
   },
+  Yearn: {
+    yvUSDC: '0xaD17A225074191d5c8a37B50FdA1AE278a2EE6A2',
+    yvWETH: '0x5B977577Eb8a480f63e11FC615D6753adB8652Ae',
+  },
 }
 
 module.exports = Object.freeze(Address)

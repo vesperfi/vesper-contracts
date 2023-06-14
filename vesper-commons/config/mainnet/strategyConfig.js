@@ -2010,6 +2010,17 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Yearn_ETH: {
+    contract: 'Yearn',
+    type: StrategyTypes.YEARN,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Yearn.yvWETH,
+      strategyName: 'Yearn_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

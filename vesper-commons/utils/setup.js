@@ -258,7 +258,7 @@ async function configureSwapper(strategies, collateral) {
       pairs.push({ tokenIn: Address.DAI, tokenOut: collateral })
       pairs.push({ tokenIn: collateral, tokenOut: Address.DAI })
     }
-    if (strategyType.includes('earn')) {
+    if (strategyType.startsWith('earn')) {
       const dripToken = await strategy.instance.dripToken()
       pairs.push({ tokenIn: collateral, tokenOut: dripToken })
     }
