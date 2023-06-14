@@ -34,7 +34,9 @@ contract CompoundXy is CompoundXyCore {
 
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
-        IERC20(rewardToken).safeApprove(address(swapper), _amount);
+        if (rewardToken != address(collateralToken)) {
+            IERC20(rewardToken).safeApprove(address(swapper), _amount);
+        }
     }
 
     /// @dev If borrowToken WETH then wrap borrowed ETH to get WETH
@@ -56,7 +58,7 @@ contract CompoundXy is CompoundXyCore {
         _markets[1] = address(borrowCToken);
         comptroller.claimComp(address(this), _markets);
         uint256 _rewardAmount = IERC20(rewardToken).balanceOf(address(this));
-        if (_rewardAmount > 0) {
+        if (_rewardAmount > 0 && rewardToken != address(collateralToken)) {
             _safeSwapExactInput(rewardToken, address(collateralToken), _rewardAmount);
         }
     }

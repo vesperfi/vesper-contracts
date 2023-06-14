@@ -89,7 +89,7 @@ function shouldTestCompoundRewards(strategyIndex) {
         return
       }
 
-      if (chain === 'mainnet') {
+      if (chain === 'mainnet' || chain === 'optimism') {
         const comptrollerInstance = await ethers.getContractAt('Comptroller', comptroller)
         await comptrollerInstance.connect(user2).claimComp(strategy.address, [token.address])
       } else if (chain === 'avalanche') {
