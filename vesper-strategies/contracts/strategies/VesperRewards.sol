@@ -17,7 +17,12 @@ library VesperRewards {
             address[] memory _rewardTokens = IPoolRewards(_poolRewards).getRewardTokens();
             uint256 _length = _rewardTokens.length;
             for (uint256 i; i < _length; ++i) {
-                if (!IStrategy(address(this)).isReservedToken(_rewardTokens[i])) {
+                // Borrow strategy is using 2 protocols and other protocol may have same reward token.
+                // So it is possible that we have already approved reward token.
+                if (IERC20(_rewardTokens[i]).allowance(address(this), address(swapper_)) == 0) {
+                    IERC20(_rewardTokens[i]).safeApprove(address(swapper_), amount_);
+                } else {
+                    IERC20(_rewardTokens[i]).safeApprove(address(swapper_), 0);
                     IERC20(_rewardTokens[i]).safeApprove(address(swapper_), amount_);
                 }
             }
