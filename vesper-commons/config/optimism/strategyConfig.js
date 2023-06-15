@@ -240,6 +240,38 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Sonne_Vesper_Xy_wstETH_USDC: {
+    contract: 'SonneVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.sowstETH,
+      borrowCToken: Address.Sonne.soUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'Sonne_Vesper_Xy_wstETH_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Sonne_Vesper_Xy_ETH_USDC: {
+    contract: 'SonneVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.soWETH,
+      borrowCToken: Address.Sonne.soUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'Sonne_Vesper_Xy_ETH_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
