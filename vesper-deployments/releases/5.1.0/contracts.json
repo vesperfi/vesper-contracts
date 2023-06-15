@@ -1077,7 +1077,8 @@
         "strategies": {
           "AaveV3_Vesper_Xy_OP_USDC": "0xd7c751fA32590451548B100C4f6442F062C9bc8E",
           "Sonne_Leverage_OP": "0xA18019E62f266C2E17e33398448e4105324e0d0F",
-          "Sonne_OP": "0xe98c509f6C8bEbdd62bEEdF78b4D276bb41f2913"
+          "Sonne_OP": "0xe98c509f6C8bEbdd62bEEdF78b4D276bb41f2913",
+          "Sonne_Vesper_Xy_OP_USDC": "0x9fBa263f1F95C73CDd2f7a0958E0a116Edf6be25"
         }
       },
       "vawsteth": {
