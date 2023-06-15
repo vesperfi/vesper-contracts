@@ -272,13 +272,14 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
-  Yearn_ETH: {
-    contract: 'Yearn',
-    type: StrategyTypes.YEARN,
+  Yearn_USDC: {
+    contract: 'YearnStaking',
+    type: StrategyTypes.YEARN_STAKING,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Yearn.yvWETH,
-      strategyName: 'Yearn_ETH',
+      receiptToken: Address.Yearn.yvUSDC,
+      stakingRewards: Address.Yearn.yvUSDCStaking,
+      strategyName: 'Yearn_USDC',
     },
     config: { ...config },
     setup: { ...setup },
