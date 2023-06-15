@@ -138,14 +138,17 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       await deposit(pool, collateralToken, 100, alice)
       await strategy.rebalance()
 
-      if ((await strategy.NAME()).includes('aave')) {
+      let timeToIncrease = time.duration.days(10)
+      if ((await strategy.NAME()).includes('aave') && getChain() === 'mainnet') {
         // Lets claim rewards including stkAAVE.
         // Passing 0 as it may fail as we are not swapping stkAAVE.
         await strategy.claimAndSwapRewards(0)
+        const stkAAVE = await ethers.getContractAt('StakedAave', '0x4da27a545c0c5B758a6BA100e3a049001de870f5')
+        timeToIncrease = await stkAAVE.COOLDOWN_SECONDS()
       }
 
       // time travel to earn more rewards. Also unlock AAVE from stkAAVE, if applicable
-      await time.increase(time.duration.days(10))
+      await time.increase(timeToIncrease)
 
       // when
       // There may or may not be rewards to pass 0.

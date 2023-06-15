@@ -710,7 +710,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 20, // 0.2%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -1090,7 +1090,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1233,7 +1233,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 20, // 0.2%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 1,
