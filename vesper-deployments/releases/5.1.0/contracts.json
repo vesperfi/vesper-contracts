@@ -1098,7 +1098,8 @@
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
-          "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA"
+          "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
+          "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"
         }
       }
     }
