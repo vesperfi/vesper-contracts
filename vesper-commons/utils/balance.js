@@ -91,6 +91,7 @@ const whales = {
 
   // Optimism
   [OptimismAddress.wstETH]: '0xb90b9b1f91a01ea22a182cd84c1e22222e39b415',
+  [OptimismAddress.Yearn.yvOP]: '0xf5d9d6133b698ce29567a90ab35cfb874204b3a7',
 }
 
 /**

@@ -272,6 +272,18 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  Yearn_USDC: {
+    contract: 'YearnStaking',
+    type: StrategyTypes.YEARN_STAKING,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Yearn.yvUSDC,
+      stakingRewards: Address.Yearn.yvUSDCStaking,
+      strategyName: 'Yearn_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
