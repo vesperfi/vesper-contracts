@@ -10,7 +10,7 @@ const Address = require('vesper-commons/utils/chains').getChainData().address
 
 async function testStkAaveRewards(pool, strategy, collateralToken) {
   const [, alice] = await ethers.getSigners()
-  const stkAAVE = await ethers.getContractAt('ERC20', Address.Aave.stkAAVE, alice)
+  const stkAAVE = await ethers.getContractAt('StakedAave', Address.Aave.stkAAVE, alice)
 
   // given
   await deposit(pool, collateralToken, 100, alice)
@@ -23,8 +23,9 @@ async function testStkAaveRewards(pool, strategy, collateralToken) {
   // claim rewards. This should trigger stkAAVE cooldown.
   await strategy.claimAndSwapRewards(0)
 
-  // Increase 10 days to finish cooldown and claim AAVE from stkAAVE
-  await time.increase(time.duration.days(10))
+  // Increase time to finish cooldown and claim AAVE from stkAAVE
+  const cooldownSeconds = await stkAAVE.COOLDOWN_SECONDS()
+  await time.increase(cooldownSeconds)
   expect(await stkAAVE.balanceOf(strategy.address)).gt(0)
 
   // when claim and swap rewards

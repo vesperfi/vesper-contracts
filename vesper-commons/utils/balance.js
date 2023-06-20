@@ -71,7 +71,7 @@ const whales = {
   [Address.Aave.stkAAVE]: '0x4a49985b14bd0ce42c25efde5d8c379a48ab02f3',
   [Address.stETH]: '0x1982b2F5814301d4e9a8b0201555376e62F82428',
   [Address.Saddle.FRAXBP_LP]: '0xfb516cf3710fc6901f2266aaeb8834cf5e4e9558',
-  [Address.Curve.CRV]: '0x32d03db62e464c9168e41028ffa6e9a05d8c6451',
+  [Address.Curve.CRV]: '0x8dAE6Cb04688C62d939ed9B68d32Bc62e49970b1',
   [Address.Alpha.ALPHA]: '0x580cE7B92F185D94511c9636869d28130702F68E',
   [Address.Euler.EUL]: '0xc697BB6625D9f7AdcF0fbf0cbd4DcF50D8716cd3',
   [Address.Stargate.STG]: '0x8A27E7e98f62295018611DD681Ec47C7d9FF633A',

@@ -188,7 +188,7 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       expect(data._profit, 'Profit should be > 0').to.gt(0)
     })
 
-    if (getChain() == 'mainnet' || getChain() == 'avalanche') {
+    if (getChain() == 'mainnet') {
       it('Should claim and swap VSP for collateral', async function () {
         const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
         // given

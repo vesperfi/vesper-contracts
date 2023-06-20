@@ -59,7 +59,7 @@ function shouldTestCompoundRewards(strategyIndex) {
       if (rewardAccruedBefore > 0) {
         // Assert only when reward tokens are available.
         expect(rewardAccruedBefore).to.gt(0)
-        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(0)
         await strategy.claimAndSwapRewards(amountOut)
         const rewardAccruedAfter = await rewardAccrued()
         expect(rewardAccruedAfter).to.eq(0)
@@ -108,7 +108,8 @@ function shouldTestCompoundRewards(strategyIndex) {
       expect(afterClaim).to.gt('0', 'rewardToken balance should be > 0')
 
       await token.exchangeRateCurrent()
-      const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+      // Rewards may not be enough to get even 1 wei amountOut
+      const amountOut = await strategy.callStatic.claimAndSwapRewards(0)
       await strategy.claimAndSwapRewards(amountOut)
 
       if (chain === 'avalanche') {
