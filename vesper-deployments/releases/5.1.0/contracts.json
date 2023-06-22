@@ -1032,7 +1032,8 @@
           "Curve_sETH_ETH": "0x7f29188Ef5fB39E11da6c131BeDa2c3ca9475c58",
           "Curve_wstETH_ETH": "0x6aFf1846413Bf15a8D7E72C799b96Bf37E424b13",
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
-          "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45"
+          "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
+          "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
       },
       "vausdc": {
