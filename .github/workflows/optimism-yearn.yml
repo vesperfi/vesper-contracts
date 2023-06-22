@@ -1,8 +1,8 @@
-name: Optimism Yearn Strategy
+name: Optimism Yearn Staking Strategy
 on:
   pull_request:
     paths:
-      - ".github/workflows/optimism-yean.yml"
+      - ".github/workflows/optimism-yearn.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/utils/setup.js"
       - "vesper-pools/contracts/pool/**/*.sol"
@@ -39,5 +39,21 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running Yean strategy for VAUSDC pool
+      - name: Running Yearn Staking strategy for VAUSDC pool
         run: npm test -- --scope vesper-strategies -- test/optimism/yearn/vausdc.spec.js
+
+
+  vaeth-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Yearn Staking strategy for VAETH pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/yearn/vaeth.spec.js
