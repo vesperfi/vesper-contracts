@@ -229,13 +229,18 @@ async function configureSwapper(strategies, collateral) {
         ['function getIncentivesController() external view returns (address)'],
         await strategy.instance.receiptToken(),
       )
-      const incentiveController = await ethers.getContractAt(
-        ['function getRewardsList() external view returns (address[] memory)'],
-        await aToken.getIncentivesController(),
-      )
-      const _rewardTokens = await getIfExist(incentiveController.getRewardsList)
-      for (let i = 0; i < _rewardTokens.length; i++) {
-        pairs.push({ tokenIn: _rewardTokens[i], tokenOut: collateral })
+
+      try {
+        const incentiveController = await ethers.getContractAt(
+          ['function getRewardsList() external view returns (address[] memory)'],
+          await aToken.getIncentivesController(),
+        )
+        const _rewardTokens = await getIfExist(incentiveController.getRewardsList)
+        for (let i = 0; i < _rewardTokens.length; i++) {
+          pairs.push({ tokenIn: _rewardTokens[i], tokenOut: collateral })
+        }
+      } catch (e) {
+        /* empty */
       }
     }
     if (strategyName.includes('Curve') || strategyName.includes('Ellipsis')) {
@@ -549,7 +554,8 @@ async function setupVPool(obj, poolData, options = {}) {
     await addStrategies(obj)
     const collateralTokenAddress = await obj.pool.token()
 
-    if (chain !== 'optimism') {
+    // Do not configure new swapper
+    if (chain !== 'optimism' && (await obj.strategies[0].instance.swapper()) !== Address.Vesper.newSwapper) {
       await configureSwapper(obj.strategies, collateralTokenAddress)
     }
     await configureOracles(obj.strategies)

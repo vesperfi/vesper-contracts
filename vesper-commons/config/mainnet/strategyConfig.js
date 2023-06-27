@@ -7,11 +7,12 @@ const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
+const newSwapper = Address.Vesper.newSwapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
 
 const setup = {
   feeCollector: Address.Vesper.FEE_COLLECTOR,
-  keepers: [Address.Vesper.KEEPER, Address.Vesper.MP, Address.Vesper.JCV],
+  keepers: [Address.Vesper.KEEPER, Address.Vesper.MP, Address.Vesper.ROHIT],
 }
 // Maker related strategies will have to add more setup config.
 // For example const maker = { gemJoin: Address.MCD_JOIN_ETH_A, highWater: 275, lowWater: 250 }
@@ -965,6 +966,44 @@ const StrategyConfig = {
       collateralIdx: 1,
       convexPoolId: 9,
       strategyName: 'ConvexForFrax_fraxusdc_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_eusdfraxbp_FRAX: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.EUSD_FRAXBP_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      newSwapper,
+      collateralIdx: 1,
+      convexPoolId: 44,
+      strategyName: 'ConvexForFrax_eusdfraxbp_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_eusdfraxbp_USDC: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.EUSD_FRAXBP_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      newSwapper,
+      collateralIdx: 2,
+      convexPoolId: 44,
+      strategyName: 'ConvexForFrax_eusdfraxbp_USDC',
     },
     config: { ...config },
     setup: { ...setup },
