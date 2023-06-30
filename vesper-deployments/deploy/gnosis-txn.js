@@ -19,12 +19,12 @@ const prepareTxn = async function (contractName, address, method, methodArgs) {
   }
 }
 
-const getBaseUrl = targetChain => `https://safe-transaction.${targetChain}.gnosis.io`
+const getBaseUrl = targetChain => `https://safe-transaction-${targetChain}.safe.global`
 
 const isDeployerADelegate = async function (safe, deployer, targetChain) {
   const {
     data: { count, results },
-  } = await axios.get(`${getBaseUrl(targetChain)}/api/v1/safes/${safe}/delegates`)
+  } = await axios.get(`${getBaseUrl(targetChain)}/api/v1/delegates/?safe=${safe}`)
   if (count === 0) {
     return false
   }
