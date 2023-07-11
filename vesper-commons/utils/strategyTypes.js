@@ -12,6 +12,7 @@ const StrategyType = {
   CONVEX: 'curveConvex',
   CONVEX_FOR_FRAX: 'fraxConvex',
   YEARN: 'yearn',
+  YEARN_STAKING: 'yearnStaking',
   EARN_MAKER: 'earnMaker',
   EARN_COMPOUND: 'earnCompound',
   EARN_AAVE: 'earnAave',

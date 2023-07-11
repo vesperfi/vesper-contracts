@@ -70,12 +70,14 @@ contract CurveAaveLendingPool is Curve {
 
     function _claimAave() private {
         (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) = cooldownData();
-        if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
-            STKAAVE.redeem(address(this), MAX_UINT_VALUE);
-        } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
-            STKAAVE.cooldown();
+        if (STKAAVE.balanceOf(address(this)) > 0) {
+            if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
+                STKAAVE.redeem(address(this), MAX_UINT_VALUE);
+            } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
+                STKAAVE.cooldown();
+            }
+            STKAAVE.claimRewards(address(this), MAX_UINT_VALUE);
         }
-        STKAAVE.claimRewards(address(this), MAX_UINT_VALUE);
     }
 
     /// @dev Return values are not being used hence returning 0

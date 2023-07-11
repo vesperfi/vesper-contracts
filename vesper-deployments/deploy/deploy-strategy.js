@@ -59,11 +59,6 @@ const deployFunction = async function (hre) {
     await execute(strategyAlias, { from: deployer, log: true }, 'approveGrowToken')
   }
 
-  if (strategyAlias.toUpperCase().includes('CONVEX')) {
-    await sleep(5000)
-    await execute(strategyAlias, { from: deployer, log: true }, 'refetchRewardTokens', [])
-  }
-
   const strategyVersion = await read(strategyAlias, {}, 'VERSION')
   deployFunction.id = `${strategyAlias}-v${strategyVersion}`
 
@@ -74,14 +69,14 @@ const deployFunction = async function (hre) {
     console.log('Deployer is not governor and delegate of governor. Rest of configuration must be handled manually')
     return
   }
-  const strategyOps = {
+  const strategyOpConfig = {
     alias: strategyAlias,
     contractName: strategyConfig.contract,
     contractAddress: deployed.address,
   }
   const operations = [
     {
-      ...strategyOps,
+      ...strategyOpConfig,
       params: ['updateFeeCollector', [setup.feeCollector]],
     },
   ]
@@ -90,8 +85,12 @@ const deployFunction = async function (hre) {
     const _keepers = await read(strategyAlias, {}, 'keepers')
     if (!_keepers.includes(ethers.utils.getAddress(keeper))) {
       const params = ['addKeeper', [keeper]]
-      operations.push({ ...strategyOps, params })
+      operations.push({ ...strategyOpConfig, params })
     }
+  }
+
+  if (strategyAlias.toUpperCase().includes('CONVEX')) {
+    operations.push({ ...strategyOpConfig, params: ['refetchRewardTokens', []] })
   }
 
   if (strategyAlias.includes('Maker')) {
@@ -109,7 +108,7 @@ const deployFunction = async function (hre) {
       })
     }
     operations.push({
-      ...strategyOps,
+      ...strategyOpConfig,
       params: ['createVault', []],
     })
   }

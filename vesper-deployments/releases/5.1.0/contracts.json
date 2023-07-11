@@ -221,6 +221,7 @@
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
           "CrvsBTCStrategyWBTC": "0x867FC11B40351451d1dc3114A4204B2444b94B32",
+          "FraxLend_Vesper_Xy_WBTC_FRAX": "0x5B458d71a353384087CE1c48dA405D9cab14d155",
           "RariFuseStrategy": "0x2962741a2aec7627F64E77a5808A025F49ea17DA",
           "VesperAaveXYStrategyWBTC_FEI": "0xd30dC2DC7b25196eDd8b6DA0e92c00F762Ce71B5",
           "VesperCompoundXYStrategyWBTC_LINK": "0x22D37D12EA1a3F18B8D4E2e3be844B6205590f1f",
@@ -246,6 +247,7 @@
         },
         "strategies": {
           "ConvexForFrax_dolafraxbp_FRAX": "0xDA91f27C301a1831e8df3E2D35627eA1A3067d2F",
+          "ConvexForFrax_eusdfraxbp_FRAX": "0xcB9ee0BB0CeF5dBf21Aad6c420473EC5c44657f8",
           "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
           "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
@@ -620,6 +622,7 @@
         },
         "strategies": {
           "ConvexForFrax_dolafraxbp_USDC": "0xeE44D248248E1b0bBE313003a41016db004326EB",
+          "ConvexForFrax_eusdfraxbp_USDC": "0x7808Ae59f227b8fecEC98000112a67534cea0F1b",
           "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
           "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
@@ -1034,6 +1037,7 @@
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
           "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA"
+          "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
       },
       "vausdc": {
@@ -1056,7 +1060,8 @@
           "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544",
           "Sonne_Leverage_USDC": "0x2eeFbB883B6a1B64a75B2aA18cD4DfBE19E684a3",
-          "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76"
+          "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
+          "Yearn_USDC": "0x7CB59d76EEDeBD0889c851C82a8498150a1651fd"
         }
       },
       "vaop": {

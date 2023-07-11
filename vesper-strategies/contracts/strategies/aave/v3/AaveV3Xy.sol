@@ -26,6 +26,9 @@ contract AaveV3Xy is Strategy {
     address public borrowToken;
     AToken public vdToken; // Variable Debt Token
     address internal aBorrowToken;
+
+    IERC20 internal wrappedCollateral;
+
     event UpdatedBorrowLimit(
         uint256 previousMinBorrowLimit,
         uint256 newMinBorrowLimit,
@@ -43,8 +46,9 @@ contract AaveV3Xy is Strategy {
     ) Strategy(_pool, _swapper, _receiptToken) {
         NAME = _name;
         require(_aaveAddressProvider != address(0), "addressProvider-is-zero");
+        wrappedCollateral = _getWrappedToken(collateralToken);
         require(
-            AToken(_receiptToken).UNDERLYING_ASSET_ADDRESS() == address(IVesperPool(_pool).token()),
+            AToken(_receiptToken).UNDERLYING_ASSET_ADDRESS() == address(wrappedCollateral),
             "invalid-receipt-token"
         );
         (address _aBorrowToken, , address _vdToken) = AaveProtocolDataProvider(
@@ -65,7 +69,7 @@ contract AaveV3Xy is Strategy {
     }
 
     /// @notice Returns total collateral locked in the strategy
-    function tvl() external view override returns (uint256) {
+    function tvl() external view virtual override returns (uint256) {
         // receiptToken is aToken. aToken is 1:1 of collateral token
         return IERC20(receiptToken).balanceOf(address(this)) + collateralToken.balanceOf(address(this));
     }
@@ -77,8 +81,8 @@ contract AaveV3Xy is Strategy {
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         address _swapper = address(swapper);
-        collateralToken.safeApprove(aaveAddressProvider.getPool(), _amount);
-        collateralToken.safeApprove(_swapper, _amount);
+        wrappedCollateral.safeApprove(aaveAddressProvider.getPool(), _amount);
+        wrappedCollateral.safeApprove(_swapper, _amount);
         IERC20(borrowToken).safeApprove(aaveAddressProvider.getPool(), _amount);
         IERC20(borrowToken).safeApprove(_swapper, _amount);
         try AToken(receiptToken).getIncentivesController() returns (address _aaveIncentivesController) {
@@ -132,7 +136,7 @@ contract AaveV3Xy is Strategy {
         AaveOracle _aaveOracle = AaveOracle(aaveAddressProvider.getPriceOracle());
 
         uint256 _borrowTokenPrice = _aaveOracle.getAssetPrice(borrowToken);
-        uint256 _collateralTokenPrice = _aaveOracle.getAssetPrice(address(collateralToken));
+        uint256 _collateralTokenPrice = _aaveOracle.getAssetPrice(address(wrappedCollateral));
         if (_borrowTokenPrice == 0 || _collateralTokenPrice == 0) {
             // Oracle problem. Lets payback all
             return (0, _borrowed);
@@ -140,11 +144,11 @@ contract AaveV3Xy is Strategy {
         // _collateralFactor in 4 decimal. 10_000 = 100%
         (, uint256 _collateralFactor, , , , , , , , ) = AaveProtocolDataProvider(
             aaveAddressProvider.getPoolDataProvider()
-        ).getReserveConfigurationData(address(collateralToken));
+        ).getReserveConfigurationData(address(wrappedCollateral));
 
         // Collateral in base currency based on oracle price and cf;
         uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-            (MAX_BPS * (10 ** IERC20Metadata(address(collateralToken)).decimals()));
+            (MAX_BPS * (10 ** IERC20Metadata(address(wrappedCollateral)).decimals()));
         // Calculate max borrow possible in borrow token number
         uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
             (10 ** IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
@@ -170,24 +174,34 @@ contract AaveV3Xy is Strategy {
         }
     }
 
+    function _calculateUnwrapped(uint256 wrappedAmount_) internal view virtual returns (uint256) {
+        return wrappedAmount_;
+    }
+
+    function _calculateWrapped(uint256 unwrappedAmount_) internal view virtual returns (uint256) {
+        return unwrappedAmount_;
+    }
+
     /// @dev Claim all rewards and convert to collateral.
     /// Overriding _claimAndSwapRewards will help child contract otherwise override _claimReward.
     function _claimAndSwapRewards() internal virtual override {
         (address[] memory _tokens, uint256[] memory _amounts) = AaveV3Incentive._claimRewards(receiptToken);
         uint256 _length = _tokens.length;
         for (uint256 i; i < _length; ++i) {
-            if (_amounts[i] > 0 && _tokens[i] != address(collateralToken)) {
-                _safeSwapExactInput(_tokens[i], address(collateralToken), _amounts[i]);
+            if (_amounts[i] > 0 && _tokens[i] != address(wrappedCollateral)) {
+                _safeSwapExactInput(_tokens[i], address(wrappedCollateral), _amounts[i]);
             }
         }
     }
 
-    /**
-     * @dev Aave support WETH as collateral.
-     */
+    function _convertToWrapped(uint256 amount_) internal view virtual returns (uint256) {
+        return amount_;
+    }
+
     function _depositToAave(uint256 _amount, AaveLendingPool _aaveLendingPool) internal virtual {
-        if (_amount > 0) {
-            try _aaveLendingPool.supply(address(collateralToken), _amount, address(this), 0) {} catch Error(
+        uint256 _wrappedAmount = _wrap(_amount);
+        if (_wrappedAmount > 0) {
+            try _aaveLendingPool.supply(address(wrappedCollateral), _wrappedAmount, address(this), 0) {} catch Error(
                 string memory _reason
             ) {
                 // Aave uses liquidityIndex and some other indexes as needed to normalize input.
@@ -199,15 +213,24 @@ contract AaveV3Xy is Strategy {
         }
     }
 
+    function _getCollateralHere() internal virtual returns (uint256) {
+        return collateralToken.balanceOf(address(this));
+    }
+
     /// @notice Borrowed Y balance deposited here or elsewhere hook
     function _getInvestedBorrowBalance() internal view virtual returns (uint256) {
         return IERC20(borrowToken).balanceOf(address(this));
+    }
+
+    function _getWrappedToken(IERC20 unwrappedToken_) internal pure virtual returns (IERC20) {
+        return unwrappedToken_;
     }
 
     /**
      * @dev Generate report for pools accounting and also send profit and any payback to pool.
      */
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
+        // NOTE:: Pool has unwrapped as collateral and any state is also unwrapped amount
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _borrowed = vdToken.balanceOf(address(this));
         uint256 _investedBorrowBalance = _getInvestedBorrowBalance();
@@ -221,9 +244,8 @@ contract AaveV3Xy is Strategy {
             // Customize this hook to handle the excess borrowToken for profit
             _rebalanceBorrow(_investedBorrowBalance - _borrowed);
         }
-
-        uint256 _collateralHere = collateralToken.balanceOf(address(this));
-        uint256 _supplied = IERC20(receiptToken).balanceOf(address(this));
+        uint256 _collateralHere = _getCollateralHere();
+        uint256 _supplied = _calculateUnwrapped(IERC20(receiptToken).balanceOf(address(this)));
         uint256 _totalCollateral = _supplied + _collateralHere;
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -246,8 +268,11 @@ contract AaveV3Xy is Strategy {
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
 
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
+        // This is unwrapped balance if pool supports unwrap token eg stETH
         uint256 _newSupply = collateralToken.balanceOf(address(this));
-        _depositToAave(_newSupply, _aaveLendingPool);
+        if (_newSupply > 0) {
+            _depositToAave(_newSupply, _aaveLendingPool);
+        }
 
         // There are scenarios when we want to call _calculateBorrowPosition and act on it.
         // 1. Strategy got some collateral from pool which will allow strategy to borrow more.
@@ -282,27 +307,36 @@ contract AaveV3Xy is Strategy {
     }
 
     /**
-     * @notice Swap given token to borrowToken
+     * @dev Swap collateral to borrow token.
      * @param _shortOnBorrow Expected output of this swap
      */
     function _swapToBorrowToken(uint256 _shortOnBorrow, AaveLendingPool _aaveLendingPool) internal {
         // Looking for _amountIn using fixed output amount
-        uint256 _amountIn = swapper.getAmountIn(address(collateralToken), borrowToken, _shortOnBorrow);
+        uint256 _amountIn = swapper.getAmountIn(address(wrappedCollateral), borrowToken, _shortOnBorrow);
         if (_amountIn > 0) {
-            uint256 _collateralHere = collateralToken.balanceOf(address(this));
+            // Not using unwrapped balance here as those can be used in rebalance reporting via getCollateralHere
+            uint256 _collateralHere = wrappedCollateral.balanceOf(address(this));
             if (_amountIn > _collateralHere) {
                 // Withdraw some collateral from Aave so that we have enough collateral to get expected output
                 uint256 _amount = _amountIn - _collateralHere;
                 require(
-                    _aaveLendingPool.withdraw(address(collateralToken), _amount, address(this)) == _amount,
+                    _aaveLendingPool.withdraw(address(wrappedCollateral), _amount, address(this)) == _amount,
                     Errors.INCORRECT_WITHDRAW_AMOUNT
                 );
             }
-            swapper.swapExactOutput(address(collateralToken), borrowToken, _shortOnBorrow, _amountIn, address(this));
+            swapper.swapExactOutput(address(wrappedCollateral), borrowToken, _shortOnBorrow, _amountIn, address(this));
         }
     }
 
-    /// @dev Withdraw collateral here. Do not transfer to pool
+    function _unwrap(uint256 wrappedAmount_) internal virtual returns (uint256) {
+        return wrappedAmount_;
+    }
+
+    function _wrap(uint256 unwrappedAmount_) internal virtual returns (uint256) {
+        return unwrappedAmount_;
+    }
+
+    /// @dev If pool supports unwrapped token(stETH) then input and output both are unwrapped token amount.
     function _withdrawHere(uint256 _requireAmount) internal override {
         _withdrawHere(
             _requireAmount,
@@ -312,26 +346,31 @@ contract AaveV3Xy is Strategy {
         );
     }
 
+    /// @dev If pool supports unwrapped token(stETH) then _requireAmount and output both are unwrapped token amount.
     function _withdrawHere(
         uint256 _requireAmount,
         AaveLendingPool _aaveLendingPool,
         uint256 _borrowed,
         uint256 _supplied
     ) internal {
-        (, uint256 _repayAmount) = _calculateBorrowPosition(0, _requireAmount, _borrowed, _supplied);
+        uint256 _wrappedRequireAmount = _calculateWrapped(_requireAmount);
+        (, uint256 _repayAmount) = _calculateBorrowPosition(0, _wrappedRequireAmount, _borrowed, _supplied);
         if (_repayAmount > 0) {
             _repayY(_repayAmount, _aaveLendingPool);
         }
         // withdraw asking more than available liquidity will fail. To do safe withdraw, check
-        // _requireAmount against available liquidity.
+        // _wrappedRequireAmount against available liquidity.
         uint256 _possibleWithdraw = Math.min(
-            _requireAmount,
-            Math.min(IERC20(receiptToken).balanceOf(address(this)), collateralToken.balanceOf(receiptToken))
+            _wrappedRequireAmount,
+            Math.min(IERC20(receiptToken).balanceOf(address(this)), wrappedCollateral.balanceOf(receiptToken))
         );
         require(
-            _aaveLendingPool.withdraw(address(collateralToken), _possibleWithdraw, address(this)) == _possibleWithdraw,
+            _aaveLendingPool.withdraw(address(wrappedCollateral), _possibleWithdraw, address(this)) ==
+                _possibleWithdraw,
             Errors.INCORRECT_WITHDRAW_AMOUNT
         );
+        // Unwrap wrapped tokens
+        _unwrap(wrappedCollateral.balanceOf(address(this)));
     }
 
     /************************************************************************************************
