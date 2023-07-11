@@ -47,7 +47,7 @@ contract AaveV3VesperXy is AaveV3Xy {
     function _claimAndSwapRewards() internal override {
         // Claim rewards from Aave
         AaveV3Xy._claimAndSwapRewards();
-        VesperRewards._claimAndSwapRewards(vPool, swapper, address(collateralToken));
+        VesperRewards._claimAndSwapRewards(vPool, swapper, address(wrappedCollateral));
     }
 
     /// @notice Borrowed Y balance deposited in Vesper Pool
@@ -57,13 +57,13 @@ contract AaveV3VesperXy is AaveV3Xy {
             ((vPool.pricePerShare() * vPool.balanceOf(address(this))) / 1e18);
     }
 
-    /// @notice Swap excess borrow for more collateral when underlying  vPool is making profits
+    /// @notice Swap excess borrow for more wrappedCollateral when underlying vPool is making profits
     function _rebalanceBorrow(uint256 _excessBorrow) internal virtual override {
         if (_excessBorrow > 0) {
             _withdrawFromVesperPool(_excessBorrow);
             uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
             if (_borrowedHere > 0) {
-                _safeSwapExactInput(borrowToken, address(collateralToken), _borrowedHere);
+                _safeSwapExactInput(borrowToken, address(wrappedCollateral), _borrowedHere);
             }
         }
     }

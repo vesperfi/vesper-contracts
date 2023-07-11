@@ -11,7 +11,7 @@ const Address = getChainData().address
 
 // Aave V3 Vesper XY strategy specific tests
 function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
-  let strategy, pool, collateralToken, token, borrowToken, vdToken
+  let strategy, pool, collateralToken, token, borrowToken, vdToken, wrappedCollateral
   let governor, user1, user2
   const maxBps = BigNumber.from('10000')
 
@@ -25,12 +25,12 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
       await aaveAddressProvider.getPoolDataProvider(),
     )
     const aaveOracle = await ethers.getContractAt('AaveOracle', await aaveAddressProvider.getPriceOracle())
-    const collateralPrice = await aaveOracle.getAssetPrice(collateralToken.address)
-    const collateralDecimal = await collateralToken.decimals()
+    const collateralPrice = await aaveOracle.getAssetPrice(wrappedCollateral.address)
+    const collateralDecimal = await wrappedCollateral.decimals()
     const borrowTokenPrice = await aaveOracle.getAssetPrice(borrowToken.address)
     const borrowTokenDecimal = await borrowToken.decimals()
 
-    const collateralFactor = (await protocolDataProvider.getReserveConfigurationData(collateralToken.address)).ltv
+    const collateralFactor = (await protocolDataProvider.getReserveConfigurationData(wrappedCollateral.address)).ltv
     const totalDebt = await token.balanceOf(strategy.address)
 
     const collateralForBorrow = totalDebt
@@ -64,6 +64,8 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
       token = await getStrategyToken(this.strategies[strategyIndex])
       vdToken = await ethers.getContractAt('TokenLike', await strategy.vdToken())
       borrowToken = await ethers.getContractAt('ERC20', await strategy.borrowToken())
+      const aToken = await ethers.getContractAt('AToken', token.address)
+      wrappedCollateral = await ethers.getContractAt('ERC20', await aToken.UNDERLYING_ASSET_ADDRESS())
     })
 
     it('Should borrow collateral at rebalance', async function () {
