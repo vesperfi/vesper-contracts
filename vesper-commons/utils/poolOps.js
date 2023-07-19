@@ -92,7 +92,7 @@ async function rebalanceUnderlying(strategy) {
   const accountant = await ethers.getContractAt('PoolAccountant', await vPool.poolAccountant())
   const strategies = await accountant.getStrategies()
 
-  const keeper = await unlock(address.Vesper.KEEPER)
+  const keeper = await unlock(address.Vesper.BOT)
   const promises = []
   for (const underlyingStrategy of strategies) {
     if ((await accountant.totalDebtOf(underlyingStrategy)).gt(0)) {

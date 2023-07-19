@@ -280,7 +280,7 @@ describe('VPool ERC4626 Wrapper', function () {
         const strategyAddress = strategies[i]
         if ((await poolAccountant.totalDebtOf(strategyAddress)).gt(0)) {
           await poolAccountant.updateDebtRatio(strategyAddress, 0)
-          const keeper = await unlock(Address.Vesper.KEEPER)
+          const keeper = await unlock(Address.Vesper.BOT)
           const strategy = await ethers.getContractAt('IStrategy', strategyAddress, keeper)
           try {
             await strategy.rebalance()
