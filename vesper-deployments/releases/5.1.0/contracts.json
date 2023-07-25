@@ -162,6 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "AaveV3_Vesper_Xy_STETH_USDC": "0x82562507429876486B60AF4F32390ef0947b3d13",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
         }
       },
@@ -1036,7 +1037,7 @@
           "Curve_wstETH_ETH": "0x6aFf1846413Bf15a8D7E72C799b96Bf37E424b13",
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
-          "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA"
+          "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA",
           "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
       },
