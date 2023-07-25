@@ -250,6 +250,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_CBETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
   AaveV3_Vesper_Xy_STETH_USDC: {
     contract: 'AaveV3VesperStETH',
     type: StrategyTypes.AAVE_V3_VESPER_XY,
