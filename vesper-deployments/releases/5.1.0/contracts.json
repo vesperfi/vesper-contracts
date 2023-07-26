@@ -779,6 +779,7 @@
           "implementation": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d"
         },
         "strategies": {
+          "AaveV3_Vesper_Xy_RETH_USDC": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
           "Maker_Vesper_RETH": "0xd08CFE37f44f2f9AFda5F8788cb856C63EA7c078"
         }
       },
