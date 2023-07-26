@@ -39,7 +39,7 @@ const Address = {
   },
   Vesper: {
     DEPLOYER: '0x1cbfae0367a9b1e4ac2c158e57b5f00ccb337271',
-    FEE_COLLECTOR: '0x1cbfae0367a9b1e4ac2c158e57b5f00ccb337271', // Same as deployer
+    FEE_COLLECTOR: '0x32934AD7b1121DeFC631080b58599A0eaAB89878', // Vesper Safe
     KEEPER: '0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83', // Keeper contract
     BOT: '0x76d266DFD3754f090488ae12F6Bd115cD7E77eBD', // Bot address
     JCV: '0x1CbfaE0367a9B1e4Ac2c158E57B5F00cCb337271', // JCV Keeper
