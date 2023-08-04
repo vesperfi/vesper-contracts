@@ -7,11 +7,12 @@ const { CurvePoolTypes } = require('../../utils/curvePoolTypes')
 
 const masterOracle = Address.Vesper.MasterOracle
 const swapper = Address.Vesper.Swapper
+const newSwapper = Address.Vesper.newSwapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
 
 const setup = {
   feeCollector: Address.Vesper.FEE_COLLECTOR,
-  keepers: [Address.Vesper.KEEPER, Address.Vesper.MP, Address.Vesper.JCV],
+  keepers: [Address.Vesper.KEEPER, Address.Vesper.MP, Address.Vesper.ROHIT],
 }
 // Maker related strategies will have to add more setup config.
 // For example const maker = { gemJoin: Address.MCD_JOIN_ETH_A, highWater: 275, lowWater: 250 }
@@ -62,30 +63,6 @@ const StrategyConfig = {
       swapper,
       receiptToken: Address.Aave.aFEI,
       strategyName: 'Aave_V2_FEI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Aave_V2_LINK: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aLINK,
-      strategyName: 'Aave_V2_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Aave_V2_UNI: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aUNI,
-      strategyName: 'Aave_V2_UNI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -154,21 +131,6 @@ const StrategyConfig = {
       borrowToken: Address.FEI,
       vPool: Address.Vesper.vaFEI,
       strategyName: 'AaveV2_Vesper_Xy_ETH_FEI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  AaveV2_Vesper_Xy_LINK_USDC: {
-    contract: 'AaveV2VesperXy',
-    type: StrategyTypes.AAVE_VESPER_XY,
-    constructorArgs: {
-      swapper,
-      rewardToken: Address.Aave.AAVE,
-      receiptToken: Address.Aave.aLINK,
-      borrowToken: Address.USDC,
-      vPool: Address.Vesper.vaUSDC,
-      strategyName: 'AaveV2_Vesper_Xy_LINK_USDC',
     },
     config: { ...config },
     setup: { ...setup },
@@ -249,6 +211,51 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_CBETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
+  AaveV3_Vesper_Xy_RETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthrETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_RETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
+  AaveV3_Vesper_Xy_STETH_USDC: {
+    contract: 'AaveV3VesperStETH',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      newSwapper,
+      receiptToken: Address.Aave.V3.aEthwstETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_STETH_USDC',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
   // Aave V1 strategy
   AaveV1StrategyUSDC: {
     contract: 'AaveV1Strategy',
@@ -289,20 +296,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Compound_LINK: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Compound_ETH: {
     contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
@@ -312,20 +305,6 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       strategyName: 'Compound_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_UNI: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_UNI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -472,36 +451,6 @@ const StrategyConfig = {
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cDAI,
       strategyName: 'Compound_Leverage_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_UNI: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_Leverage_UNI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_LINK: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_Leverage_LINK',
     },
     config: { ...config },
     setup: { ...setup },
@@ -710,7 +659,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 20, // 0.2%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 0,
@@ -864,7 +813,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 50, // 0.5%
+      crvSlippage: 300, // 3%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -965,6 +914,44 @@ const StrategyConfig = {
       collateralIdx: 1,
       convexPoolId: 9,
       strategyName: 'ConvexForFrax_fraxusdc_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_eusdfraxbp_FRAX: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.EUSD_FRAXBP_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      newSwapper,
+      collateralIdx: 1,
+      convexPoolId: 44,
+      strategyName: 'ConvexForFrax_eusdfraxbp_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ConvexForFrax_eusdfraxbp_USDC: {
+    contract: 'ConvexForFrax',
+    type: StrategyTypes.CONVEX_FOR_FRAX,
+    constructorArgs: {
+      crvPool: Address.Curve.EUSD_FRAXBP_POOL,
+      curvePoolType: CurvePoolTypes.META_3_POOL,
+      depositZap: Address.Curve.FACTORY_METAPOOLS_ZAP,
+      crvToken: Address.Curve.CRV,
+      crvSlippage: 100, // 1%
+      masterOracle,
+      newSwapper,
+      collateralIdx: 2,
+      convexPoolId: 44,
+      strategyName: 'ConvexForFrax_eusdfraxbp_USDC',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1090,7 +1077,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1233,7 +1220,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.LENDING_3_POOL,
       depositZap: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 20, // 0.2%
+      crvSlippage: 30, // 0.3%
       masterOracle,
       swapper,
       collateralIdx: 1,
@@ -1970,13 +1957,13 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  FraxLend_FRAX: {
+  FraxLend_CRV_FRAX: {
     contract: 'FraxLend',
     type: StrategyTypes.FRAX_LEND,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.WETH_FRAX,
-      strategyName: 'FraxLend_FRAX',
+      receiptToken: Address.FraxLend.CRV_FRAX,
+      strategyName: 'FraxLend_CRV_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
@@ -2006,6 +1993,17 @@ const StrategyConfig = {
       vPool: Address.Vesper.vaFRAX,
       vsp: Address.Vesper.VSP,
       strategyName: 'FraxLend_Vesper_Xy_WBTC_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Yearn_ETH: {
+    contract: 'Yearn',
+    type: StrategyTypes.YEARN,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Yearn.yvWETH,
+      strategyName: 'Yearn_ETH',
     },
     config: { ...config },
     setup: { ...setup },

@@ -168,7 +168,9 @@ function shouldBehaveLikeFraxLendVesperXyStrategy(index) {
     })
 
     if (getChain() == 'mainnet' || getChain() == 'avalanche') {
-      it('Should claim and swap VSP for collateral', async function () {
+      // Skipping test as there is no VSP rewards in vaFRAX pool.
+      // eslint-disable-next-line mocha/no-skipped-tests
+      it.skip('Should claim and swap VSP for collateral', async function () {
         const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
         // given
         await deposit(pool, collateralToken, 100, user2)

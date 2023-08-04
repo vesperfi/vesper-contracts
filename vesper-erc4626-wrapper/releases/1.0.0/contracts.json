@@ -1,0 +1,17 @@
+{
+  "version": "1.0.0",
+  "networks": {
+    "optimism": {
+      "PoolRewardsWrapper": "0xC954A6e12D9D6Ca3f2c6aa8f286D7a4B302c611E",
+      "PoolRewardsWrapperUpgrader": "0x918B1df459f3caeD6224Aa7f0C21AdA55df164DC",
+      "VPoolWrapper": "0x22E7f6359Ee5A65B7e769838F983daC90FEd259e",
+      "VPoolWrapperUpgrader": "0xeFe2aFE3F2e03eaD747C61ff0fdabb1697441D84",
+      "vaUSDCRewardsWrapper": "0x8128a04821baCc77Ff3EC70D88fdEf947dA1fF02",
+      "vaUSDCRewardsWrapper_Implementation": "0xC954A6e12D9D6Ca3f2c6aa8f286D7a4B302c611E",
+      "vaUSDCRewardsWrapper_Proxy": "0x8128a04821baCc77Ff3EC70D88fdEf947dA1fF02",
+      "vaUSDCWrapper": "0xed51C628ae26E3355742Af878b1f39051937Fb1D",
+      "vaUSDCWrapper_Implementation": "0x22E7f6359Ee5A65B7e769838F983daC90FEd259e",
+      "vaUSDCWrapper_Proxy": "0xed51C628ae26E3355742Af878b1f39051937Fb1D"
+    }
+  }
+}

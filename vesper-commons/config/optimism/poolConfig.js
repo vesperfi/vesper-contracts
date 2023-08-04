@@ -3,7 +3,7 @@
 const Address = require('./address')
 const setup = { universalFee: 200 }
 
-const rewards = { contract: 'PoolRewards', tokens: [] }
+const rewards = { contract: 'PoolRewards', tokens: [Address.OP] }
 
 const PoolConfig = {
   VAETH: {

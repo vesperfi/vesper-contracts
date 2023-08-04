@@ -162,6 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "AaveV3_Vesper_Xy_STETH_USDC": "0x82562507429876486B60AF4F32390ef0947b3d13",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
         }
       },
@@ -221,6 +222,7 @@
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
           "CrvsBTCStrategyWBTC": "0x867FC11B40351451d1dc3114A4204B2444b94B32",
+          "FraxLend_Vesper_Xy_WBTC_FRAX": "0x5B458d71a353384087CE1c48dA405D9cab14d155",
           "RariFuseStrategy": "0x2962741a2aec7627F64E77a5808A025F49ea17DA",
           "VesperAaveXYStrategyWBTC_FEI": "0xd30dC2DC7b25196eDd8b6DA0e92c00F762Ce71B5",
           "VesperCompoundXYStrategyWBTC_LINK": "0x22D37D12EA1a3F18B8D4E2e3be844B6205590f1f",
@@ -246,9 +248,11 @@
         },
         "strategies": {
           "ConvexForFrax_dolafraxbp_FRAX": "0xDA91f27C301a1831e8df3E2D35627eA1A3067d2F",
+          "ConvexForFrax_eusdfraxbp_FRAX": "0xcB9ee0BB0CeF5dBf21Aad6c420473EC5c44657f8",
           "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",
           "Convex_dolafraxbp_FRAX": "0xb4906Ef3c39805e101AdfAe34baEE1D75862e5f3",
           "Convex_fraxusdc_FRAX": "0xeb365dfEFEEBe677281da9114A0B66d4dbBFA6D8",
+          "FraxLend_CRV_FRAX": "0x9ce5FcF17E5aD2e4dc6cD402FCE2DC22D78f4Fbb",
           "RariFuseStrategy#18": "0xeCF139cF1a5D902b191818F182b48f0301CA0bD6",
           "RariFuseStrategy#36": "0x13AECC59A88A65F02E053eEce29d743a952D6f1e",
           "RariFuseStrategy#6": "0x463C835f2959c52F99D65b5E712F3806c7E6A46F",
@@ -288,7 +292,7 @@
           }
         },
         "strategies": {
-          "Aave_V2_ETH": "0xE5eF7F0835213E820b1eC86Ce10Fb78eDD32aF6E",
+          "Aave_V2_ETH": "0x017CBF62b53313d5eE3aD1288daA95CD39AA11fE",
           "CompoundStrategyETH": "0x69ea3FE4a34dD1d9c9B9cC0a3eB48e86fc18Af22"
         }
       },
@@ -619,6 +623,7 @@
         },
         "strategies": {
           "ConvexForFrax_dolafraxbp_USDC": "0xeE44D248248E1b0bBE313003a41016db004326EB",
+          "ConvexForFrax_eusdfraxbp_USDC": "0x7808Ae59f227b8fecEC98000112a67534cea0F1b",
           "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
           "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
@@ -774,6 +779,7 @@
           "implementation": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d"
         },
         "strategies": {
+          "AaveV3_Vesper_Xy_RETH_USDC": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
           "Maker_Vesper_RETH": "0xd08CFE37f44f2f9AFda5F8788cb856C63EA7c078"
         }
       },
@@ -794,8 +800,9 @@
           "implementation": "0x90bb3E3AA5Fa88f0a83Dcb9485f65D2592f4307E"
         },
         "strategies": {
-          "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609",
-          "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C"
+          "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
+          "AaveV3_Vesper_Xy_CBETH_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
+          "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
         }
       }
     },
@@ -1012,39 +1019,52 @@
     "optimism": {
       "vaeth": {
         "pool": {
-          "proxyAdmin": "0x1aF1055214d6A2FD8dbC8e257610c81516f838Be",
+          "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0xCcF3d1AcF799bAe67F6e354d685295557cf64761",
           "implementation": "0x655952146E18ec662bF2BC7cC3d85247fd5d86D4",
           "poolAccountant": {
-            "proxyAdmin": "0xAf245C4Fb15Cb8f9cE72E387F71F0eEB418e7BE9",
+            "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0x59e9117a1106EDd3b3CfEE71eb2FE502f356482D",
             "implementation": "0x1BdA287BF5d14b70C0A2805bc15049C9fA43B428"
           }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x973b9A7D490f06FEa3dd06432Cea3b097E9Cecb9",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
           "AaveV3_Vesper_Xy_ETH_USDC": "0x5cd23c6fCC61fa33Fc36ABCf696129A85a99DB31",
           "Curve_sETH_ETH": "0x7f29188Ef5fB39E11da6c131BeDa2c3ca9475c58",
           "Curve_wstETH_ETH": "0x6aFf1846413Bf15a8D7E72C799b96Bf37E424b13",
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
-          "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45"
+          "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
+          "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA",
+          "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
       },
       "vausdc": {
         "pool": {
-          "proxyAdmin": "0x1aF1055214d6A2FD8dbC8e257610c81516f838Be",
+          "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0x539505Dde2B9771dEBE0898a84441c5E7fDF6BC0",
           "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
           "poolAccountant": {
-            "proxyAdmin": "0xAf245C4Fb15Cb8f9cE72E387F71F0eEB418e7BE9",
+            "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0x476F833357961bF4Dc144d13C0A6326E54b94dA9",
             "implementation": "0x1BdA287BF5d14b70C0A2805bc15049C9fA43B428"
           }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x6104D21888CD996918C8cbA7480C71271DEE3120",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
           "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544",
           "Sonne_Leverage_USDC": "0x2eeFbB883B6a1B64a75B2aA18cD4DfBE19E684a3",
-          "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76"
+          "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
+          "Yearn_USDC": "0x7CB59d76EEDeBD0889c851C82a8498150a1651fd"
         }
       },
       "vaop": {
@@ -1058,10 +1078,16 @@
             "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
           }
         },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0xE91172020777b03a94627dBe0b94c6b8389Fb99C",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
+        },
         "strategies": {
           "AaveV3_Vesper_Xy_OP_USDC": "0xd7c751fA32590451548B100C4f6442F062C9bc8E",
           "Sonne_Leverage_OP": "0xA18019E62f266C2E17e33398448e4105324e0d0F",
-          "Sonne_OP": "0xe98c509f6C8bEbdd62bEEdF78b4D276bb41f2913"
+          "Sonne_OP": "0xe98c509f6C8bEbdd62bEEdF78b4D276bb41f2913",
+          "Sonne_Vesper_Xy_OP_USDC": "0x9fBa263f1F95C73CDd2f7a0958E0a116Edf6be25"
         }
       },
       "vawsteth": {
@@ -1075,8 +1101,14 @@
             "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
           }
         },
+        "poolRewards": {
+          "proxyAdmin": "0xb2af500c94F7b4DFF189120c97cb25d8ad5aa028",
+          "proxy": "0x94E38F592d92964ebe0684A65F1318b91Dc54E9e",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
+        },
         "strategies": {
-          "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA"
+          "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
+          "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"
         }
       }
     }

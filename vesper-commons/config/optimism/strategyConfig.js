@@ -224,6 +224,78 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Sonne_Vesper_Xy_OP_USDC: {
+    contract: 'SonneVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.soOP,
+      borrowCToken: Address.Sonne.soUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'Sonne_Vesper_Xy_OP_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Sonne_Vesper_Xy_wstETH_USDC: {
+    contract: 'SonneVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.sowstETH,
+      borrowCToken: Address.Sonne.soUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'Sonne_Vesper_Xy_wstETH_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Sonne_Vesper_Xy_ETH_USDC: {
+    contract: 'SonneVesperXy',
+    type: StrategyTypes.COMPOUND_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      comptroller: Address.Sonne.Unitroller,
+      rewardToken: Address.Sonne.SONNE,
+      receiptToken: Address.Sonne.soWETH,
+      borrowCToken: Address.Sonne.soUSDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'Sonne_Vesper_Xy_ETH_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Yearn_USDC: {
+    contract: 'YearnStaking',
+    type: StrategyTypes.YEARN_STAKING,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Yearn.yvUSDC,
+      stakingRewards: Address.Yearn.yvUSDCStaking,
+      strategyName: 'Yearn_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  Yearn_ETH: {
+    contract: 'YearnStaking',
+    type: StrategyTypes.YEARN_STAKING,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Yearn.yvWETH,
+      stakingRewards: Address.Yearn.yvWETHStaking,
+      strategyName: 'Yearn_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

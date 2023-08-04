@@ -1,0 +1,29 @@
+name: Pool Wrapper basic tests
+on:
+  pull_request:
+    paths:
+      - ".github/actions/setup-env/action.yml"
+      - ".github/workflows/pool-wrapper.yml"
+      - "vesper-pools/contracts/pool/PoolRewards.sol"
+      - "vesper-pools/contracts/interfaces/vesper/*.sol"
+      - "vesper-erc4626-wrapper/contracts/**/*.sol"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-erc4626-wrapper/test/*.js"
+
+jobs:
+  vesper-pool-wrapper-test:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Run npm install
+        run: npm install
+
+      - name: Running tests for Vesper Pool Wrapper
+        run: npm test -- --scope vesper-erc4626-wrapper -- test/vpool-wrapper.spec.js
