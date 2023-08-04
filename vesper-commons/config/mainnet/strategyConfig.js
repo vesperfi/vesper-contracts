@@ -296,20 +296,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Compound_LINK: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Compound_ETH: {
     contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
@@ -319,20 +305,6 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       strategyName: 'Compound_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_UNI: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_UNI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -479,36 +451,6 @@ const StrategyConfig = {
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cDAI,
       strategyName: 'Compound_Leverage_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_UNI: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_Leverage_UNI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_LINK: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_Leverage_LINK',
     },
     config: { ...config },
     setup: { ...setup },
