@@ -113,7 +113,7 @@ abstract contract AaveV2Core {
                 // If normalized input equals to 0 then error will be thrown with '56' error code.
                 // CT_INVALID_MINT_AMOUNT = '56'; //invalid amount to mint
                 // Hence discard error where error code is '56'
-                require(bytes32(bytes(_reason)) == "56", "deposit failed");
+                require(bytes32(bytes(_reason)) == "56", _reason);
             }
         }
     }

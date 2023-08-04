@@ -236,7 +236,7 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
       await strategy.connect(governor).rebalance()
       await token.exchangeRateCurrent()
 
-      await mine(100)
+      await mine(1000)
 
       const withdrawAmount = await pool.balanceOf(user2.address)
       // reward accrued is updated only when user do some activity.

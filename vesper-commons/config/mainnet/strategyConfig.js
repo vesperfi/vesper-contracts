@@ -68,30 +68,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Aave_V2_LINK: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aLINK,
-      strategyName: 'Aave_V2_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Aave_V2_UNI: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aUNI,
-      strategyName: 'Aave_V2_UNI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Aave_V2_USDC: {
     contract: 'AaveV2',
     type: StrategyTypes.AAVE,
@@ -155,21 +131,6 @@ const StrategyConfig = {
       borrowToken: Address.FEI,
       vPool: Address.Vesper.vaFEI,
       strategyName: 'AaveV2_Vesper_Xy_ETH_FEI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  AaveV2_Vesper_Xy_LINK_USDC: {
-    contract: 'AaveV2VesperXy',
-    type: StrategyTypes.AAVE_VESPER_XY,
-    constructorArgs: {
-      swapper,
-      rewardToken: Address.Aave.AAVE,
-      receiptToken: Address.Aave.aLINK,
-      borrowToken: Address.USDC,
-      vPool: Address.Vesper.vaUSDC,
-      strategyName: 'AaveV2_Vesper_Xy_LINK_USDC',
     },
     config: { ...config },
     setup: { ...setup },
@@ -335,20 +296,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Compound_LINK: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Compound_ETH: {
     contract: 'CompoundETH',
     type: StrategyTypes.COMPOUND,
@@ -358,20 +305,6 @@ const StrategyConfig = {
       rewardToken: Address.Compound.COMP,
       receiptToken: Address.Compound.cETH,
       strategyName: 'Compound_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_UNI: {
-    contract: 'Compound',
-    type: StrategyTypes.COMPOUND,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_UNI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -518,36 +451,6 @@ const StrategyConfig = {
       aaveAddressProvider: Address.Aave.AddressProvider,
       receiptToken: Address.Compound.cDAI,
       strategyName: 'Compound_Leverage_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_UNI: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cUNI,
-      strategyName: 'Compound_Leverage_UNI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Leverage_LINK: {
-    contract: 'CompoundLeverage',
-    type: StrategyTypes.COMPOUND_LEVERAGE,
-    constructorArgs: {
-      swapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      aaveAddressProvider: Address.Aave.AddressProvider,
-      receiptToken: Address.Compound.cLINK,
-      strategyName: 'Compound_Leverage_LINK',
     },
     config: { ...config },
     setup: { ...setup },
