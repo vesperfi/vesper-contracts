@@ -68,30 +68,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Aave_V2_LINK: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aLINK,
-      strategyName: 'Aave_V2_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Aave_V2_UNI: {
-    contract: 'AaveV2',
-    type: StrategyTypes.AAVE,
-    constructorArgs: {
-      swapper,
-      receiptToken: Address.Aave.aUNI,
-      strategyName: 'Aave_V2_UNI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Aave_V2_USDC: {
     contract: 'AaveV2',
     type: StrategyTypes.AAVE,
@@ -155,21 +131,6 @@ const StrategyConfig = {
       borrowToken: Address.FEI,
       vPool: Address.Vesper.vaFEI,
       strategyName: 'AaveV2_Vesper_Xy_ETH_FEI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  AaveV2_Vesper_Xy_LINK_USDC: {
-    contract: 'AaveV2VesperXy',
-    type: StrategyTypes.AAVE_VESPER_XY,
-    constructorArgs: {
-      swapper,
-      rewardToken: Address.Aave.AAVE,
-      receiptToken: Address.Aave.aLINK,
-      borrowToken: Address.USDC,
-      vPool: Address.Vesper.vaUSDC,
-      strategyName: 'AaveV2_Vesper_Xy_LINK_USDC',
     },
     config: { ...config },
     setup: { ...setup },
