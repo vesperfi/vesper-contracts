@@ -39,6 +39,7 @@ const StrategyType = {
   ALPACA: 'alpaca',
   FRAX_LEND: 'fraxLend',
   FRAX_LEND_VESPER_XY: 'fraxLendVesperXY',
+  SOMMELIER: 'sommelier',
 }
 
 module.exports = Object.freeze(StrategyType)

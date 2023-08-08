@@ -8,6 +8,7 @@ const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('./balance')
 const { getChain } = require('./chains')
 const { unlock, executeIfExist, getStrategyToken, getIfExist } = require('./setup')
+const StrategyType = require('./strategyTypes')
 const address = require(`../config/${getChain()}/address`)
 
 /**
@@ -124,6 +125,19 @@ async function totalDebtOfAllStrategy(strategies, pool) {
  * @param {object} strategy - strategy object
  */
 async function increaseTimeIfNeeded(strategy) {
+  if (strategy.type === StrategyType.SOMMELIER) {
+    const cellarAbi = [
+      'function setShareLockPeriod(uint256) external',
+      'function owner() external view returns(address)',
+    ]
+    const cellar = await ethers.getContractAt(cellarAbi, await strategy.instance.receiptToken())
+    const cellarSigner = await unlock(await cellar.owner())
+
+    // Sommelier uses priceOracle for almost all operations.
+    // If unlock time is large enough to make price stale then all ops will fail.
+    // Hence set small amount of time. Sommelier has minimum 5 minutes lock.
+    await cellar.connect(cellarSigner).setShareLockPeriod(5 * 60)
+  }
   const unlockTime = await getIfExist(strategy.instance.unlockTime)
   if (unlockTime && unlockTime.gt(await time.latest())) {
     await time.increaseTo(unlockTime)
