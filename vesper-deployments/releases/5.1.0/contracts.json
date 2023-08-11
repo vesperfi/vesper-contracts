@@ -183,11 +183,11 @@
           "implementation": "0x08BCa8c3789F35F9c482991FbABaC54fC9042b89"
         },
         "strategies": {
-          "AaveV2_Vesper_Xy_ETH_DAI": "0x9A1a37e573dEd585299FdDbe99Ca43853DD21d9D",
+          "AaveV2_Vesper_Xy_ETH_DAI": "0x25496AfB6a732d266FB5343A860ACb931e54a109",
           "AaveV3_Vesper_Xy_ETH_DAI": "0xaB1A2802F0Ba6F958009DE8739250e04BAE67E3b",
           "AlphaLendStrategyETH": "0xeCe0f32840280aD0069Dd89Ad97Ad6dF1bB0fF2A",
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
-          "Compound_Vesper_Xy_ETH_DAI": "0xB3325EAE761EADCC052dAF3D67CAAD75C6c9E0b4",
+          "Compound_Vesper_Xy_ETH_DAI": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
           "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
           "Euler_Vesper_Xy_ETH_DAI": "0x46667F3771514E7D76c3948AcAD6DdA378db63f5",
