@@ -5,19 +5,21 @@ import {EnumerableSetUpgradeable} from "@openzeppelin/contracts-upgradeable/util
 import {Governable} from "./access/Governable.sol";
 
 error AddressIsNull();
-error NotAnOperator();
+error NotAKeeper();
 
-/// @title Operator contract for Vesper ecosystem
-contract Operator is Governable {
+/// @title Keeper contract for Vesper ecosystem
+contract Keeper is Governable {
     using EnumerableSetUpgradeable for EnumerableSetUpgradeable.AddressSet;
+
+    string public constant VERSION = "1.0.0";
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
 
-    EnumerableSetUpgradeable.AddressSet internal _operators; // List of operator addresses
+    EnumerableSetUpgradeable.AddressSet internal _keepers; // List of keeper addresses
 
-    modifier onlyOperator() {
-        if (!isOperator(msg.sender)) revert NotAnOperator();
+    modifier onlyKeeper() {
+        if (!isKeeper(msg.sender)) revert NotAKeeper();
         _;
     }
 
@@ -30,34 +32,34 @@ contract Operator is Governable {
         __Governable_init();
     }
 
-    function isOperator(address address_) public view returns (bool) {
-        return governor == address_ || _operators.contains(address_);
+    function isKeeper(address address_) public view returns (bool) {
+        return governor == address_ || _keepers.contains(address_);
     }
 
-    function operators() external view returns (address[] memory) {
-        return _operators.values();
+    function keepers() external view returns (address[] memory) {
+        return _keepers.values();
     }
 
     /**
-     * @notice onlyGovernor:: If given address is already a operator then remove operator else add as operator
-     * @param operatorAddress_ operator address to update.
+     * @notice onlyGovernor:: If given address is already a keeper then remove keeper else add as keeper
+     * @param keeperAddress_ keeper address to update.
      */
-    function updateOperator(address operatorAddress_) external onlyGovernor {
-        if (operatorAddress_ == address(0)) revert AddressIsNull();
+    function updateKeeper(address keeperAddress_) external onlyGovernor {
+        if (keeperAddress_ == address(0)) revert AddressIsNull();
 
-        if (_operators.contains(operatorAddress_)) {
-            _operators.remove(operatorAddress_);
+        if (_keepers.contains(keeperAddress_)) {
+            _keepers.remove(keeperAddress_);
         } else {
-            _operators.add(operatorAddress_);
+            _keepers.add(keeperAddress_);
         }
     }
 
     /**
-     * @notice onlyOperator:: Execute encoded function provided as data_ at target_ address.
+     * @notice onlyKeeper:: Execute encoded function provided as data_ at target_ address.
      * @param target_ Target address where function will be executed.
      * @param data_ Encoded function data to execute.
      */
-    function execute(address target_, bytes calldata data_) external payable onlyOperator returns (bytes memory) {
+    function execute(address target_, bytes calldata data_) external payable onlyKeeper returns (bytes memory) {
         // solhint-disable-next-line avoid-low-level-calls
         (bool _success, bytes memory _returnData) = target_.call{value: msg.value}(data_);
         if (_success) {

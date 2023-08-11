@@ -21,7 +21,7 @@
     "verify": "hardhat verify"
   },
   "devDependencies": {
-    "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/contracts": "4.8.2",
     "@openzeppelin/contracts-upgradeable": "4.8.2",
     "vesper-commons": "^1.0.0"
   }
