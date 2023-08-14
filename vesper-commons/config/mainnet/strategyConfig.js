@@ -2008,6 +2008,30 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Sommelier_ETH: {
+    contract: 'Sommelier',
+    type: StrategyTypes.SOMMELIER,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Sommelier.YieldETH,
+      strategyName: 'Sommelier_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Sommelier_USDC: {
+    contract: 'Sommelier',
+    type: StrategyTypes.SOMMELIER,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Sommelier.YieldUSD,
+      strategyName: 'Sommelier_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
