@@ -26,6 +26,6 @@ const deployContract = async function (hre, contractConfig) {
   })
 
   console.log('Verifying source code on etherscan')
-  await run('verify', { address: deployed.address, noCompile: true })
+  await run('verify', { address: deployed.implementation, noCompile: true })
 }
 module.exports = deployContract
