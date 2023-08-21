@@ -13,7 +13,14 @@
   "optimism": {
     "DefaultProxyAdmin": "0x5aDd2f7eBb50246CD8694da0fB106eEAca3312e0",
     "Keeper": "0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83",
+    "Keeper_Implementation": "0x2d306498A7fAaD3bF19aD8dec3584a7d3aD65dB5",
     "Keeper_Proxy": "0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83",
-    "Operator": "0x8eBe970BEEDfE7616A50DE707aD53199068261dC"
+    "Maintainer_Implementation": "0xB4317F54ED4623834ce6C12050E7CFBB212DC4BE",
+    "PoolKeeper": "0x68c80d3d6567B5998F78aC0c81467D5d4A82E781",
+    "PoolKeeper_Proxy": "0x68c80d3d6567B5998F78aC0c81467D5d4A82E781",
+    "PoolMaintainer": "0x8Db4A31683f0B8af64efe13C0D304da6fccFcE13",
+    "PoolMaintainer_Proxy": "0x8Db4A31683f0B8af64efe13C0D304da6fccFcE13",
+    "StrategyKeeper": "0xBC456C278EB11D26CB0912A8a2e1fd93c7c624EC",
+    "StrategyKeeper_Proxy": "0xBC456C278EB11D26CB0912A8a2e1fd93c7c624EC"
   }
 }
