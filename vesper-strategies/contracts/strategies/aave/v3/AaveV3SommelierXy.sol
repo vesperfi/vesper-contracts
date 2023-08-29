@@ -7,7 +7,7 @@ import "./AaveV3Xy.sol";
 import "../../sommelier/SommelierBase.sol";
 import "../../../interfaces/sommelier/ISommelier.sol";
 
-/// @title Deposit Collateral in Aave and earn interest by depositing borrowed token in a Vesper Pool.
+/// @title Deposit Collateral in Aave and earn yield by depositing borrowed token in a Sommelier Vault.
 contract AaveV3VSommelierXy is AaveV3Xy, SommelierBase {
     using SafeERC20 for IERC20;
 
@@ -23,7 +23,7 @@ contract AaveV3VSommelierXy is AaveV3Xy, SommelierBase {
         require(ICellar(_cellar).asset() == borrowToken, "invalid-sommelier-vault");
     }
 
-    /// @notice After borrowing Y, deposit to Vesper Pool
+    /// @dev After borrowing Y, deposit to Sommelier vault
     function _afterBorrowY(uint256 _amount) internal virtual override {
         _depositInSommelier(_amount);
     }
@@ -34,23 +34,18 @@ contract AaveV3VSommelierXy is AaveV3Xy, SommelierBase {
         IERC20(borrowToken).safeApprove(address(cellar), _amount);
     }
 
-    /// @notice Before repaying Y, withdraw it from Vesper Pool
+    /// @dev Before repaying Y, withdraw it from Sommelier vault
+
     function _beforeRepayY(uint256 _amount) internal virtual override {
         _withdrawFromSommelier(_amount);
     }
 
-    /// @dev Claim all rewards and convert to collateral.
-    function _claimAndSwapRewards() internal override {
-        // Claim rewards from Aave
-        AaveV3Xy._claimAndSwapRewards();
-    }
-
-    /// @notice Borrowed Y balance deposited in Vesper Pool
+    /// @notice Borrowed Y balance deposited in Sommelier vault
     function _getInvestedBorrowBalance() internal view virtual override returns (uint256) {
         return _getAssetsInSommelier();
     }
 
-    /// @notice Swap excess borrow for more wrappedCollateral when underlying vPool is making profits
+    /// @dev Swap excess borrow for more collateral when underlying Sommelier vault is making profits
     function _rebalanceBorrow(uint256 _excessBorrow) internal virtual override {
         if (_excessBorrow > 0) {
             _withdrawFromSommelier(_excessBorrow);
