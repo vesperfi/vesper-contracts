@@ -8,7 +8,6 @@ const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('./balance')
 const { getChain } = require('./chains')
 const { unlock, executeIfExist, getStrategyToken, getIfExist } = require('./setup')
-const StrategyType = require('./strategyTypes')
 const address = require(`../config/${getChain()}/address`)
 
 /**
@@ -125,12 +124,16 @@ async function totalDebtOfAllStrategy(strategies, pool) {
  * @param {object} strategy - strategy object
  */
 async function increaseTimeIfNeeded(strategy) {
-  if (strategy.type === StrategyType.SOMMELIER) {
+  if (strategy.type.toLowerCase().includes('sommelier')) {
     const cellarAbi = [
       'function setShareLockPeriod(uint256) external',
       'function owner() external view returns(address)',
     ]
-    const cellar = await ethers.getContractAt(cellarAbi, await strategy.instance.receiptToken())
+    const sommelierStrategy = await ethers.getContractAt(
+      ['function cellar() external view returns(address)'],
+      strategy.instance.address,
+    )
+    const cellar = await ethers.getContractAt(cellarAbi, await sommelierStrategy.cellar())
     const cellarSigner = await unlock(await cellar.owner())
 
     // Sommelier uses priceOracle for almost all operations.
