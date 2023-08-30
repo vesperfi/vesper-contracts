@@ -34,6 +34,7 @@ import "vesper-strategies/contracts/strategies/compound/CompoundVesperXy.sol";
 import "vesper-strategies/contracts/strategies/compound/avalanche/BenqiAVAX.sol";
 import "vesper-strategies/contracts/strategies/stargate/StargateETH.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperXy.sol";
+import "vesper-strategies/contracts/strategies/aave/v3/AaveV3SommelierXy.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperStETH.sol";
 import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";
 import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3.sol";

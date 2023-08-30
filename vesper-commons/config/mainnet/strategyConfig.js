@@ -226,8 +226,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveV3_Vesper_Xy_CBETH_WETH: {
-    contract: 'AaveV3VSommelierXy',
+  AaveV3_Sommelier_Xy_CBETH_WETH: {
+    contract: 'AaveV3SommelierXy',
     type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
     constructorArgs: {
       swapper,

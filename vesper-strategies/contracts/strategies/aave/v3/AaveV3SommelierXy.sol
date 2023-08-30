@@ -8,7 +8,7 @@ import "../../sommelier/SommelierBase.sol";
 import "../../../interfaces/sommelier/ISommelier.sol";
 
 /// @title Deposit Collateral in Aave and earn yield by depositing borrowed token in a Sommelier Vault.
-contract AaveV3VSommelierXy is AaveV3Xy, SommelierBase {
+contract AaveV3SommelierXy is AaveV3Xy, SommelierBase {
     using SafeERC20 for IERC20;
 
     constructor(
