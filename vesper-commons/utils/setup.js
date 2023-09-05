@@ -555,7 +555,7 @@ async function setupVPool(obj, poolData, options = {}) {
     const collateralTokenAddress = await obj.pool.token()
 
     // Do not configure new swapper
-    if (chain !== 'optimism' && (await obj.strategies[0].instance.swapper()) !== Address.Vesper.newSwapper) {
+    if (chain !== 'optimism' && (await obj.strategies[0].instance.swapper()) !== Address.Vesper.Swapper) {
       await configureSwapper(obj.strategies, collateralTokenAddress)
     }
     await configureOracles(obj.strategies)
