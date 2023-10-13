@@ -8,8 +8,8 @@ import "../../interfaces/stargate/IStargateFactory.sol";
 import "../../interfaces/stargate/IStargateLpStaking.sol";
 import "../Strategy.sol";
 
-/// @title This Strategy will deposit collateral token in a Stargate Pool
-/// Stake LP Token and accrue swap rewards
+/// @title This Strategy will deposit collateral token in a Stargate Pool to yearn yield.
+/// Stake LP token to accrue rewards.
 contract Stargate is Strategy {
     using SafeERC20 for IERC20;
     using SafeERC20 for IStargatePool;
@@ -25,7 +25,7 @@ contract Stargate is Strategy {
     /// @notice Stargate Factory LP Pool Id
     uint256 public immutable stargatePoolId;
 
-    /// @notice rewardToken, usually STG
+    /// @notice rewardToken
     address public immutable rewardToken;
 
     IStargatePool internal immutable stargateLp;
@@ -54,7 +54,7 @@ contract Stargate is Strategy {
         stargateLp = stargateLp_;
         stargatePoolId = stargatePoolId_;
         stargateLpStakingPoolId = stargateLpStakingPoolId_; // can be 0
-        rewardToken = stargateLpStaking.stargate();
+        rewardToken = _getRewardToken(stargateLpStaking_);
         NAME = name_;
     }
 
@@ -66,7 +66,7 @@ contract Stargate is Strategy {
         (_lpAmountStaked, ) = stargateLpStaking.userInfo(stargateLpStakingPoolId, address(this));
     }
 
-    function pendingStargate() external view returns (uint256 _pendingStargate) {
+    function pendingRewards() external view virtual returns (uint256) {
         return stargateLpStaking.pendingStargate(stargateLpStakingPoolId, address(this));
     }
 
@@ -101,6 +101,7 @@ contract Stargate is Strategy {
     }
 
     /// @dev Converts a collateral amount in its relative shares of STG LP Token
+    /// Collateral is called as LD, so this function is basically convertLDtoLP
     function _convertToLpShares(uint256 collateralAmount_) internal view returns (uint256) {
         uint256 _totalLiquidity = stargateLp.totalLiquidity();
         // amount SD = _collateralAmount / stargateLp.convertRate()
@@ -137,6 +138,10 @@ contract Stargate is Strategy {
             return stargateLp.balanceOf(address(this));
         }
         return _lpRequired;
+    }
+
+    function _getRewardToken(IStargateLpStaking stargateLpStaking_) internal view virtual returns (address) {
+        return stargateLpStaking_.stargate();
     }
 
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
