@@ -86,6 +86,9 @@ module.exports = {
       accounts,
     },
   },
+  paths: {
+    deploy: ['deploy/scripts'],
+  },
   namedAccounts: {
     deployer: process.env.DEPLOYER || 0,
   },
