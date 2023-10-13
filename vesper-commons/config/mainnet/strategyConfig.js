@@ -226,8 +226,8 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  AaveV3_Vesper_Xy_CBETH_WETH: {
-    contract: 'AaveV3VSommelierXy',
+  AaveV3_Sommelier_Xy_CBETH_WETH: {
+    contract: 'AaveV3SommelierXy',
     type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
     constructorArgs: {
       swapper: oldSwapper,
@@ -236,6 +236,21 @@ const StrategyConfig = {
       aaveAddressProvider: Address.Aave.V3.AddressProvider,
       cellar: Address.Sommelier.YieldETH,
       strategyName: 'AaveV3_Sommelier_Xy_CBETH_WETH',
+    },
+    config: { ...config }, // Shallow copy
+    setup: { ...setup },
+  },
+
+  AaveV3_Sommelier_Xy_RETH_WETH: {
+    contract: 'AaveV3SommelierXy',
+    type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthrETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      cellar: Address.Sommelier.YieldETH,
+      strategyName: 'AaveV3_Sommelier_Xy_RETH_WETH',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
