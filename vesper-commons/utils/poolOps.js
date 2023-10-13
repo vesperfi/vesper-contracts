@@ -124,6 +124,23 @@ async function totalDebtOfAllStrategy(strategies, pool) {
  * @param {object} strategy - strategy object
  */
 async function increaseTimeIfNeeded(strategy) {
+  if (strategy.type.toLowerCase().includes('sommelier')) {
+    const cellarAbi = [
+      'function setShareLockPeriod(uint256) external',
+      'function owner() external view returns(address)',
+    ]
+    const sommelierStrategy = await ethers.getContractAt(
+      ['function cellar() external view returns(address)'],
+      strategy.instance.address,
+    )
+    const cellar = await ethers.getContractAt(cellarAbi, await sommelierStrategy.cellar())
+    const cellarSigner = await unlock(await cellar.owner())
+
+    // Sommelier uses priceOracle for almost all operations.
+    // If unlock time is large enough to make price stale then all ops will fail.
+    // Hence set small amount of time. Sommelier has minimum 5 minutes lock.
+    await cellar.connect(cellarSigner).setShareLockPeriod(5 * 60)
+  }
   const unlockTime = await getIfExist(strategy.instance.unlockTime)
   if (unlockTime && unlockTime.gt(await time.latest())) {
     await time.increaseTo(unlockTime)

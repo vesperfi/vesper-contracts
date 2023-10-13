@@ -33,12 +33,14 @@ const StrategyType = {
   COMPOUNDV3: 'compoundV3',
   COMPOUNDV3_VESPER_XY: 'compoundV3VesperXY',
   AAVE_V3_VESPER_XY: 'aaveV3VesperXy',
+  AAVE_V3_SOMMELIER_XY: 'aaveV3SommelierXy',
   ELLIPSIS: 'ellipsis',
   DOT_DOT: 'dotDot',
   WOMBAT: 'wombat',
   ALPACA: 'alpaca',
   FRAX_LEND: 'fraxLend',
   FRAX_LEND_VESPER_XY: 'fraxLendVesperXY',
+  SOMMELIER: 'sommelier',
 }
 
 module.exports = Object.freeze(StrategyType)

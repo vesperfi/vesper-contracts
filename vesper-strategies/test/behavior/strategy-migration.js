@@ -25,7 +25,7 @@ async function shouldMigrateStrategies() {
     const tvlBefore = await oldStrategy.instance.tvl()
     const strategyConfigBefore = await pool.strategy(oldStrategy.instance.address)
     const type = oldStrategy.type.toLowerCase()
-    if (type.includes('vesper') && type.includes('xy')) {
+    if (type.includes('xy')) {
       const borrowToken = await ethers.getContractAt('ERC20', await oldStrategy.instance.borrowToken())
       await makeStrategyProfitable(oldStrategy.instance, borrowToken)
     }
