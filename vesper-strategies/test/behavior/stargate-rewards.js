@@ -18,16 +18,16 @@ function shouldTestStargateRewards(strategyIndex) {
       collateralToken = this.collateralToken
     })
 
-    it('Should swap STG rewards when claimed by external source', async function () {
-      const stg = await ethers.getContractAt('ERC20', await strategy.rewardToken(), user1)
+    it('Should swap rewardToken when claimed by external source', async function () {
+      const rewardToken = await ethers.getContractAt('ERC20', await strategy.rewardToken(), user1)
       await deposit(pool, collateralToken, 10, user1)
       await strategy.rebalance()
-      // Get some STG at strategy address
-      await adjustBalance(stg.address, strategy.address, ethers.utils.parseEther('10'))
-      expect(await stg.balanceOf(strategy.address)).gt(0)
+      // Get some rewardToken at strategy address
+      await adjustBalance(rewardToken.address, strategy.address, ethers.utils.parseEther('10'))
+      expect(await rewardToken.balanceOf(strategy.address)).gt(0)
       const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
       await strategy.claimAndSwapRewards(amountOut)
-      expect(await stg.balanceOf(strategy.address)).eq(0)
+      expect(await rewardToken.balanceOf(strategy.address)).eq(0)
     })
   })
 }
