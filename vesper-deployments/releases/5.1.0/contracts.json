@@ -1041,6 +1041,7 @@
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
           "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA",
+          "Stargate_ETH": "0xAf71624A448983d100645aF716a9fbfcb0DE463a",
           "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
       },
@@ -1065,6 +1066,7 @@
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544",
           "Sonne_Leverage_USDC": "0x2eeFbB883B6a1B64a75B2aA18cD4DfBE19E684a3",
           "Sonne_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
+          "Stargate_USDC": "0xB94d9d323e9432C55bDc588541bEd764e2b8D20a",
           "Yearn_USDC": "0x7CB59d76EEDeBD0889c851C82a8498150a1651fd"
         }
       },
