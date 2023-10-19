@@ -12,6 +12,9 @@ import "../../AaveFlashLoanHelper.sol";
 contract SonneLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     using SafeERC20 for IERC20;
 
+    // @dev Sonne may provide OP token as rewards too
+    address internal constant OP = 0x4200000000000000000000000000000000000042;
+
     constructor(
         address _pool,
         address _swapManager,
@@ -32,14 +35,26 @@ contract SonneLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         AaveFlashLoanHelper._approveToken(address(collateralToken), _amount);
+        IERC20(OP).safeApprove(address(swapper), _amount);
     }
 
-    /// @notice Claim comp
-    function _claimRewards() internal override returns (address, uint256) {
+    /**
+     * @dev Claim and swap COMP and OP rewards
+     */
+    function _claimAndSwapRewards() internal virtual override {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
         comptroller.claimComp(address(this), _markets);
-        return (rewardToken, IERC20(rewardToken).balanceOf(address(this)));
+
+        uint256 _amountIn = IERC20(rewardToken).balanceOf(address(this));
+        if (_amountIn > 0) {
+            _safeSwapExactInput(rewardToken, address(collateralToken), _amountIn);
+        }
+
+        uint256 _opAmountIn = IERC20(OP).balanceOf(address(this));
+        if (_opAmountIn > 0) {
+            _safeSwapExactInput(OP, address(collateralToken), _opAmountIn);
+        }
     }
 
     /**
