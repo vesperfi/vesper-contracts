@@ -2062,6 +2062,43 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Morpho_Aave_USDC: {
+    contract: 'MorphoAave',
+    type: StrategyTypes.MORPHO,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.maUSDC,
+      strategyName: 'Morpho_Aave_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Morpho_AaveV3_WETH: {
+    contract: 'MorphoAave',
+    type: StrategyTypes.MORPHO,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.ma3WETH,
+      strategyName: 'Morpho_AaveV3_WETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  Morpho_Compound_USDC: {
+    contract: 'MorphoCompound',
+    type: StrategyTypes.MORPHO,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.mcUSDC,
+      comp: Address.Compound.COMP,
+      strategyName: 'Morpho_Compound_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
