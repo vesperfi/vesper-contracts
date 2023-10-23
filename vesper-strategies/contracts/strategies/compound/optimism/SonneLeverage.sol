@@ -35,25 +35,34 @@ contract SonneLeverage is CompoundLeverageBase, AaveFlashLoanHelper {
     function _approveToken(uint256 _amount) internal virtual override {
         super._approveToken(_amount);
         AaveFlashLoanHelper._approveToken(address(collateralToken), _amount);
-        IERC20(OP).safeApprove(address(swapper), _amount);
+        if (OP != address(collateralToken)) {
+            IERC20(OP).safeApprove(address(swapper), _amount);
+        }
     }
 
     /**
-     * @dev Claim and swap COMP and OP rewards
+     * @dev Claim and swap rewardsToken and OP rewards
      */
     function _claimAndSwapRewards() internal virtual override {
         address[] memory _markets = new address[](1);
         _markets[0] = address(cToken);
         comptroller.claimComp(address(this), _markets);
+        // Saving gas by reading once
+        address _rewardToken = rewardToken;
+        address _collateralToken = address(collateralToken);
 
-        uint256 _amountIn = IERC20(rewardToken).balanceOf(address(this));
-        if (_amountIn > 0) {
-            _safeSwapExactInput(rewardToken, address(collateralToken), _amountIn);
+        if (_rewardToken != _collateralToken) {
+            uint256 _amountIn = IERC20(_rewardToken).balanceOf(address(this));
+            if (_amountIn > 0) {
+                _safeSwapExactInput(_rewardToken, _collateralToken, _amountIn);
+            }
         }
 
-        uint256 _opAmountIn = IERC20(OP).balanceOf(address(this));
-        if (_opAmountIn > 0) {
-            _safeSwapExactInput(OP, address(collateralToken), _opAmountIn);
+        if (OP != _collateralToken) {
+            uint256 _opAmountIn = IERC20(OP).balanceOf(address(this));
+            if (_opAmountIn > 0) {
+                _safeSwapExactInput(OP, _collateralToken, _opAmountIn);
+            }
         }
     }
 
