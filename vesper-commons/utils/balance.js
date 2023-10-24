@@ -63,6 +63,7 @@ const slots = {
   [OptimismAddress.Curve.CRV]: 0,
   [OptimismAddress.USDC]: 0,
   [OptimismAddress.OP]: 0,
+  [OptimismAddress.Sonne.SONNE]: 0,
 }
 
 // Some tokens, specially rebase tokens, uses dynamic storage or multi storage hence

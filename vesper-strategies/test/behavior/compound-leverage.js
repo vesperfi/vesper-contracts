@@ -6,6 +6,7 @@ const { mine } = require('@nomicfoundation/hardhat-network-helpers')
 const { getStrategyToken, executeIfExist, getIfExist } = require('vesper-commons/utils/setup')
 const { deposit, makeStrategyProfitable } = require('vesper-commons/utils/poolOps')
 const { getChain } = require('vesper-commons/utils/chains')
+const { adjustBalance } = require('vesper-commons/utils/balance')
 const chain = getChain()
 const address = require(`vesper-commons/config/${chain}/address`)
 
@@ -44,7 +45,7 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
 
   async function rewardAccrued() {
     let outcome
-    if (getChain() === 'mainnet') {
+    if (getChain() === 'mainnet' || getChain() === 'optimism') {
       const comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
       return comptroller.compAccrued(strategy.address)
     } else if (chain === 'avalanche') {
@@ -296,6 +297,30 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
       if (chain === 'avalanche') {
         const avaxBalance = await ethers.provider.getBalance(strategy.address)
         expect(avaxBalance, 'Avax balance should be zero').to.eq('0')
+      }
+    })
+
+    it('Should liquidate optional rewards too', async function () {
+      if (chain === 'optimism') {
+        const rewardToken = await ethers.getContractAt('IERC20', await strategy.rewardToken())
+        const opToken = await ethers.getContractAt('IERC20', address.OP)
+        await deposit(pool, collateralToken, 20, user2)
+        await strategy.connect(governor).rebalance()
+
+        const rewardAmount = ethers.utils.parseEther('100')
+        await adjustBalance(rewardToken.address, strategy.address, rewardAmount)
+        expect(await rewardToken.balanceOf(strategy.address), 'Reward balance should be > 0').to.gt(0)
+
+        await adjustBalance(opToken.address, strategy.address, rewardAmount)
+        expect(await opToken.balanceOf(strategy.address), 'OP balance should be > 0').to.gt(0)
+
+        await token.exchangeRateCurrent()
+        const amountOut = await strategy.callStatic.claimAndSwapRewards(1)
+        await strategy.claimAndSwapRewards(amountOut)
+        await strategy.connect(governor).rebalance()
+
+        expect(await rewardToken.balanceOf(strategy.address), 'Reward balance should be zero').to.eq('0')
+        expect(await opToken.balanceOf(strategy.address), 'OP balance should be zero').to.eq('0')
       }
     })
 
