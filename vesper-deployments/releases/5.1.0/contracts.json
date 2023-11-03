@@ -627,6 +627,7 @@
           "ConvexForFrax_eusdfraxbp_USDC": "0x7808Ae59f227b8fecEC98000112a67534cea0F1b",
           "ConvexForFrax_fraxusdc_USDC": "0x003ce696B826969734C0b62aE45F85Db3CFF2fBc",
           "Convex_dolafraxbp_USDC": "0x464682819c159604C16cbD78b39A24c32D6a13eA",
+          "Morpho_AaveV2_USDC": "0xA58126E7541e3870535A17A839C55dCBe4fc13bd",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
           "Stargate_USDC": "0xE27e8095B33FBCBB480AAC5E6e6dA94FbAf2965B"
