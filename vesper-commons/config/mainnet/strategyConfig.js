@@ -2063,13 +2063,13 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Morpho_Aave_USDC: {
+  Morpho_AaveV2_USDC: {
     contract: 'MorphoAave',
     type: StrategyTypes.MORPHO,
     constructorArgs: {
       swapper,
       receiptToken: Address.Morpho.maUSDC,
-      strategyName: 'Morpho_Aave_USDC',
+      strategyName: 'Morpho_AaveV2_USDC',
     },
     config: { ...config },
     setup: { ...setup },
