@@ -128,6 +128,30 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  ExtraFinance_ETH: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.ExtraFinance.eWETH,
+      reserveId: 1,
+      strategyName: 'ExtraFinance_ETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+  ExtraFinance_USDC: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.ExtraFinance.eUSDC,
+      reserveId: 2,
+      strategyName: 'ExtraFinance_USDC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Sonne_ETH: {
     contract: 'Sonne',
     type: StrategyTypes.COMPOUND,
