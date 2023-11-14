@@ -219,8 +219,6 @@ async function configureSwapper(strategies, collateral) {
       (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
     if (rewardToken) {
       pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
-    } else if (chain === 'mainnet' && strategyName.includes('Alpha')) {
-      pairs.push({ tokenIn: Address.Alpha.ALPHA, tokenOut: collateral })
     }
 
     if (strategyName.includes('AaveV3')) {
