@@ -31,7 +31,6 @@ contract RevenueSplitter is Governable {
     // events
     event PayeeAdded(address indexed payee, uint256 share);
     event PaymentReleased(address indexed payee, address indexed asset, uint256 tokens);
-    event PartnerPaymentTransferred(address indexed partner, address indexed asset, uint256 amount);
     event VTokenAdded(address indexed vToken, address indexed oracle);
     event VTokenRemoved(address indexed vToken, address indexed oracle);
 
@@ -78,6 +77,14 @@ contract RevenueSplitter is Governable {
 
     //solhint-disable no-empty-blocks
     receive() external payable override {}
+
+    function getPayees() external view returns (address[] memory) {
+        return payees;
+    }
+
+    function getVTokens() external view returns (address[] memory) {
+        return vTokens;
+    }
 
     /**
      * @dev Transfer of ERC20 token(s) to `payee` based on share and their previous withdrawals.
@@ -263,13 +270,5 @@ contract RevenueSplitter is Governable {
         } else {
             isTopUpEnabled = true;
         }
-    }
-
-    /// @notice Transfer _asset to _partner address
-    function transfer(address _asset, address _partner, uint256 _amount) public onlyGovernor {
-        require(_partner != address(0), "partner-is-zero-address");
-        require(_amount > 0, "incorrect-amount");
-        IERC20(_asset).safeTransfer(_partner, _amount);
-        emit PartnerPaymentTransferred(_partner, _asset, _amount);
     }
 }

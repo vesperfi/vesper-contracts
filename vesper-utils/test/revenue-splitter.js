@@ -963,48 +963,17 @@ describe('RevenueSplitter', function () {
         expect(await psContract.isTopUpEnabled()).to.be.equal(false)
       })
 
-      it('should transfer partial payment to partner address', async function () {
-        const transferAmount = BN.from(asset1Amount).div(2)
-        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)
-        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount, 'partial payment to partner failed')
+      it('should allow sweep if caller is governor', async function () {
+        const sweepAmount = BN.from(asset1Amount)
+        await psContract.sweep(vaETH.address, VESPER_DEPLOYER, sweepAmount)
+        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(sweepAmount, 'sweep failed')
       })
 
-      it('should transfer full payment to partner address', async function () {
-        const transferAmount = BN.from(asset1Amount)
-        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)
-        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount, 'full payment to partner failed')
-      })
-
-      it('should be able to transfer multiple vesper tokens', async function () {
-        const transferAmount1 = BN.from(asset1Amount).div(3)
-        await psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount1)
-        expect(await vaETH.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount1, 'vaETH payment to partner failed')
-
-        const transferAmount2 = BN.from(asset2Amount).div(3)
-        await psContract.transfer(vaWBTC.address, VESPER_DEPLOYER, transferAmount2)
-        expect(await vaWBTC.balanceOf(VESPER_DEPLOYER)).to.be.eq(transferAmount2, 'vaWBTC payment to partner failed')
-      })
-
-      it('should not transfer zero amount', async function () {
-        await expect(psContract.transfer(vaETH.address, VESPER_DEPLOYER, 0)).to.be.revertedWith('incorrect-amount')
-      })
-
-      it('should not transfer to zero address', async function () {
-        await expect(psContract.transfer(vaETH.address, ZERO_ADDRESS, 0)).to.be.revertedWith('partner-is-zero-address')
-      })
-
-      it('should not allow transfer using non-governor', async function () {
-        const transferAmount = BN.from(asset1Amount).div(2)
+      it('should not allow sweep using non-governor', async function () {
+        const sweepAmount = BN.from(asset1Amount).div(2)
         await expect(
-          psContract.connect(user6).transfer(vaETH.address, VESPER_DEPLOYER, transferAmount),
+          psContract.connect(user6).sweep(vaETH.address, VESPER_DEPLOYER, sweepAmount),
         ).to.be.revertedWithCustomError(psContract, 'SenderIsNotGovernor')
-      })
-
-      it('should not transfer more than available balance', async function () {
-        const transferAmount = BN.from(asset1Amount).mul(2)
-        await expect(psContract.transfer(vaETH.address, VESPER_DEPLOYER, transferAmount)).to.be.revertedWith(
-          'ERC20: transfer amount exceeds balance',
-        )
       })
     })
   })
