@@ -84,32 +84,6 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
-  Vesper_Earn_DAI_WETH: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Vesper.vDAI,
-      dripToken: Address.WETH,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_WETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-  Vesper_Earn_DAI_WBTC: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapManager,
-      receiptToken: Address.Vesper.vDAI,
-      dripToken: Address.WBTC,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_WBTC',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
