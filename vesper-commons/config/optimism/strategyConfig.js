@@ -133,7 +133,7 @@ const StrategyConfig = {
     type: StrategyTypes.EXTRA_FINANCE,
     constructorArgs: {
       swapper,
-      receiptToken: Address.ExtraFinance.eWETH,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
       reserveId: 1,
       strategyName: 'ExtraFinance_ETH',
     },
@@ -145,7 +145,7 @@ const StrategyConfig = {
     type: StrategyTypes.EXTRA_FINANCE,
     constructorArgs: {
       swapper,
-      receiptToken: Address.ExtraFinance.eUSDC,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
       reserveId: 2,
       strategyName: 'ExtraFinance_USDC',
     },

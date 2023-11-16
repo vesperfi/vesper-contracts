@@ -16,33 +16,42 @@ contract ExtraFinance is Strategy {
     string public NAME;
     string public constant VERSION = "5.1.0";
 
-    IEToken internal immutable eToken;
-    uint256 public immutable reserveId;
     ILendingPool public immutable lendingPool;
+
+    uint256 public reserveId;
+    IStakingRewards public staking;
     address[] public rewardTokens;
-    IStakingRewards public immutable staking;
 
     constructor(
         address _pool,
         address _swapper,
-        address _receiptToken,
+        address _lendingPool,
         uint256 _reserveId,
         string memory _name
-    ) Strategy(_pool, _swapper, _receiptToken) {
+    ) Strategy(_pool, _swapper, address(0)) {
+        lendingPool = ILendingPool(_lendingPool);
+        _setReserve(_reserveId);
+        NAME = _name;
+    }
+
+    function _setReserve(uint256 _reserveId) private {
+        address _receiptToken = lendingPool.getETokenAddress(_reserveId);
         require(_receiptToken != address(0), "eToken-address-is-zero");
-        eToken = IEToken(_receiptToken);
-        lendingPool = ILendingPool(eToken.lendingPool());
-        require(address(eToken) == lendingPool.reserves(_reserveId).eTokenAddress, "invalid-receipt-token");
+        require(IEToken(_receiptToken).lendingPool() == address(lendingPool), "invalid-lending-pool");
+        receiptToken = _receiptToken;
         staking = IStakingRewards(lendingPool.getStakingAddress(_reserveId));
         require(address(staking) != address(0), "staking-address-is-zero");
         reserveId = _reserveId;
-        NAME = _name;
         rewardTokens = _getRewardTokens();
+    }
+
+    function eToken() public view returns (address) {
+        return receiptToken;
     }
 
     /// @inheritdoc Strategy
     function isReservedToken(address _token) public view virtual override returns (bool) {
-        return _token == address(eToken);
+        return _token == address(receiptToken);
     }
 
     /// @inheritdoc Strategy
@@ -149,7 +158,7 @@ contract ExtraFinance is Strategy {
         // Get minimum of requested amount and available collateral
         _collateralAmount = Math.min(
             _collateralAmount,
-            Math.min(_invested(), collateralToken.balanceOf(address(eToken)))
+            Math.min(_invested(), collateralToken.balanceOf(address(receiptToken)))
         );
 
         uint256 _eTokenAmount = _convertToReceiptToken(_collateralAmount);
@@ -164,13 +173,30 @@ contract ExtraFinance is Strategy {
      ***********************************************************************************************/
 
     /// @notice Rewards token can be updated any time. This method refresh list.
-    function refetchRewardTokens(uint256 _amountOutMin) external virtual onlyGovernor {
+    function refetchRewardTokens(uint256 _claimInCollateralAmountMin) external virtual onlyGovernor {
         // Claim rewards before updating the reward list.
         uint256 _before = collateralToken.balanceOf(address(this));
         _claimAndSwapRewards();
-        require(collateralToken.balanceOf(address(this)) - _before >= _amountOutMin, "slippage-too-high");
+        require(collateralToken.balanceOf(address(this)) - _before >= _claimInCollateralAmountMin, "slippage-too-high");
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
+    }
+
+    function migrateReserve(uint256 _newReserveId, uint256 _claimInCollateralAmountMin) external onlyGovernor {
+        uint256 _before = collateralToken.balanceOf(address(this));
+        _claimAndSwapRewards();
+        require(collateralToken.balanceOf(address(this)) - _before >= _claimInCollateralAmountMin, "slippage-too-high");
+
+        // Note: Reverts if reserve hasn't enough available liquidity
+        lendingPool.unStakeAndWithdraw(reserveId, _convertToReceiptToken(_invested()), address(this), false);
+
+        _setReserve(_newReserveId);
+
+        rewardTokens = _getRewardTokens();
+        _approveToken(0);
+        _approveToken(MAX_UINT_VALUE);
+
+        _deposit(collateralToken.balanceOf(address(this)));
     }
 }
