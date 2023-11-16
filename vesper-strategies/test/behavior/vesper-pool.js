@@ -16,13 +16,10 @@ const expect = chai.expect
 const { BigNumber } = require('ethers')
 const { ethers } = require('hardhat')
 const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
-const { getChain } = require('vesper-commons/utils/chains')
-const StrategyType = require('vesper-commons/utils/strategyTypes')
-const { NATIVE_TOKEN, Vesper } = require(`vesper-commons/config/${getChain()}/address`)
 
 const MAX_BPS = BigNumber.from('10000')
 
-async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false) {
+async function shouldBehaveLikePool(poolName, collateralName) {
   let pool, strategies, collateralToken, collateralDecimal, accountant
   let user1, user2, user3, user4
 
@@ -208,33 +205,17 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
     })
 
     describe(`Price per share of ${poolName} pool`, function () {
-      if (isEarnPool) {
-        it('Should not increase pool value', async function () {
-          await deposit(50, user1)
-          await rebalance(strategies)
-          // Curve strategy takes a loss initially hence taking value after 1st rebalance
-          const value1 = await pool.totalValue()
-          // Time travel to generate earning
-          await time.increase(30 * 24 * 60 * 60)
-          await mine(500)
-          await rebalance(strategies)
-          await rebalance(strategies)
-          const value2 = await pool.totalValue()
-          expect(value2).to.be.eq(value1, `${poolName} Pool value should not increase`)
-        })
-      } else {
-        it('Should increase pool value', async function () {
-          await deposit(50, user1)
-          await rebalance(strategies)
-          // some strategies are loss making so lets make strategy profitable by sending token
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          const value1 = await pool.totalValue()
-          // Time travel to generate earning
-          await rebalance(strategies)
-          const value2 = await pool.totalValue()
-          expect(value2).to.be.gt(value1, `${poolName} Pool value should increase`)
-        })
-      }
+      it('Should increase pool value', async function () {
+        await deposit(50, user1)
+        await rebalance(strategies)
+        // some strategies are loss making so lets make strategy profitable by sending token
+        await makeStrategyProfitable(strategies[0].instance, collateralToken)
+        const value1 = await pool.totalValue()
+        // Time travel to generate earning
+        await rebalance(strategies)
+        const value2 = await pool.totalValue()
+        expect(value2).to.be.gt(value1, `${poolName} Pool value should increase`)
+      })
     })
 
     describe(`Universal fee in ${poolName} pool`, function () {
@@ -248,88 +229,54 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         secondsPerYear = await pool.ONE_YEAR()
         universalFee = await pool.universalFee()
       })
-      if (isEarnPool) {
-        it('Earn Pool:: Should collect universal fee on rebalance', async function () {
-          const earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          const dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          let rewardToken = dripToken
 
-          const growToken = await earnDrip.growToken()
-          if (growToken !== ethers.constants.AddressZero) {
-            rewardToken = await ethers.getContractAt('ERC20', growToken)
-          }
-          const feeCollector = strategies[0].feeCollector
-          const rewardBalanceBefore = await rewardToken.balanceOf(feeCollector)
-          const dripBalanceBefore = await dripToken.balanceOf(feeCollector)
-          const collateralBalanceBefore = await collateralToken.balanceOf(feeCollector)
+      it('Should collect universal fee on rebalance', async function () {
+        const feeCollector = await unlock(strategies[0].feeCollector)
+        const timeBetweenRebalance = 60 * 60
+        await rebalanceStrategy(strategies[0])
+        // Advance some block will help compound related strategy to earn some profit
+        await mine(300)
+        // Increase time before doing another rebalance
+        await time.increase(timeBetweenRebalance)
+        const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
+        await makeStrategyProfitable(strategies[0].instance, collateralToken)
+        const tx = await rebalanceStrategy(strategies[0])
+        const profit = (await getEvent(tx, accountant, 'EarningReported')).profit
+        let fee = universalFee.mul(timeBetweenRebalance).mul(totalDebt).div(secondsPerYear).div(MAX_BPS)
+        const maxFee = profit.mul(await pool.maxProfitAsFee()).div(MAX_BPS)
+        if (fee.gt(maxFee)) {
+          fee = maxFee
+        }
+        const vPoolBalance = await pool.balanceOf(feeCollector.address)
+        expect(vPoolBalance, 'Fee earned by FC should be > 0').to.gt(0)
+        await pool.connect(feeCollector).withdraw(vPoolBalance)
+        expect(await pool.balanceOf(feeCollector.address), `${poolName} balance of FC should be equal to 0`).to.eq(0)
+        const collateralBalance = await collateralToken.balanceOf(feeCollector.address)
+        expect(collateralBalance, 'Incorrect fee collected').to.gte(fee)
+      })
 
-          await deposit(20, user1)
-          await rebalance(strategies)
-          await makeStrategyProfitable(strategies[0].instance, dripToken)
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          await rebalance(strategies)
-
-          const rewardBalanceAfter = await rewardToken.balanceOf(feeCollector)
-          const dripBalanceAfter = await dripToken.balanceOf(feeCollector)
-          const collateralBalanceAfter = await collateralToken.balanceOf(feeCollector)
-          const type = strategies[0].type
-          if (dripToken.address === Vesper.VSP || type === StrategyType.EARN_MAKER) {
-            expect(dripBalanceAfter, 'Fee collected by FC is wrong').to.be.gt(dripBalanceBefore)
-          } else if (type === StrategyType.EARN_VESPER_MAKER) {
-            expect(rewardBalanceAfter, 'Fee collected by FC is wrong').to.be.gt(rewardBalanceBefore)
-          } else {
-            expect(collateralBalanceAfter, 'Fee collected by FC is wrong').to.be.gt(collateralBalanceBefore)
-          }
-        })
-      } else {
-        it('Should collect universal fee on rebalance', async function () {
-          const feeCollector = await unlock(strategies[0].feeCollector)
-          const timeBetweenRebalance = 60 * 60
-          await rebalanceStrategy(strategies[0])
-          // Advance some block will help compound related strategy to earn some profit
-          await mine(300)
-          // Increase time before doing another rebalance
-          await time.increase(timeBetweenRebalance)
-          const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          const tx = await rebalanceStrategy(strategies[0])
-          const profit = (await getEvent(tx, accountant, 'EarningReported')).profit
-          let fee = universalFee.mul(timeBetweenRebalance).mul(totalDebt).div(secondsPerYear).div(MAX_BPS)
-          const maxFee = profit.mul(await pool.maxProfitAsFee()).div(MAX_BPS)
-          if (fee.gt(maxFee)) {
-            fee = maxFee
-          }
-          const vPoolBalance = await pool.balanceOf(feeCollector.address)
-          expect(vPoolBalance, 'Fee earned by FC should be > 0').to.gt(0)
-          await pool.connect(feeCollector).withdraw(vPoolBalance)
-          expect(await pool.balanceOf(feeCollector.address), `${poolName} balance of FC should be equal to 0`).to.eq(0)
-          const collateralBalance = await collateralToken.balanceOf(feeCollector.address)
-          expect(collateralBalance, 'Incorrect fee collected').to.gte(fee)
-        })
-
-        it('Should collect universal fee equal to maxProfitAsFee', async function () {
-          const strategySigner = await unlock(strategies[0].instance.address)
-          // Manual and force report earning to get fund from pool
-          await pool.connect(strategySigner).reportEarning(0, 0, 0)
-          // Increase time
-          await time.increase(60 * 60)
-          // set universal fee super high.
-          await pool.updateUniversalFee('5000')
-          // Manual and force report earning with 1000 as profit
-          const profit = BigNumber.from(1000) // wei
-          // Actual fee calculation on TVL will be higher than profit/2 so final fee will be profit/2
-          const expectedFee = profit.mul(await pool.maxProfitAsFee()).div(MAX_BPS)
-          const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
-          // This will trigger fee calculation
-          const tx = pool.connect(strategySigner).reportEarning(profit, 0, 0)
-          await expect(tx).emit(pool, 'UniversalFeePaid').withArgs(totalDebt, 1000, expectedFee)
-          // feeAsShare is in 18 decimals, profit is in collateral decimals
-          const expectedFeeAsShare = ethers.utils.parseUnits(expectedFee.toString(), 18 - collateralDecimal)
-          const feeCollectorBalance = await pool.balanceOf(strategies[0].feeCollector)
-          // There is possibility that result is off by few wei
-          expect(feeCollectorBalance, 'Fee earned by FC is wrong').to.closeTo(expectedFeeAsShare, 5)
-        })
-      }
+      it('Should collect universal fee equal to maxProfitAsFee', async function () {
+        const strategySigner = await unlock(strategies[0].instance.address)
+        // Manual and force report earning to get fund from pool
+        await pool.connect(strategySigner).reportEarning(0, 0, 0)
+        // Increase time
+        await time.increase(60 * 60)
+        // set universal fee super high.
+        await pool.updateUniversalFee('5000')
+        // Manual and force report earning with 1000 as profit
+        const profit = BigNumber.from(1000) // wei
+        // Actual fee calculation on TVL will be higher than profit/2 so final fee will be profit/2
+        const expectedFee = profit.mul(await pool.maxProfitAsFee()).div(MAX_BPS)
+        const totalDebt = await accountant.totalDebtOf(strategies[0].instance.address)
+        // This will trigger fee calculation
+        const tx = pool.connect(strategySigner).reportEarning(profit, 0, 0)
+        await expect(tx).emit(pool, 'UniversalFeePaid').withArgs(totalDebt, 1000, expectedFee)
+        // feeAsShare is in 18 decimals, profit is in collateral decimals
+        const expectedFeeAsShare = ethers.utils.parseUnits(expectedFee.toString(), 18 - collateralDecimal)
+        const feeCollectorBalance = await pool.balanceOf(strategies[0].feeCollector)
+        // There is possibility that result is off by few wei
+        expect(feeCollectorBalance, 'Fee earned by FC is wrong').to.closeTo(expectedFeeAsShare, 5)
+      })
     })
 
     describe(`${poolName}: Should report earning correctly`, function () {
@@ -412,11 +359,7 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         await rebalance(strategies)
         const strategyParams = await pool.strategy(strategies[0].instance.address)
         const totalProfit = strategyParams._totalProfit
-        if (isEarnPool) {
-          expect(totalProfit).to.be.eq(0, `Total debt of strategy in ${poolName} is wrong`)
-        } else {
-          expect(totalProfit).to.be.gt(0, `Total debt of strategy in ${poolName} is wrong`)
-        }
+        expect(totalProfit).to.be.gt(0, `Total debt of strategy in ${poolName} is wrong`)
       })
     })
 
@@ -453,103 +396,6 @@ async function shouldBehaveLikePool(poolName, collateralName, isEarnPool = false
         expect(creditLimit).to.be.gt(0, `Credit limit of strategy in ${poolName} is wrong`)
       })
     })
-
-    if (isEarnPool) {
-      describe(`${poolName}: Earn specific tests`, function () {
-        let earnDrip, rewardToken, dripToken
-
-        beforeEach(async function () {
-          earnDrip = await ethers.getContractAt('IEarnDrip', await pool.poolRewards())
-          dripToken = await ethers.getContractAt('ERC20', strategies[0].constructorArgs.dripToken)
-          rewardToken = dripToken
-
-          const growToken = await earnDrip.growToken()
-          if (growToken !== ethers.constants.AddressZero) {
-            rewardToken = await ethers.getContractAt('ERC20', growToken)
-          }
-        })
-
-        it('Earn Pool should collect profits in rewardToken in drip contract', async function () {
-          const rewardTokenBalanceBefore = await rewardToken.balanceOf(earnDrip.address)
-          await deposit(20, user1)
-          await rebalance(strategies)
-          // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken)
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          await rebalance(strategies)
-          // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
-          // next rebalance, after 24 hours, will transfer those and drip as rewards
-          await time.increase(time.duration.days(1))
-          await rebalance(strategies)
-          const rewardTokenBalanceAfter = await rewardToken.balanceOf(earnDrip.address)
-
-          expect(rewardTokenBalanceAfter).to.be.gt(
-            rewardTokenBalanceBefore,
-            `rewardToken balance in ${poolName} is wrong`,
-          )
-        })
-
-        it('Users should collect profits in dripToken using claimReward', async function () {
-          await deposit(20, user1)
-
-          const dripTokenBalanceBefore =
-            dripToken.address === NATIVE_TOKEN
-              ? await ethers.provider.getBalance(user1.address)
-              : await dripToken.balanceOf(user1.address)
-
-          await rebalance(strategies)
-          // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken)
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          await rebalance(strategies)
-          // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
-          // next rebalance, after 24 hours, will transfer those and drip as rewards
-          await time.increase(time.duration.days(1))
-          await rebalance(strategies)
-          await earnDrip.claimReward(user1.address)
-          const dripTokenBalanceAfter =
-            dripToken.address === NATIVE_TOKEN
-              ? await ethers.provider.getBalance(user1.address)
-              : await dripToken.balanceOf(user1.address)
-          expect(dripTokenBalanceAfter).to.be.gt(dripTokenBalanceBefore, `dripToken balance in ${poolName} is wrong`)
-        })
-
-        it('Users should collect profits in dripToken on withdraw', async function () {
-          await deposit(50, user1)
-          await rebalance(strategies)
-          // Making 1 strategy profitable is enough, no need to loop over all strategies
-          await makeStrategyProfitable(strategies[0].instance, dripToken)
-          await makeStrategyProfitable(strategies[0].instance, collateralToken)
-          await rebalance(strategies)
-          // If VSP is drip token, then 1 rebalance will deposit VSP into vVSP  and then
-          // next rebalance, after 24 hours, will transfer those and drip as rewards
-          await time.increase(time.duration.days(1))
-          await rebalance(strategies)
-          const withdrawAmount = await pool.balanceOf(user1.address)
-
-          let dripTokenBalanceBefore =
-            dripToken.address === NATIVE_TOKEN
-              ? await ethers.provider.getBalance(user1.address)
-              : await dripToken.balanceOf(user1.address)
-
-          await time.increase(7 * 24 * 60 * 60)
-          await mine(500)
-
-          const withdrawTx = await (await pool.connect(user1).withdrawAndClaim(withdrawAmount)).wait()
-
-          if (dripToken.address === NATIVE_TOKEN) {
-            dripTokenBalanceBefore = dripTokenBalanceBefore.sub(withdrawTx.cumulativeGasUsed)
-          }
-
-          const dripTokenBalanceAfter =
-            dripToken.address === NATIVE_TOKEN
-              ? await ethers.provider.getBalance(user1.address)
-              : await dripToken.balanceOf(user1.address)
-
-          expect(dripTokenBalanceAfter).to.be.gt(dripTokenBalanceBefore, `dripToken balance in ${poolName} is wrong`)
-        })
-      })
-    }
   })
 }
 

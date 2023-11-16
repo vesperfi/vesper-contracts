@@ -299,19 +299,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Aave_Earn_ETH_DAI: {
-    contract: 'AaveEarn',
-    type: StrategyTypes.EARN_AAVE,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Aave.aWETH,
-      dripToken: Address.DAI,
-      strategyName: 'Aave_Earn_ETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Compound_DAI: {
     contract: 'Compound',
     type: StrategyTypes.COMPOUND,
@@ -421,36 +408,6 @@ const StrategyConfig = {
       rewardToken: Address.Drops.DOP,
       receiptToken: Address.Drops.dETH,
       strategyName: 'Drops_Compound_ETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Earn_ETH_DAI: {
-    contract: 'CompoundEarnETH',
-    type: StrategyTypes.EARN_COMPOUND,
-    constructorArgs: {
-      swapper: oldSwapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cETH,
-      dripToken: Address.DAI,
-      strategyName: 'Compound_Earn_ETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Compound_Earn_WBTC_DAI: {
-    contract: 'CompoundEarn',
-    type: StrategyTypes.EARN_COMPOUND,
-    constructorArgs: {
-      swapper: oldSwapper,
-      comptroller: Address.Compound.COMPTROLLER,
-      rewardToken: Address.Compound.COMP,
-      receiptToken: Address.Compound.cWBTC,
-      dripToken: Address.DAI,
-      strategyName: 'Compound_Earn_WBTC_DAI',
     },
     config: { ...config },
     setup: { ...setup },
@@ -1135,25 +1092,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Curve_Earn_sbtc_WBTC_DAI: {
-    contract: 'CurveEarn',
-    type: StrategyTypes.EARN_CURVE,
-    constructorArgs: {
-      crvPool: Address.Curve.SBTC_POOL,
-      curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
-      depositZap: ethers.constants.AddressZero,
-      crvToken: Address.Curve.CRV,
-      crvSlippage: 2500, // 25%
-      masterOracle,
-      swapper: oldSwapper,
-      collateralIdx: 1,
-      dripToken: Address.DAI,
-      strategyName: 'Curve_Earn_sbtc_WBTC_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Curve_mim_DAI: {
     contract: 'Curve',
     type: StrategyTypes.CURVE,
@@ -1475,230 +1413,6 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_C, highWater: 250, lowWater: 225 } },
   },
 
-  EarnAaveMakerStrategyETH_DAI: {
-    contract: 'EarnAaveMakerStrategy',
-    type: StrategyTypes.EARN_MAKER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Aave.aDAI,
-      collateralType: ethers.utils.formatBytes32String('ETH-C'),
-      dripToken: Address.DAI,
-      strategyName: 'EarnAaveMakerStrategyETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
-  },
-
-  EarnCompoundMakerStrategyETH_DAI: {
-    contract: 'EarnCompoundMakerStrategy',
-    type: StrategyTypes.EARN_MAKER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Compound.cDAI,
-      collateralType: ethers.utils.formatBytes32String('ETH-C'),
-      dripToken: Address.DAI,
-      strategyName: 'EarnCompoundMakerStrategyETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
-  },
-
-  EarnVesperMakerStrategyETH_DAI: {
-    contract: 'EarnVesperMakerStrategy',
-    type: StrategyTypes.EARN_VESPER_MAKER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      collateralType: ethers.utils.formatBytes32String('ETH-C'),
-      dripToken: Address.DAI,
-      strategyName: 'EarnVesperMakerStrategyETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_ETH_C, highWater: 250, lowWater: 225 } },
-  },
-
-  EarnVesperMakerStrategyLINK_DAI: {
-    contract: 'EarnVesperMakerStrategy',
-    type: StrategyTypes.EARN_VESPER_MAKER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      collateralType: ethers.utils.formatBytes32String('LINK-A'),
-      dripToken: Address.DAI,
-      strategyName: 'EarnVesperMakerStrategyLINK_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_LINK_A, highWater: 275, lowWater: 250 } },
-  },
-
-  EarnVesperMakerStrategyWBTC_DAI: {
-    contract: 'EarnVesperMakerStrategy',
-    type: StrategyTypes.EARN_VESPER_MAKER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      collateralType: ethers.utils.formatBytes32String('WBTC-A'),
-      dripToken: Address.DAI,
-      strategyName: 'EarnVesperMakerStrategyWBTC_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_A, highWater: 250, lowWater: 225 } },
-  },
-
-  Vesper_Earn_DAI_DPI: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.DPI,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_DPI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_LINK: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.LINK,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_LINK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_LINK_DAI: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaLINK,
-      dripToken: Address.DAI,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_LINK_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_SHIB: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.SHIB,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_SHIB',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_PUNK: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.PUNK,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_PUNK',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_USDC_LMR: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaUSDC,
-      dripToken: Address.LMR,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_USDC_LMR',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_VSP: {
-    contract: 'Vesper_Earn_VSPDrip',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.Vesper.VSP,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_VSP',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_WBTC: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.WBTC,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_WBTC',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_DAI_WETH: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaDAI,
-      dripToken: Address.WETH,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_DAI_WETH',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_ETH_DAI: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaETH,
-      dripToken: Address.DAI,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_ETH_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Vesper_Earn_WBTC_DAI: {
-    contract: 'VesperEarn',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaWBTC,
-      dripToken: Address.DAI,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_WBTC_DAI',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   YearnStrategyDAI: {
     contract: 'YearnStrategy',
     type: StrategyTypes.YEARN,
@@ -1788,20 +1502,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Vesper_Earn_FRAX_FRAXBP: {
-    contract: 'VesperEarnSaddleLp',
-    type: StrategyTypes.EARN_VESPER,
-    constructorArgs: {
-      saddlePool: Address.Saddle.FRAXBP_POOL,
-      swapper: oldSwapper,
-      receiptToken: Address.Vesper.vaFRAX,
-      dripToken: Address.Saddle.FRAXBP_LP,
-      vsp: Address.Vesper.VSP,
-      strategyName: 'Vesper_Earn_FRAX_FRAXBP',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
   Euler_ETH: {
     contract: 'Euler',
     type: StrategyTypes.EULER,
