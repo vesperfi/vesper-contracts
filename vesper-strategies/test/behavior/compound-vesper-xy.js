@@ -10,8 +10,10 @@ const { shouldTestCompoundRewards } = require('./compound-rewards')
 const { getChain } = require('vesper-commons/utils/chains')
 const Address = require('vesper-commons/utils/chains').getChainData().address
 
+const poolRewardsAbi = ['function periodFinish(address) external view returns(uint256)']
+
 async function simulateVesperPoolProfit(strategy) {
-  const vPool = await ethers.getContractAt('IVesperPool', await strategy.instance.vPool())
+  const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
   const collateralTokenAddress = await vPool.token()
   const collateralToken = await ethers.getContractAt('IERC20Metadata', collateralTokenAddress)
   const collateralDecimal = await collateralToken.decimals()
@@ -182,7 +184,7 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       await deposit(pool, collateralToken, 10, user1)
       await strategy.rebalance()
       const borrowBefore = await strategy.borrowBalance()
-      await simulateVesperPoolProfit(this.strategies[index])
+      await simulateVesperPoolProfit(strategy)
       expect(await strategy.borrowBalance()).to.be.gt(borrowBefore)
       const data = await strategy.callStatic.rebalance()
       expect(data._profit, 'Profit should be > 0').to.gt(0)
@@ -191,6 +193,14 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
     if (getChain() == 'mainnet') {
       it('Should claim and swap VSP for collateral', async function () {
         const vsp = await ethers.getContractAt('ERC20', Address.Vesper.VSP, user2)
+        const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
+        const poolRewards = await ethers.getContractAt(poolRewardsAbi, await vPool.poolRewards())
+        const periodFinish = await poolRewards.periodFinish(Address.Vesper.VSP)
+        // There is no rewards in system if periodFinish < timestamp
+        if (periodFinish.lt((await ethers.provider.getBlock()).timestamp)) {
+          return
+        }
+
         // given
         await deposit(pool, collateralToken, 100, user2)
         await strategy.rebalance()

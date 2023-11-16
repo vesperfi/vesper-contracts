@@ -742,7 +742,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.META_4_POOL,
       depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 10, // 0.1%
+      crvSlippage: 20, // 0.2%
       masterOracle,
       swapper,
       collateralIdx: 0,
