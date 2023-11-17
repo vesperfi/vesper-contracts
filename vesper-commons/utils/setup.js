@@ -7,6 +7,7 @@ const StrategyType = require('./strategyTypes')
 const { adjustBalance } = require('./balance')
 const gemJoins = require('./gemJoins')
 const { getChain, getChainData } = require('./chains')
+const swapHelper = require('./swapHelper')
 const chain = getChain()
 const Address = getChainData().address
 hre.address = Address
@@ -76,201 +77,6 @@ async function deployContract(name, params = []) {
   }
   const contractFactory = await ethers.getContractFactory(contractName)
   return contractFactory.deploy(...params)
-}
-
-// eslint-disable-next-line complexity
-async function setDefaultRouting(swapperAddress, pairs) {
-  const abi = [
-    'function setDefaultRouting(uint8, address, address, uint8, bytes) external',
-    'function governor() external view returns(address)',
-    'function addressProvider() external view returns(address)',
-    'function defaultRoutings(bytes memory) external view returns(bytes memory)',
-  ]
-  const swapper = await ethers.getContractAt(abi, swapperAddress)
-
-  let governor
-  try {
-    governor = await swapper.governor()
-  } catch (e) {
-    const apABI = ['function governor() external view returns(address)']
-    const addressProvider = await ethers.getContractAt(apABI, await swapper.addressProvider())
-    governor = await addressProvider.governor()
-  }
-
-  const caller = await unlock(governor)
-  const ExchangeType = {
-    UNISWAP_V2: 0,
-    SUSHISWAP: 1,
-    TRADERJOE: 2,
-    PANGOLIN: 3,
-    QUICKSWAP: 4,
-    UNISWAP_V3: 5,
-    PANCAKE_SWAP: 6,
-  }
-  let defaultExchange
-  switch (chain) {
-    case 'avalanche':
-      defaultExchange = ExchangeType.TRADERJOE
-      break
-    case 'bsc':
-      defaultExchange = ExchangeType.PANCAKE_SWAP
-      break
-    case 'optimism':
-      defaultExchange = ExchangeType.UNISWAP_V3
-      break
-    default:
-      defaultExchange = ExchangeType.UNISWAP_V2
-  }
-
-  const swapType = { EXACT_INPUT: 0, EXACT_OUTPUT: 1 }
-  for (let pair of pairs) {
-    let exchange = defaultExchange
-    let tokens = [pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]
-    if (pair.tokenIn === Address.NATIVE_TOKEN || pair.tokenOut === Address.NATIVE_TOKEN) {
-      tokens = [pair.tokenIn, pair.tokenOut]
-    }
-    let path = ethers.utils.defaultAbiCoder.encode(['address[]'], [tokens])
-    if (chain === 'mainnet') {
-      if (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG) {
-        // uni3 has pair of USDC, WETH in 0.3 fee pool.
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
-        exchange = ExchangeType.UNISWAP_V3
-        if (pair.tokenOut == Address.DAI || pair.tokenOut == Address.FRAX) {
-          path = ethers.utils.solidityPack(
-            ['address', 'uint24', 'address', 'uint24', 'address'],
-            [pair.tokenIn, 3000, Address.USDC, 3000, pair.tokenOut],
-          )
-        }
-      } else if (pair.tokenIn === Address.rETH || pair.tokenOut === Address.rETH) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
-      } else if (pair.tokenIn === Address.Euler.EUL) {
-        if (pair.tokenOut === Address.NATIVE_TOKEN) {
-          path = ethers.utils.solidityPack(
-            ['address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN],
-          )
-        } else {
-          path = ethers.utils.solidityPack(
-            ['address', 'uint24', 'address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-          )
-        }
-        exchange = ExchangeType.UNISWAP_V3
-      } else if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
-      }
-    } else if (chain == 'optimism') {
-      if (pair.tokenOut === Address.NATIVE_TOKEN) {
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, Address.NATIVE_TOKEN])
-      } else {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-        )
-      }
-      exchange = ExchangeType.UNISWAP_V3
-    } else if (chain !== 'bsc') {
-      if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
-      } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
-      } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
-        path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
-        exchange = ExchangeType.SUSHISWAP
-      }
-    }
-
-    await swapper.connect(caller).setDefaultRouting(swapType.EXACT_INPUT, pair.tokenIn, pair.tokenOut, exchange, path)
-    if (exchange === ExchangeType.UNISWAP_V3) {
-      await swapper
-        .connect(caller)
-        .setDefaultRouting(swapType.EXACT_OUTPUT, pair.tokenOut, pair.tokenIn, exchange, path)
-    } else {
-      await swapper
-        .connect(caller)
-        .setDefaultRouting(swapType.EXACT_OUTPUT, pair.tokenIn, pair.tokenOut, exchange, path)
-    }
-  }
-}
-
-// eslint-disable-next-line complexity
-async function configureSwapper(strategies, collateral) {
-  const pairs = []
-  for (const strategy of strategies) {
-    const strategyType = strategy.type.toLowerCase()
-    const strategyName = await strategy.instance.NAME()
-    const rewardToken =
-      (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
-    if (rewardToken) {
-      pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
-    } else if (chain === 'mainnet' && strategyName.includes('Alpha')) {
-      pairs.push({ tokenIn: Address.Alpha.ALPHA, tokenOut: collateral })
-    }
-
-    if (strategyName.includes('AaveV3')) {
-      // get reward token list from AaveIncentivesController
-      const aToken = await ethers.getContractAt(
-        ['function getIncentivesController() external view returns (address)'],
-        await strategy.instance.receiptToken(),
-      )
-
-      try {
-        const incentiveController = await ethers.getContractAt(
-          ['function getRewardsList() external view returns (address[] memory)'],
-          await aToken.getIncentivesController(),
-        )
-        const _rewardTokens = await getIfExist(incentiveController.getRewardsList)
-        for (let i = 0; i < _rewardTokens.length; i++) {
-          pairs.push({ tokenIn: _rewardTokens[i], tokenOut: collateral })
-        }
-      } catch (e) {
-        /* empty */
-      }
-    }
-    if (strategyName.includes('Curve') || strategyName.includes('Ellipsis')) {
-      const rewardTokens = await strategy.instance.getRewardTokens()
-      for (let i = 0; i < rewardTokens.length; i++) {
-        pairs.push({ tokenIn: rewardTokens[i], tokenOut: collateral })
-      }
-    }
-    if (strategyType.includes('xy')) {
-      const token1 = collateral
-      const token2 = await strategy.instance.borrowToken()
-      pairs.push({ tokenIn: token1, tokenOut: token2 })
-      pairs.push({ tokenIn: token2, tokenOut: token1 })
-    }
-
-    if (strategyType.includes('vesper') && Address.Vesper.VSP) {
-      pairs.push({ tokenIn: Address.Vesper.VSP, tokenOut: collateral })
-    }
-    if (strategyType.includes('maker')) {
-      pairs.push({ tokenIn: Address.DAI, tokenOut: collateral })
-      pairs.push({ tokenIn: collateral, tokenOut: Address.DAI })
-    }
-    if (strategyType.startsWith('earn')) {
-      const dripToken = await strategy.instance.dripToken()
-      pairs.push({ tokenIn: collateral, tokenOut: dripToken })
-    }
-  }
-
-  const swapperAddress = strategies[0].constructorArgs.swapper
-  await setDefaultRouting(swapperAddress, pairs)
 }
 
 async function configureOracles(strategies) {
@@ -553,11 +359,7 @@ async function setupVPool(obj, poolData, options = {}) {
     await createStrategies(obj, options)
     await addStrategies(obj)
     const collateralTokenAddress = await obj.pool.token()
-
-    // Do not configure new swapper
-    if (chain !== 'optimism' && (await obj.strategies[0].instance.swapper()) !== Address.Vesper.Swapper) {
-      await configureSwapper(obj.strategies, collateralTokenAddress)
-    }
+    await swapHelper.setupRoutings(obj.strategies, collateralTokenAddress)
     await configureOracles(obj.strategies)
     obj.collateralToken = await ethers.getContractAt(TokenLike, collateralTokenAddress)
     // Save snapshot restorer to restore snapshot and take new one

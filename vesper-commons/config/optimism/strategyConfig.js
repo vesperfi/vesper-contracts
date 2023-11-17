@@ -66,7 +66,7 @@ const StrategyConfig = {
       curvePoolType: CurvePoolTypes.PLAIN_2_POOL,
       crvDeposit: ethers.constants.AddressZero,
       crvToken: Address.Curve.CRV,
-      crvSlippage: 100, // 1%
+      crvSlippage: 200, // 2%
       masterOracle,
       swapper,
       collateralIdx: 0,

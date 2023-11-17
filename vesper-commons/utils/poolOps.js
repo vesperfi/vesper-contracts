@@ -62,9 +62,6 @@ async function makeStrategyProfitable(strategy, token) {
  * @param {object} strategy - strategy object
  */
 async function rebalanceStrategy(strategy) {
-  // Alpha SafeBox has a cToken - this method calls exchangeRateCurrent on the cToken
-  await executeIfExist(strategy.instance.updateTokenRate)
-
   // For Compound related strategies
   const token = await getStrategyToken(strategy)
   await executeIfExist(token.accrueInterest)

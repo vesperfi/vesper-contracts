@@ -1,17 +1,17 @@
 /* eslint-disable mocha/no-async-describe */
 'use strict'
 
-const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { parseEther } = require('ethers/lib/utils')
-const { mine } = require('@nomicfoundation/hardhat-network-helpers')
+const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { unlock } = require('vesper-commons/utils/setup')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { testStkAaveRewards } = require('./stk-aave-rewards')
 const { getChain, getChainData } = require('vesper-commons/utils/chains')
 
+const chain = getChain()
 const Address = getChainData().address
 
 // crv strategy specific tests
@@ -122,13 +122,26 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
       await strategy.rebalance()
       expect(await gauge.callStatic.claimable_tokens(strategy.address)).eq(0)
       await mine(1000)
-      // await time.increase(time.duration.days(10))
+      await time.increase(time.duration.hours(5))
+
       await gauge.user_checkpoint(strategy.address)
       try {
         expect(await gauge.callStatic.claimable_tokens(strategy.address)).gt(0)
       } catch {
         const rewardToken = await ethers.getContractAt('IERC20', await gauge.reward_tokens(0))
         const rewards = await gauge.claimable_reward(strategy.address, rewardToken.address)
+
+        if (rewards.eq(0) && chain === 'optimism') {
+          const childGaugeAbi = [
+            'function reward_data(address) external view returns(address,uint256,uint256,uint256,uint256)',
+          ]
+          const childGauge = await ethers.getContractAt(childGaugeAbi, gauge.address)
+          const data = await childGauge.reward_data(rewardToken.address)
+          const currentTimestamp = (await ethers.provider.getBlock()).timestamp
+          if (data[1].lt(currentTimestamp)) {
+            return
+          }
+        }
         expect(rewards).gt(0)
       }
     })

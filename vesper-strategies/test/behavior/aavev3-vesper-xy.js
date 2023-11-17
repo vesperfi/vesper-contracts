@@ -9,6 +9,11 @@ const { getStrategyToken } = require('vesper-commons/utils/setup')
 const { getChainData } = require('vesper-commons/utils/chains')
 const Address = getChainData().address
 
+const poolRewardsAbi = [
+  'function rewardTokens(uint256) external view returns(address)',
+  'function periodFinish(address) external view returns(uint256)',
+]
+
 // Aave V3 Vesper XY strategy specific tests
 function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
   let strategy, pool, collateralToken, token, borrowToken, vdToken, wrappedCollateral
@@ -146,6 +151,14 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
 
     it('Should claim and swap rewards to collateral', async function () {
       const wNative = await ethers.getContractAt('ERC20', Address.NATIVE_TOKEN)
+      const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
+      const poolRewards = await ethers.getContractAt(poolRewardsAbi, await vPool.poolRewards())
+      const rewardToken = await poolRewards.rewardTokens(0)
+      const periodFinish = await poolRewards.periodFinish(rewardToken)
+      // There is no rewards in system if periodFinish < timestamp
+      if (periodFinish.lt((await ethers.provider.getBlock()).timestamp)) {
+        return
+      }
       await deposit(pool, collateralToken, 10, user2)
       await strategy.rebalance()
       await mine(100)

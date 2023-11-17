@@ -12,7 +12,7 @@ import "../../strategies/curve/CurveBase.sol";
 contract ConvexForFrax is CurveBase {
     using SafeERC20 for IERC20;
 
-    IVaultRegistry public constant VAULT_REGISTRY = IVaultRegistry(0x569f5B842B5006eC17Be02B8b94510BA8e79FbCa);
+    IVaultRegistry public constant VAULT_REGISTRY = IVaultRegistry(0x2B8b301B90Eb8801f1eEFe73285Eec117D2fFC95);
     IConvexFraxPoolRegistry public constant POOL_REGISTRY =
         IConvexFraxPoolRegistry(0x41a5881c17185383e19Df6FA4EC158a6F4851A69);
     address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
