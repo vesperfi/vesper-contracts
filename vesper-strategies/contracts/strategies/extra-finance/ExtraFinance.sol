@@ -34,24 +34,13 @@ contract ExtraFinance is Strategy {
         NAME = _name;
     }
 
-    function _setReserve(uint256 _reserveId) private {
-        address _receiptToken = lendingPool.getETokenAddress(_reserveId);
-        require(_receiptToken != address(0), "eToken-address-is-zero");
-        require(IEToken(_receiptToken).lendingPool() == address(lendingPool), "invalid-lending-pool");
-        receiptToken = _receiptToken;
-        staking = IStakingRewards(lendingPool.getStakingAddress(_reserveId));
-        require(address(staking) != address(0), "staking-address-is-zero");
-        reserveId = _reserveId;
-        rewardTokens = _getRewardTokens();
-    }
-
-    function eToken() public view returns (address) {
-        return receiptToken;
+    function eToken() public view returns (IERC20) {
+        return IERC20(receiptToken);
     }
 
     /// @inheritdoc Strategy
     function isReservedToken(address _token) public view virtual override returns (bool) {
-        return _token == address(receiptToken);
+        return _token == receiptToken;
     }
 
     /// @inheritdoc Strategy
@@ -63,6 +52,8 @@ contract ExtraFinance is Strategy {
     function _approveToken(uint256 _amount) internal virtual override {
         collateralToken.safeApprove(pool, _amount);
         collateralToken.safeApprove(address(lendingPool), _amount);
+        eToken().safeApprove(address(staking), _amount);
+        eToken().safeApprove(address(lendingPool), _amount);
         uint256 _len = rewardTokens.length;
         for (uint256 i; i < _len; ++i) {
             IERC20(rewardTokens[i]).safeApprove(address(swapper), _amount);
@@ -72,9 +63,10 @@ contract ExtraFinance is Strategy {
     /// @inheritdoc Strategy
     // solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address) internal virtual override {
-        _withdrawHere(_invested());
+        _unstakeAll();
     }
 
+    /// @inheritdoc Strategy
     function _claimAndSwapRewards() internal override {
         // Note: We can only claim all at once
         staking.claim();
@@ -101,7 +93,11 @@ contract ExtraFinance is Strategy {
     /// @dev Deposit collateral and stake the received eTokens
     function _deposit(uint256 _amount) internal virtual {
         if (_amount > 0) {
-            lendingPool.depositAndStake(reserveId, _amount, address(this), 0);
+            lendingPool.deposit(reserveId, _amount, address(this), 0);
+            uint256 _eTokenBalance = eToken().balanceOf(address(this));
+            if (_eTokenBalance > 0) {
+                staking.stake(_eTokenBalance, address(this)); // stake all
+            }
         }
     }
 
@@ -141,8 +137,7 @@ contract ExtraFinance is Strategy {
 
     /// @dev Total collateral amount allocated
     function _invested() private view returns (uint256) {
-        // Note: This receipt tokens are automatically staked when depositing
-        return _convertToCollateral(staking.balanceOf(address(this)));
+        return _convertToCollateral(eToken().balanceOf(address(this)) + staking.balanceOf(address(this)));
     }
 
     /// @dev Generate report for pools accounting and also send profit and any payback to pool.
@@ -153,18 +148,45 @@ contract ExtraFinance is Strategy {
         _deposit(collateralToken.balanceOf(address(this)));
     }
 
+    /// @dev Assign reserve's params
+    function _setReserve(uint256 _reserveId) private {
+        require(lendingPool.getUnderlyingTokenAddress(_reserveId) == address(collateralToken), "invalid-reserve");
+        address _receiptToken = lendingPool.getETokenAddress(_reserveId);
+        require(_receiptToken != address(0), "eToken-address-is-zero");
+        require(IEToken(_receiptToken).lendingPool() == address(lendingPool), "invalid-lending-pool");
+        receiptToken = _receiptToken;
+        staking = IStakingRewards(lendingPool.getStakingAddress(_reserveId));
+        require(address(staking) != address(0), "staking-address-is-zero");
+        reserveId = _reserveId;
+        rewardTokens = _getRewardTokens();
+    }
+
+    function _unstakeAll() private {
+        uint256 _staked = staking.balanceOf(address(this));
+        if (_staked > 0) {
+            staking.withdraw(_staked, address(this));
+        }
+    }
+
     /// @dev Withdraw collateral here. Do not transfer to pool
     function _withdrawHere(uint256 _collateralAmount) internal override {
         // Get minimum of requested amount and available collateral
         _collateralAmount = Math.min(
             _collateralAmount,
-            Math.min(_invested(), collateralToken.balanceOf(address(receiptToken)))
+            Math.min(_invested(), collateralToken.balanceOf(address(eToken())))
         );
 
         uint256 _eTokenAmount = _convertToReceiptToken(_collateralAmount);
+        uint256 _eTokenBalance = eToken().balanceOf(address(this));
 
-        if (_eTokenAmount > 0) {
-            lendingPool.unStakeAndWithdraw(reserveId, _eTokenAmount, address(this), false);
+        if (_eTokenAmount > _eTokenBalance) {
+            uint256 _unstakeAmount = _eTokenAmount - _eTokenBalance;
+            staking.withdraw(_unstakeAmount, address(this));
+            _eTokenBalance = eToken().balanceOf(address(this));
+        }
+
+        if (_eTokenAmount >= 0) {
+            lendingPool.redeem(reserveId, Math.min(_eTokenAmount, _eTokenBalance), address(this), false);
         }
     }
 
@@ -172,31 +194,38 @@ contract ExtraFinance is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
 
-    /// @notice Rewards token can be updated any time. This method refresh list.
-    function refetchRewardTokens(uint256 _claimInCollateralAmountMin) external virtual onlyGovernor {
+    /// @notice Rewards token can be updated any time. This method refresh list
+    function refetchRewardTokens(uint256 _claimAmountOutMin) external virtual onlyGovernor {
         // Claim rewards before updating the reward list.
         uint256 _before = collateralToken.balanceOf(address(this));
         _claimAndSwapRewards();
-        require(collateralToken.balanceOf(address(this)) - _before >= _claimInCollateralAmountMin, "slippage-too-high");
+        require(collateralToken.balanceOf(address(this)) - _before >= _claimAmountOutMin, "slippage-too-high");
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
     }
 
-    function migrateReserve(uint256 _newReserveId, uint256 _claimInCollateralAmountMin) external onlyGovernor {
+    /// @notice Migrate funds to another reserve that supports' the same collateral
+    function migrateReserve(uint256 _newReserveId, uint256 _claimAmountOutMin) external onlyGovernor {
+        // 1. Claim rewards from current staking contract
         uint256 _before = collateralToken.balanceOf(address(this));
         _claimAndSwapRewards();
-        require(collateralToken.balanceOf(address(this)) - _before >= _claimInCollateralAmountMin, "slippage-too-high");
+        require(collateralToken.balanceOf(address(this)) - _before >= _claimAmountOutMin, "slippage-too-high");
 
-        // Note: Reverts if reserve hasn't enough available liquidity
-        lendingPool.unStakeAndWithdraw(reserveId, _convertToReceiptToken(_invested()), address(this), false);
+        // 2. Withdraw all collateral
+        // Note: Do not use `_withdrawHere` in order to make it reverts if available liquidity isn't enough
+        _unstakeAll();
+        lendingPool.redeem(reserveId, eToken().balanceOf(address(this)), address(this), false);
 
+        // 3. Setup the new reserve
         _setReserve(_newReserveId);
 
+        // 4. Fetch reward tokens from the new staking contract
         rewardTokens = _getRewardTokens();
         _approveToken(0);
         _approveToken(MAX_UINT_VALUE);
 
+        // 5. Deposit all collateral to the new reserve
         _deposit(collateralToken.balanceOf(address(this)));
     }
 }
