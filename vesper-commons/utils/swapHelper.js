@@ -5,8 +5,6 @@ const { getIfExist, unlock } = require('./contractHelper')
 
 const chain = getChain()
 const Address = getChainData().address
-const uniV2Adapter = '0xdDf35dDEA032525CDA74d178458f1a15C16759D8'
-const uniV3Adapter = '0xdC66f6313973AB834B3b79923FB6bb843cFF18c9'
 
 const SwapType = {
   EXACT_INPUT: 0,
@@ -43,7 +41,7 @@ function prepareExactInputRouting(swapInfo) {
     const adapterAbi = ['function swapExactInput(address[] calldata path_) external']
     routing.calls = [
       {
-        target: uniV2Adapter,
+        target: Address.Vesper.UniswapV2Adapter,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [swapInfo.path]),
         value: 0,
         isDelegateCall: true,
@@ -53,7 +51,7 @@ function prepareExactInputRouting(swapInfo) {
     const adapterAbi = ['function swapExactInput(bytes calldata path_) external']
     routing.calls = [
       {
-        target: uniV3Adapter,
+        target: Address.Vesper.UniswapV3Adapter,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [swapInfo.path]),
         value: 0,
         isDelegateCall: true,
@@ -70,7 +68,7 @@ function prepareExactOutputRouting(swapInfo) {
     return {
       tokenIn: swapInfo.pair.tokenIn,
       tokenOut: swapInfo.pair.tokenOut,
-      exchange: uniV2Adapter,
+      exchange: Address.Vesper.UniswapV2Adapter,
       path: abiCoder.encode(['address[]'], [swapInfo.path]),
     }
   } else if (swapInfo.exchange === ExchangeType.UNISWAP_V3) {
@@ -78,7 +76,7 @@ function prepareExactOutputRouting(swapInfo) {
     return {
       tokenIn: swapInfo.pair.tokenOut,
       tokenOut: swapInfo.pair.tokenIn,
-      exchange: uniV3Adapter,
+      exchange: Address.Vesper.UniswapV3Adapter,
       path: swapInfo.path,
     }
   }
@@ -312,10 +310,6 @@ async function getTokenPairs(strategies, collateral) {
 }
 
 async function setupRoutings(strategies, collateral) {
-  // Optimism mainnet already has most of the configuration
-  if (chain === 'optimism') {
-    return
-  }
   // Get token pairs for swap
   const pairs = await getTokenPairs(strategies, collateral)
   // prepare path and exchange for each pair
@@ -323,7 +317,7 @@ async function setupRoutings(strategies, collateral) {
 
   const swapperAddress = strategies[0].constructorArgs.swapper
 
-  if (chain === 'mainnet') {
+  if (chain === 'mainnet' || chain === 'optimism') {
     await setupRoutingsInNewSwapper(swapInfoList)
   } else {
     await setupRoutingsInOldSwapper(swapperAddress, swapInfoList)
