@@ -167,12 +167,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
         // Generate profit
         await makeStrategyProfitable(strategy, collateralToken)
         const data = await strategy.callStatic.rebalance()
-        if ((await pool.name()).includes('Earn')) {
-          // Earn strategies don't generate profit
-          expect(data._profit, 'Profit should be == 0').to.be.eq('0')
-        } else {
-          expect(data._profit, 'Profit should be > 0').to.be.gt('0')
-        }
+        expect(data._profit, 'Profit should be > 0').to.be.gt('0')
       })
 
       it('Should generate EarningReported event', async function () {

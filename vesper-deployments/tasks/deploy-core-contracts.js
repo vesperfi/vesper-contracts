@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict'
 
 const _ = require('lodash')
@@ -8,7 +9,6 @@ const execSync = require('child_process').execSync
 
 const PoolAccountant = 'PoolAccountant'
 const PoolRewards = 'PoolRewards'
-const VesperEarnDrip = 'VesperEarnDrip'
 const poolBaseDir = 'vesper-pools/contracts/pool'
 
 // Validate given keys exists in given object
@@ -39,21 +39,13 @@ function validatePoolConfig(poolConfig, targetChain) {
   validateObject(poolConfig.setup, setupKeys)
 
   // Validate rewards in config object
-  let rewardsKeys = ['contract', 'tokens']
-  if (poolConfig.poolParams[0].includes('Earn')) {
-    rewardsKeys = ['contract', 'tokens']
-    validateObject(poolConfig.rewards, rewardsKeys)
-    if (poolConfig.rewards.contract !== VesperEarnDrip) {
-      throw new Error('Wrong contract name for Earn Rewards pool')
-    }
-  } else {
-    validateObject(poolConfig.rewards, rewardsKeys)
-    if (poolConfig.rewards.contract !== PoolRewards) {
-      throw new Error('Wrong contract name for Rewards Pool')
-    }
-    if (!poolConfig.rewards.tokens.length) {
-      console.log('Deploying without any rewards tokens')
-    }
+  const rewardsKeys = ['contract', 'tokens']
+  validateObject(poolConfig.rewards, rewardsKeys)
+  if (poolConfig.rewards.contract !== PoolRewards) {
+    throw new Error('Wrong contract name for Rewards Pool')
+  }
+  if (!poolConfig.rewards.tokens.length) {
+    console.log('Deploying without any rewards tokens')
   }
 }
 
@@ -63,9 +55,6 @@ function getProxyContracts() {
     { contract: PoolAccountant, path: poolBaseDir },
     { contract: PoolRewards, path: poolBaseDir },
   ]
-  if (hre.poolConfig.poolParams[0].includes('Earn')) {
-    proxyContracts[2] = { contract: VesperEarnDrip, path: `${poolBaseDir}/earn/` }
-  }
   return proxyContracts
 }
 

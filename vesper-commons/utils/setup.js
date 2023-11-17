@@ -4,8 +4,7 @@ const hre = require('hardhat')
 const helpers = require('@nomicfoundation/hardhat-network-helpers')
 const ethers = hre.ethers
 const StrategyType = require('./strategyTypes')
-const { adjustBalance } = require('./balance')
-const { deployContract, executeIfExist, unlock } = require('./contractHelper')
+const { deployContract, unlock } = require('./contractHelper')
 const gemJoins = require('./gemJoins')
 const { getChain, getChainData } = require('./chains')
 const swapHelper = require('./swapHelper')
@@ -95,54 +94,6 @@ async function addStrategies(obj) {
 }
 
 /**
- * Setups a local Vesper Pool for strategies that use it as underlying
- *
- * @param {string} collateralToken Address of collateralToken
- * @returns {object} Pool Contract instance
- */
-async function setupVesperPool(collateralToken = Address.DAI) {
-  const token = await ethers.getContractAt('IERC20Metadata', collateralToken)
-  const tokenName = await token.symbol()
-  const poolParams = [`v${tokenName} Pool`, `v${tokenName}`, collateralToken]
-  const vPool = await deployContract('VPool', poolParams)
-  const accountant = await deployContract(PoolAccountant)
-  await accountant.init(vPool.address)
-  await vPool.initialize(...poolParams, accountant.address)
-  return vPool
-}
-
-/**
- * Setup Vesper Earn Drip Pool for testing
- *
- * @param {object} obj Test class object
- * @param {object} options optional parameters
- */
-async function setupEarnDrip(obj, options) {
-  const { AddressZero } = ethers.constants
-  for (const strategy of obj.strategies) {
-    if (strategy.type.toUpperCase().includes('EARN')) {
-      let growPool
-      if (strategy.type === 'earnVesperMaker') {
-        // For earn Vesper Maker growPool should be same as receiptToken
-        growPool = { address: strategy.constructorArgs.receiptToken }
-      } else {
-        growPool = options.growPool ? options.growPool : { address: AddressZero }
-      }
-      const rewardTokens = growPool.address === AddressZero ? options.rewardTokens || [] : [growPool.address]
-      if (rewardTokens.length > 0) {
-        const vesperEarnDrip = await deployContract('VesperEarnDrip', [])
-        await vesperEarnDrip.initialize(obj.pool.address, rewardTokens)
-        if (growPool.address !== AddressZero) {
-          await vesperEarnDrip.updateGrowToken(growPool.address)
-        }
-        await obj.pool.updatePoolRewards(vesperEarnDrip.address)
-        break
-      }
-    }
-  }
-}
-
-/**
  * Create and configure Maker strategy. Also update test class object with required data.
  *
  * @param {object} strategy  Strategy config object
@@ -173,67 +124,20 @@ async function createMakerStrategy(strategy, poolAddress, options) {
   return strategyInstance
 }
 
-/**
- * Create and configure a VesperEarn Strategy.
- * Using an up-to-date underlying vPool and VSP rewards enabled
- *
- * @param {object} strategy  Strategy config object
- * @param {object} poolAddress pool address
- * @param {object} options extra params
- * @returns {object} Strategy instance
- */
-async function createEarnVesperStrategy(strategy, poolAddress, options) {
-  const underlyingVesperPool = await ethers.getContractAt('IVesperPool', strategy.constructorArgs.receiptToken)
-  const collateralToken = await underlyingVesperPool.token()
-
-  if (!options.vPool) {
-    options.vPool = await setupVesperPool(collateralToken)
-    const TOTAL_REWARD = ethers.utils.parseUnits('150000')
-    const REWARD_DURATION = 30 * 24 * 60 * 60
-
-    const vPoolRewards = await deployContract('PoolRewards', [])
-    const rewardTokens = [Address.Vesper.VSP]
-    await vPoolRewards.initialize(poolAddress, rewardTokens)
-    await options.vPool.updatePoolRewards(vPoolRewards.address)
-
-    const vsp = await ethers.getContractAt('IVSP', Address.Vesper.VSP)
-
-    await adjustBalance(Address.Vesper.VSP, vPoolRewards.address, TOTAL_REWARD)
-
-    const notifyMultiSignature = 'notifyRewardAmount(address[],uint256[],uint256[])'
-    await vPoolRewards[`${notifyMultiSignature}`]([vsp.address], [TOTAL_REWARD], [REWARD_DURATION])
-    strategy.constructorArgs.receiptToken = options.vPool.address
-  }
-
-  const strategyInstance = await deployContract(strategy.contract, [
-    poolAddress,
-    ...Object.values(strategy.constructorArgs),
-  ])
-
-  return strategyInstance
-}
-
 async function createStrategy(strategy, poolAddress, options = {}) {
   const strategyType = strategy.type
   let instance
   if (
-    strategyType === StrategyType.EARN_MAKER ||
     strategyType === StrategyType.AAVE_MAKER ||
     strategyType === StrategyType.COMPOUND_MAKER ||
-    strategyType === StrategyType.VESPER_MAKER ||
-    strategyType === StrategyType.EARN_VESPER_MAKER
+    strategyType === StrategyType.VESPER_MAKER
   ) {
     instance = await createMakerStrategy(strategy, poolAddress, options)
-  } else if (strategyType === StrategyType.EARN_VESPER) {
-    instance = await createEarnVesperStrategy(strategy, poolAddress, options)
   } else {
     instance = await deployContract(strategy.contract, [poolAddress, ...Object.values(strategy.constructorArgs)])
   }
   await instance.approveToken(MAX_UINT)
   await instance.updateFeeCollector(strategy.feeCollector)
-
-  // Earn strategies require call to approveGrowToken
-  await executeIfExist(instance.approveGrowToken)
 
   return instance
 }
@@ -244,7 +148,6 @@ async function createStrategy(strategy, poolAddress, options = {}) {
  * @param {object} options optional parameters
  */
 async function createStrategies(obj, options) {
-  await setupEarnDrip(obj, options)
   for (const strategy of obj.strategies) {
     strategy.instance = await createStrategy(strategy, obj.pool.address, options)
   }

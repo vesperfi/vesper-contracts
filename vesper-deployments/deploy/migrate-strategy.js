@@ -1,4 +1,4 @@
-/* eslint-disable complexity */
+/* eslint-disable complexity, no-console */
 'use strict'
 const { isDelegateOrOwner, proposeMultiTxn, prepareTxn } = require('./gnosis-txn')
 const { ethers } = require('hardhat')
@@ -33,7 +33,7 @@ const deployFunction = async function ({
   const constructorArgs = [poolProxy.address, ...Object.values(strategyConfig.constructorArgs)]
 
   if (strategyAlias.includes('Maker')) {
-    // Maker strategy of any type, EarnXXXMaker, XXXMaker
+    // Maker strategy of any type, XXXMaker
     const cm = address.Vesper.COLLATERAL_MANAGER
     if (!cm) {
       // For migrate we expect Collateral Manager to be deployed
@@ -63,11 +63,6 @@ const deployFunction = async function ({
 
   // Execute configuration transactions
   await execute(strategyAlias, { from: deployer, log: true }, 'approveToken', ethers.constants.MaxUint256)
-
-  // For earn strategies approve grow token
-  if (strategyAlias.includes('Earn')) {
-    await execute(strategyAlias, { from: deployer, log: true }, 'approveGrowToken')
-  }
 
   const setup = strategyConfig.setup
 
