@@ -1462,7 +1462,7 @@ const StrategyConfig = {
       stargateLpStaking: Address.Stargate.lpStaking,
       stargatePoolId: 13, // ETH LP Pool ID
       stargateLpStakingPoolId: 2, // Staking Contract pool ID
-      wrappedNativeToken: Address.NATIVE_TOKEN,
+      wrappedNativeToken: Address.WRAPPED_NATIVE_TOKEN,
       strategyName: 'Stargate_ETH',
     },
     config: { ...config },

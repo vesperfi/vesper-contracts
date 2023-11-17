@@ -7,11 +7,11 @@ const { getChainData } = require('vesper-commons/utils/chains')
 const address = getChainData().address
 const DECIMAL = BigNumber.from('1000000000000000000')
 const SUSHI_ROUTER = address.SUSHI_ROUTER
-const NATIVE_TOKEN = address.NATIVE_TOKEN
+const WRAPPED_NATIVE_TOKEN = address.WRAPPED_NATIVE_TOKEN
 
 async function getEthQuote(ethAmount, toToken) {
   const uni = await ethers.getContractAt('IUniswapRouterTest', SUSHI_ROUTER)
-  const path = [NATIVE_TOKEN, toToken]
+  const path = [WRAPPED_NATIVE_TOKEN, toToken]
   const amountIn = BigNumber.from(ethAmount).mul(DECIMAL)
   const retAmount = (await uni.getAmountsOut(amountIn, path))[1]
   expect(retAmount).to.be.gt('0', 'Token balance is not correct')

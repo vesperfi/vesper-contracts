@@ -173,8 +173,8 @@ function prepareSwapInfo(pairs) {
   const swapInfo = []
   for (let pair of pairs) {
     let exchange = ExchangeType.NO_EXCHANGE
-    let tokens = [pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]
-    if (pair.tokenIn === Address.NATIVE_TOKEN || pair.tokenOut === Address.NATIVE_TOKEN) {
+    let tokens = [pair.tokenIn, Address.WRAPPED_NATIVE_TOKEN, pair.tokenOut]
+    if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
       tokens = [pair.tokenIn, pair.tokenOut]
     }
     let path = tokens
@@ -192,36 +192,39 @@ function prepareSwapInfo(pairs) {
       } else if (pair.tokenIn === Address.rETH || pair.tokenOut === Address.rETH) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
+          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Euler.EUL) {
-        if (pair.tokenOut === Address.NATIVE_TOKEN) {
+        if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN],
+            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
           )
         } else {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
           )
         }
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
+          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       }
     } else if (chain == 'optimism') {
-      if (pair.tokenOut === Address.NATIVE_TOKEN) {
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, Address.NATIVE_TOKEN])
+      if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address'],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
+        )
       } else {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
       }
       exchange = ExchangeType.UNISWAP_V3
@@ -229,17 +232,20 @@ function prepareSwapInfo(pairs) {
       if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 3000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
-        path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
+        path = ethers.utils.defaultAbiCoder.encode(
+          ['address[]'],
+          [[pair.tokenIn, Address.WRAPPED_NATIVE_TOKEN, pair.tokenOut]],
+        )
         exchange = ExchangeType.SUSHISWAP
       }
     }
