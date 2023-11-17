@@ -3,7 +3,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const poolOps = require('vesper-commons/utils/poolOps')
-const { deployContract } = require('vesper-commons/utils/setup')
+const { deployContract } = require('vesper-commons/utils/contractHelper')
 const { address, poolConfig } = require('vesper-commons/utils/chains').getChainData()
 const VDAI = poolConfig.VDAI
 const multiCall = address.MultiCall

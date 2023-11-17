@@ -7,7 +7,8 @@ const { BigNumber } = require('ethers')
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('./balance')
 const { getChain } = require('./chains')
-const { unlock, executeIfExist, getStrategyToken, getIfExist } = require('./setup')
+const { unlock, executeIfExist, getIfExist } = require('./contractHelper')
+const { getStrategyToken } = require('./setup')
 const address = require(`../config/${getChain()}/address`)
 
 /**

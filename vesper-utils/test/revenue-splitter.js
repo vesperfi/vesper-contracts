@@ -1,6 +1,6 @@
 'use strict'
 
-const { deployContract, unlock } = require('vesper-commons/utils/setup')
+const { deployContract, unlock } = require('vesper-commons/utils/contractHelper')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { getEthQuote, sendEth } = require('../utils/util')

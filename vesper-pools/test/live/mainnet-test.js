@@ -3,7 +3,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const BigNumber = ethers.BigNumber
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { deposit } = require('vesper-commons/utils/poolOps')
 
 function sanityTestOfPool(poolAddress) {

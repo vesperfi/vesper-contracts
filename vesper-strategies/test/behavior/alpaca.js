@@ -5,7 +5,7 @@ const { ethers } = require('hardhat')
 const { parseEther } = require('ethers/lib/utils')
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { getChainData } = require('vesper-commons/utils/chains')
 

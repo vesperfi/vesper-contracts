@@ -2,7 +2,7 @@
 'use strict'
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
 const { getChainData } = require('vesper-commons/utils/chains')

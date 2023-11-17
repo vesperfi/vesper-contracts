@@ -3,7 +3,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { BigNumber } = ethers.BigNumber
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { deposit } = require('vesper-commons/utils/poolOps')
 
 // TODO Commented test for CI build as tests was failing with BLOCK_NUMBER 13937297.

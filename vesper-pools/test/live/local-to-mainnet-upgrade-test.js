@@ -2,7 +2,7 @@
 
 const { ethers } = require('hardhat')
 const { expect } = require('chai')
-const { unlock, deployContract } = require('vesper-commons/utils/setup')
+const { unlock, deployContract } = require('vesper-commons/utils/contractHelper')
 const { VADAI } = require('vesper-commons/config/mainnet/poolConfig')
 const { adjustBalance } = require('vesper-commons/utils/balance')
 

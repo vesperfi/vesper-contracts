@@ -2,7 +2,7 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { deployContract } = require('vesper-commons/utils/setup')
+const { deployContract } = require('vesper-commons/utils/contractHelper')
 const { getChainData } = require('vesper-commons/utils/chains')
 const { shouldBehaveLikePool } = require('./vesper-pool-behavior')
 const { poolConfig } = getChainData()

@@ -1,6 +1,6 @@
 'use strict'
 
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { ethers } = require('hardhat')
 
 const { expect } = require('chai')

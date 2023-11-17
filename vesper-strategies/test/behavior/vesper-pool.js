@@ -1,6 +1,7 @@
 'use strict'
 
-const { getEvent, unlock } = require('vesper-commons/utils/setup')
+const { getEvent } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const {
   deposit: _deposit,
   rebalance,
