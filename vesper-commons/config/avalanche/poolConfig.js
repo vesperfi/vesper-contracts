@@ -32,7 +32,7 @@ const PoolConfig = {
   },
   VAAVAX: {
     contractName: 'VETH',
-    poolParams: ['vaAVAX Pool', 'vaAVAX', Address.NATIVE_TOKEN],
+    poolParams: ['vaAVAX Pool', 'vaAVAX', Address.WRAPPED_NATIVE_TOKEN],
     setup: { ...setup }, // Shallow copy
     rewards: { ...rewards },
   },

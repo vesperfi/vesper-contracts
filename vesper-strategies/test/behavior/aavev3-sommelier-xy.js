@@ -146,7 +146,7 @@ function shouldBehaveLikeAaveV3SommelierXY(strategyIndex) {
     })
 
     it('Should claim and swap rewards to collateral', async function () {
-      const wNative = await ethers.getContractAt('ERC20', Address.NATIVE_TOKEN)
+      const wNative = await ethers.getContractAt('ERC20', Address.WRAPPED_NATIVE_TOKEN)
       await deposit(pool, collateralToken, 10, user2)
       await strategy.rebalance()
       await mine(100)

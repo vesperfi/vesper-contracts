@@ -1,7 +1,7 @@
 'use strict'
 const { ethers } = require('hardhat')
 const { expect } = require('chai')
-const { deployContract } = require('vesper-commons/utils/setup')
+const { deployContract } = require('vesper-commons/utils/contractHelper')
 const { smock } = require('@defi-wonderland/smock')
 const { poolConfig } = require('vesper-commons/utils/chains').getChainData()
 const VDAI = poolConfig.VDAI

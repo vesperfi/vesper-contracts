@@ -5,7 +5,7 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const hre = require('hardhat')
 const { BigNumber: BN } = require('ethers')
-const { executeIfExist, unlock } = require('vesper-commons/utils/setup')
+const { executeIfExist, unlock } = require('vesper-commons/utils/contractHelper')
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 
 async function shouldBehaveLikeUnderlyingVesperPoolStrategy(strategyIndex) {

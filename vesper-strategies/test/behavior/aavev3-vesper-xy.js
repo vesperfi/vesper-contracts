@@ -150,7 +150,7 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
     })
 
     it('Should claim and swap rewards to collateral', async function () {
-      const wNative = await ethers.getContractAt('ERC20', Address.NATIVE_TOKEN)
+      const wNative = await ethers.getContractAt('ERC20', Address.WRAPPED_NATIVE_TOKEN)
       const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
       const poolRewards = await ethers.getContractAt(poolRewardsAbi, await vPool.poolRewards())
       const rewardToken = await poolRewards.rewardTokens(0)

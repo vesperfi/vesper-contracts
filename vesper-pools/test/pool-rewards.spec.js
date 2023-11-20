@@ -7,7 +7,7 @@ const { ethers } = require('hardhat')
 const { time } = require('@nomicfoundation/hardhat-network-helpers')
 const poolOps = require('vesper-commons/utils/poolOps')
 const { adjustBalance } = require('vesper-commons/utils/balance')
-const { deployContract } = require('vesper-commons/utils/setup')
+const { deployContract } = require('vesper-commons/utils/contractHelper')
 const { address: Address, poolConfig } = require('vesper-commons/utils/chains').getChainData()
 
 const TOTAL_REWARD = ethers.utils.parseUnits('150000')

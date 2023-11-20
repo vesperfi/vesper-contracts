@@ -53,12 +53,6 @@ const deployFunction = async function (hre) {
   await sleep(5000)
   await execute(strategyAlias, { from: deployer, log: true }, 'approveToken', ethers.constants.MaxUint256)
 
-  // For earn strategies approve grow token
-  if (strategyAlias.includes('Earn')) {
-    await sleep(5000)
-    await execute(strategyAlias, { from: deployer, log: true }, 'approveGrowToken')
-  }
-
   const strategyVersion = await read(strategyAlias, {}, 'VERSION')
   deployFunction.id = `${strategyAlias}-v${strategyVersion}`
 

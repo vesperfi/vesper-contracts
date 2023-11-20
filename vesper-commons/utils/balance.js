@@ -46,7 +46,7 @@ const slots = {
   [AvalancheAddress.USDCe]: 0,
   [AvalancheAddress.WBTCe]: 0,
   [AvalancheAddress.WETHe]: 0,
-  [AvalancheAddress.NATIVE_TOKEN]: 3, // WAVAX
+  [AvalancheAddress.WRAPPED_NATIVE_TOKEN]: 3, // WAVAX
   [AvalancheAddress.Benqi.QI]: 1,
   [AvalancheAddress.Vesper.VSP]: 2,
 
@@ -56,10 +56,10 @@ const slots = {
   [PolygonAddress.USDT]: 0,
   [PolygonAddress.WBTC]: 0,
   [PolygonAddress.WETH]: 0,
-  [PolygonAddress.NATIVE_TOKEN]: 3, // WMATIC
+  [PolygonAddress.WRAPPED_NATIVE_TOKEN]: 3, // WMATIC
 
   // Optimism addresses
-  [OptimismAddress.NATIVE_TOKEN]: 3, // WETH
+  [OptimismAddress.WRAPPED_NATIVE_TOKEN]: 3, // WETH
   [OptimismAddress.Curve.CRV]: 0,
   [OptimismAddress.USDC]: 0,
   [OptimismAddress.OP]: 0,

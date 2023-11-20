@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { time, loadFixture, setStorageAt } = require('@nomicfoundation/hardhat-network-helpers')
 const { adjustBalance } = require('vesper-commons/utils/balance')
-const { unlock } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const { address: Address } = require('vesper-commons/utils/chains').getChainData()
 
 const { parseEther } = ethers.utils

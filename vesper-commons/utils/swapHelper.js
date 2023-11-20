@@ -5,8 +5,6 @@ const { getIfExist, unlock } = require('./contractHelper')
 
 const chain = getChain()
 const Address = getChainData().address
-const uniV2Adapter = '0xdDf35dDEA032525CDA74d178458f1a15C16759D8'
-const uniV3Adapter = '0xdC66f6313973AB834B3b79923FB6bb843cFF18c9'
 
 const SwapType = {
   EXACT_INPUT: 0,
@@ -22,6 +20,7 @@ const ExchangeType = {
   QUICKSWAP: 4,
   UNISWAP_V3: 5,
   PANCAKE_SWAP: 6,
+  VELODROME: 7,
 }
 
 const abi = [
@@ -43,7 +42,7 @@ function prepareExactInputRouting(swapInfo) {
     const adapterAbi = ['function swapExactInput(address[] calldata path_) external']
     routing.calls = [
       {
-        target: uniV2Adapter,
+        target: Address.Vesper.UniswapV2Adapter,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [swapInfo.path]),
         value: 0,
         isDelegateCall: true,
@@ -53,14 +52,27 @@ function prepareExactInputRouting(swapInfo) {
     const adapterAbi = ['function swapExactInput(bytes calldata path_) external']
     routing.calls = [
       {
-        target: uniV3Adapter,
+        target: Address.Vesper.UniswapV3Adapter,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [swapInfo.path]),
         value: 0,
         isDelegateCall: true,
       },
     ]
+  } else if (swapInfo.exchange === ExchangeType.VELODROME) {
+    const adapterAbi = ['function swapExactInput(address[] calldata path_, bool[] memory stable_) external']
+    routing.calls = [
+      {
+        target: Address.Vesper.VelodromeV2Adapter,
+        data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [
+          swapInfo.path,
+          swapInfo.stable,
+        ]),
+        value: 0,
+        isDelegateCall: true,
+      },
+    ]
   } else {
-    throw new Error('Exchange %s is not supported', swapInfo.exchange)
+    throw new Error('Exchange %s is not supported for exactInput', swapInfo.exchange)
   }
   return routing
 }
@@ -70,7 +82,7 @@ function prepareExactOutputRouting(swapInfo) {
     return {
       tokenIn: swapInfo.pair.tokenIn,
       tokenOut: swapInfo.pair.tokenOut,
-      exchange: uniV2Adapter,
+      exchange: Address.Vesper.UniswapV2Adapter,
       path: abiCoder.encode(['address[]'], [swapInfo.path]),
     }
   } else if (swapInfo.exchange === ExchangeType.UNISWAP_V3) {
@@ -78,11 +90,11 @@ function prepareExactOutputRouting(swapInfo) {
     return {
       tokenIn: swapInfo.pair.tokenOut,
       tokenOut: swapInfo.pair.tokenIn,
-      exchange: uniV3Adapter,
+      exchange: Address.Vesper.UniswapV3Adapter,
       path: swapInfo.path,
     }
   }
-  throw new Error('Exchange %s is not supported', swapInfo.exchange)
+  throw new Error('Exchange %s is not supported for exactOutput', swapInfo.exchange)
 }
 
 async function setupRoutingsInNewSwapper(swapInfoList) {
@@ -90,7 +102,10 @@ async function setupRoutingsInNewSwapper(swapInfoList) {
   const exactOutputRoutings = []
   for (let swapInfo of swapInfoList) {
     exactInputRoutings.push(prepareExactInputRouting(swapInfo))
-    exactOutputRoutings.push(prepareExactOutputRouting(swapInfo))
+    // exact output is not supported in velodrome
+    if (swapInfo.exchange !== ExchangeType.VELODROME) {
+      exactOutputRoutings.push(prepareExactOutputRouting(swapInfo))
+    }
   }
 
   const swapper = await ethers.getContractAt(abi, Address.Vesper.Swapper)
@@ -175,11 +190,12 @@ function prepareSwapInfo(pairs) {
   const swapInfo = []
   for (let pair of pairs) {
     let exchange = ExchangeType.NO_EXCHANGE
-    let tokens = [pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]
-    if (pair.tokenIn === Address.NATIVE_TOKEN || pair.tokenOut === Address.NATIVE_TOKEN) {
+    let tokens = [pair.tokenIn, Address.WRAPPED_NATIVE_TOKEN, pair.tokenOut]
+    if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
       tokens = [pair.tokenIn, pair.tokenOut]
     }
     let path = tokens
+    let stable = []
     if (chain === 'mainnet') {
       if (pair.tokenIn === Address.Stargate.STG || pair.tokenOut === Address.Stargate.STG) {
         // uni3 has pair of USDC, WETH in 0.3 fee pool.
@@ -194,59 +210,81 @@ function prepareSwapInfo(pairs) {
       } else if (pair.tokenIn === Address.rETH || pair.tokenOut === Address.rETH) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
+          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Euler.EUL) {
-        if (pair.tokenOut === Address.NATIVE_TOKEN) {
+        if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN],
+            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
           )
         } else {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
           )
         }
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.NATIVE_TOKEN, 500, pair.tokenOut],
+          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       }
     } else if (chain == 'optimism') {
-      if (pair.tokenOut === Address.NATIVE_TOKEN) {
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, Address.NATIVE_TOKEN])
+      if (pair.tokenIn === Address.Sonne.SONNE) {
+        if (pair.tokenOut === Address.OP) {
+          path = [pair.tokenIn, Address.USDC, Address.WETH, pair.tokenOut]
+          stable = [false, false, false]
+        } else if (pair.tokenOut === Address.USDC) {
+          path = [pair.tokenIn, pair.tokenOut]
+          stable = [false]
+        } else if (pair.tokenOut === Address.WETH) {
+          path = [pair.tokenIn, Address.USDC, pair.tokenOut]
+          stable = [false, false]
+        } else if (pair.tokenOut === Address.wstETH) {
+          path = [pair.tokenIn, Address.USDC, pair.tokenOut]
+          stable = [false, false]
+        }
+        exchange = ExchangeType.VELODROME
+      } else if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address'],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
+        )
+        exchange = ExchangeType.UNISWAP_V3
       } else {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
+        exchange = ExchangeType.UNISWAP_V3
       }
-      exchange = ExchangeType.UNISWAP_V3
     } else if (chain !== 'bsc') {
       if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.FEI) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 3000, Address.NATIVE_TOKEN, 3000, pair.tokenOut],
+          [pair.tokenIn, 3000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.ALUSD) {
-        path = ethers.utils.defaultAbiCoder.encode(['address[]'], [[pair.tokenIn, Address.NATIVE_TOKEN, pair.tokenOut]])
+        path = ethers.utils.defaultAbiCoder.encode(
+          ['address[]'],
+          [[pair.tokenIn, Address.WRAPPED_NATIVE_TOKEN, pair.tokenOut]],
+        )
         exchange = ExchangeType.SUSHISWAP
       }
     }
 
-    swapInfo.push({ exchange, pair, path })
+    swapInfo.push({ exchange, pair, path, stable })
   }
   return swapInfo
 }
@@ -312,10 +350,6 @@ async function getTokenPairs(strategies, collateral) {
 }
 
 async function setupRoutings(strategies, collateral) {
-  // Optimism mainnet already has most of the configuration
-  if (chain === 'optimism') {
-    return
-  }
   // Get token pairs for swap
   const pairs = await getTokenPairs(strategies, collateral)
   // prepare path and exchange for each pair
@@ -323,7 +357,7 @@ async function setupRoutings(strategies, collateral) {
 
   const swapperAddress = strategies[0].constructorArgs.swapper
 
-  if (chain === 'mainnet') {
+  if (chain === 'mainnet' || chain === 'optimism') {
     await setupRoutingsInNewSwapper(swapInfoList)
   } else {
     await setupRoutingsInOldSwapper(swapperAddress, swapInfoList)

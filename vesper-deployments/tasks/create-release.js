@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict'
 const fs = require('fs')
 const _ = require('lodash')
@@ -57,14 +58,6 @@ async function getPoolData(data) {
       proxyAdmin: await getProxyAdminAddress(data.PoolRewards),
       proxy: data.PoolRewards,
       implementation: await getImplAddress(data.PoolRewards),
-    }
-  }
-
-  if (data.VesperEarnDrip) {
-    root.poolRewards = {
-      proxyAdmin: await getProxyAdminAddress(data.VesperEarnDrip),
-      proxy: data.VesperEarnDrip,
-      implementation: await getImplAddress(data.VesperEarnDrip),
     }
   }
 

@@ -1,6 +1,7 @@
 'use strict'
 
-const { getEvent, unlock } = require('vesper-commons/utils/setup')
+const { getEvent } = require('vesper-commons/utils/setup')
+const { unlock } = require('vesper-commons/utils/contractHelper')
 const {
   deposit: _deposit,
   rebalance,
@@ -107,7 +108,7 @@ async function shouldBehaveLikePool(poolName, collateralName) {
         await makeStrategyProfitable(strategies[0].instance, collateralToken)
         await rebalance(strategies)
         const user2Balance = await pool.balanceOf(user2.address)
-        // Earn pool leaves dust behind sometimes
+        // Pool leaves dust behind sometimes
         const dust = user2Balance.div(1000000) // 0.0001 % dust
         // Increase time to unlock asset from ConvexFroFrax/Sommelier strategies
         await increaseTimeIfNeeded(strategies[0])

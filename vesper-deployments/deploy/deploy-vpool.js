@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use strict'
 
 const { ethers } = require('hardhat')
@@ -93,7 +94,7 @@ const deployFunction = async function (hre) {
     return true
   }
   const rewards = poolConfig.rewards
-  // Deploy pool rewards (Vesper Earn drip for Earn pools)
+  // Deploy pool rewards
   await sleep(networkName, 5000)
 
   // Deploy upgrader
@@ -122,16 +123,6 @@ const deployFunction = async function (hre) {
   if ((await read(poolConfig.contractName, {}, 'poolRewards')) === ethers.constants.AddressZero) {
     await sleep(networkName, 5000)
     await execute(poolConfig.contractName, { from: deployer, log: true }, 'updatePoolRewards', rewardsProxy.address)
-  }
-
-  // Update grow token in Vesper Earn Drip contract of Earn pool
-  if (
-    poolConfig.poolParams[0].includes('Earn') &&
-    'growToken' in rewards &&
-    (await read(rewards.contract, {}, 'growToken')) === ethers.constants.AddressZero
-  ) {
-    await sleep(networkName, 5000)
-    await execute(rewards.contract, { from: deployer, log: true }, 'updateGrowToken', rewards.growToken)
   }
 
   return true

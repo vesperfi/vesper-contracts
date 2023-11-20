@@ -5,7 +5,7 @@ const { ethers } = require('hardhat')
 
 const { adjustBalance } = require('vesper-commons/utils/balance')
 const { deposit } = require('vesper-commons/utils/poolOps')
-const { deployContract } = require('vesper-commons/utils/setup')
+const { deployContract } = require('vesper-commons/utils/contractHelper')
 const { getPermitData } = require('vesper-commons/utils/sign')
 
 const MNEMONIC = 'test test test test test test test test test test test junk'
