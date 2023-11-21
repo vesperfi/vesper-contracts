@@ -52,6 +52,8 @@ contract CurveEarn is Curve, Earn {
         override(Strategy, CurveBase)
         returns (uint256 _profit, uint256 _loss, uint256 _payback)
     {
+        _checkLpSpotPriceSlippage();
+
         (_profit, , _payback) = _generateReport();
         _handleProfit(_profit);
         _profit = 0;

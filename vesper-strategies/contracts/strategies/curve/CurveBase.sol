@@ -144,7 +144,7 @@ abstract contract CurveBase is Strategy {
     function tvl() external view override returns (uint256) {
         return
             collateralToken.balanceOf(address(this)) +
-            _quoteLpToCoin(lpBalanceHereAndStaked(), SafeCast.toInt128(int256(collateralIdx)));
+            _quoteLpToCoin(lpBalanceHereAndStaked(), SafeCast.toInt128(int256(collateralIdx)), false);
     }
 
     function _approveToken(uint256 amount_) internal virtual override {
@@ -326,7 +326,7 @@ abstract contract CurveBase is Strategy {
         int128 _i = SafeCast.toInt128(int256(collateralIdx));
         uint256 _lpHere = lpBalanceHere();
         uint256 _totalLp = _lpHere + lpBalanceStaked();
-        uint256 _collateralInCurve = _quoteLpToCoin(_totalLp, _i);
+        uint256 _collateralInCurve = _quoteLpToCoin(_totalLp, _i, false);
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
         uint256 _totalCollateral = _collateralHere + _collateralInCurve;
 
@@ -361,9 +361,17 @@ abstract contract CurveBase is Strategy {
 
     function _getRewardTokens() internal view virtual returns (address[] memory _rewardTokens);
 
-    function _quoteLpToCoin(uint256 amountIn_, int128 toIdx_) private view returns (uint256 _amountOut) {
+    function _quoteLpToCoin(
+        uint256 amountIn_,
+        int128 toIdx_,
+        bool useOracle_
+    ) private view returns (uint256 _amountOut) {
         if (amountIn_ == 0) {
             return 0;
+        }
+
+        if (useOracle_) {
+            return masterOracle.quote(address(crvLp), address(collateralToken), amountIn_);
         }
 
         if (curvePoolType == PoolType.PLAIN_4_POOL || (curvePoolType == PoolType.META_4_POOL && !isFactoryPool)) {
@@ -377,9 +385,21 @@ abstract contract CurveBase is Strategy {
     }
 
     function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
+        _checkLpSpotPriceSlippage();
+
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
+    }
+
+    function _checkLpSpotPriceSlippage() internal view {
+        int128 _i = SafeCast.toInt128(int256(collateralIdx));
+        uint256 _amountIn = lpBalanceHere() + lpBalanceStaked();
+        uint256 _oracleAmount = _quoteLpToCoin(_amountIn, _i, true);
+        uint256 _min = (_oracleAmount * (MAX_BPS - crvSlippage)) / MAX_BPS;
+        uint256 _max = (_oracleAmount * (MAX_BPS + crvSlippage)) / MAX_BPS;
+        uint256 _spotAmount = _quoteLpToCoin(_amountIn, _i, false);
+        require(_min <= _spotAmount && _spotAmount <= _max, "slippage-too-high");
     }
 
     // Requires that gauge has approval for lp token
@@ -460,7 +480,7 @@ abstract contract CurveBase is Strategy {
 
         uint256 _lpHere = lpBalanceHere();
         uint256 _totalLp = _lpHere + lpBalanceStaked();
-        uint256 _lpToBurn = Math.min((coinAmountOut_ * _totalLp) / _quoteLpToCoin(_totalLp, _i), _totalLp);
+        uint256 _lpToBurn = Math.min((coinAmountOut_ * _totalLp) / _quoteLpToCoin(_totalLp, _i, false), _totalLp);
 
         if (_lpToBurn == 0) return;
 
