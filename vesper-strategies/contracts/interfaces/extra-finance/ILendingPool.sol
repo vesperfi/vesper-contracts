@@ -2,8 +2,6 @@
 
 pragma solidity 0.8.9;
 
-import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/IERC20.sol";
-
 interface ILendingPool {
     // Interest Rate Config
     // The utilization rate and borrowing rate are expressed in RAY

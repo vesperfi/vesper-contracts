@@ -101,8 +101,23 @@ contract ExtraFinance is Strategy {
         }
     }
 
-    ///  @dev Generate profit, loss and payback statement. Also claim rewards.
-    function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
+    /// @dev Fetch reward tokens from the stake contract
+    function _getRewardTokens() internal view virtual returns (address[] memory _rewardTokens) {
+        IStakingRewards _staking = staking;
+        uint256 _len = _staking.rewardsTokenListLength();
+        _rewardTokens = new address[](_len);
+        for (uint256 i; i < _len; ++i) {
+            _rewardTokens[i] = _staking.rewardTokens(i);
+        }
+    }
+
+    /// @dev Total collateral amount allocated
+    function _invested() private view returns (uint256) {
+        return _convertToCollateral(eToken().balanceOf(address(this)) + staking.balanceOf(address(this)));
+    }
+
+    /// @dev Generate report for pools accounting and also send profit and any payback to pool.
+    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
@@ -123,28 +138,10 @@ contract ExtraFinance is Strategy {
         // Make sure _collateralHere >= _payback + profit. set actual payback first and then profit
         _payback = Math.min(_collateralHere, _excessDebt);
         _profit = _collateralHere > _payback ? Math.min((_collateralHere - _payback), _profit) : 0;
-    }
 
-    /// @dev Fetch reward tokens from the stake contract
-    function _getRewardTokens() internal view virtual returns (address[] memory _rewardTokens) {
-        IStakingRewards _staking = staking;
-        uint256 _len = _staking.rewardsTokenListLength();
-        _rewardTokens = new address[](_len);
-        for (uint256 i; i < _len; ++i) {
-            _rewardTokens[i] = _staking.rewardTokens(i);
-        }
-    }
-
-    /// @dev Total collateral amount allocated
-    function _invested() private view returns (uint256) {
-        return _convertToCollateral(eToken().balanceOf(address(this)) + staking.balanceOf(address(this)));
-    }
-
-    /// @dev Generate report for pools accounting and also send profit and any payback to pool.
-    function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
-        (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
-        // After reportEarning strategy may get more collateral from pool. Deposit those in Compound.
+
+        // After reportEarning strategy may get more collateral from pool. Deposit those in ExtraFinance.
         _deposit(collateralToken.balanceOf(address(this)));
     }
 
