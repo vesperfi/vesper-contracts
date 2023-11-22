@@ -182,7 +182,7 @@ contract ExtraFinance is Strategy {
             _eTokenBalance = eToken().balanceOf(address(this));
         }
 
-        if (_eTokenAmount >= 0) {
+        if (_eTokenAmount > 0) {
             lendingPool.redeem(reserveId, Math.min(_eTokenAmount, _eTokenBalance), address(this), false);
         }
     }
