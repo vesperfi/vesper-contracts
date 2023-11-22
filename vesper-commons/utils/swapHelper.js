@@ -234,7 +234,7 @@ function prepareSwapInfo(pairs) {
         exchange = ExchangeType.UNISWAP_V3
       }
     } else if (chain == 'optimism') {
-      if (pair.tokenIn === Address.Sonne.SONNE) {
+      if (pair.tokenIn === Address.Sonne.SONNE || pair.tokenIn === Address.ExtraFinance.EXTRA) {
         if (pair.tokenOut === Address.OP) {
           path = [pair.tokenIn, Address.USDC, Address.WETH, pair.tokenOut]
           stable = [false, false, false]
