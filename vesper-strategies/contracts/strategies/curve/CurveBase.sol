@@ -32,7 +32,7 @@ abstract contract CurveBase is Strategy {
         META_4_POOL
     }
 
-    string public constant VERSION = "5.1.0";
+    string public constant VERSION = "5.2.0";
     uint256 internal constant MAX_BPS = 10_000;
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
     ILiquidityGaugeFactory public constant GAUGE_FACTORY =
@@ -377,9 +377,21 @@ abstract contract CurveBase is Strategy {
     }
 
     function _rebalance() internal virtual override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
+        _checkLpSpotPriceSlippage();
+
         (_profit, _loss, _payback) = _generateReport();
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
+    }
+
+    function _checkLpSpotPriceSlippage() internal view {
+        int128 _i = SafeCast.toInt128(int256(collateralIdx));
+        uint256 _amountIn = lpBalanceHere() + lpBalanceStaked();
+        uint256 _oracleAmount = masterOracle.quote(address(crvLp), address(collateralToken), _amountIn);
+        uint256 _min = (_oracleAmount * (MAX_BPS - crvSlippage)) / MAX_BPS;
+        uint256 _max = (_oracleAmount * (MAX_BPS + crvSlippage)) / MAX_BPS;
+        uint256 _spotAmount = _quoteLpToCoin(_amountIn, _i);
+        require(_min <= _spotAmount && _spotAmount <= _max, "slippage-too-high");
     }
 
     // Requires that gauge has approval for lp token

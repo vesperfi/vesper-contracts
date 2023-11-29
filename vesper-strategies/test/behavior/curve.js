@@ -3,7 +3,7 @@
 
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { parseEther } = require('ethers/lib/utils')
+const { parseEther, parseUnits } = require('ethers/lib/utils')
 const { mine, time } = require('@nomicfoundation/hardhat-network-helpers')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { unlock } = require('vesper-commons/utils/contractHelper')
@@ -185,6 +185,39 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
 
       const crvBalance = await crv.balanceOf(strategy.address)
       expect(crvBalance).to.be.equal('0', 'CRV balance should be 0 on rebalance')
+    })
+
+    it('Should revert if slippage is too high', async function () {
+      const curvePoolAddress = await strategy.crvPool()
+      if (curvePoolAddress != Address.Curve.THREE_POOL || collateralToken.address != Address.USDC) {
+        return
+      }
+
+      const curvePool = await ethers.getContractAt(
+        ['function add_liquidity(uint256[3],uint256)'],
+        curvePoolAddress,
+        alice,
+      )
+
+      // given
+      await deposit(pool, collateralToken, 100, alice)
+      await strategy.rebalance()
+      const expectedProfit = parseUnits('10', await collateralToken.decimals())
+      await adjustBalance(collateralToken.address, strategy.address, expectedProfit)
+      const { _profit } = await strategy.callStatic.rebalance()
+      // 1. Before pool manipulation, actual profit should be close to the expected
+      expect(_profit).closeTo(expectedProfit, parseUnits('0.1', await collateralToken.decimals()))
+
+      // when
+      const amount = parseUnits('1000000000', await collateralToken.decimals())
+      const amounts = [0, amount, 0]
+      await adjustBalance(collateralToken.address, alice.address, amount)
+      await collateralToken.connect(alice).approve(curvePool.address, ethers.constants.MaxUint256)
+      await curvePool.add_liquidity(amounts, 0)
+
+      // then
+      // 2. After the pool manipulation, call should revert
+      await expect(strategy.callStatic.rebalance()).revertedWith('slippage-too-high')
     })
   })
 }
