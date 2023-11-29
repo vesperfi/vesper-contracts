@@ -1,11 +1,7 @@
 'use strict'
 
-const { ethers } = require('hardhat')
 const Address = require('./address')
 const StrategyTypes = require('../../utils/strategyTypes')
-const { EllipsisPoolTypes } = require('../../utils/curvePoolTypes')
-
-const masterOracle = Address.Vesper.MasterOracle
 
 const swapper = Address.Vesper.Swapper
 const config = { debtRatio: 0, externalDepositFee: 0 }
@@ -43,38 +39,7 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
-  DotDot_Val3Pool_BUSD: {
-    contract: 'DotDot',
-    type: StrategyTypes.DOT_DOT,
-    constructorArgs: {
-      ellipsisPool: Address.Ellipsis.VAL_3EPS,
-      ellipsisPoolType: EllipsisPoolTypes.PLAIN_3_POOL,
-      depositZap: ethers.constants.AddressZero,
-      ellipsisSlippage: 10, // 0.1%
-      masterOracle,
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'DotDot_Val3Pool_BUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-  Ellipsis_Val3Pool_BUSD: {
-    contract: 'Ellipsis',
-    type: StrategyTypes.ELLIPSIS,
-    constructorArgs: {
-      ellipsisPool: Address.Ellipsis.VAL_3EPS,
-      ellipsisPoolType: EllipsisPoolTypes.PLAIN_3_POOL,
-      depositZap: ethers.constants.AddressZero,
-      ellipsisSlippage: 10, // 0.1%
-      masterOracle,
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Ellipsis_Val3Pool_BUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
+
   Stargate_BUSD: {
     contract: 'Stargate',
     type: StrategyTypes.STARGATE,
@@ -144,18 +109,6 @@ const StrategyConfig = {
       borrowCToken: Address.Venus.vBNB,
       vPool: Address.Vesper.vaBNB,
       strategyName: 'Venus_Vesper_Xy_BUSD_BNB',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Wombat_BUSD: {
-    contract: 'Wombat',
-    type: StrategyTypes.WOMBAT,
-    constructorArgs: {
-      swapper,
-      wombatPool: Address.Wombat.MainPool,
-      strategyName: 'Wombat_BUSD',
     },
     config: { ...config },
     setup: { ...setup },
