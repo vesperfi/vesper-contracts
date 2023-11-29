@@ -18,9 +18,6 @@ const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
 const { shouldBehaveLikeEulerVesperXY } = require('./euler-vesper-xy')
 const { shouldBehaveLikeAaveV3VesperXY } = require('./aavev3-vesper-xy')
 const { shouldBehaveLikeAaveV3SommelierXY } = require('./aavev3-sommelier-xy')
-const { shouldBehaveLikeEllipsisStrategy } = require('./ellipsis')
-const { shouldBehaveLikeDotDotStrategy } = require('./dot-dot')
-const { shouldBehaveLikeWombatStrategy } = require('./wombat')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
 const { shouldTestStargateRewards } = require('./stargate-rewards')
 const { shouldBehaveLikeFraxLendVesperXyStrategy } = require('./frax-lend-vesper-xy')
@@ -49,9 +46,6 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.EULER_VESPER_XY]: shouldBehaveLikeEulerVesperXY,
     [StrategyType.AAVE_V3_VESPER_XY]: shouldBehaveLikeAaveV3VesperXY,
     [StrategyType.AAVE_V3_SOMMELIER_XY]: shouldBehaveLikeAaveV3SommelierXY,
-    [StrategyType.ELLIPSIS]: shouldBehaveLikeEllipsisStrategy,
-    [StrategyType.DOT_DOT]: shouldBehaveLikeDotDotStrategy,
-    [StrategyType.WOMBAT]: shouldBehaveLikeWombatStrategy,
     [StrategyType.ALPACA]: shouldBehaveLikeAlpacaStrategy,
     [StrategyType.STARGATE]: shouldTestStargateRewards,
     [StrategyType.FRAX_LEND_VESPER_XY]: shouldBehaveLikeFraxLendVesperXyStrategy,
