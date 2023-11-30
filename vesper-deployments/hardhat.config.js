@@ -66,12 +66,6 @@ module.exports = {
       gas: 6700000,
       accounts,
     },
-    goerli: {
-      url,
-      chainId: 5,
-      gas: 12000000,
-      accounts,
-    },
     polygon: {
       url,
       chainId: 137,
@@ -96,9 +90,6 @@ module.exports = {
       gas: 8000000,
       accounts,
     },
-  },
-  paths: {
-    sources: process.env.SOURCES_DIR || './contracts',
   },
   namedAccounts: {
     deployer: process.env.DEPLOYER || 0,
