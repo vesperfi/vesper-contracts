@@ -134,7 +134,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       lendingPool: Address.ExtraFinance.LENDING_POOL,
-      reserveId: 1,
+      reserveId: 36,
       strategyName: 'ExtraFinance_ETH',
     },
     config: { ...config },
@@ -146,7 +146,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       lendingPool: Address.ExtraFinance.LENDING_POOL,
-      reserveId: 2,
+      reserveId: 25,
       strategyName: 'ExtraFinance_USDC',
     },
     config: { ...config },
