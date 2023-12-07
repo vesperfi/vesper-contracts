@@ -23,6 +23,8 @@ interface IStakingRewards {
 
     function rewardTokens(uint256) external view returns (address);
 
+    function rewardPerToken(address rewardsToken) external view returns (uint256);
+
     function rewardData(address) external view returns (uint256, uint256, uint256, uint256, uint256);
 
     function stakedToken() external view returns (IERC20);

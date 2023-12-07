@@ -39,6 +39,10 @@ function shouldBehaveLikeExtraFinanceStrategy(strategyIndex) {
         stakingAddress,
         strategySigner,
       )
+      // No EXTRA rewards skip the test
+      if ((await staking.rewardPerToken(extraToken.address)) == 0) {
+        return
+      }
 
       // given
       await deposit(pool, collateralToken, 100, alice)
@@ -63,6 +67,17 @@ function shouldBehaveLikeExtraFinanceStrategy(strategyIndex) {
     })
 
     it('Should liquidate EXTRA when claimed by external source', async function () {
+      const reserveId = await strategy.reserveId()
+      const { stakingAddress } = await lendingPool.reserves(reserveId)
+      const staking = await ethers.getContractAt(
+        'contracts/interfaces/extra-finance/IStakingRewards.sol:IStakingRewards',
+        stakingAddress,
+      )
+      // No EXTRA rewards meaning there may not be swap route, so skip the test
+      if ((await staking.rewardPerToken(extraToken.address)) == 0) {
+        return
+      }
+
       // given
       await deposit(pool, collateralToken, 1, alice)
       await strategy.rebalance()

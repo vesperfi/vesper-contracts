@@ -74,7 +74,7 @@ contract ExtraFinance is Strategy {
         for (uint256 i; i < _len; ++i) {
             address _rewardToken = rewardTokens[i];
             uint256 _rewardsAmount = IERC20(_rewardToken).balanceOf(address(this));
-            if (_rewardsAmount > 0) {
+            if (_rewardsAmount > 0 && _rewardToken != address(collateralToken)) {
                 _safeSwapExactInput(_rewardToken, address(collateralToken), _rewardsAmount);
             }
         }
