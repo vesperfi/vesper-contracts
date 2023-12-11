@@ -152,6 +152,18 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+  ExtraFinance_OP: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
+      reserveId: 66,
+      strategyName: 'ExtraFinance_OP',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
   Sonne_ETH: {
     contract: 'Sonne',
     type: StrategyTypes.COMPOUND,
