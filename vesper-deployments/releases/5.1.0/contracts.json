@@ -1114,6 +1114,7 @@
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
+          "AaveV3_Vesper_Xy_wstETH_USDC": "0xd9636c07CC1c90216e75A6237cB3d824aFf00b5F",
           "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
           "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"
         }
