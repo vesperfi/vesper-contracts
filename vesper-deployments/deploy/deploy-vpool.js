@@ -78,12 +78,13 @@ const deployFunction = async function (hre) {
     await execute(PoolAccountant, { from: deployer, log: true }, 'init', poolProxy.address)
   }
 
-  // If universal fee is zero then call setup
-  const universalFee = await read(poolConfig.contractName, {}, 'universalFee')
-  if (universalFee.toString() === '0') {
-    await sleep(networkName, 5000)
-    await execute(poolConfig.contractName, { from: deployer, log: true }, 'setup')
-  }
+  // Add keeper
+  await sleep(networkName, 5000)
+  await execute(poolConfig.contractName, { from: deployer, log: true }, 'addKeeper', poolConfig.setup.keeper)
+
+  // Add maintainer
+  await sleep(networkName, 5000)
+  await execute(poolConfig.contractName, { from: deployer, log: true }, 'addMaintainer', poolConfig.setup.maintainer)
 
   // Prepare id of deployment, next deployment will be triggered if id is changed
   const poolVersion = await read(poolConfig.contractName, {}, 'VERSION')

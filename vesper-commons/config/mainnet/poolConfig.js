@@ -1,7 +1,7 @@
 'use strict'
 
 const Address = require('./address')
-const setup = { universalFee: 200 }
+const setup = { universalFee: 200, keeper: Address.Vesper.PoolKeeper, maintainer: Address.Vesper.PoolMaintainer }
 
 const rewards = { contract: 'PoolRewards', tokens: [Address.Vesper.VSP] }
 
