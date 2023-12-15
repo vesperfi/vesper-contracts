@@ -8,5 +8,9 @@
   "Vesper_Earn_WBTC_DAI-v5.0.0": 1671712793,
   "vaRETH-v5.0.2_5.0.2": 1675347591,
   "vaCBETH-v5.1.0_5.1.0": 1676460027,
-  "Aave_V2_ETH-v5.1.0": 1685716890
+  "Aave_V2_ETH-v5.1.0": 1685716890,
+  "ConvexForFrax_dolafraxbp_FRAX-v5.2.0": 1702345711,
+  "ConvexForFrax_eusdfraxbp_FRAX-v5.2.0": 1702345926,
+  "ConvexForFrax_eusdfraxbp_USDC-v5.2.0": 1702346117,
+  "ConvexForFrax_dolafraxbp_USDC-v5.2.0": 1702346791
 }
