@@ -35,7 +35,7 @@ function validatePoolConfig(poolConfig, targetChain) {
   }
 
   // Validate setup in config object
-  const setupKeys = ['universalFee']
+  const setupKeys = ['universalFee', 'keeper', 'maintainer']
   validateObject(poolConfig.setup, setupKeys)
 
   // Validate rewards in config object
