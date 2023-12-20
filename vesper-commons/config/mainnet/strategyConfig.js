@@ -1774,6 +1774,18 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Morpho_AaveV2_WBTC: {
+    contract: 'MorphoAave',
+    type: StrategyTypes.MORPHO,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.maWBTC,
+      strategyName: 'Morpho_AaveV2_WBTC',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Morpho_AaveV3_WETH: {
     contract: 'MorphoAave',
     type: StrategyTypes.MORPHO,

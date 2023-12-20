@@ -36,6 +36,12 @@ const PoolConfig = {
     setup: { ...setup },
     rewards: { ...rewards },
   },
+  VWBTC: {
+    contractName: 'VPool',
+    poolParams: ['vWBTC Pool', 'vWBTC', Address.WBTC],
+    setup: { ...setup },
+    rewards: { ...rewards },
+  },
   VLINK: {
     contractName: 'VPool',
     poolParams: ['vLINK Pool', 'vLINK', Address.LINK],
