@@ -293,7 +293,8 @@
         },
         "strategies": {
           "Aave_V2_ETH": "0x017CBF62b53313d5eE3aD1288daA95CD39AA11fE",
-          "CompoundStrategyETH": "0x69ea3FE4a34dD1d9c9B9cC0a3eB48e86fc18Af22"
+          "CompoundStrategyETH": "0x69ea3FE4a34dD1d9c9B9cC0a3eB48e86fc18Af22",
+          "Morpho_AaveV3_WETH": "0x5554694285F3dbDC863c0FE42A02aBFD4187b93E"
         }
       },
       "vdai": {
@@ -602,7 +603,8 @@
           }
         },
         "strategies": {
-          "CompoundStrategyUSDC": "0xEADf9078361564a41907ba5d177E465d111B2D2D"
+          "CompoundStrategyUSDC": "0xEADf9078361564a41907ba5d177E465d111B2D2D",
+          "Morpho_AaveV2_USDC": "0x55e57e28d0e5e5d43b12ca40a7f02db532e1f654"
         }
       },
       "vausdc": {
@@ -805,6 +807,22 @@
           "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
           "AaveV3_Vesper_Xy_CBETH_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
           "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
+        }
+      },
+      "vwbtc": {
+        "pool": {
+          "proxyAdmin": "0x582Ebf6D677d54d54BD26980d076047fcb9E0446",
+          "proxy": "0xd25ee8509302bD23dc11d1Ab867FE995CDD7b531",
+          "implementation": "0x3CEDDEF5cbe54674fCBE1b4368a68b8D6a20Fc46",
+          "poolAccountant": {
+            "proxyAdmin": "0xcE91056e4C9A12871D66Fa17F2Ff2f9237Fdf13e",
+            "proxy": "0x90B8450A582814D504caeCd07aC9d138cfd728f6",
+            "implementation": "0x955613704CF4f99E270E7a470C020F7aF1379b95"
+          }
+        },
+        "strategies": {
+          "CompoundStrategyWBTC": "0x10dec1D38b3D528eFa5E8480ff516Ce9740b5c97",
+          "Morpho_AaveV2_WBTC": "0x046003F51B1D81ed736b40650C10A60b3F324107"
         }
       }
     },
