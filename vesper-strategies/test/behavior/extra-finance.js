@@ -40,7 +40,7 @@ function shouldBehaveLikeExtraFinanceStrategy(strategyIndex) {
         strategySigner,
       )
       // No EXTRA rewards skip the test
-      if ((await staking.rewardPerToken(extraToken.address)) == 0) {
+      if ((await staking.rewardData(extraToken.address))[1] < (await time.latest())) {
         return
       }
 
