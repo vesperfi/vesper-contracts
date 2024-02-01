@@ -128,30 +128,58 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
-  ExtraFinance_ETH: {
+  ExtraFinance_ETH_1: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
+      reserveId: 1,
+      strategyName: 'ExtraFinance_ETH_1',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ExtraFinance_ETH_2: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
     constructorArgs: {
       swapper,
       lendingPool: Address.ExtraFinance.LENDING_POOL,
       reserveId: 36,
-      strategyName: 'ExtraFinance_ETH',
+      strategyName: 'ExtraFinance_ETH_2',
     },
     config: { ...config },
     setup: { ...setup },
   },
-  ExtraFinance_USDC: {
+
+  ExtraFinance_USDC_1: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
+      reserveId: 2,
+      strategyName: 'ExtraFinance_USDC_1',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ExtraFinance_USDC_2: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
     constructorArgs: {
       swapper,
       lendingPool: Address.ExtraFinance.LENDING_POOL,
       reserveId: 25,
-      strategyName: 'ExtraFinance_USDC',
+      strategyName: 'ExtraFinance_USDC_2',
     },
     config: { ...config },
     setup: { ...setup },
   },
+
   ExtraFinance_OP: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
