@@ -1762,6 +1762,18 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Morpho_AaveV2_DAI: {
+    contract: 'MorphoAave',
+    type: StrategyTypes.MORPHO,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.maDAI,
+      strategyName: 'Morpho_AaveV2_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   Morpho_AaveV2_USDC: {
     contract: 'MorphoAave',
     type: StrategyTypes.MORPHO,
