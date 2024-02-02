@@ -3,10 +3,10 @@
 pragma solidity 0.8.9;
 
 import "../../../interfaces/external/lido/IWstETH.sol";
-import "./AaveV3VesperXy.sol";
+import "./AaveV3SommelierXy.sol";
 
 /// @title Deposit wstETH in Aave and earn yield by depositing borrowed token in a Vesper Pool.
-contract AaveV3VesperStETH is AaveV3VesperXy {
+contract AaveV3SommelierStETH is AaveV3SommelierXy {
     using SafeERC20 for IERC20;
 
     IWstETH internal constant WSTETH = IWstETH(0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0);
@@ -17,9 +17,9 @@ contract AaveV3VesperStETH is AaveV3VesperXy {
         address receiptToken_,
         address borrowToken_,
         address aaveAddressProvider_,
-        address vPool_,
+        address cellar_,
         string memory name_
-    ) AaveV3VesperXy(pool_, swapper_, receiptToken_, borrowToken_, aaveAddressProvider_, vPool_, name_) {}
+    ) AaveV3SommelierXy(pool_, swapper_, receiptToken_, borrowToken_, aaveAddressProvider_, cellar_, name_) {}
 
     /// @notice Returns total collateral locked in the strategy
     function tvl() external view virtual override returns (uint256) {

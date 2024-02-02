@@ -27,7 +27,7 @@ contract AaveV3Xy is Strategy {
     AToken public vdToken; // Variable Debt Token
     address internal aBorrowToken;
 
-    IERC20 internal wrappedCollateral;
+    IERC20 public wrappedCollateral;
 
     event UpdatedBorrowLimit(
         uint256 previousMinBorrowLimit,
@@ -192,10 +192,6 @@ contract AaveV3Xy is Strategy {
                 _safeSwapExactInput(_tokens[i], address(wrappedCollateral), _amounts[i]);
             }
         }
-    }
-
-    function _convertToWrapped(uint256 amount_) internal view virtual returns (uint256) {
-        return amount_;
     }
 
     function _depositToAave(uint256 _amount, AaveLendingPool _aaveLendingPool) internal virtual {

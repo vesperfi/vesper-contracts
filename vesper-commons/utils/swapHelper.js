@@ -232,6 +232,12 @@ function prepareSwapInfo(pairs) {
           [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
+      } else if (
+        (pair.tokenIn === Address.wstETH && pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) ||
+        (pair.tokenOut === Address.wstETH && pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN)
+      ) {
+        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+        exchange = ExchangeType.UNISWAP_V3
       }
     } else if (chain == 'optimism') {
       if (pair.tokenIn === Address.Sonne.SONNE || pair.tokenIn === Address.ExtraFinance.EXTRA) {
@@ -302,6 +308,11 @@ async function getTokenPairs(strategies, collateral) {
     }
 
     if (strategyName.includes('AaveV3')) {
+      // Is strategy is AaveV3Xy
+      if (strategyName.includes('Xy')) {
+        // eslint-disable-next-line no-param-reassign
+        collateral = await strategy.instance.wrappedCollateral()
+      }
       // get reward token list from AaveIncentivesController
       const aToken = await ethers.getContractAt(
         ['function getIncentivesController() external view returns (address)'],
