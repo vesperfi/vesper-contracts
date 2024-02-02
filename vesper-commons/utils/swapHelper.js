@@ -232,12 +232,14 @@ function prepareSwapInfo(pairs) {
           [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
-      } else if (
-        (pair.tokenIn === Address.wstETH && pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) ||
-        (pair.tokenOut === Address.wstETH && pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN)
-      ) {
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
-        exchange = ExchangeType.UNISWAP_V3
+      } else if (pair.tokenIn === Address.wstETH || pair.tokenOut === Address.wstETH) {
+        if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+          exchange = ExchangeType.UNISWAP_V3
+        } else if (pair.tokenIn === Address.USDC || pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
+          exchange = ExchangeType.UNISWAP_V3
+        } // else do nothing
       }
     } else if (chain == 'optimism') {
       if (pair.tokenIn === Address.Sonne.SONNE || pair.tokenIn === Address.ExtraFinance.EXTRA) {

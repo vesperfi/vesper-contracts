@@ -90,7 +90,7 @@ const whales = {
   [BscAddress.Stargate.STG]: '0x6e690075eedBC52244Dd4822D9F7887d4f27442F',
 
   // Optimism
-  [OptimismAddress.wstETH]: '0xb90b9b1f91a01ea22a182cd84c1e22222e39b415',
+  [OptimismAddress.wstETH]: '0xc45A479877e1e9Dfe9FcD4056c699575a1045dAA',
   [OptimismAddress.Yearn.yvOP]: '0xf5d9d6133b698ce29567a90ab35cfb874204b3a7',
 }
 
