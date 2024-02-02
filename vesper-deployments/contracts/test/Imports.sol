@@ -37,6 +37,7 @@ import "vesper-strategies/contracts/strategies/stargate/StargateTime.sol";
 import "vesper-strategies/contracts/strategies/stargate/StargateTimeETH.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperXy.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3SommelierXy.sol";
+import "vesper-strategies/contracts/strategies/aave/v3/AaveV3SommelierStETH.sol";
 import "vesper-strategies/contracts/strategies/aave/v3/AaveV3VesperStETH.sol";
 import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";
 import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3.sol";

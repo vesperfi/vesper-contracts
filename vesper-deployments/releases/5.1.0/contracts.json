@@ -162,6 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
+          "AaveV3_Sommelier_Xy_STETH_WETH": "0xCdBe4058eEC5FFf8461D43eC0aeb0b753aeC2071",
           "AaveV3_Vesper_Xy_STETH_USDC": "0x82562507429876486B60AF4F32390ef0947b3d13",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
         }
