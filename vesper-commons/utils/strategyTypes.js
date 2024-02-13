@@ -33,6 +33,7 @@ const StrategyType = {
   SOMMELIER: 'sommelier',
   MORPHO: 'morpho',
   EXTRA_FINANCE: 'extraFinance',
+  DUMMY: 'dummy',
 }
 
 module.exports = Object.freeze(StrategyType)
