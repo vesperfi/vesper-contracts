@@ -1837,6 +1837,18 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  Rari_Dummy_DAI: {
+    contract: 'DummyStrategy',
+    type: StrategyTypes.DUMMY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.ZERO,
+      strategyName: 'Rari_Dummy_DAI',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
