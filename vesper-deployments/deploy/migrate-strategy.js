@@ -17,6 +17,7 @@ const deployFunction = async function ({
   targetChain,
   multisigNonce = 0,
   oldStrategyName,
+  run,
 }) {
   if (!strategyConfig) {
     throw new Error('Strategy configuration object is not created.')
@@ -117,6 +118,13 @@ const deployFunction = async function ({
     console.log('Sending multisig tx')
     await proposeMultiTxn(address.MultiSig.safe, targetChain, deployer, multisigNonce, bundleTxs, address.MultiSend)
   }
+
+  console.log('Verifying source code on etherscan')
+  await run('verify', {
+    address: newStrategy.address,
+    constructorArgsParams: constructorArgs.map(val => val.toString()),
+    noCompile: true,
+  })
 
   const strategyVersion = await read(strategyAlias, {}, 'VERSION')
   deployFunction.id = `${strategyAlias}-v${strategyVersion}`
