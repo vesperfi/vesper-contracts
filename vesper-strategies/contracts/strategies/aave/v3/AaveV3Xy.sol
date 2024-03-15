@@ -102,7 +102,10 @@ contract AaveV3Xy is Strategy {
      */
     function _beforeMigration(address _newStrategy) internal virtual override {
         require(IStrategy(_newStrategy).token() == receiptToken, "wrong-receipt-token");
-        _repayY(vdToken.balanceOf(address(this)), AaveLendingPool(aaveAddressProvider.getPool()));
+        uint256 _repayAmount = vdToken.balanceOf(address(this));
+        if (_repayAmount > 0) {
+            _repayY(_repayAmount, AaveLendingPool(aaveAddressProvider.getPool()));
+        }
     }
 
     /// @notice Before repaying Y Hook
@@ -110,8 +113,10 @@ contract AaveV3Xy is Strategy {
 
     /**
      * @notice Calculate borrow and repay amount based on current collateral and new deposit/withdraw amount.
-     * @param _depositAmount deposit amount
-     * @param _withdrawAmount withdraw amount
+     * @param _depositAmount wrapped collateral amount to deposit
+     * @param _withdrawAmount wrapped collateral amount to withdraw
+     * @param _borrowed borrowed from protocol
+     * @param _supplied wrapped collateral supplied to protocol
      * @return _borrowAmount borrow more amount
      * @return _repayAmount repay amount to keep ltv within limit
      */
@@ -241,8 +246,9 @@ contract AaveV3Xy is Strategy {
             _rebalanceBorrow(_investedBorrowBalance - _borrowed);
         }
         uint256 _collateralHere = _getCollateralHere();
-        uint256 _supplied = _calculateUnwrapped(IERC20(receiptToken).balanceOf(address(this)));
-        uint256 _totalCollateral = _supplied + _collateralHere;
+        uint256 _supplied = IERC20(receiptToken).balanceOf(address(this));
+        uint256 _unwrappedSupplied = _calculateUnwrapped(_supplied);
+        uint256 _totalCollateral = _unwrappedSupplied + _collateralHere;
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
         if (_totalCollateral > _totalDebt) {
@@ -252,7 +258,7 @@ contract AaveV3Xy is Strategy {
         }
         uint256 _profitAndExcessDebt = _profit + _excessDebt;
         if (_collateralHere < _profitAndExcessDebt) {
-            uint256 _totalAmountToWithdraw = Math.min((_profitAndExcessDebt - _collateralHere), _supplied);
+            uint256 _totalAmountToWithdraw = Math.min((_profitAndExcessDebt - _collateralHere), _unwrappedSupplied);
             if (_totalAmountToWithdraw > 0) {
                 _withdrawHere(_totalAmountToWithdraw, _aaveLendingPool, _borrowed, _supplied);
                 _collateralHere = collateralToken.balanceOf(address(this));
@@ -342,7 +348,11 @@ contract AaveV3Xy is Strategy {
         );
     }
 
-    /// @dev If pool supports unwrapped token(stETH) then _requireAmount and output both are unwrapped token amount.
+    /**
+     * @dev If pool supports unwrapped token(stETH) then _requireAmount and output both are unwrapped token amount.
+     * @param _requireAmount unwrapped collateral amount
+     * @param _supplied wrapped collateral amount
+     */
     function _withdrawHere(
         uint256 _requireAmount,
         AaveLendingPool _aaveLendingPool,
@@ -358,7 +368,7 @@ contract AaveV3Xy is Strategy {
         // _wrappedRequireAmount against available liquidity.
         uint256 _possibleWithdraw = Math.min(
             _wrappedRequireAmount,
-            Math.min(IERC20(receiptToken).balanceOf(address(this)), wrappedCollateral.balanceOf(receiptToken))
+            Math.min(_supplied, wrappedCollateral.balanceOf(receiptToken))
         );
         require(
             _aaveLendingPool.withdraw(address(wrappedCollateral), _possibleWithdraw, address(this)) ==
