@@ -14,7 +14,7 @@ const PoolConfig = {
   },
   VAUSDC: {
     contractName: 'VPool',
-    poolParams: ['vaUSDC Pool', 'vaUSDC', Address.USDC],
+    poolParams: ['vaUSDC Pool', 'vaUSDC', Address.USDCe],
     setup: { ...setup },
     rewards: { ...rewards },
   },
@@ -27,6 +27,12 @@ const PoolConfig = {
   vawstETH: {
     contractName: 'VPool',
     poolParams: ['vawstETH Pool', 'vawstETH', Address.wstETH],
+    setup: { ...setup },
+    rewards: { ...rewards },
+  },
+  VAUSDCn: {
+    contractName: 'VPool',
+    poolParams: ['vaUSDCn Pool', 'vaUSDCn', Address.USDCn],
     setup: { ...setup },
     rewards: { ...rewards },
   },
