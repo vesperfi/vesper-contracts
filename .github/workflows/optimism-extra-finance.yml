@@ -43,7 +43,7 @@ jobs:
       - name: Running Extra Finance strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/optimism/extra-finance/vaeth.spec.js
 
-  vausdc-test:
+  vausdce-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
@@ -57,3 +57,18 @@ jobs:
 
       - name: Running Extra Finance strategy for VAUSDC pool
         run: npm test -- --scope vesper-strategies -- test/optimism/extra-finance/vausdc.spec.js
+
+  vausdcn-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.OPTIMISM_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Extra Finance strategy for VAUSDC pool
+        run: npm test -- --scope vesper-strategies -- test/optimism/extra-finance/vausdcn.spec.js

@@ -180,6 +180,32 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  ExtraFinance_USDCn_1: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
+      reserveId: 70,
+      strategyName: 'ExtraFinance_USDCn_1',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
+  ExtraFinance_USDCn_2: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LENDING_POOL,
+      reserveId: 71,
+      strategyName: 'ExtraFinance_USDCn_2',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   ExtraFinance_OP: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
