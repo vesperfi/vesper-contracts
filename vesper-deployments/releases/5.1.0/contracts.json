@@ -1140,6 +1140,23 @@
           "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
           "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"
         }
+      },
+      "vausdcn": {
+        "pool": {
+          "proxyAdmin": "0x2F4e44662c4c50abF4782E498E2d2165172Ad92c",
+          "proxy": "0x51babfc06D0ccaff8aafcD19Bc83C61B41c49a44",
+          "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
+          "poolAccountant": {
+            "proxyAdmin": "0x84C02e86988b379124b2476e706c15ef488900de",
+            "proxy": "0x0Be6A7eA81fc08bC8b388CA1FaA7bCcEDb25bAF8",
+            "implementation": "0x1C8f469e3c1D87B108eC69b165037d5d7365F8C3"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x774FC6E3dd63F8f1D095CE017c7712E801B01146",
+          "proxy": "0xbfC57300946673BA2EabB0652E4Fd22276471434",
+          "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
+        }
       }
     }
   }
