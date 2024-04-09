@@ -112,7 +112,8 @@ function shouldBehaveLikeExtraFinanceStrategy(strategyIndex) {
       const tvlBefore = await strategy.tvl()
       await time.increase(time.duration.days(30))
       const earned = await currentStaking.earned(strategy.address, extraToken.address)
-      expect(earned).gt(0)
+      // Only few pools offer EXTRA tokens
+      expect(earned).gte(0)
 
       // when
       const claimInCollateralAmountMin = 0

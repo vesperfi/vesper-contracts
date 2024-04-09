@@ -244,16 +244,19 @@ function prepareSwapInfo(pairs) {
     } else if (chain == 'optimism') {
       if (pair.tokenIn === Address.Sonne.SONNE || pair.tokenIn === Address.ExtraFinance.EXTRA) {
         if (pair.tokenOut === Address.OP) {
-          path = [pair.tokenIn, Address.USDC, Address.WETH, pair.tokenOut]
+          path = [pair.tokenIn, Address.USDCe, Address.WETH, pair.tokenOut]
           stable = [false, false, false]
-        } else if (pair.tokenOut === Address.USDC) {
+        } else if (pair.tokenOut === Address.USDCn) {
+          path = [pair.tokenIn, Address.USDCe, pair.tokenOut]
+          stable = [false, true]
+        } else if (pair.tokenOut === Address.USDCe) {
           path = [pair.tokenIn, pair.tokenOut]
           stable = [false]
         } else if (pair.tokenOut === Address.WETH) {
-          path = [pair.tokenIn, Address.USDC, pair.tokenOut]
+          path = [pair.tokenIn, Address.USDCe, pair.tokenOut]
           stable = [false, false]
         } else if (pair.tokenOut === Address.wstETH) {
-          path = [pair.tokenIn, Address.USDC, pair.tokenOut]
+          path = [pair.tokenIn, Address.USDCe, pair.tokenOut]
           stable = [false, false]
         }
         exchange = ExchangeType.VELODROME

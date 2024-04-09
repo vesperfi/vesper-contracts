@@ -1156,6 +1156,10 @@
           "proxyAdmin": "0x774FC6E3dd63F8f1D095CE017c7712E801B01146",
           "proxy": "0xbfC57300946673BA2EabB0652E4Fd22276471434",
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
+        },
+        "strategies": {
+          "ExtraFinance_USDCn_1": "0x0F309a98C30F1eAEA2f4E7c552f2075bDBceb07D",
+          "ExtraFinance_USDCn_2": "0x773485cAEF02eA74Ce9F3d256515197A5fACa781"
         }
       }
     }
