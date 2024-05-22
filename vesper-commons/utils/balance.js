@@ -6,6 +6,7 @@ const AvalancheAddress = require('../config/avalanche/address')
 const PolygonAddress = require('../config/polygon/address')
 const OptimismAddress = require('../config/optimism/address')
 const BscAddress = require('../config/bsc/address')
+const BaseAddress = require('../config/base/address')
 const ethers = hre.ethers
 const helpers = require('@nomicfoundation/hardhat-network-helpers')
 const BigNumber = ethers.BigNumber
@@ -105,6 +106,11 @@ const whales = {
     [OptimismAddress.Yearn.yvOP]: '0xf5d9d6133b698ce29567a90ab35cfb874204b3a7',
     [OptimismAddress.USDCe]: '0x86bb63148d17d445ed5398ef26aa05bf76dd5b59',
     [OptimismAddress.USDCn]: '0x8af3827a41c26c7f32c81e93bb66e837e0210d5c',
+  },
+  base: {
+    // Base
+    [BaseAddress.ExtraFinance.EXTRA]: '0x89f0885da2553232aeef201692f8c97e24715c83',
+    [BaseAddress.USDC]: '0xd5c41fd4a31eaaf5559ffcc60ec051fcb8ecc375',
   },
 }
 
