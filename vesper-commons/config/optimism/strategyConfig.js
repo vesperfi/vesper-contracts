@@ -70,6 +70,20 @@ const StrategyConfig = {
     config: { ...config }, // Shallow copy
     setup: { ...setup },
   },
+  AaveV3_Vesper_Xy_wstETH_ETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptwstETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_wstETH_ETH',
+    },
+    config,
+    setup,
+  },
   Curve_sETH_ETH: {
     contract: 'CurveETH',
     type: StrategyTypes.CURVE,
