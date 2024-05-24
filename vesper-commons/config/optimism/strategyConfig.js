@@ -16,13 +16,25 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  AaveV3_USDCe: {
+    contract: 'AaveV3',
+    type: StrategyTypes.AAVE_V3,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptUSDC,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      strategyName: 'AaveV3_USDCe',
+    },
+    config,
+    setup,
+  },
   AaveV3_Vesper_Xy_ETH_USDC: {
     contract: 'AaveV3VesperXy',
     type: StrategyTypes.AAVE_V3_VESPER_XY,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptWETH,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_ETH_USDC',
@@ -36,7 +48,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptOP,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_OP_USDC',
@@ -50,7 +62,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptwstETH,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_wstETH_USDC',
