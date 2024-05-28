@@ -1085,6 +1085,7 @@
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
+          "AaveV3_USDCe": "0xED8EE4F4b0fd6e9895B9426ac99C68BFA09890A0",
           "Curve_FRAXBP_USDC": "0x624B944AFAfa1456407DE3bA3fB713Dee0E619C5",
           "Curve_sUSD_USDC": "0x6A12FA3eD48B1404EB973bCdF2d4DF390E497544",
           "ExtraFinance_USDC": "0x41d17e7E24Ad868425DaE6a9083777055dF3F979",
@@ -1136,6 +1137,7 @@
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
+          "AaveV3_Vesper_Xy_wstETH_ETH": "0xA3B31FA31a0Ab32e0F1d6B92fcEfEa50089Dd4F5",
           "AaveV3_Vesper_Xy_wstETH_USDC": "0xd9636c07CC1c90216e75A6237cB3d824aFf00b5F",
           "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
           "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"

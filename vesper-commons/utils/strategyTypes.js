@@ -2,6 +2,7 @@
 const StrategyType = {
   AAVE: 'aave',
   AAVE_V1: 'aaveV1',
+  AAVE_V3: 'aaveV3',
   COMPOUND: 'compound',
   TRADER_JOE: 'traderJoe',
   AAVE_MAKER: 'aaveMaker',

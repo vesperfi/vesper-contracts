@@ -16,13 +16,25 @@ const setup = {
 
 /* eslint-disable camelcase */
 const StrategyConfig = {
+  AaveV3_USDCe: {
+    contract: 'AaveV3',
+    type: StrategyTypes.AAVE_V3,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptUSDC,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      strategyName: 'AaveV3_USDCe',
+    },
+    config,
+    setup,
+  },
   AaveV3_Vesper_Xy_ETH_USDC: {
     contract: 'AaveV3VesperXy',
     type: StrategyTypes.AAVE_V3_VESPER_XY,
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptWETH,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_ETH_USDC',
@@ -36,7 +48,7 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptOP,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_OP_USDC',
@@ -50,13 +62,27 @@ const StrategyConfig = {
     constructorArgs: {
       swapper,
       receiptToken: Address.Aave.aOptwstETH,
-      borrowToken: Address.USDC,
+      borrowToken: Address.USDCe,
       aaveAddressProvider: Address.Aave.AddressProvider,
       vPool: Address.Vesper.vaUSDC,
       strategyName: 'AaveV3_Vesper_Xy_wstETH_USDC',
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
+  },
+  AaveV3_Vesper_Xy_wstETH_ETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.aOptwstETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_wstETH_ETH',
+    },
+    config,
+    setup,
   },
   Curve_sETH_ETH: {
     contract: 'CurveETH',
