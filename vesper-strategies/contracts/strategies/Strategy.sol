@@ -158,6 +158,10 @@ abstract contract Strategy is IStrategy, Context {
         return address(collateralToken);
     }
 
+    function governor() external view returns (address) {
+        return IVesperPool(pool).governor();
+    }
+
     /// @notice Returns total collateral locked in the strategy
     function tvl() external view virtual returns (uint256);
 
