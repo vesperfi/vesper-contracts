@@ -1,4 +1,15 @@
 {
+  "base": {
+    "DefaultProxyAdmin": "0x1b4E1E670cdFee15675Dab024b543BE7547454aD",
+    "Keeper_Implementation": "0xB747015Fa5550039B807135F22C596bd19A1900F",
+    "Maintainer_Implementation": "0x178b526358eB7e66cCE357f452285e5debb1d57F",
+    "PoolKeeper": "0x33Aa8F94428C0F891dFd77DD141878aBCaEFEbe8",
+    "PoolKeeper_Proxy": "0x33Aa8F94428C0F891dFd77DD141878aBCaEFEbe8",
+    "PoolMaintainer": "0x017CBF62b53313d5eE3aD1288daA95CD39AA11fE",
+    "PoolMaintainer_Proxy": "0x017CBF62b53313d5eE3aD1288daA95CD39AA11fE",
+    "StrategyKeeper": "0x3ED788455Ec4CD272c578f7218bc5c5a8DB3B9B6",
+    "StrategyKeeper_Proxy": "0x3ED788455Ec4CD272c578f7218bc5c5a8DB3B9B6"
+  },
   "mainnet": {
     "DefaultProxyAdmin": "0x0C8aFD1b58aa2A5bAd2414B861D8A7fF898eDC3A",
     "Keeper_Implementation": "0xc2f8037a31a4f12b07d20D3f382b1aA03c94519B",
@@ -17,6 +28,7 @@
     "Keeper_Implementation": "0x2d306498A7fAaD3bF19aD8dec3584a7d3aD65dB5",
     "Keeper_Proxy": "0xe1aA88d62d3A6b48f5d1D0C997D14C2323180f83",
     "Maintainer_Implementation": "0xB4317F54ED4623834ce6C12050E7CFBB212DC4BE",
+    "Operator": "0x8eBe970BEEDfE7616A50DE707aD53199068261dC",
     "PoolKeeper": "0x68c80d3d6567B5998F78aC0c81467D5d4A82E781",
     "PoolKeeper_Proxy": "0x68c80d3d6567B5998F78aC0c81467D5d4A82E781",
     "PoolMaintainer": "0x8Db4A31683f0B8af64efe13C0D304da6fccFcE13",

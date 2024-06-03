@@ -29,6 +29,9 @@ function resolveChainId() {
   if (nodeUrl.includes('polygon')) {
     return 137
   }
+  if (nodeUrl.includes('base-mainnet')) {
+    return 8453
+  }
 
   return 31337
 }
@@ -85,6 +88,11 @@ module.exports = {
       gas: 8000000,
       accounts,
     },
+    base: {
+      url: process.env.NODE_URL,
+      chainId: 8453,
+      accounts,
+    },
   },
   paths: {
     deploy: ['deploy/scripts'],
@@ -100,7 +108,18 @@ module.exports = {
     apiKey: {
       mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
       optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY,
+      base: process.env.BASE_ETHERSCAN_API_KEY,
     },
+    customChains: [
+      {
+        network: 'base',
+        chainId: 8453,
+        urls: {
+          apiURL: 'https://api.basescan.org/api',
+          browserURL: 'https://basescan.org/',
+        },
+      },
+    ],
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS === 'true',

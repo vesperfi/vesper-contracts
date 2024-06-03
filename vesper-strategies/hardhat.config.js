@@ -22,6 +22,9 @@ function resolveChainId() {
   if (NODE_URL.includes('avax')) {
     return 43114
   }
+  if (NODE_URL.includes('base-mainnet')) {
+    return 8453
+  }
   return 31337
 }
 
@@ -80,6 +83,12 @@ module.exports = {
       url: process.env.NODE_URL,
       chainId: 10,
       gas: 8000000,
+      accounts,
+    },
+    base: {
+      url: process.env.NODE_URL,
+      chainId: 8453,
+      accounts,
     },
   },
   paths: {
