@@ -111,6 +111,8 @@ const whales = {
     // Base
     [BaseAddress.ExtraFinance.EXTRA]: '0x89f0885da2553232aeef201692f8c97e24715c83',
     [BaseAddress.USDC]: '0xd5c41fd4a31eaaf5559ffcc60ec051fcb8ecc375',
+    [BaseAddress.WETH]: '0x628ff693426583D9a7FB391E54366292F509D457',
+    [BaseAddress.Stargate.STG]: '0xb680190fB16f417647e69D6A84719aE9c7E5E20a',
   },
 }
 

@@ -341,6 +341,10 @@ function prepareSwapInfo(pairs) {
         }
         exchange = ExchangeType.UNISWAP_V3
       }
+      if (pair.tokenIn === Address.Stargate.STG) {
+        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        exchange = ExchangeType.UNISWAP_V3
+      }
     }
 
     swapInfo.push({ exchange, pair, path, stable })
