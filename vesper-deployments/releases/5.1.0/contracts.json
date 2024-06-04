@@ -1176,6 +1176,12 @@
             "proxy": "0xFAfE66bB00Bc805A7Bc264D9272909693d02dBE5",
             "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
           }
+        },
+        "strategies": {
+          "AaveV3_USDC": "0xcB9ee0BB0CeF5dBf21Aad6c420473EC5c44657f8",
+          "CompoundV3_USDC": "0xa617a02aA64C7f9Ca26d839392fF690aDF365Fd4",
+          "ExtraFinance_USDC_1": "0x1F394157ad709Def95396Dfb207fEc247e26E385",
+          "ExtraFinance_USDC_2": "0xD623A58cbd72785a5f371bF49B990ed253b631D3"
         }
       }
     }

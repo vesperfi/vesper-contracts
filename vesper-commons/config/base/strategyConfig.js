@@ -25,6 +25,7 @@ const StrategyConfig = {
     config,
     setup,
   },
+
   CompoundV3_USDC: {
     contract: 'CompoundV3',
     type: StrategyTypes.COMPOUNDV3,

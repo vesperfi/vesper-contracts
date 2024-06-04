@@ -7,12 +7,6 @@ const { isDelegateOrOwner, proposeMultiTxn, prepareTxn } = require('./gnosis-txn
 const CollateralManager = 'CollateralManager'
 const PoolAccountant = 'PoolAccountant'
 
-function sleep(ms) {
-  console.log(`waiting for ${ms} ms`)
-  // eslint-disable-next-line no-undef
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
 const deployFunction = async function (hre) {
   const { getNamedAccounts, deployments, poolConfig, strategyConfig, targetChain, multisigNonce = 0, run } = hre
   if (!strategyConfig) {
@@ -38,7 +32,6 @@ const deployFunction = async function (hre) {
   }
 
   // Deploy strategy
-  await sleep(5000)
   const deployed = await deploy(strategyAlias, {
     contract: strategyConfig.contract,
     from: deployer,
@@ -50,7 +43,6 @@ const deployFunction = async function (hre) {
   const setup = strategyConfig.setup
 
   // Execute setup transactions
-  await sleep(5000)
   await execute(strategyAlias, { from: deployer, log: true }, 'approveToken', ethers.constants.MaxUint256)
 
   const strategyVersion = await read(strategyAlias, {}, 'VERSION')
@@ -123,7 +115,6 @@ const deployFunction = async function (hre) {
       console.log(`preparing multisig tx for ${operation.params[0]}`)
       bundleTxs.push(await prepareTxn(operation.contractName, operation.contractAddress, ...operation.params))
     } else {
-      await sleep(5000)
       await execute(operation.alias, { from: deployer, log: true }, operation.params[0], ...operation.params[1])
     }
   }
@@ -132,7 +123,7 @@ const deployFunction = async function (hre) {
     await proposeMultiTxn(address.MultiSig.safe, targetChain, deployer, multisigNonce, bundleTxs, address.MultiSend)
   }
 
-  console.log('Verifying source code on etherscan')
+  console.log('Verifying source code on blockchain explorer')
   await run('verify', {
     address: deployed.address,
     constructorArgsParams: constructorArgs.map(val => val.toString()),
