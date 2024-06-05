@@ -113,6 +113,7 @@ const whales = {
     [BaseAddress.USDC]: '0xd5c41fd4a31eaaf5559ffcc60ec051fcb8ecc375',
     [BaseAddress.WETH]: '0x628ff693426583D9a7FB391E54366292F509D457',
     [BaseAddress.Stargate.STG]: '0xb680190fB16f417647e69D6A84719aE9c7E5E20a',
+    [BaseAddress.cbETH]: '0x3bf93770f2d4a794c3d9EBEfBAeBAE2a8f09A5E5',
   },
 }
 

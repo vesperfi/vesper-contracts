@@ -1,0 +1,45 @@
+name: Base Compound V3 XY Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/base-compoundV3-xy.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/test/utils/setup.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/compound/v3/CompoundV3Xy.sol"
+      - "vesper-strategies/contracts/strategies/compound/v3/CompoundV3VesperXy.sol"
+      - "vesper-strategies/test/base/compound/v3/xy/**/*.js"
+
+# Limit concurrency to one workflow per branch and one per pull_request
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BASE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vacbeth-vesper-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.BASE_NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running CompoundV3 Vesper XY strategy for vacbETH pool
+        run: npm test -- --scope vesper-strategies -- test/base/compound/v3/xy/vesper/vacbeth.spec.js

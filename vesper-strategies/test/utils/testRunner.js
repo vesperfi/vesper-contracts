@@ -43,7 +43,7 @@ function testRunner(poolKey, strategyKeys, strategyTestParams = [{ debtRatio: 90
 
     // Prep pool test params
     const poolName = pool.poolParams[0]
-    const collateralSymbol = pool.poolParams[1].split('-')[0].split(/([A-Z]+)/g)[1]
+    const collateralSymbol = pool.poolParams[1].split('-')[0].split(/^([vaVA]{0,2})/g)[2]
 
     // Do pool and strategy setup
     beforeEach(async function () {

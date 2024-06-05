@@ -40,6 +40,38 @@ const StrategyConfig = {
     setup,
   },
 
+  CompoundV3_Vesper_Xy_cbETH_ETH: {
+    contract: 'CompoundV3VesperXy',
+    type: StrategyTypes.COMPOUNDV3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.CompoundV3.COMP,
+      comet: Address.CompoundV3.cWETHv3,
+      borrowToken: Address.WETH,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'CompoundV3_Vesper_Xy_cbETH_ETH',
+    },
+    config,
+    setup,
+  },
+
+  CompoundV3_Vesper_Xy_cbETH_USDC: {
+    contract: 'CompoundV3VesperXy',
+    type: StrategyTypes.COMPOUNDV3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.CompoundV3.COMP,
+      comet: Address.CompoundV3.cUSDCv3,
+      borrowToken: Address.USDC,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'CompoundV3_Vesper_Xy_cbETH_USDC',
+    },
+    config,
+    setup,
+  },
+
   ExtraFinance_ETH_1: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
