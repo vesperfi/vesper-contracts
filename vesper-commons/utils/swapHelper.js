@@ -21,6 +21,7 @@ const ExchangeType = {
   UNISWAP_V3: 5,
   PANCAKE_SWAP: 6,
   VELODROME: 7,
+  AERODROME: 8,
 }
 
 const abi = [
@@ -49,10 +50,16 @@ function prepareExactInputRouting(swapInfo) {
       },
     ]
   } else if (swapInfo.exchange === ExchangeType.UNISWAP_V3) {
+    let target
+    if (chain === 'base') {
+      target = Address.Vesper.UniswapV3AdapterV2
+    } else {
+      target = Address.Vesper.UniswapV3Adapter
+    }
     const adapterAbi = ['function swapExactInput(bytes calldata path_) external']
     routing.calls = [
       {
-        target: Address.Vesper.UniswapV3Adapter,
+        target,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [swapInfo.path]),
         value: 0,
         isDelegateCall: true,
@@ -63,6 +70,19 @@ function prepareExactInputRouting(swapInfo) {
     routing.calls = [
       {
         target: Address.Vesper.VelodromeV2Adapter,
+        data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [
+          swapInfo.path,
+          swapInfo.stable,
+        ]),
+        value: 0,
+        isDelegateCall: true,
+      },
+    ]
+  } else if (swapInfo.exchange === ExchangeType.AERODROME) {
+    const adapterAbi = ['function swapExactInput(address[] calldata path_, bool[] memory stable_) external']
+    routing.calls = [
+      {
+        target: Address.Vesper.AerodromeAdapter,
         data: new ethers.utils.Interface(adapterAbi).encodeFunctionData('swapExactInput', [
           swapInfo.path,
           swapInfo.stable,
@@ -86,11 +106,17 @@ function prepareExactOutputRouting(swapInfo) {
       path: abiCoder.encode(['address[]'], [swapInfo.path]),
     }
   } else if (swapInfo.exchange === ExchangeType.UNISWAP_V3) {
+    let exchange
+    if (chain === 'base') {
+      exchange = Address.Vesper.UniswapV3AdapterV2
+    } else {
+      exchange = Address.Vesper.UniswapV3Adapter
+    }
     // For UniV3 exactOutput, tokenOut becomes tokenIn and vice versa
     return {
       tokenIn: swapInfo.pair.tokenOut,
       tokenOut: swapInfo.pair.tokenIn,
-      exchange: Address.Vesper.UniswapV3Adapter,
+      exchange,
       path: swapInfo.path,
     }
   }
@@ -103,7 +129,7 @@ async function setupRoutingsInNewSwapper(swapInfoList) {
   for (let swapInfo of swapInfoList) {
     exactInputRoutings.push(prepareExactInputRouting(swapInfo))
     // exact output is not supported in velodrome
-    if (swapInfo.exchange !== ExchangeType.VELODROME) {
+    if (swapInfo.exchange !== ExchangeType.VELODROME && swapInfo.exchange !== ExchangeType.AERODROME) {
       exactOutputRoutings.push(prepareExactOutputRouting(swapInfo))
     }
   }
@@ -273,7 +299,7 @@ function prepareSwapInfo(pairs) {
         )
         exchange = ExchangeType.UNISWAP_V3
       }
-    } else if (chain !== 'bsc') {
+    } else if (chain !== 'bsc' && chain !== 'base') {
       if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
@@ -292,6 +318,28 @@ function prepareSwapInfo(pairs) {
           [[pair.tokenIn, Address.WRAPPED_NATIVE_TOKEN, pair.tokenOut]],
         )
         exchange = ExchangeType.SUSHISWAP
+      }
+    } else if (chain === 'base') {
+      if (pair.tokenIn === Address.ExtraFinance.EXTRA) {
+        if (pair.tokenOut === Address.USDC) {
+          path = [pair.tokenIn, Address.WETH, pair.tokenOut]
+          stable = [false, false]
+        } else if (pair.tokenOut === Address.WETH) {
+          path = [pair.tokenIn, pair.tokenOut]
+          stable = [false]
+        }
+        exchange = ExchangeType.AERODROME
+      }
+      if (pair.tokenIn === Address.CompoundV3.COMP) {
+        if (pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
+          )
+        } else if (pair.tokenOut === Address.WETH) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        }
+        exchange = ExchangeType.UNISWAP_V3
       }
     }
 
@@ -373,7 +421,7 @@ async function setupRoutings(strategies, collateral) {
 
   const swapperAddress = strategies[0].constructorArgs.swapper
 
-  if (chain === 'mainnet' || chain === 'optimism') {
+  if (['mainnet', 'optimism', 'base'].includes(chain)) {
     await setupRoutingsInNewSwapper(swapInfoList)
   } else {
     await setupRoutingsInOldSwapper(swapperAddress, swapInfoList)

@@ -7,18 +7,18 @@ const PoolAccountantUpgrader = 'PoolAccountantUpgrader'
 const VPoolUpgrader = 'VPoolUpgrader'
 const PoolRewardsUpgrader = 'PoolRewardsUpgrader'
 
-// eslint-disable-next-line consistent-return
-function sleep(network, ms) {
-  if (network !== 'localhost') {
-    console.log(`waiting for ${ms} ms`)
-    // eslint-disable-next-line no-undef
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
+async function verify(hre, address, constructorArgs = []) {
+  console.log('Verifying source code on blockchain explorer')
+  await hre.run('verify', {
+    address,
+    constructorArgsParams: constructorArgs.map(val => val.toString()),
+    noCompile: true,
+  })
 }
 
 const deployFunction = async function (hre) {
   const { getNamedAccounts, deployments, poolConfig, targetChain } = hre
-  const { deploy, execute, read } = deployments
+  const { deploy, execute, read, get } = deployments
   const { deployer } = await getNamedAccounts()
   const networkName = hre.network.name
   const Address = require(`vesper-commons/config/${targetChain}/address`)
@@ -43,8 +43,6 @@ const deployFunction = async function (hre) {
 
   // Add implementation address in hre
   hre.implementations[PoolAccountant] = accountantProxy.implementation
-
-  await sleep(networkName, 5000)
 
   // Deploy upgrader
   await deploy(VPoolUpgrader, { from: deployer, log: true, args: [Address.MultiCall], waitConfirmations })
@@ -74,17 +72,29 @@ const deployFunction = async function (hre) {
 
   // Initialize PoolAccountant with pool proxy address
   if ((await read(PoolAccountant, {}, 'pool')) === ethers.constants.AddressZero) {
-    await sleep(networkName, 5000)
     await execute(PoolAccountant, { from: deployer, log: true }, 'init', poolProxy.address)
   }
 
-  // Add keeper
-  await sleep(networkName, 5000)
-  await execute(poolConfig.contractName, { from: deployer, log: true }, 'addKeeper', poolConfig.setup.keeper)
+  // Add
+  const keeper = poolConfig.setup.keeper
+  if (!(await read(poolConfig.contractName, {}, 'isKeeper', keeper))) {
+    await execute(poolConfig.contractName, { from: deployer, log: true }, 'addKeeper', keeper)
+  }
 
   // Add maintainer
-  await sleep(networkName, 5000)
-  await execute(poolConfig.contractName, { from: deployer, log: true }, 'addMaintainer', poolConfig.setup.maintainer)
+  const maintainer = poolConfig.setup.maintainer
+  if (!(await read(poolConfig.contractName, {}, 'isMaintainer', maintainer))) {
+    await execute(poolConfig.contractName, { from: deployer, log: true }, 'addMaintainer', maintainer)
+  }
+
+  // verify pool accountant upgrader
+  await verify(hre, (await get(PoolAccountantUpgrader)).address, [Address.MultiCall])
+  // verify pool accountant implementation
+  await verify(hre, accountantProxy.implementation)
+  // verify pool upgrader
+  await verify(hre, (await get(VPoolUpgrader)).address, [Address.MultiCall])
+  // verify pool implementation
+  await verify(hre, poolProxy.implementation, ['Vesper pool', 'vPool', ethers.constants.AddressZero])
 
   // Prepare id of deployment, next deployment will be triggered if id is changed
   const poolVersion = await read(poolConfig.contractName, {}, 'VERSION')
@@ -96,10 +106,14 @@ const deployFunction = async function (hre) {
   }
   const rewards = poolConfig.rewards
   // Deploy pool rewards
-  await sleep(networkName, 5000)
-
   // Deploy upgrader
-  await deploy(PoolRewardsUpgrader, { from: deployer, log: true, args: [Address.MultiCall], waitConfirmations })
+  const rewardsUpgrader = await deploy(PoolRewardsUpgrader, {
+    from: deployer,
+    log: true,
+    args: [Address.MultiCall],
+    waitConfirmations,
+  })
+
   const rewardsProxy = await deploy(rewards.contract, {
     from: deployer,
     log: true,
@@ -122,9 +136,13 @@ const deployFunction = async function (hre) {
 
   // Update pool rewards in pool
   if ((await read(poolConfig.contractName, {}, 'poolRewards')) === ethers.constants.AddressZero) {
-    await sleep(networkName, 5000)
     await execute(poolConfig.contractName, { from: deployer, log: true }, 'updatePoolRewards', rewardsProxy.address)
   }
+
+  // verify pool rewards upgrader
+  await verify(hre, (await get(PoolRewardsUpgrader)).address, [Address.MultiCall])
+  // verify pool rewards implementation
+  await verify(hre, rewardsUpgrader.implementation)
 
   return true
 }
