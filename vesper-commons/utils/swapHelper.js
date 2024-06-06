@@ -329,8 +329,7 @@ function prepareSwapInfo(pairs) {
           stable = [false]
         }
         exchange = ExchangeType.AERODROME
-      }
-      if (pair.tokenIn === Address.CompoundV3.COMP) {
+      } else if (pair.tokenIn === Address.CompoundV3.COMP) {
         if (pair.tokenOut === Address.USDC) {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address', 'uint24', 'address'],
@@ -338,11 +337,27 @@ function prepareSwapInfo(pairs) {
           )
         } else if (pair.tokenOut === Address.WETH) {
           path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        } else if (pair.tokenOut === Address.cbETH) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 10000, Address.WETH, 100, pair.tokenOut],
+          )
         }
         exchange = ExchangeType.UNISWAP_V3
-      }
-      if (pair.tokenIn === Address.Stargate.STG) {
+      } else if (pair.tokenIn === Address.Stargate.STG) {
         path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        exchange = ExchangeType.UNISWAP_V3
+      }
+
+      if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
+        if (pair.tokenIn === Address.USDC || pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WETH, 100, pair.tokenOut],
+          )
+        } else if (pair.tokenIn === Address.WETH || pair.tokenOut === Address.WETH) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+        }
         exchange = ExchangeType.UNISWAP_V3
       }
     }

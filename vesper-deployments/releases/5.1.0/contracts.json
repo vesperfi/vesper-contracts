@@ -1200,6 +1200,22 @@
           "ExtraFinance_ETH_LRT": "0x4D7365cd99a2aAB0848D7f3ee82399DDD786272C",
           "Stargate_ETH": "0xB5281F3f436B52CaE2284441050604e62a5b23A6"
         }
+      },
+      "vacbeth": {
+        "pool": {
+          "proxyAdmin": "0x5173C8e2F9C730dCf1E0072B1E18a845509B5b22",
+          "proxy": "0x3899a6090c5C178dB8A1800DA39daD0D06EeEFBE",
+          "implementation": "0x67006C2e8d2F28468f77a962cf26bCc792AfAC0f",
+          "poolAccountant": {
+            "proxyAdmin": "0xeDf3B0796cD3C44c430C6aCf41555f76c5815532",
+            "proxy": "0x4FdFFF343a1f14F3451D000cbEFB2d86c6031B8e",
+            "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
+          }
+        },
+        "strategies": {
+          "CompoundV3_Vesper_Xy_cbETH_ETH": "0xD8039420f1A61D0930127B89ab7Be23a7f21cd77",
+          "CompoundV3_Vesper_Xy_cbETH_USDC": "0xd1781A104F26DdF63E9a304c7E2c70E6FFe58A06"
+        }
       }
     }
   }
