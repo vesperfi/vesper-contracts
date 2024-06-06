@@ -99,12 +99,13 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
     })
 
     it('Borrowed Y amount should reflect in target Vesper Pool', async function () {
+      const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
+      const vPoolPricePerShare = await vPool.pricePerShare()
+
       await deposit(pool, collateralToken, 100, user1)
       await strategy.connect(governor).rebalance()
       const borrowBalance = await vdToken.balanceOf(strategy.address)
-      const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
       const actualVTokens = await vPool.balanceOf(strategy.address)
-      const vPoolPricePerShare = await vPool.pricePerShare()
       const decimal18 = ethers.utils.parseEther('1')
       // Actual logic inside pool contract
       let expectedVTokens = borrowBalance.mul(decimal18).div(vPoolPricePerShare)
@@ -153,6 +154,10 @@ function shouldBehaveLikeAaveV3VesperXY(strategyIndex) {
       const wNative = await ethers.getContractAt('ERC20', Address.WRAPPED_NATIVE_TOKEN)
       const vPool = await ethers.getContractAt('IVesperPool', await strategy.vPool())
       const poolRewards = await ethers.getContractAt(poolRewardsAbi, await vPool.poolRewards())
+      // No rewards in underlying Vesper pool
+      if (poolRewards.address === ethers.constants.AddressZero) {
+        return
+      }
       const rewardToken = await poolRewards.rewardTokens(0)
       const periodFinish = await poolRewards.periodFinish(rewardToken)
       // There is no rewards in system if periodFinish < timestamp

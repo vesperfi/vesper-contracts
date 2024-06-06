@@ -26,6 +26,36 @@ const StrategyConfig = {
     setup,
   },
 
+  AaveV3_Vesper_Xy_wstETH_ETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.AaveV3.aBaswstETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.AaveV3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_wstETH_ETH',
+    },
+    config,
+    setup,
+  },
+
+  AaveV3_Vesper_Xy_wstETH_USDC: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.AaveV3.aBaswstETH,
+      borrowToken: Address.USDC,
+      aaveAddressProvider: Address.AaveV3.AddressProvider,
+      vPool: Address.Vesper.vaUSDC,
+      strategyName: 'AaveV3_Vesper_Xy_wstETH_USDC',
+    },
+    config,
+    setup,
+  },
+
   CompoundV3_USDC: {
     contract: 'CompoundV3',
     type: StrategyTypes.COMPOUNDV3,
