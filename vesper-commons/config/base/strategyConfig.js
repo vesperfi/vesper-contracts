@@ -40,6 +40,32 @@ const StrategyConfig = {
     setup,
   },
 
+  ExtraFinance_ETH_1: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LendingPool,
+      reserveId: 1,
+      strategyName: 'ExtraFinance_ETH_1',
+    },
+    config,
+    setup,
+  },
+
+  ExtraFinance_ETH_LRT: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LendingPool,
+      reserveId: 49,
+      strategyName: 'ExtraFinance_ETH_LRT',
+    },
+    config,
+    setup,
+  },
+
   ExtraFinance_USDC_1: {
     contract: 'ExtraFinance',
     type: StrategyTypes.EXTRA_FINANCE,
@@ -61,6 +87,23 @@ const StrategyConfig = {
       lendingPool: Address.ExtraFinance.LendingPool,
       reserveId: 25,
       strategyName: 'ExtraFinance_USDC_2',
+    },
+    config,
+    setup,
+  },
+
+  Stargate_ETH: {
+    contract: 'StargateTimeETH',
+    type: StrategyTypes.STARGATE,
+    constructorArgs: {
+      swapper,
+      stargateRouter: Address.Stargate.router,
+      stargateLp: Address.Stargate.ethLP,
+      stargateLpStaking: Address.Stargate.lpStaking,
+      stargatePoolId: 13, // ETH LP Pool ID, https://stargateprotocol.gitbook.io/stargate/developers/pool-ids
+      stargateLpStakingPoolId: 0, // https://basescan.org/address/0x06Eb48763f117c7Be887296CDcdfad2E4092739C
+      wrappedNativeToken: Address.WRAPPED_NATIVE_TOKEN,
+      strategyName: 'Stargate_ETH',
     },
     config,
     setup,

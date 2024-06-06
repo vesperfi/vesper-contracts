@@ -6,6 +6,13 @@ const setup = { universalFee: 200, keeper: Address.Vesper.PoolKeeper, maintainer
 const rewards = { contract: 'PoolRewards', tokens: [] }
 
 const PoolConfig = {
+  vaETH: {
+    contractName: 'VETH',
+    poolParams: ['vaETH Pool', 'vaETH', Address.WETH],
+    setup,
+    rewards,
+  },
+
   vaUSDC: {
     contractName: 'VPool',
     poolParams: ['vaUSDC Pool', 'vaUSDC', Address.USDC],

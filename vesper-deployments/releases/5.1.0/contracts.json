@@ -1183,6 +1183,23 @@
           "ExtraFinance_USDC_1": "0x1F394157ad709Def95396Dfb207fEc247e26E385",
           "ExtraFinance_USDC_2": "0xD623A58cbd72785a5f371bF49B990ed253b631D3"
         }
+      },
+      "vaeth": {
+        "pool": {
+          "proxyAdmin": "0x5173C8e2F9C730dCf1E0072B1E18a845509B5b22",
+          "proxy": "0x82562507429876486B60AF4F32390ef0947b3d13",
+          "implementation": "0x097F419AC9F704742164De4a3E0f1136dE43Dec1",
+          "poolAccountant": {
+            "proxyAdmin": "0xeDf3B0796cD3C44c430C6aCf41555f76c5815532",
+            "proxy": "0xf50A0f53B047ED6101DA53b09821667a3f63e32B",
+            "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
+          }
+        },
+        "strategies": {
+          "ExtraFinance_ETH_1": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
+          "ExtraFinance_ETH_LRT": "0x4D7365cd99a2aAB0848D7f3ee82399DDD786272C",
+          "Stargate_ETH": "0xB5281F3f436B52CaE2284441050604e62a5b23A6"
+        }
       }
     }
   }

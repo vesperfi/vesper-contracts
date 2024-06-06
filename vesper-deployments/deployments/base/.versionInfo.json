@@ -6,5 +6,9 @@
   "VPool": {
     "address": "0x67006C2e8d2F28468f77a962cf26bCc792AfAC0f",
     "version": "5.1.0"
+  },
+  "VETH": {
+    "address": "0x097F419AC9F704742164De4a3E0f1136dE43Dec1",
+    "version": "5.1.0"
   }
 }
