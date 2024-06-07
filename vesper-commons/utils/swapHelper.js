@@ -360,6 +360,18 @@ function prepareSwapInfo(pairs) {
         }
         exchange = ExchangeType.UNISWAP_V3
       }
+
+      if (pair.tokenIn === Address.wstETH || pair.tokenOut === Address.wstETH) {
+        if (pair.tokenIn === Address.USDC || pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WETH, 100, pair.tokenOut],
+          )
+        } else if (pair.tokenIn === Address.WETH || pair.tokenOut === Address.WETH) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+        }
+        exchange = ExchangeType.UNISWAP_V3
+      }
     }
 
     swapInfo.push({ exchange, pair, path, stable })

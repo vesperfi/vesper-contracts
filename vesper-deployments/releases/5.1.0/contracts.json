@@ -1216,6 +1216,22 @@
           "CompoundV3_Vesper_Xy_cbETH_ETH": "0xD8039420f1A61D0930127B89ab7Be23a7f21cd77",
           "CompoundV3_Vesper_Xy_cbETH_USDC": "0xd1781A104F26DdF63E9a304c7E2c70E6FFe58A06"
         }
+      },
+      "vawsteth": {
+        "pool": {
+          "proxyAdmin": "0x5173C8e2F9C730dCf1E0072B1E18a845509B5b22",
+          "proxy": "0x46fb68Eb2b1Fc43654AbaE5691D39D18D933E4b4",
+          "implementation": "0x67006C2e8d2F28468f77a962cf26bCc792AfAC0f",
+          "poolAccountant": {
+            "proxyAdmin": "0xeDf3B0796cD3C44c430C6aCf41555f76c5815532",
+            "proxy": "0x8fd96F12E4cA0752af07F8d2aB9De30E09b05679",
+            "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
+          }
+        },
+        "strategies": {
+          "AaveV3_Vesper_Xy_wstETH_ETH": "0xD47a9F4Dcba4eabB643f8d880Cc8E91531FD849a",
+          "AaveV3_Vesper_Xy_wstETH_USDC": "0x36545537780052Dc021Dd32e14F2Cafe63B4Fc1A"
+        }
       }
     }
   }
