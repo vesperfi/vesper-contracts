@@ -17,6 +17,8 @@ interface IConvexFraxPoolRegistry {
             address rewardsAddress,
             uint8 active
         );
+
+    function operator() external view returns (address);
 }
 
 interface IVaultRegistry {

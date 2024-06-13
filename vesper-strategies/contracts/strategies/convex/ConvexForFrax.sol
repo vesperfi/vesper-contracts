@@ -12,7 +12,6 @@ import "../../strategies/curve/CurveBase.sol";
 contract ConvexForFrax is CurveBase {
     using SafeERC20 for IERC20;
 
-    IVaultRegistry public constant VAULT_REGISTRY = IVaultRegistry(0x2B8b301B90Eb8801f1eEFe73285Eec117D2fFC95);
     IConvexFraxPoolRegistry public constant POOL_REGISTRY =
         IConvexFraxPoolRegistry(0x41a5881c17185383e19Df6FA4EC158a6F4851A69);
     address public constant CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
@@ -68,7 +67,8 @@ contract ConvexForFrax is CurveBase {
     {
         (, address _stakingAddress, , address _reward, ) = POOL_REGISTRY.poolInfo(convexPoolId_);
         rewards = IMultiReward(_reward);
-        vault = IStakingProxyConvex(VAULT_REGISTRY.createVault(convexPoolId_));
+        // Read operator on the fly as operator can be updated anytime.
+        vault = IStakingProxyConvex(IVaultRegistry(POOL_REGISTRY.operator()).createVault(convexPoolId_));
         require(vault.curveLpToken() == address(crvLp), "incorrect-lp-token");
         fraxStaking = IFraxFarmERC20(_stakingAddress);
         lockPeriod = fraxStaking.lock_time_min();
