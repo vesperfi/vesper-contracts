@@ -11,7 +11,7 @@ import "../../interfaces/curve/IStableSwap.sol";
 import "../../interfaces/curve/ILiquidityGauge.sol";
 import "../../interfaces/curve/ITokenMinter.sol";
 import "../../interfaces/curve/IMetapoolFactory.sol";
-import "../../interfaces/curve/IRegistry.sol";
+import "../../interfaces/curve/IMetaRegistry.sol";
 import "../../interfaces/curve/IAddressProvider.sol";
 import "../../interfaces/curve/ILiquidityGaugeFactory.sol";
 import "../../interfaces/one-oracle/IMasterOracle.sol";
@@ -38,7 +38,7 @@ abstract contract CurveBase is Strategy {
     ILiquidityGaugeFactory public constant GAUGE_FACTORY =
         ILiquidityGaugeFactory(0xabC000d88f23Bb45525E447528DBF656A9D55bf5); // Act as CRV_MINTER on side chains
     IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
-    uint256 private constant FACTORY_ADDRESS_ID = 3;
+    uint256 private constant META_REGISTRY_ADDRESS_ID = 7;
 
     // solhint-disable-next-line var-name-mixedcase
     address public immutable CRV;
@@ -72,36 +72,17 @@ abstract contract CurveBase is Strategy {
         string memory name_
     ) Strategy(pool_, swapper_, address(0)) {
         require(crvToken_ != address(0), "crv-token-is-null");
-
-        address _crvGauge;
-        IRegistry _registry = IRegistry(ADDRESS_PROVIDER.get_registry());
-        address _crvLp = _registry.get_lp_token(crvPool_);
-
-        if (_crvLp != address(0)) {
-            // Get data from Registry contract
-            require(collateralIdx_ < _registry.get_n_coins(crvPool_)[1], "invalid-collateral");
-            _verifyCollateral(_registry.get_underlying_coins(crvPool_)[collateralIdx_]);
-            _crvGauge = _registry.get_gauges(crvPool_)[0];
-        } else {
-            // Get data from Factory contract
-            IMetapoolFactory _factory = IMetapoolFactory(ADDRESS_PROVIDER.get_address(FACTORY_ADDRESS_ID));
-
-            if (_factory.is_meta(crvPool_)) {
-                require(collateralIdx_ < _factory.get_meta_n_coins(crvPool_)[1], "invalid-collateral");
-                _verifyCollateral(_factory.get_underlying_coins(crvPool_)[collateralIdx_]);
-            } else {
-                require(collateralIdx_ < _factory.get_n_coins(crvPool_), "invalid-collateral");
-                _verifyCollateral(_factory.get_coins(crvPool_)[collateralIdx_]);
-            }
-            _crvLp = crvPool_;
-            _crvGauge = _factory.get_gauge(crvPool_);
-        }
-
         require(crvPool_ != address(0), "pool-is-null");
+
+        IMetaRegistry _registry = IMetaRegistry(ADDRESS_PROVIDER.get_address(META_REGISTRY_ADDRESS_ID));
+
+        address _crvLp = _registry.get_lp_token(crvPool_);
         require(_crvLp != address(0), "lp-is-null");
-        if (_crvGauge == address(0)) {
-            _crvGauge = GAUGE_FACTORY.get_gauge_from_lp_token(_crvLp);
-        }
+
+        require(collateralIdx_ < _registry.get_n_underlying_coins(crvPool_), "invalid-collateral");
+        _verifyCollateral(_registry.get_underlying_coins(crvPool_)[collateralIdx_]);
+
+        address _crvGauge = _registry.get_gauge(crvPool_);
         require(_crvGauge != address(0), "gauge-is-null");
 
         CRV = crvToken_;
