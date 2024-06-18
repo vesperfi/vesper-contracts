@@ -32,36 +32,6 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  d3pool-alusd-test:
-    needs: [setup-job]
-    runs-on: ubuntu-latest
-    env:
-      NODE_URL: ${{ secrets.NODE_URL }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-
-      - name: Running Convex strategy for VAALUSD pool using D3 3pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/3pool/d3pool-alusd.spec.js
-
-  d3pool-fei-test:
-    needs: [setup-job]
-    runs-on: ubuntu-latest
-    env:
-      NODE_URL: ${{ secrets.NODE_URL }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-
-      - name: Running Convex strategy for VAFEI pool using D3 3pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/3pool/d3pool-fei.spec.js
-
   d3pool-frax-test:
     needs: [setup-job]
     runs-on: ubuntu-latest

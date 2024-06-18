@@ -730,63 +730,6 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  Convex_d3pool_AlUSD: {
-    contract: 'Convex',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
-      crvPool: Address.Curve.D3_POOL,
-      curvePoolType: CurvePoolTypes.PLAIN_3_POOL,
-      depositZap: ethers.constants.AddressZero,
-      crvToken: Address.Curve.CRV,
-      crvSlippage: 250, // 2.5%
-      masterOracle,
-      swapper,
-      collateralIdx: 2,
-      convexPoolId: 58,
-      strategyName: 'Convex_d3pool_AlUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Convex_mim_MIM: {
-    contract: 'Convex',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
-      crvPool: Address.Curve.MIM_3CRV_POOL,
-      curvePoolType: CurvePoolTypes.META_4_POOL,
-      depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
-      crvToken: Address.Curve.CRV,
-      crvSlippage: 20, // 0.2%
-      masterOracle,
-      swapper,
-      collateralIdx: 0,
-      convexPoolId: 40,
-      strategyName: 'Convex_mim_MIM',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
-  Convex_musd_MUSD: {
-    contract: 'Convex',
-    type: StrategyTypes.CONVEX,
-    constructorArgs: {
-      crvPool: Address.Curve.MUSD_POOL,
-      curvePoolType: CurvePoolTypes.META_4_POOL,
-      depositZap: Address.Curve.MUSD_DEPOSIT,
-      crvToken: Address.Curve.CRV,
-      crvSlippage: 50, // 0.5%
-      masterOracle,
-      swapper,
-      collateralIdx: 0,
-      convexPoolId: 14,
-      strategyName: 'Convex_musd_MUSD',
-    },
-    config: { ...config },
-    setup: { ...setup },
-  },
-
   Convex_frax_FRAX: {
     contract: 'Convex',
     type: StrategyTypes.CONVEX,
@@ -1121,24 +1064,6 @@ const StrategyConfig = {
       strategyName: 'Curve_mim_DAI',
     },
     config: { ...config, externalDepositFee: 100 },
-    setup: { ...setup },
-  },
-
-  Curve_mim_MIM: {
-    contract: 'Curve',
-    type: StrategyTypes.CURVE,
-    constructorArgs: {
-      crvPool: Address.Curve.MIM_3CRV_POOL,
-      curvePoolType: CurvePoolTypes.META_4_POOL,
-      depositZap: Address.Curve.TRIPOOL_DEPOSIT_ZAP,
-      crvToken: Address.Curve.CRV,
-      crvSlippage: 50, // 0.5%
-      masterOracle,
-      swapper,
-      collateralIdx: 0,
-      strategyName: 'Curve_mim_MIM',
-    },
-    config: { ...config },
     setup: { ...setup },
   },
 

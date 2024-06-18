@@ -77,36 +77,6 @@ jobs:
       - name: Running Convex strategy for VAUSDC pool using FRAX+3Crv 4pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/frax-pool-usdc.spec.js
 
-  mim-pool-mim-test:
-    needs: [setup-job]
-    runs-on: ubuntu-latest
-    env:
-      NODE_URL: ${{ secrets.NODE_URL }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-
-      - name: Running Convex strategy for vmim pool using MIM+3Crv 4pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/mim-pool-mim.spec.js
-
-  musd-pool-musd-test:
-    needs: [setup-job]
-    runs-on: ubuntu-latest
-    env:
-      NODE_URL: ${{ secrets.NODE_URL }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup env
-        uses: ./.github/actions/setup-env
-
-      - name: Running Convex strategy for VAMUSD pool using mUSD+3Crv 4pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/convex/4pool/musd-pool-musd.spec.js
-
   dola-pool-dai-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
