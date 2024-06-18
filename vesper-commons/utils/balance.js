@@ -79,7 +79,7 @@ const slots = {
 // there is no clear balanceOf storage so using whale address for adjusting balance
 const whales = {
   mainnet: {
-    [Address.Aave.stkAAVE]: '0x4a49985b14bd0ce42c25efde5d8c379a48ab02f3',
+    [Address.Aave.stkAAVE]: '0x80845058350B8c3Df5c3015d8a717D64B3bF9267',
     [Address.stETH]: '0x1982b2F5814301d4e9a8b0201555376e62F82428',
     [Address.Saddle.FRAXBP_LP]: '0xfb516cf3710fc6901f2266aaeb8834cf5e4e9558',
     [Address.Curve.CRV]: '0x8dAE6Cb04688C62d939ed9B68d32Bc62e49970b1',
