@@ -28,8 +28,6 @@ import "vesper-strategies/contracts/strategies/convex/Convex.sol";
 import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";
 import "vesper-strategies/contracts/strategies/curve/Curve.sol";
 import "vesper-strategies/contracts/strategies/compound/bsc/VenusBNB.sol";
-import "vesper-strategies/contracts/strategies/euler/Euler.sol";
-import "vesper-strategies/contracts/strategies/euler/EulerVesperXy.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundVesperXy.sol";
 import "vesper-strategies/contracts/strategies/compound/avalanche/BenqiAVAX.sol";
 import "vesper-strategies/contracts/strategies/stargate/StargateETH.sol";
