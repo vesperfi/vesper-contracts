@@ -29,7 +29,8 @@ abstract contract CurveBase is Strategy {
         LENDING_3_POOL,
         LENDING_4_POOL,
         META_3_POOL,
-        META_4_POOL
+        META_4_POOL,
+        DYNAMIC_ARRAYED_POOL
     }
 
     string public constant VERSION = "5.2.0";
@@ -244,7 +245,7 @@ abstract contract CurveBase is Strategy {
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap3x(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
-            address(crvPool),
+            crvPool,
             _depositAmounts,
             lpAmountOutMin_
         );
@@ -255,7 +256,7 @@ abstract contract CurveBase is Strategy {
         _depositAmounts[collateralIdx] = coinAmountIn_;
         // Note: The function below won't return a reason when reverting due to slippage
         IDepositZap4x(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
-            address(crvPool),
+            crvPool,
             _depositAmounts,
             lpAmountOutMin_
         );
@@ -296,8 +297,21 @@ abstract contract CurveBase is Strategy {
             }
             return _depositTo4PlainOrMetaPool(coinAmountIn_, _lpAmountOutMin, useEth_);
         }
+        if (curvePoolType == PoolType.DYNAMIC_ARRAYED_POOL) {
+            return _depositToDynamicArrayedPool(coinAmountIn_, _lpAmountOutMin, useEth_);
+        }
 
         revert("deposit-to-curve-failed");
+    }
+
+    function _depositToDynamicArrayedPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
+        uint256[] memory _depositAmounts = new uint256[](8);
+        _depositAmounts[collateralIdx] = coinAmountIn_;
+        IDynamicArrayedDepositZap(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+            crvPool,
+            _depositAmounts,
+            lpAmountOutMin_
+        );
     }
 
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
@@ -352,6 +366,9 @@ abstract contract CurveBase is Strategy {
         }
         if (curvePoolType == PoolType.META_3_POOL || curvePoolType == PoolType.META_4_POOL) {
             return IDepositZap(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
+        }
+        if (curvePoolType == PoolType.DYNAMIC_ARRAYED_POOL) {
+            return IDepositZap(depositZap).calc_withdraw_one_coin(crvPool, amountIn_, toIdx_);
         }
 
         return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
@@ -443,9 +460,15 @@ abstract contract CurveBase is Strategy {
             } else {
                 _withdrawFrom4PlainOrMetaPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
             }
+        } else if (curvePoolType == PoolType.DYNAMIC_ARRAYED_POOL) {
+            _withdrawFromDynamicArrayedPool(lpToBurn_, _minCoinAmountOut, coinIdx_);
         } else {
             revert("withdraw-from-curve-failed");
         }
+    }
+
+    function _withdrawFromDynamicArrayedPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
+        IDynamicArrayedDepositZap(depositZap).remove_liquidity_one_coin(crvPool, lpAmount_, i_, minAmountOut_);
     }
 
     function _withdrawHere(uint256 coinAmountOut_) internal override {
