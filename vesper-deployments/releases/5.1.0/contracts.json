@@ -248,6 +248,7 @@
           "implementation": "0x92574eD22C0b3961e240dBa1EbA02F6f30fd066C"
         },
         "strategies": {
+          "ConvexForFrax_DolaFraxPyusd_FRAX": "0x3536d419f27eCCf257570EadA6698Cab1Ce4c1Ba",
           "ConvexForFrax_dolafraxbp_FRAX": "0x4FF325Ae4dFc97ce7808bab776da4f2d8E750940",
           "ConvexForFrax_eusdfraxbp_FRAX": "0xb207c5ed0a5A5dc04FB6f88995bDA4A385eb7ab8",
           "ConvexForFrax_fraxusdc_FRAX": "0x6AaA692eE622667c2EA339878c93ef0f8DE58A6A",

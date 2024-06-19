@@ -10,6 +10,7 @@ const CurvePoolType = {
   LENDING_4_POOL: 5,
   META_3_POOL: 6,
   META_4_POOL: 7,
+  DYNAMIC_ARRAYED_POOL: 8,
 }
 
 module.exports = { CurvePoolTypes: Object.freeze(CurvePoolType) }

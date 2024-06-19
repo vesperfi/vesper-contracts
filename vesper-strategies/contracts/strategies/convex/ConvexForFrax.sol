@@ -146,22 +146,22 @@ contract ConvexForFrax is CurveBase {
     /**
      * @notice Unstake all LPs
      * @dev This function is called by `_beforeMigration()` hook
-     * @dev `withdrawLockedAndUnwrap` destroys current position
-     * Should claim rewards that will be swept later
      */
     function _unstakeAllLp() internal override {
-        require(block.timestamp >= unlockTime, "unlock-time-didnt-pass");
-        vault.withdrawLockedAndUnwrap(kekId);
-        kekId = 0x0;
+        _unstakeLp(lpBalanceStaked());
     }
 
     /**
      * @notice Unstake LPs
      * @dev Unstake all because Convex-FRAX doesn't support partial unlocks
+     * @dev `withdrawLockedAndUnwrap` destroys current position
+     * Should claim rewards that will be swept later
      */
     function _unstakeLp(uint256 _amount) internal override {
         if (_amount > 0) {
-            _unstakeAllLp();
+            require(block.timestamp >= unlockTime, "unlock-time-didnt-pass");
+            vault.withdrawLockedAndUnwrap(kekId);
+            kekId = 0x0;
         }
     }
 
