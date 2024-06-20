@@ -16,6 +16,7 @@ contract CurveAaveLendingPool is Curve {
     address private constant CRV_POOL = 0xDeBF20617708857ebe4F679508E7b7863a8A8EeE;
     StakedAave private constant STKAAVE = StakedAave(0x4da27a545c0c5B758a6BA100e3a049001de870f5);
     IERC20 private constant AAVE = IERC20(0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9);
+    uint104 internal constant MAX_UINT104_VALUE = type(uint104).max;
 
     constructor(
         address pool_,
@@ -72,7 +73,8 @@ contract CurveAaveLendingPool is Curve {
         (uint256 _cooldownStart, uint256 _cooldownEnd, uint256 _unstakeEnd) = cooldownData();
         if (STKAAVE.balanceOf(address(this)) > 0) {
             if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
-                STKAAVE.redeem(address(this), MAX_UINT_VALUE);
+                // stkAave V3 is casting uint256 into uint104 hence the usage of uint104
+                STKAAVE.redeem(address(this), MAX_UINT104_VALUE);
             } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
                 STKAAVE.cooldown();
             }
