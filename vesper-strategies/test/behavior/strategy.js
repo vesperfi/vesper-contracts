@@ -15,7 +15,6 @@ const { shouldBehaveLikeConvexForFraxStrategy } = require('./convex-for-frax')
 const { shouldBehaveLikeMakerStrategy } = require('./maker')
 const { shouldBehaveLikeCompoundVesperXyStrategy } = require('./compound-vesper-xy')
 const { shouldBehaveLikeAaveVesperXY } = require('./aave-vesper-xy')
-const { shouldBehaveLikeEulerVesperXY } = require('./euler-vesper-xy')
 const { shouldBehaveLikeAaveV3VesperXY } = require('./aavev3-vesper-xy')
 const { shouldBehaveLikeAaveV3SommelierXY } = require('./aavev3-sommelier-xy')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
@@ -43,7 +42,6 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.CURVE]: shouldBehaveLikeCrvStrategy,
     [StrategyType.CONVEX]: shouldBehaveLikeConvexStrategy,
     [StrategyType.CONVEX_FOR_FRAX]: shouldBehaveLikeConvexForFraxStrategy,
-    [StrategyType.EULER_VESPER_XY]: shouldBehaveLikeEulerVesperXY,
     [StrategyType.AAVE_V3_VESPER_XY]: shouldBehaveLikeAaveV3VesperXY,
     [StrategyType.AAVE_V3_SOMMELIER_XY]: shouldBehaveLikeAaveV3SommelierXY,
     [StrategyType.ALPACA]: shouldBehaveLikeAlpacaStrategy,

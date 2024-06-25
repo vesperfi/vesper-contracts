@@ -239,19 +239,6 @@ function prepareSwapInfo(pairs) {
           [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
         )
         exchange = ExchangeType.UNISWAP_V3
-      } else if (pair.tokenIn === Address.Euler.EUL) {
-        if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
-          path = ethers.utils.solidityPack(
-            ['address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
-          )
-        } else {
-          path = ethers.utils.solidityPack(
-            ['address', 'uint24', 'address', 'uint24', 'address'],
-            [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN, 3000, pair.tokenOut],
-          )
-        }
-        exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],

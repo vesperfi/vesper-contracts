@@ -38,7 +38,7 @@ abstract contract CurveBase is Strategy {
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
     ILiquidityGaugeFactory public constant GAUGE_FACTORY =
         ILiquidityGaugeFactory(0xabC000d88f23Bb45525E447528DBF656A9D55bf5); // Act as CRV_MINTER on side chains
-    IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x0000000022D53366457F9d5E68Ec105046FC4383); // Same address to all chains
+    IAddressProvider public constant ADDRESS_PROVIDER = IAddressProvider(0x5ffe7FB82894076ECB99A30D6A32e969e6e35E98); // Same address to all chains
     uint256 private constant META_REGISTRY_ADDRESS_ID = 7;
 
     // solhint-disable-next-line var-name-mixedcase
