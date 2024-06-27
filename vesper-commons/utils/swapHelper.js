@@ -332,7 +332,14 @@ function prepareSwapInfo(pairs) {
         }
         exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Stargate.STG) {
-        path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        if (pair.tokenOut === Address.WETH) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 10000, pair.tokenOut])
+        } else if (pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 10000, Address.WETH, 100, pair.tokenOut],
+          )
+        }
         exchange = ExchangeType.UNISWAP_V3
       }
 

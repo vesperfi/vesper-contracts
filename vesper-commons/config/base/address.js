@@ -28,6 +28,11 @@ const Address = {
     router: '0x45f1A95A4D3f3836523F5c83673c797f4d4d263B',
     lpStaking: '0x06Eb48763f117c7Be887296CDcdfad2E4092739C',
     ethLP: '0x28fc411f9e1c480AD312b3d9C60c22b965015c6B',
+    V2: {
+      stargateStaking: '0xDFc47DCeF7e8f9Ab19a1b8Af3eeCF000C7ea0B80',
+      ethPool: '0xdc181Bd607330aeeBEF6ea62e03e5e1Fb4B6F7C7',
+      usdcPool: '0x27a16dc786820B16E5c9028b75B99F6f604b5d26',
+    },
   },
   Vesper: {
     DEPLOYER: '0x169e2FfC1c6b229b04E65A431434bF0e8eD9563d',
