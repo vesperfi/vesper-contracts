@@ -105,6 +105,7 @@ const whales = {
     [OptimismAddress.Yearn.yvOP]: '0xf5d9d6133b698ce29567a90ab35cfb874204b3a7',
     [OptimismAddress.USDCe]: '0x86bb63148d17d445ed5398ef26aa05bf76dd5b59',
     [OptimismAddress.USDCn]: '0x8af3827a41c26c7f32c81e93bb66e837e0210d5c',
+    [OptimismAddress.Stargate.STG]: '0x43d2761ed16C89A2C4342e2B16A3C61Ccf88f05B',
   },
   base: {
     // Base
