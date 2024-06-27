@@ -22,6 +22,7 @@ const StrategyType = {
   AAVE_LEVERAGE: 'aaveLeverage',
   AAVE_VESPER_XY: 'aaveVesperXY',
   STARGATE: 'stargate',
+  STARGATE_V2: 'stargateV2',
   COMPOUNDV3: 'compoundV3',
   COMPOUNDV3_VESPER_XY: 'compoundV3VesperXY',
   AAVE_V3_VESPER_XY: 'aaveV3VesperXy',
