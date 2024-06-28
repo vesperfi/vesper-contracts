@@ -1,0 +1,43 @@
+name: Mainnet Stargate V2 Strategy
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/mainnet-stargateV2.yml"
+      - ".github/actions/setup-env/action.yml"
+      - "vesper-commons/utils/setup.js"
+      - "vesper-pools/contracts/pool/**/*.sol"
+      - "vesper-pools/contracts/pool/*.sol"
+      - "vesper-strategies/contracts/strategies/Strategy.sol"
+      - "vesper-strategies/contracts/strategies/stargate/v2/*.sol"
+
+# Limit concurrency to one workflow per branch and one per pull_request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  setup-job:
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+  vausdc-stargate-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Stargate V2 strategy vaUSDC pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/stargate/v2/vausdc.spec.js
