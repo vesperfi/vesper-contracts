@@ -637,6 +637,7 @@
           "Morpho_AaveV2_USDC": "0xA58126E7541e3870535A17A839C55dCBe4fc13bd",
           "RariFuseStrategy#18": "0x3f46812E5b11A1b88B7b757b3caFF965e458f380",
           "RariFuseStrategy#6": "0xA92F21CF2923cd634922d193fC8eEaf05CBefb65",
+          "StargateV2_USDC": "0xbdeb773bF40e3b6B81240cd349f703bdE586968f",
           "Stargate_USDC": "0xE27e8095B33FBCBB480AAC5E6e6dA94FbAf2965B"
         }
       },
