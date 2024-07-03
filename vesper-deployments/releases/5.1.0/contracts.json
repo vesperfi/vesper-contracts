@@ -1185,7 +1185,8 @@
           "AaveV3_USDC": "0xcB9ee0BB0CeF5dBf21Aad6c420473EC5c44657f8",
           "CompoundV3_USDC": "0xa617a02aA64C7f9Ca26d839392fF690aDF365Fd4",
           "ExtraFinance_USDC_1": "0x1F394157ad709Def95396Dfb207fEc247e26E385",
-          "ExtraFinance_USDC_2": "0xD623A58cbd72785a5f371bF49B990ed253b631D3"
+          "ExtraFinance_USDC_2": "0xD623A58cbd72785a5f371bF49B990ed253b631D3",
+          "StargateV2_USDC": "0xc9924e0bd5CB4Aa8B67fe2bB883355Ba73Abb777"
         }
       },
       "vaeth": {
@@ -1202,6 +1203,7 @@
         "strategies": {
           "ExtraFinance_ETH_1": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
           "ExtraFinance_ETH_LRT": "0x4D7365cd99a2aAB0848D7f3ee82399DDD786272C",
+          "StargateV2_ETH": "0x1e379208a3fb99B794C00Cf26245Aa6B082761D5",
           "Stargate_ETH": "0xB5281F3f436B52CaE2284441050604e62a5b23A6"
         }
       },
