@@ -17,10 +17,10 @@ contract StargateV2 is Strategy {
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.2.0";
+    string public constant VERSION = "5.2.1";
 
     /// @notice Address of Stargate pool
-    IStargatePool internal immutable stargatePool;
+    IStargatePool public immutable stargatePool;
     /// @notice Address of Staking contract
     IStargateStaking public immutable stargateStaking;
     /// @dev Stargate LP. Immutable version of receiptToken
