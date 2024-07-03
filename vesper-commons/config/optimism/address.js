@@ -49,6 +49,10 @@ const Address = {
     lpStaking: '0x4DeA9e918c6289a52cd469cAC652727B7b412Cd2',
     ethLP: '0xd22363e3762cA7339569F3d33EADe20127D5F98C',
     usdcLP: '0xDecC0c09c3B5f6e92EF4184125D5648a66E35298',
+    V2: {
+      stargateStaking: '0xFBb5A71025BEf1A8166C9BCb904a120AA17d6443',
+      ethPool: '0xe8CDF27AcD73a434D661C84887215F7598e7d0d3',
+    },
   },
   Vesper: {
     DEPLOYER: '0x1cbfae0367a9b1e4ac2c158e57b5f00ccb337271',

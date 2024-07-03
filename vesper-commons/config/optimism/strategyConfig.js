@@ -302,6 +302,20 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
+
+  StargateV2_ETH: {
+    contract: 'StargateV2ETH',
+    type: StrategyTypes.STARGATE_V2,
+    constructorArgs: {
+      swapper,
+      stargatePool: Address.Stargate.V2.ethPool,
+      stargateStaking: Address.Stargate.V2.stargateStaking,
+      wrappedNativeToken: Address.WRAPPED_NATIVE_TOKEN,
+      strategyName: 'StargateV2_ETH',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
