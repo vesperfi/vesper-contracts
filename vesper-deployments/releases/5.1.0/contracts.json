@@ -1067,7 +1067,7 @@
           "Sonne_ETH": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Sonne_Leverage_ETH": "0xfD5B3e34b53BF6f603155620821De612006C8A45",
           "Sonne_Vesper_Xy_ETH_USDC": "0xa8eD06e96EAfd4B89A66728434722BB4e8A2CBbA",
-          "StargateV2_ETH": "0xA519456110C3c3cd65B59cBa379bAd6342126f2c",
+          "StargateV2_ETH": "0xAA6F6e1b4C91a2530460D979DF0b54dF09733ED9",
           "Stargate_ETH": "0xAf71624A448983d100645aF716a9fbfcb0DE463a",
           "Yearn_ETH": "0x34FA07AeCd10F45bc72934b31D4a601d04045d8E"
         }
@@ -1186,7 +1186,7 @@
           "CompoundV3_USDC": "0xa617a02aA64C7f9Ca26d839392fF690aDF365Fd4",
           "ExtraFinance_USDC_1": "0x1F394157ad709Def95396Dfb207fEc247e26E385",
           "ExtraFinance_USDC_2": "0xD623A58cbd72785a5f371bF49B990ed253b631D3",
-          "StargateV2_USDC": "0xc9924e0bd5CB4Aa8B67fe2bB883355Ba73Abb777"
+          "StargateV2_USDC": "0xf185985C655321528F15e3996dE3886a6aDdE4Da"
         }
       },
       "vaeth": {
@@ -1203,7 +1203,7 @@
         "strategies": {
           "ExtraFinance_ETH_1": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
           "ExtraFinance_ETH_LRT": "0x4D7365cd99a2aAB0848D7f3ee82399DDD786272C",
-          "StargateV2_ETH": "0x1e379208a3fb99B794C00Cf26245Aa6B082761D5",
+          "StargateV2_ETH": "0x933b752C96b68ee82a48544AefD60f0253f363be",
           "Stargate_ETH": "0xB5281F3f436B52CaE2284441050604e62a5b23A6"
         }
       },
