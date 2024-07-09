@@ -1,0 +1,578 @@
+[
+  {
+    "account": "0x37A6156e4a6E8B60b2415AF040546cF5e91699bd",
+    "amount": "4084236912000000000000"
+  },
+  {
+    "account": "0xF8133F1189bb5A6b0038976f7d69FF7480119071",
+    "amount": "883543110700000000000"
+  },
+  {
+    "account": "0x2E15D7AA0650dE1009710FDd45C3468d75AE1392",
+    "amount": "874394487500000000000"
+  },
+  {
+    "account": "0xbAd908bc158EF60aC7472f3fd978e65A51379B8e",
+    "amount": "803940858600000000000"
+  },
+  {
+    "account": "0xF68813feF24Ae1CE7000f0f1771Cd3042d5702be",
+    "amount": "796215384200000000000"
+  },
+  {
+    "account": "0x5b7E76029aa45817F88694d00d4e69aC5915eAE5",
+    "amount": "577382826900000000000"
+  },
+  {
+    "account": "0x9Bd6125A273c20cf43C2ba1bb98F7a094B054Ca1",
+    "amount": "522438749900000000000"
+  },
+  {
+    "account": "0xba23646c87b5b40FD2DF4ec3Dd7042DcE305A144",
+    "amount": "455186536300000000000"
+  },
+  {
+    "account": "0xBCEE5F1A02392608324903fa61e3042dc8a0B641",
+    "amount": "438845776500000000000"
+  },
+  {
+    "account": "0xb446427a794a23E0E29b1aafF3F80B7Fb7f901Cc",
+    "amount": "424067189100000000000"
+  },
+  {
+    "account": "0x21e639f6F89FB6c3b7712a5e3d51C0fd875C9BFf",
+    "amount": "373800992400000000000"
+  },
+  {
+    "account": "0x4fda54C85e7DB9890a7E95b5faC4ff634ba608C8",
+    "amount": "358988764900000000000"
+  },
+  {
+    "account": "0xe052c6a58e3aB776796F773D1b2b04536C5B3Fbe",
+    "amount": "332543768500000000000"
+  },
+  {
+    "account": "0x716a8Bba81d610E986aBfB2CE84213d18233D97a",
+    "amount": "250000000000000000000"
+  },
+  {
+    "account": "0xd76E8c18A21BBd944895B4b45d7563AFAbbe2916",
+    "amount": "242326140900000000000"
+  },
+  {
+    "account": "0x1Fb21E2A6509E481a710705f30Da91753E84C761",
+    "amount": "239223806700000000000"
+  },
+  {
+    "account": "0xD2E0690cf42B58103e6f976463D84566cC263454",
+    "amount": "210429854500000000000"
+  },
+  {
+    "account": "0x1F1618823b3EB96919B345503dD1E94767168aB4",
+    "amount": "206048589000000000000"
+  },
+  {
+    "account": "0xFf0ae9387E8B49E3ADdA008925a5BBa02a6A8021",
+    "amount": "205730768700000000000"
+  },
+  {
+    "account": "0x070eB2840ADEf4A0ABcbd15Af2bB4496FA4E60D6",
+    "amount": "198404927000000000000"
+  },
+  {
+    "account": "0xe639fA0647a2D9c61ea33B5dEb0DF3c7c0A68760",
+    "amount": "197892137000000000000"
+  },
+  {
+    "account": "0x3B82B31bBE0DC3fE0f13D17f9a4d0455eF562e06",
+    "amount": "180873558900000000000"
+  },
+  {
+    "account": "0xBF6e850f6906d141c61c67cc0E8A8bb89DCe394e",
+    "amount": "177134985200000000000"
+  },
+  {
+    "account": "0x919AB2FaC961d88660750A93475ADD1901786782",
+    "amount": "169529847800000000000"
+  },
+  {
+    "account": "0x25c173c236a6f0bCa04c9BB50B4F877082CbefFE",
+    "amount": "166123999000000000000"
+  },
+  {
+    "account": "0xe66e614B3110E93822E8388B7a9FC2c42Eb9F296",
+    "amount": "164362412900000000000"
+  },
+  {
+    "account": "0xb7d6302FBFcb2dE0CD4ca446aADf28F90f5a974f",
+    "amount": "163859962500000000000"
+  },
+  {
+    "account": "0xa274F4bb88A0BC689049A02b3738E6584Fa4aC9C",
+    "amount": "157670767300000000000"
+  },
+  {
+    "account": "0xB97ADe36185a07343FfA89B9595280F021977CB7",
+    "amount": "150655250600000000000"
+  },
+  {
+    "account": "0xBaE202e6687Bf04e3820367159594C101Ed97f0D",
+    "amount": "144750872300000000000"
+  },
+  {
+    "account": "0x1Ee24AaeD93F8F8660c96B06Ec4fBBf4D481f45e",
+    "amount": "137690147600000000000"
+  },
+  {
+    "account": "0x8289d6a2eD28E4B52eDF32662ECd54e7033F76B1",
+    "amount": "133862579600000000000"
+  },
+  {
+    "account": "0x64ea5A109A6f8d5cA30f9565b0D7F72DE781CE7d",
+    "amount": "123577960100000000000"
+  },
+  {
+    "account": "0x272E8d0DfFdd8AbF7b4eDd488602e0D3137a373e",
+    "amount": "122196133300000000000"
+  },
+  {
+    "account": "0x0200575F1bB1Bc230b50169d3040e3a688508f1e",
+    "amount": "121266788500000000000"
+  },
+  {
+    "account": "0x60E3d987F397DD0d3CC68B05ff3c6ce6d5C6A1fE",
+    "amount": "106970463200000000000"
+  },
+  {
+    "account": "0x07eFAFC95A0fB31a6216300182350712cD1aB333",
+    "amount": "106596385800000000000"
+  },
+  {
+    "account": "0x2E289bC52eebF12954250371B734F4BaFDc187e8",
+    "amount": "99501701080000000000"
+  },
+  {
+    "account": "0x5E7AB0Efc1Bc2587Ef9e24f9608f65a5359c37c5",
+    "amount": "87882202210000000000"
+  },
+  {
+    "account": "0x0A7A87E7eB134b5e3DBb4798acafAf3736D7dF8F",
+    "amount": "85609366000000000000"
+  },
+  {
+    "account": "0x9330CB363C27e538Ce31bCDC69B948531078A48c",
+    "amount": "82832228080000000000"
+  },
+  {
+    "account": "0x303196EeB4A89037484e5dE5f50503f4ba00A345",
+    "amount": "80161262370000000000"
+  },
+  {
+    "account": "0x1797808b1EED6a4F19D28b87D48B054bA7561364",
+    "amount": "79978537280000000000"
+  },
+  {
+    "account": "0x29b8849F4e9F9831F023EAd2780EABE232D82852",
+    "amount": "70037965360000000000"
+  },
+  {
+    "account": "0x7faf3e50B6DF4FcE4883d79a3365F608B0802f3C",
+    "amount": "69021012720000000000"
+  },
+  {
+    "account": "0xD5ffb70bA893c6230a00A318E71E9A1160D9DBce",
+    "amount": "68067457040000000000"
+  },
+  {
+    "account": "0x6E9Fa67C3E8e563F652F46f9f9e9B70760273428",
+    "amount": "59238361970000000000"
+  },
+  {
+    "account": "0x76d266DFD3754f090488ae12F6Bd115cD7E77eBD",
+    "amount": "57791339910000000000"
+  },
+  {
+    "account": "0x784282DD2575F95c756778b7cd5D4c6a75Fe8952",
+    "amount": "54177340360000000000"
+  },
+  {
+    "account": "0x71A5B182670B162D9D6574aac268F3565962Bb3a",
+    "amount": "50619390120000000000"
+  },
+  {
+    "account": "0x06f7DC8d1b9462ceF6fEb13368a7E3974b097F9f",
+    "amount": "50000000000000000000"
+  },
+  {
+    "account": "0x091F1Ce4d8Bc81715C2F4b605195Ca754FC6893e",
+    "amount": "49448492390000000000"
+  },
+  {
+    "account": "0x1724587ca51042AEa7c2488dB83bd89c018F1C4C",
+    "amount": "46626510540000000000"
+  },
+  {
+    "account": "0xCf1D56D6fA4f8A3404106ef4765C140546D1E5e3",
+    "amount": "45542813420000000000"
+  },
+  {
+    "account": "0x8832D07a813A17df7275E6B402efD514125605C7",
+    "amount": "41624775350000000000"
+  },
+  {
+    "account": "0x2ed56D17D8216B8dFdDB579580D230E42c9f710A",
+    "amount": "41201373470000000000"
+  },
+  {
+    "account": "0xc3Be098f9594E57A3e71f485a53d990FE3961fe5",
+    "amount": "34751490960000000000"
+  },
+  {
+    "account": "0x8874c82E6e82DB52252c57491266aF186237aEB7",
+    "amount": "34010385540000000000"
+  },
+  {
+    "account": "0xFd67d1f84c38E5b607A413C70E820834a0d9A217",
+    "amount": "31933560260000000000"
+  },
+  {
+    "account": "0x98421536D9DA38a5E3273f9dc63051e3ad1Ab698",
+    "amount": "30100129170000000000"
+  },
+  {
+    "account": "0x92575DEb7bCBA0107C5CF547A3fBB78136D55e85",
+    "amount": "29347685710000000000"
+  },
+  {
+    "account": "0x71443379973CaFb30E83a1B356E5C07a3AC639F0",
+    "amount": "24674967410000000000"
+  },
+  {
+    "account": "0x4D96140Fa1D4aa736fC8D882Fab7d42Cf454A4e9",
+    "amount": "23585225540000000000"
+  },
+  {
+    "account": "0x7EFBFC6303428d6895055812D1a5189B16A0Fa62",
+    "amount": "21904396040000000000"
+  },
+  {
+    "account": "0x3eE4811a39C1f3E8BEfE57Def54FE04b18bD9135",
+    "amount": "21900771200000000000"
+  },
+  {
+    "account": "0x55b5d473E68dc083dE5e253a1D473212bc91F936",
+    "amount": "21729995940000000000"
+  },
+  {
+    "account": "0x5CFDA27088eEEDD66E7a9B50Cbe40f59b717e972",
+    "amount": "20287432070000000000"
+  },
+  {
+    "account": "0x4090031FEa5f4211F8c4240554Bc1Eaa3852ED84",
+    "amount": "19897686720000000000"
+  },
+  {
+    "account": "0xACd8a7a54CD9242DA19F647A6c70A3643cd11D74",
+    "amount": "18436008860000000000"
+  },
+  {
+    "account": "0x5f022A0EacFa27Aa87d11539281eD1Ae04a65A11",
+    "amount": "17778145500000000000"
+  },
+  {
+    "account": "0xfB1B6D053f187F5B30D872CC00C5A9c40B9dA8F2",
+    "amount": "17415792020000000000"
+  },
+  {
+    "account": "0xaDEc6FeB9dD015344f966A92bf1bB4FD1B1C4FA8",
+    "amount": "16560790020000000000"
+  },
+  {
+    "account": "0xF7707c52048b1BaDed3cAc4f7bC554BC2458037c",
+    "amount": "14770267520000000000"
+  },
+  {
+    "account": "0x822BaC563288E76ab0ec2eA05281eBA9519d8690",
+    "amount": "14744989540000000000"
+  },
+  {
+    "account": "0x6D7777050E5cE0223822446DCC644769348BD04E",
+    "amount": "14459983190000000000"
+  },
+  {
+    "account": "0xb926887FEeA50bBFd272AfEde3E2ADAaE4E6B5ef",
+    "amount": "14393832990000000000"
+  },
+  {
+    "account": "0x9a77F02Bc2a6aaBc915aaeFBE81BA6E51A335082",
+    "amount": "13735126670000000000"
+  },
+  {
+    "account": "0xBfa4D5A557f3C8cb5Cd2df3B58Ba14F81d22B2B3",
+    "amount": "12566036880000000000"
+  },
+  {
+    "account": "0x6a75B3864A56E91Fe72D9f713786cdC395BAce14",
+    "amount": "12269380570000000000"
+  },
+  {
+    "account": "0xAD1819cc1a6DbCfE293B49E1930EC0f8C872a2cD",
+    "amount": "12060771020000000000"
+  },
+  {
+    "account": "0x1C71D67A95F6DDbeE0751F56aFCeb550D49CDa50",
+    "amount": "11576041620000000000"
+  },
+  {
+    "account": "0x2d82083B3c87b600A4B512DF157B68a7929bb6ae",
+    "amount": "11359085700000000000"
+  },
+  {
+    "account": "0x5386a02D131566FF5a315DEfA84f73d5003eA32A",
+    "amount": "10070160580000000000"
+  },
+  {
+    "account": "0x3437d6c6e251B18852aC520e5E3b6552f12877ec",
+    "amount": "10064555260000000000"
+  },
+  {
+    "account": "0xFb6aaA0D149620e040D0c428588d2dfDbAE38493",
+    "amount": "10035630350000000000"
+  },
+  {
+    "account": "0x97a1CA841B4792068932D4224681f6F6fa22C549",
+    "amount": "10000000000000000000"
+  },
+  {
+    "account": "0xfBfda76e25aD7bc5e37853E38167fe9c868b6EAd",
+    "amount": "9919167542000000000"
+  },
+  {
+    "account": "0x9C3d907EB3f403df38522500c27d236e34897664",
+    "amount": "9807492657000000000"
+  },
+  {
+    "account": "0x51bA6D1f2EEa2AFb1ed0169D982558b4cc3fB21b",
+    "amount": "9352409252000000000"
+  },
+  {
+    "account": "0xDE49A24C7bb59caB429314365af21e7AfEf1862F",
+    "amount": "9160399687000000000"
+  },
+  {
+    "account": "0x6aCbe64d027DeaB7947AA858797E41Ee443c531A",
+    "amount": "8464078867000000000"
+  },
+  {
+    "account": "0x4CcEA985cA0D66DDd2e7bf91396004DD6B7D9966",
+    "amount": "8185457466000000000"
+  },
+  {
+    "account": "0xb18d1B896eb33BfeBD5e729318C29b084ec0DCc5",
+    "amount": "7960327323000000000"
+  },
+  {
+    "account": "0xD980AC0F430BE1972819BD10Be0EccE32BFDd31f",
+    "amount": "7406140797000000000"
+  },
+  {
+    "account": "0x44DCea9f1D679D6DC4C521Afab6d1445efBe1ecc",
+    "amount": "7346142302000000000"
+  },
+  {
+    "account": "0x74a0DE5547c8188dF3eC106c0eF0BB6AbaFF8133",
+    "amount": "7182993215000000000"
+  },
+  {
+    "account": "0x6fFFa8162C9981Db7D7bA945E152f1DFc3eDC51e",
+    "amount": "6628752143000000000"
+  },
+  {
+    "account": "0xfEa40Cfa49F66625D732B3C05dc3F1909BdaCeed",
+    "amount": "6424685482000000000"
+  },
+  {
+    "account": "0xD8c84eaC995150662CC052E6ac76Ec184fcF1122",
+    "amount": "6131051156000000000"
+  },
+  {
+    "account": "0x9E372716651b890fF6B2B32a8cEa04D901948918",
+    "amount": "6077570402000000000"
+  },
+  {
+    "account": "0xeF7833dcA899B8d960D57B820014a693d5fb0eF1",
+    "amount": "5877247657000000000"
+  },
+  {
+    "account": "0xf7566bb4f92dd5d9013f5CE5B6f9c39F3fB9544e",
+    "amount": "5581377026000000000"
+  },
+  {
+    "account": "0x19C6026Ad5e8b9a78bB6d42E96A75cCc991Be355",
+    "amount": "5573948082000000000"
+  },
+  {
+    "account": "0xc7FA34ef87ad08bDCE50f5CB4d68da1BaE39c657",
+    "amount": "5532496244000000000"
+  },
+  {
+    "account": "0x17D2967d95172593E2F0D125E8174b8dA6e0aBed",
+    "amount": "5232892113000000000"
+  },
+  {
+    "account": "0xF72C65791B7B6D978C444877d9D8Ec74E7028172",
+    "amount": "5022387018000000000"
+  },
+  {
+    "account": "0xFdbBfB0Fe2986672af97Eca0e797D76A0bbF35c9",
+    "amount": "5005146943000000000"
+  },
+  {
+    "account": "0xE7863A1C674F5a0CB78e89d50f34A1f1C2f34e3d",
+    "amount": "5000000000000000000"
+  },
+  {
+    "account": "0xA77eF99EBE1a84A53c46E9f778d087F9805AD140",
+    "amount": "4868463264000000000"
+  },
+  {
+    "account": "0x3Bf296a3b45cEF06c7aDD058B1b7d2a13Af44E41",
+    "amount": "4593737582000000000"
+  },
+  {
+    "account": "0xf07fC8F7542822cD21Faacd79E40630f36A2FDf8",
+    "amount": "4516790667000000000"
+  },
+  {
+    "account": "0x7DE7B1eF2E9bef0e1C91766B2bD47B2f35bc6111",
+    "amount": "4385476021000000000"
+  },
+  {
+    "account": "0x4594de64d7FFcAbf324D6420f186b6325Bce5c64",
+    "amount": "4258969494000000000"
+  },
+  {
+    "account": "0x2f3f29aD4ed64d429B478D1a1a851FDBd463C0a1",
+    "amount": "4235016891000000000"
+  },
+  {
+    "account": "0xA8CC3F0f9630864B4482Ff3E1dbDa71a0aAEc577",
+    "amount": "4086755004000000000"
+  },
+  {
+    "account": "0x1031243411365BF027fAC698D0C1f71f7cc44bF5",
+    "amount": "3977504582000000000"
+  },
+  {
+    "account": "0xc4DFFdb70059ECA0884030eD38680Be6296Cabaf",
+    "amount": "3941013898000000000"
+  },
+  {
+    "account": "0x75C058B56D2008da3e4aF779b0e77C41b8581812",
+    "amount": "3740028179000000000"
+  },
+  {
+    "account": "0x069514c4d00f9307b01703DC9460410891344187",
+    "amount": "3653255444000000000"
+  },
+  {
+    "account": "0x304cB3E7aC683571eEa99baAB5aD47B5163C4798",
+    "amount": "3250510755000000000"
+  },
+  {
+    "account": "0x78320e6082f9E831DD3057272F553e143dFe5b9c",
+    "amount": "3245517359000000000"
+  },
+  {
+    "account": "0x0F7EaF5E23E0BFC3993Ae467B399A43367Bda105",
+    "amount": "3139343390000000000"
+  },
+  {
+    "account": "0x975b01Da98dE2946888314b4561508519ca524d4",
+    "amount": "3119993218000000000"
+  },
+  {
+    "account": "0xe97fECEBdE0E222c4DFded8F9Da7A8Dd8f8559bB",
+    "amount": "3079786814000000000"
+  },
+  {
+    "account": "0x948e085d74A31377fAeECc7D18fE611Cf42b792C",
+    "amount": "2890737514000000000"
+  },
+  {
+    "account": "0x48b576c87e788a762D6f95A456f2A39113b46950",
+    "amount": "2619231377000000000"
+  },
+  {
+    "account": "0xf439E75D5cFCB6c84Bd2d57D92dAC100ed0c9C8A",
+    "amount": "2396461441000000000"
+  },
+  {
+    "account": "0x421Eb1760110E609281427681971c11CAc0A02d0",
+    "amount": "2229247689000000000"
+  },
+  {
+    "account": "0x02684edf99F0221f64568Ce84102A64311592A74",
+    "amount": "2000000000000000000"
+  },
+  {
+    "account": "0x848f7B971bEBcB660A4C2C071D0fD631E6c60Aca",
+    "amount": "1953349136000000000"
+  },
+  {
+    "account": "0x55Cf22ca9Bd904A3Dc22469b6A2206866c0601cF",
+    "amount": "1923229969000000000"
+  },
+  {
+    "account": "0xC8D46eb7881975F9aE15216FeEBa2ff58E55803c",
+    "amount": "1917135159000000000"
+  },
+  {
+    "account": "0xaF3802996778f7a759855066D514Eb1454F0303b",
+    "amount": "1908028043000000000"
+  },
+  {
+    "account": "0x543d42C66527bFE8dD0BC948baCAe850d5AF82Dc",
+    "amount": "1810086097000000000"
+  },
+  {
+    "account": "0xAaE12DEfC40d2bD0ac3eF47b1D605a6Ca96bD92C",
+    "amount": "1731328924000000000"
+  },
+  {
+    "account": "0x8d9A9FDFb28C4F9Ba56c8aC063dF171E053c406D",
+    "amount": "1653470861000000000"
+  },
+  {
+    "account": "0xf2C713B4b0E6338f4e0A97C4250df20E8dAfCde4",
+    "amount": "1626823836000000000"
+  },
+  {
+    "account": "0x841a17f1C7A7245AE4f4070B854C33514586216f",
+    "amount": "1575661283000000000"
+  },
+  {
+    "account": "0xFFc985a62e0d1941adde4a270B53b80366649933",
+    "amount": "1563383542000000000"
+  },
+  {
+    "account": "0x014370828d6A2de55d24BA9eC1030eD0df24A568",
+    "amount": "1448514335000000000"
+  },
+  {
+    "account": "0x8767F8A2CaeF714BEd4bc0Bc059ee1c5270abc00",
+    "amount": "1225505900000000000"
+  },
+  {
+    "account": "0xB6DCC51e167d9A9F4eFd537fdC573c34c854337f",
+    "amount": "1042826828000000000"
+  },
+  {
+    "account": "0xB4C2b2dDE3775dEFC59429769Fe3A499a220C645",
+    "amount": "1017976477000000000"
+  },
+  {
+    "account": "0x1BF555E99b9056e75F5752EBF6593C4929BF5d50",
+    "amount": "1000000000000000000"
+  }
+]
