@@ -160,6 +160,7 @@ const Address = {
     V2: {
       stargateStaking: '0xFF551fEDdbeDC0AeE764139cCD9Cb644Bb04A6BD',
       usdcPool: '0xc026395860Db2d07ee33e05fE50ed7bD583189C7',
+      ethPool: '0x77b2043768d28E9C9aB44E1aBfC95944bcE57931',
     },
   },
   Curve: {

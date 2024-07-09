@@ -27,6 +27,21 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
+  vaeth-stargate-test:
+    needs: [setup-job]
+    runs-on: ubuntu-latest
+    env:
+      NODE_URL: ${{ secrets.NODE_URL }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+
+      - name: Running Stargate V2 strategy vaETH pool
+        run: npm test -- --scope vesper-strategies -- test/mainnet/stargate/v2/vaeth.spec.js
+
   vausdc-stargate-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
