@@ -37,6 +37,9 @@ function resolveChainId() {
   if (nodeUrl.includes('base-mainnet')) {
     return 8453
   }
+  if (nodeUrl.includes('sepolia')) {
+    return 11155111
+  }
 
   return 31337
 }
@@ -98,6 +101,11 @@ module.exports = {
       chainId: 8453,
       accounts,
     },
+    sepolia: {
+      url: process.env.NODE_URL,
+      chainId: 11155111,
+      accounts,
+    },
   },
   namedAccounts: {
     deployer: process.env.DEPLOYER || 0,
@@ -111,6 +119,7 @@ module.exports = {
       mainnet: process.env.MAINNET_ETHERSCAN_API_KEY,
       optimisticEthereum: process.env.OPTIMISM_ETHERSCAN_API_KEY,
       base: process.env.BASE_ETHERSCAN_API_KEY,
+      sepolia: process.env.SEPOLIA_ETHERSCAN_API_KEY,
     },
     customChains: [
       {

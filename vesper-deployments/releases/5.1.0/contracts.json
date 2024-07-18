@@ -1240,6 +1240,20 @@
           "AaveV3_Vesper_Xy_wstETH_USDC": "0x36545537780052Dc021Dd32e14F2Cafe63B4Fc1A"
         }
       }
+    },
+    "sepolia": {
+      "vaeth": {
+        "pool": {
+          "proxyAdmin": "0xE27e8095B33FBCBB480AAC5E6e6dA94FbAf2965B",
+          "proxy": "0x15D7BeA7B437C2C1B7e983aBDbD2a3EF70CAf27f",
+          "implementation": "0x29AD7fE4516909b9e498B5a65339e54791293234",
+          "poolAccountant": {
+            "proxyAdmin": "0x19382707d5a47E74f60053b652Ab34b6e30Febad",
+            "proxy": "0xd7c751fA32590451548B100C4f6442F062C9bc8E",
+            "implementation": "0x1c1c67E52942F4dd20a7262a9d17eA2A2e16Acf3"
+          }
+        }
+      }
     }
   }
 }
