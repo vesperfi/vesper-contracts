@@ -23,6 +23,7 @@ import "vesper-strategies/contracts/strategies/aave/v2/AaveV2.sol";
 import "vesper-strategies/contracts/strategies/compound/CompoundLeverage.sol";
 import "vesper-strategies/contracts/strategies/stargate/Stargate.sol";
 import "vesper-strategies/contracts/strategies/maker/MakerVesperStETH.sol";
+import "vesper-strategies/contracts/strategies/maker/MakerDummy.sol";
 import "vesper-strategies/contracts/interfaces/maker/IMakerDAO.sol";
 import "vesper-strategies/contracts/strategies/convex/Convex.sol";
 import "vesper-strategies/contracts/strategies/convex/ConvexForFrax.sol";

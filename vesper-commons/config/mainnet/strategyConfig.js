@@ -1226,6 +1226,19 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
   },
 
+  Maker_Dummy_STETH: {
+    contract: 'MakerDummy',
+    type: StrategyTypes.VESPER_MAKER,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Vesper.vaDAI,
+      collateralType: ethers.utils.formatBytes32String('WSTETH-B'),
+      strategyName: 'Maker_Dummy_STETH',
+    },
+    config: { ...config },
+    setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WSTETH_B } },
+  },
+
   Maker_Vesper_RETH: {
     contract: 'MakerVesper',
     type: StrategyTypes.VESPER_MAKER,
