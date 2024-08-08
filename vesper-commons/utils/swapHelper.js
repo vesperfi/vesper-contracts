@@ -385,10 +385,16 @@ async function getTokenPairs(strategies, collateral) {
   for (const strategy of strategies) {
     const strategyType = strategy.type.toLowerCase()
     const strategyName = await strategy.instance.NAME()
-    const rewardToken =
-      (await getIfExist(strategy.instance.rewardToken)) ||
-      (await getIfExist(strategy.instance.rewardTokens, [0])) ||
-      (await getIfExist(strategy.instance.getRewardTokens))[0]
+    let rewardToken =
+      (await getIfExist(strategy.instance.rewardToken)) || (await getIfExist(strategy.instance.rewardTokens, [0]))
+
+    if (!rewardToken) {
+      const rewardTokens = await getIfExist(strategy.instance.getRewardTokens)
+      if (rewardTokens) {
+        rewardToken = rewardTokens[0]
+      }
+    }
+
     if (rewardToken) {
       pairs.push({ tokenIn: rewardToken, tokenOut: collateral })
     }

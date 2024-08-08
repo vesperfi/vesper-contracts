@@ -57,6 +57,7 @@ const Address = {
       acbETH: '0x977b6fc5dE62598B08C85AC8Cf2b745874E8b78c',
       aEthrETH: '0xCc9EE9483f662091a1de4795249E24aC0aC2630f',
       aEthwstETH: '0x0B925eD163218f6662a35e0f0371Ac234f9E9371',
+      aEthWBTC: '0x5Ee5bf7ae06D1Be5997A1A72006FE6C607eC6DE8',
     },
   },
   Compound: {
