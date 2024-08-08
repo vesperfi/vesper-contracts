@@ -221,6 +221,7 @@
           "implementation": "0xe583A2e073b5CC3853fAda6E33fC2F6F4e29a0bB"
         },
         "strategies": {
+          "AaveV3_Sommelier_Xy_WBTC_WETH": "0x38Cc6584f2Ead1Ad988637Fd3721389806ef2992",
           "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",

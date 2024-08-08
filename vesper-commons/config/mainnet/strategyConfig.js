@@ -270,6 +270,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Sommelier_Xy_WBTC_WETH: {
+    contract: 'AaveV3SommelierXy',
+    type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthWBTC,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      cellar: Address.Sommelier.YieldETH,
+      strategyName: 'AaveV3_Sommelier_Xy_WBTC_WETH',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   AaveV3_Vesper_Xy_RETH_USDC: {
     contract: 'AaveV3VesperXy',
     type: StrategyTypes.AAVE_V3_VESPER_XY,
