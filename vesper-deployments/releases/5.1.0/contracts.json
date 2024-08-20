@@ -1239,7 +1239,8 @@
         },
         "strategies": {
           "AaveV3_Vesper_Xy_wstETH_ETH": "0xD47a9F4Dcba4eabB643f8d880Cc8E91531FD849a",
-          "AaveV3_Vesper_Xy_wstETH_USDC": "0x36545537780052Dc021Dd32e14F2Cafe63B4Fc1A"
+          "AaveV3_Vesper_Xy_wstETH_USDC": "0x36545537780052Dc021Dd32e14F2Cafe63B4Fc1A",
+          "ExtraFinance_wstETH_1": "0x6aeeDf5E2a17131c88118353CbFA2225651A5ab9"
         }
       }
     },
