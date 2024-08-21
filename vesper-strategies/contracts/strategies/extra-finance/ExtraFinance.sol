@@ -20,7 +20,7 @@ contract ExtraFinance is Strategy {
 
     uint256 public reserveId;
     IStakingRewards public staking;
-    address[] public rewardTokens;
+    address[] internal rewardTokens;
 
     constructor(
         address _pool,
@@ -36,6 +36,10 @@ contract ExtraFinance is Strategy {
 
     function eToken() public view returns (IERC20) {
         return IERC20(receiptToken);
+    }
+
+    function getRewardTokens() external view returns (address[] memory) {
+        return rewardTokens;
     }
 
     /// @inheritdoc Strategy

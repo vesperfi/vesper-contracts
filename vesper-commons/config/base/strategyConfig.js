@@ -154,6 +154,19 @@ const StrategyConfig = {
     setup,
   },
 
+  ExtraFinance_wstETH_1: {
+    contract: 'ExtraFinance',
+    type: StrategyTypes.EXTRA_FINANCE,
+    constructorArgs: {
+      swapper,
+      lendingPool: Address.ExtraFinance.LendingPool,
+      reserveId: 30,
+      strategyName: 'ExtraFinance_wstETH_1',
+    },
+    config,
+    setup,
+  },
+
   Stargate_ETH: {
     contract: 'StargateTimeETH',
     type: StrategyTypes.STARGATE,
