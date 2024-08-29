@@ -226,6 +226,9 @@ const Address = {
     mcDAI: '0x8F88EaE3e1c01d60bccdc3DB3CBD5362Dd55d707',
     mcUSDC: '0xba9E3b3b684719F80657af1A19DEbc3C772494a0',
     mcWETH: '0x676E1B7d5856f4f69e10399685e17c2299370E95',
+    vault: {
+      UsualBoostedUSDC: '0xd63070114470f685b75B74D60EEc7c1113d33a3D',
+    },
   },
 }
 
