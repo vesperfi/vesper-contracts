@@ -351,7 +351,7 @@
           "RariFuseStrategyDAI": "0x5495f41144ECeF9233f15AC3E4283f5F653fc96c",
           "Rari_Dummy_DAI": "0x084aFb5e91A043C2959E70739B346416ea7F6f7F",
           "Stargate_DAI": "0xE053E3CC956D2A835B504E932c5DCd789bF0a6aA",
-          "YearnStrategyDAI": "0xA385821a6f24a1e541ab22448eb03aE9f21a1611"
+          "Yearn_DAI": "0x9f4e0914Ea2A6191f15D5E0FCCde596B2181DC78"
         }
       },
       "veeth_dai": {
