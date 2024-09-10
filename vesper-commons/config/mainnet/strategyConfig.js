@@ -1287,25 +1287,25 @@ const StrategyConfig = {
     setup: { ...setup, maker: { gemJoin: Address.Maker.MCD_JOIN_WBTC_C, highWater: 250, lowWater: 225 } },
   },
 
-  YearnStrategyDAI: {
-    contract: 'YearnStrategy',
+  Yearn_V2_DAI: {
+    contract: 'Yearn',
     type: StrategyTypes.YEARN,
     constructorArgs: {
       swapper,
       receiptToken: Address.Yearn.yvDAI,
-      strategyName: 'YearnStrategyDAI',
+      strategyName: 'Yearn_V2_DAI',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  YearnStrategyUSDC: {
+  Yearn_V2_USDC: {
     contract: 'YearnStrategy',
     type: StrategyTypes.YEARN,
     constructorArgs: {
       swapper,
       receiptToken: Address.Yearn.yvUSDC,
-      strategyName: 'YearnStrategyUSDC',
+      strategyName: 'Yearn_V2_USDC',
     },
     config: { ...config },
     setup: { ...setup },
