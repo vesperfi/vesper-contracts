@@ -32,6 +32,7 @@ const StrategyType = {
   FRAX_LEND_VESPER_XY: 'fraxLendVesperXY',
   SOMMELIER: 'sommelier',
   MORPHO: 'morpho',
+  MORPHO_VAULT: 'morphoVault',
   EXTRA_FINANCE: 'extraFinance',
   DUMMY: 'dummy',
 }
