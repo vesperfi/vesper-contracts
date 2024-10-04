@@ -849,6 +849,9 @@
           "proxyAdmin": "0x478196Cb0F17bF8d1D08b991eFA4Abdc5C633E09",
           "proxy": "0xadfa7477647Ae7865884362Ff130D3d6e9B17362",
           "implementation": "0xbdE7FAeFF578d8F7e4cE2A42FF1B51F845127C0D"
+        },
+        "strategies": {
+          "Morpho_MetronomeMsETH_Vault_msETH": "0x411CF4FFdeB96405e031E4f0f470A231285bf2bd"
         }
       }
     },
