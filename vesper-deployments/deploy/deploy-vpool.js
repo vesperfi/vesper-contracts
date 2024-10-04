@@ -140,9 +140,9 @@ const deployFunction = async function (hre) {
   }
 
   // verify pool rewards upgrader
-  await verify(hre, (await get(PoolRewardsUpgrader)).address, [Address.MultiCall])
+  await verify(hre, rewardsUpgrader.address, [Address.MultiCall])
   // verify pool rewards implementation
-  await verify(hre, rewardsUpgrader.implementation)
+  await verify(hre, rewardsProxy.implementation)
 
   return true
 }
