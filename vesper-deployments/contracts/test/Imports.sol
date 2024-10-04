@@ -48,9 +48,12 @@ import "vesper-strategies/contracts/strategies/frax-lend/FraxLendVesperXy.sol";
 import "vesper-strategies/contracts/strategies/yearn/YearnStaking.sol";
 import "vesper-strategies/contracts/strategies/yearn/Yearn.sol";
 import "vesper-strategies/contracts/strategies/morpho/MorphoAave.sol";
+import "vesper-strategies/contracts/strategies/morpho/MorphoVault.sol";
 import "vesper-strategies/contracts/strategies/DummyStrategy.sol";
 import "vesper-strategies/contracts/strategies/sommelier/Sommelier.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks
-contract Imports {}
+contract Imports {
+
+}

@@ -833,6 +833,26 @@
           "CompoundStrategyWBTC": "0x10dec1D38b3D528eFa5E8480ff516Ce9740b5c97",
           "Morpho_AaveV2_WBTC": "0x046003F51B1D81ed736b40650C10A60b3F324107"
         }
+      },
+      "vamseth": {
+        "pool": {
+          "proxyAdmin": "0x9153F17Cf2339b97cc71400cec63c913Fa7066F8",
+          "proxy": "0xCa7c607C590ad16007CCBbba9D26f4df656a36C2",
+          "implementation": "0x91f92F75E547Db066c39DEa4d4a8B45f4B8EDE4a",
+          "poolAccountant": {
+            "proxyAdmin": "0xbbb56ac343aE8bbedc60cEd953834B4ad6Ab6e4B",
+            "proxy": "0x0F309a98C30F1eAEA2f4E7c552f2075bDBceb07D",
+            "implementation": "0xD5fBA1680fdCca1dCc8363944fD2A65364C04FA9"
+          }
+        },
+        "poolRewards": {
+          "proxyAdmin": "0x478196Cb0F17bF8d1D08b991eFA4Abdc5C633E09",
+          "proxy": "0xadfa7477647Ae7865884362Ff130D3d6e9B17362",
+          "implementation": "0xbdE7FAeFF578d8F7e4cE2A42FF1B51F845127C0D"
+        },
+        "strategies": {
+          "Morpho_MetronomeMsETH_Vault_msETH": "0x411CF4FFdeB96405e031E4f0f470A231285bf2bd"
+        }
       }
     },
     "avalanche": {

@@ -1597,13 +1597,14 @@ const StrategyConfig = {
     config: { ...config },
     setup: { ...setup },
   },
-  Morpho_UsualBoostedUSDC_Vault_USDC: {
+
+  Morpho_MetronomeMsETH_Vault_msETH: {
     contract: 'MorphoVault',
     type: StrategyTypes.MORPHO_VAULT,
     constructorArgs: {
       swapper,
-      receiptToken: Address.Morpho.vault.UsualBoostedUSDC,
-      strategyName: 'Morpho_UsualBoostedUSDC_Vault_USDC',
+      receiptToken: Address.Morpho.vault.MetronomeMsETH,
+      strategyName: 'Morpho_MetronomeMsETH_Vault_msETH',
     },
     config,
     setup,
