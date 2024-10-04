@@ -86,6 +86,7 @@ const whales = {
     [Address.Stargate.STG]: '0x8A27E7e98f62295018611DD681Ec47C7d9FF633A',
     [Address.rETH]: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     [Address.cbETH]: '0x977b6fc5dE62598B08C85AC8Cf2b745874E8b78c',
+    [Address.Metronome.msETH]: '0xa4c567c662349BeC3D0fB94C4e7f85bA95E208e4',
   },
   avalanche: {
     // Avalanche

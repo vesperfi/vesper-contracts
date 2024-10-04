@@ -228,7 +228,11 @@ const Address = {
     mcWETH: '0x676E1B7d5856f4f69e10399685e17c2299370E95',
     vault: {
       UsualBoostedUSDC: '0xd63070114470f685b75B74D60EEc7c1113d33a3D',
+      MetronomeMsETH: '0x78B18E07dc43017fcEaabaD0751d6464c0F56b25',
     },
+  },
+  Metronome: {
+    msETH: '0x64351fC9810aDAd17A690E4e1717Df5e7e085160',
   },
 }
 
