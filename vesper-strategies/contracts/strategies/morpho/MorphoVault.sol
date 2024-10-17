@@ -17,6 +17,7 @@ contract MorphoVault is Strategy {
     using SafeERC20 for IERC20;
 
     error AddressIsNull();
+    error InvalidVault();
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
@@ -31,6 +32,7 @@ contract MorphoVault is Strategy {
         string memory name_
     ) Strategy(pool_, swapper_, receiptToken_) {
         if (receiptToken_ == address(0)) revert AddressIsNull();
+        if (IMetaMorpho(receiptToken_).asset() != address(IVesperPool(pool_).token())) revert InvalidVault();
         metaMorpho = IMetaMorpho(receiptToken_);
         NAME = name_;
     }

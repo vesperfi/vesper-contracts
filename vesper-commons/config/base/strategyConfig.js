@@ -210,6 +210,42 @@ const StrategyConfig = {
     config,
     setup,
   },
+
+  Morpho_MoonwellFlagshipUSDC_Vault_USDC: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.MoonwellFlagshipUSDC,
+      strategyName: 'Morpho_MoonwellFlagshipUSDC_Vault_USDC',
+    },
+    config,
+    setup,
+  },
+
+  Morpho_MoonwellFlagshipETH_Vault_ETH: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.MoonwellFlagshipETH,
+      strategyName: 'Morpho_MoonwellFlagshipETH_Vault_ETH',
+    },
+    config,
+    setup,
+  },
+
+  Morpho_Re7WETH_Vault_WETH: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.Re7WETH,
+      strategyName: 'Morpho_Re7WETH_Vault_WETH',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

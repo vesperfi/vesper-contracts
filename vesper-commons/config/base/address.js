@@ -48,6 +48,13 @@ const Address = {
     vaUSDC: '0x1e41238aCd3A9fF90b0DCB9ea96Cf45F104e09Ef',
     vaETH: '0x82562507429876486B60AF4F32390ef0947b3d13',
   },
+  Morpho: {
+    vault: {
+      MoonwellFlagshipUSDC: '0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca',
+      MoonwellFlagshipETH: '0xa0E430870c4604CcfC7B38Ca7845B1FF653D0ff1',
+      Re7WETH: '0xA2Cac0023a4797b4729Db94783405189a4203AFc',
+    },
+  },
 }
 
 module.exports = Object.freeze(Address)
