@@ -1,15 +1,15 @@
-name: Mainnet Morpho Vault Strategy
+name: Base Morpho Vault Strategy
 on:
   pull_request:
     paths:
-      - ".github/workflows/mainnet-morpho-vault.yml"
+      - ".github/workflows/base-morpho-vault.yml"
       - ".github/actions/setup-env/action.yml"
       - "vesper-commons/test/utils/setup.js"
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
       - "vesper-strategies/contracts/strategies/morpho/MorphoVault*"
-      - "vesper-strategies/test/mainnet/morpho/vault/*.js"
+      - "vesper-strategies/test/base/morpho/vault/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
 concurrency:
@@ -20,7 +20,7 @@ jobs:
   setup-job:
     runs-on: ubuntu-latest
     env:
-      NODE_URL: ${{ secrets.NODE_URL }}
+      NODE_URL: ${{ secrets.BASE_NODE_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -28,11 +28,11 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-  vamseth-vault-test:
+  vaeth-morpho-vault-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
-      NODE_URL: ${{ secrets.NODE_URL }}
+      NODE_URL: ${{ secrets.BASE_NODE_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -40,13 +40,14 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running Morpho msETH vault strategy for vamsETH pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/morpho/vault/vamseth.spec.js
-  vausdc-vault-test:
+      - name: Running Morpho vault strategy for vaeth pool
+        run: npm test -- --scope vesper-strategies -- test/base/morpho/vault/vaeth.spec.js
+
+  vausdc-morpho-vault-test:
     needs: [setup-job]
     runs-on: ubuntu-latest
     env:
-      NODE_URL: ${{ secrets.NODE_URL }}
+      NODE_URL: ${{ secrets.BASE_NODE_URL }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -55,4 +56,4 @@ jobs:
         uses: ./.github/actions/setup-env
 
       - name: Running Morpho USDC vault strategy for vaUSDC pool
-        run: npm test -- --scope vesper-strategies -- test/mainnet/morpho/vault/vausdc.spec.js
+        run: npm test -- --scope vesper-strategies -- test/base/morpho/vault/vausdc.spec.js
