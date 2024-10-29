@@ -1262,6 +1262,21 @@
           "AaveV3_Vesper_Xy_wstETH_USDC": "0x36545537780052Dc021Dd32e14F2Cafe63B4Fc1A",
           "ExtraFinance_wstETH_1": "0x6aeeDf5E2a17131c88118353CbFA2225651A5ab9"
         }
+      },
+      "vamseth": {
+        "pool": {
+          "proxyAdmin": "0x5a91b77F22a6F2B48Dc5b8c69715DFC2d557fbD7",
+          "proxy": "0x913Ece180df83A2B81A4976F83cA88543a0C51b8",
+          "implementation": "0x67006C2e8d2F28468f77a962cf26bCc792AfAC0f",
+          "poolAccountant": {
+            "proxyAdmin": "0x31E41Aa5eAB8317187879c2f1A0e07De36260E72",
+            "proxy": "0xdB25Df8da72501472938220eB834E4998e67f2d9",
+            "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
+          }
+        },
+        "strategies": {
+          "Morpho_MetronomeMsETH_Vault_msETH": "0xf53848532f56bdc64b028180479113aC0A682074"
+        }
       }
     },
     "sepolia": {
