@@ -53,7 +53,11 @@ const Address = {
       MoonwellFlagshipUSDC: '0xc1256Ae5FF1cf2719D4937adb3bbCCab2E00A2Ca',
       MoonwellFlagshipETH: '0xa0E430870c4604CcfC7B38Ca7845B1FF653D0ff1',
       Re7WETH: '0xA2Cac0023a4797b4729Db94783405189a4203AFc',
+      MetronomeMsETH: '0x43Cd00De63485618A5CEEBE0de364cD6cBeB26E7',
     },
+  },
+  Metronome: {
+    msETH: '0x7Ba6F01772924a82D9626c126347A28299E98c98',
   },
 }
 
