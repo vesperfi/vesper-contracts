@@ -1099,7 +1099,7 @@
         "pool": {
           "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0x539505Dde2B9771dEBE0898a84441c5E7fDF6BC0",
-          "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
+          "implementation": "0x44EDC69f7dFEAeD2869ee09b7B13A3441C546c99",
           "poolAccountant": {
             "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0x476F833357961bF4Dc144d13C0A6326E54b94dA9",
