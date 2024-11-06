@@ -1,24 +1,9 @@
 {
   "version": "5.1.0",
-  "date": "2024-11-04T18:31:11.039Z",
+  "date": "2024-11-06T16:50:04.546Z",
   "networks": {
     "mainnet": {},
     "optimism": {},
-    "base": {
-      "vamseth": {
-        "pool": {
-          "proxyAdminOwner": "0xdf826ff6518e609E4cEE86299d40611C148099d5",
-          "expectedProxyAdminOwner": "0x32934AD7b1121DeFC631080b58599A0eaAB89878",
-          "updateInProxyAdminRequired": true,
-          "action": "changeProxyAdmin, update release file with correct proxyAdmin",
-          "poolAccountant": {
-            "proxyAdminOwner": "0xdf826ff6518e609E4cEE86299d40611C148099d5",
-            "expectedProxyAdminOwner": "0x32934AD7b1121DeFC631080b58599A0eaAB89878",
-            "updateInProxyAdminRequired": true,
-            "action": "changeProxyAdmin, update release file with correct proxyAdmin"
-          }
-        }
-      }
-    }
+    "base": {}
   }
 }

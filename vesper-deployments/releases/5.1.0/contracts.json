@@ -1265,11 +1265,11 @@
       },
       "vamseth": {
         "pool": {
-          "proxyAdmin": "0x5a91b77F22a6F2B48Dc5b8c69715DFC2d557fbD7",
+          "proxyAdmin": "0x5173C8e2F9C730dCf1E0072B1E18a845509B5b22",
           "proxy": "0x913Ece180df83A2B81A4976F83cA88543a0C51b8",
           "implementation": "0x67006C2e8d2F28468f77a962cf26bCc792AfAC0f",
           "poolAccountant": {
-            "proxyAdmin": "0x31E41Aa5eAB8317187879c2f1A0e07De36260E72",
+            "proxyAdmin": "0xeDf3B0796cD3C44c430C6aCf41555f76c5815532",
             "proxy": "0xdB25Df8da72501472938220eB834E4998e67f2d9",
             "implementation": "0x88d271CfAEB999C37E52B418f9080B4441a513fc"
           }
