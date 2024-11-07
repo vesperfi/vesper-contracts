@@ -50,22 +50,30 @@ async function runValidation(input, safeAddress) {
   if (liveAdmin !== input.proxyAdmin) {
     result.newProxyAdmin = liveAdmin
     result.incorrectAdminInRelease = true
-    result.action = 'updateReleaseFile'
+    result.action = 'update release file with correct implementation'
   }
 
   const owner = await getOwner(liveAdmin)
   if (owner !== safeAddress) {
     result.proxyAdminOwner = owner
     result.expectedProxyAdminOwner = safeAddress
-    result.changeInProxyAdminRequired = true
-    result.action = 'changeProxyAdmin, update deployer dir name at deployments/{chain}/global'
+    result.updateInProxyAdminRequired = true
+
+    const chain = await getChain()
+    const safeDir = `./deployments/${chain}/global/${safeAddress}`
+    if (fs.existsSync(safeDir)) {
+      result.action = 'changeProxyAdmin, update release file with correct proxyAdmin'
+    } else {
+      const ownerDir = `deployments/${chain}/global/${owner}`
+      result.action = `transferOwnership of proxyAdmin, update ${ownerDir} to ${safeDir}`
+    }
   }
 
   const liveImpl = await getImplAddress(input.proxy)
   if (liveImpl !== input.implementation) {
     result.newImplementation = liveImpl
     result.incorrectImplInRelease = true
-    result.action = 'updateReleaseFile'
+    result.action = 'update release file with correct implementation'
   }
 
   return Object.keys(result).length > 0 ? result : null
