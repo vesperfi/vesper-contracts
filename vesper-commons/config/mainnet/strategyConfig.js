@@ -1461,6 +1461,18 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  Fraxlend_sfrxETH_FRAX: {
+    contract: 'FraxLendV3',
+    type: StrategyTypes.FRAX_LEND,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.FraxLend.sfrxETH_FRAX,
+      strategyName: 'Fraxlend_sfrxETH_FRAX',
+    },
+    config: { ...config },
+    setup: { ...setup },
+  },
+
   FraxLend_Vesper_Xy_ETH_FRAX: {
     contract: 'FraxLendVesperXy',
     type: StrategyTypes.FRAX_LEND_VESPER_XY,
