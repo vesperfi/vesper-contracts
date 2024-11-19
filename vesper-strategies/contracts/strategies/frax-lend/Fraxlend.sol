@@ -3,17 +3,17 @@
 pragma solidity 0.8.9;
 
 import "../Strategy.sol";
-import "../../interfaces/frax-lend/IFraxLend.sol";
+import "../../interfaces/frax-lend/IFraxlendPair.sol";
 
-/// @title This strategy will deposit FRAX as collateral token in FraxLend and earn interest.
-contract FraxLend is Strategy {
+/// @title This strategy will deposit FRAX as collateral token in Fraxlend and earn interest.
+contract Fraxlend is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
     string public constant VERSION = "5.1.0";
 
-    IFraxLend internal immutable fraxLend;
+    IFraxlendPair internal immutable fraxlendPair;
 
     constructor(
         address pool_,
@@ -22,13 +22,13 @@ contract FraxLend is Strategy {
         string memory name_
     ) Strategy(pool_, swapper_, receiptToken_) {
         require(receiptToken_ != address(0), "frax-lend-address-is-null");
-        require(IFraxLend(receiptToken_).asset() == address(collateralToken), "collateral-mismatch");
-        fraxLend = IFraxLend(receiptToken_);
+        require(IFraxlendPair(receiptToken_).asset() == address(collateralToken), "collateral-mismatch");
+        fraxlendPair = IFraxlendPair(receiptToken_);
         NAME = name_;
     }
 
     function isReservedToken(address token_) public view virtual override returns (bool) {
-        return token_ == address(fraxLend);
+        return token_ == address(fraxlendPair);
     }
 
     function tvl() external view override returns (uint256) {
@@ -38,22 +38,22 @@ contract FraxLend is Strategy {
     /// @notice Approve all required tokens
     function _approveToken(uint256 amount_) internal virtual override {
         collateralToken.safeApprove(pool, amount_);
-        collateralToken.safeApprove(address(fraxLend), amount_);
+        collateralToken.safeApprove(address(fraxlendPair), amount_);
     }
 
     function _balanceOfUnderlying() internal view returns (uint256) {
-        return fraxLend.toAssetAmount(fraxLend.balanceOf(address(this)), false);
+        return fraxlendPair.toAssetAmount(fraxlendPair.balanceOf(address(this)), false);
     }
 
     //solhint-disable-next-line no-empty-blocks
     function _beforeMigration(address newStrategy_) internal virtual override {}
 
     /**
-     * @notice Deposit collateral in FraxLend.
+     * @notice Deposit collateral in Fraxlend.
      */
     function _deposit(uint256 amount_) internal virtual {
         if (amount_ > 0) {
-            fraxLend.deposit(amount_, address(this));
+            fraxlendPair.deposit(amount_, address(this));
         }
     }
 
@@ -94,7 +94,7 @@ contract FraxLend is Strategy {
     }
 
     function _totalAssetAvailable() internal view returns (uint256) {
-        return fraxLend.totalAsset().amount - fraxLend.totalBorrow().amount;
+        return fraxlendPair.totalAsset().amount - fraxlendPair.totalBorrow().amount;
     }
 
     function _withdrawHere(uint256 amount_) internal override {
@@ -103,12 +103,12 @@ contract FraxLend is Strategy {
 
         // Check we have enough LPs for this withdraw
         uint256 _sharesToWithdraw = Math.min(
-            fraxLend.toAssetShares(_withdrawAmount, false),
-            fraxLend.balanceOf(address(this))
+            fraxlendPair.toAssetShares(_withdrawAmount, false),
+            fraxlendPair.balanceOf(address(this))
         );
 
         if (_sharesToWithdraw > 0) {
-            fraxLend.redeem(_sharesToWithdraw, address(this), address(this));
+            fraxlendPair.redeem(_sharesToWithdraw, address(this), address(this));
         }
     }
 }

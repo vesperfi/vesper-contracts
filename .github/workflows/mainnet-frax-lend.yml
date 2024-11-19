@@ -8,7 +8,7 @@ on:
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
-      - "vesper-strategies/contracts/strategies/frax-lend/FraxLend.sol"
+      - "vesper-strategies/contracts/strategies/frax-lend/Fraxlend.sol"
       - "vesper-strategies/test/mainnet/frax-lend/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
@@ -40,5 +40,5 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running FraxLend deposit/lend strategy for VAFRAX pool
+      - name: Running Fraxlend deposit/lend strategy for VAFRAX pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/frax-lend/vafrax.spec.js

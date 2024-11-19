@@ -9,6 +9,7 @@ pragma solidity 0.8.9;
 import "vesper-strategies/contracts/strategies/extra-finance/ExtraFinance.sol";
 import "vesper-strategies/contracts/strategies/stargate/v2/StargateV2.sol";
 import "vesper-strategies/contracts/strategies/stargate/v2/StargateV2ETH.sol";
+import "vesper-strategies/contracts/strategies/frax-lend/FraxlendV3.sol";
 
 // Importer contract to compile the solidity files from dependent `vesper-pools` and `vesper-strategies` modules.
 // solhint-disable-next-line no-empty-blocks

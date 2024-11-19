@@ -1,4 +1,4 @@
-name: Mainnet FraxLend Xy Strategy
+name: Mainnet Fraxlend Xy Strategy
 on:
   pull_request:
     paths:
@@ -9,7 +9,7 @@ on:
       - "vesper-pools/contracts/pool/**/*.sol"
       - "vesper-pools/contracts/pool/*.sol"
       - "vesper-strategies/contracts/strategies/Strategy.sol"
-      - "vesper-strategies/contracts/strategies/frax-lend/FraxLendVesperXy.sol"
+      - "vesper-strategies/contracts/strategies/frax-lend/FraxlendVesperXy.sol"
       - "vesper-strategies/test/mainnet/frax-lend/xy/**/*.js"
 
 # Limit concurrency to one workflow per branch and one per pull_request
@@ -41,7 +41,7 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running FraxLend Vesper XY strategy for VAETH pool
+      - name: Running Fraxlend Vesper XY strategy for VAETH pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/frax-lend/xy/vesper/vaeth.spec.js
 
   vawbtc-vesper-test:
@@ -56,5 +56,5 @@ jobs:
       - name: Setup env
         uses: ./.github/actions/setup-env
 
-      - name: Running FraxLend Vesper XY strategy for VAWBTC pool
+      - name: Running Fraxlend Vesper XY strategy for VAWBTC pool
         run: npm test -- --scope vesper-strategies -- test/mainnet/frax-lend/xy/vesper/vawbtc.spec.js
