@@ -1462,7 +1462,7 @@ const StrategyConfig = {
   },
 
   Fraxlend_sfrxETH_FRAX: {
-    contract: 'FraxlendV3',
+    contract: 'FraxLendV3',
     type: StrategyTypes.FRAX_LEND,
     constructorArgs: {
       swapper,

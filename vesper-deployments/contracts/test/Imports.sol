@@ -44,6 +44,7 @@ import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3.sol";
 import "vesper-strategies/contracts/strategies/compound/v3/CompoundV3VesperXy.sol";
 import "vesper-strategies/contracts/strategies/curve/CurveETH.sol";
 import "vesper-strategies/contracts/strategies/frax-lend/FraxLend.sol";
+import "vesper-strategies/contracts/strategies/frax-lend/FraxLendV3.sol";
 import "vesper-strategies/contracts/strategies/frax-lend/FraxLendVesperXy.sol";
 import "vesper-strategies/contracts/strategies/yearn/YearnStaking.sol";
 import "vesper-strategies/contracts/strategies/yearn/Yearn.sol";
