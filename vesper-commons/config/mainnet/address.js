@@ -234,6 +234,7 @@ const Address = {
   },
   Metronome: {
     msETH: '0x64351fC9810aDAd17A690E4e1717Df5e7e085160',
+    msUSD: '0xab5eB14c09D416F0aC63661E57EDB7AEcDb9BEfA',
   },
 }
 

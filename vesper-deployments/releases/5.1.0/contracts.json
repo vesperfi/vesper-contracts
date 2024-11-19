@@ -853,6 +853,18 @@
         "strategies": {
           "Morpho_MetronomeMsETH_Vault_msETH": "0x411CF4FFdeB96405e031E4f0f470A231285bf2bd"
         }
+      },
+      "vamsusd": {
+        "pool": {
+          "proxyAdmin": "0x9153F17Cf2339b97cc71400cec63c913Fa7066F8",
+          "proxy": "0x4C73F025a1947ec770327B9956Fc61f535F72C22",
+          "implementation": "0x91f92F75E547Db066c39DEa4d4a8B45f4B8EDE4a",
+          "poolAccountant": {
+            "proxyAdmin": "0xbbb56ac343aE8bbedc60cEd953834B4ad6Ab6e4B",
+            "proxy": "0x4f531a9D63910877f5Ee9E81AA8bcE4c9A1013d7",
+            "implementation": "0xD5fBA1680fdCca1dCc8363944fD2A65364C04FA9"
+          }
+        }
       }
     },
     "avalanche": {

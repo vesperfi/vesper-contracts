@@ -150,6 +150,12 @@ const PoolConfig = {
     setup,
     rewards,
   },
+  vamsUSD: {
+    contractName: 'VPool',
+    poolParams: ['vamsUSD Pool', 'vamsUSD', Address.Metronome.msUSD],
+    setup,
+    rewards: { contract: 'PoolRewards', tokens: [] },
+  },
 }
 
 module.exports = Object.freeze(PoolConfig)
