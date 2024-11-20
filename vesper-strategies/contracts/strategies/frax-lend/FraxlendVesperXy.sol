@@ -5,13 +5,13 @@ pragma solidity 0.8.9;
 import "vesper-pools/contracts/dependencies/openzeppelin/contracts/utils/math/Math.sol";
 import "vesper-pools/contracts/interfaces/vesper/IPoolRewards.sol";
 import "../Strategy.sol";
-import "../../interfaces/frax-lend/IFraxLend.sol";
+import "../../interfaces/frax-lend/IFraxlendPair.sol";
 
 // solhint-disable var-name-mixedcase
 
-/// @title This strategy will deposit collateral token in FraxLend and based on position it will
+/// @title This strategy will deposit collateral token in Fraxlend and based on position it will
 /// borrow Frax and supplied borrowed tokens to Vesper pool.
-contract FraxLendVesperXy is Strategy {
+contract FraxlendVesperXy is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
@@ -21,7 +21,7 @@ contract FraxLendVesperXy is Strategy {
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
     uint256 public maxBorrowLimit = 8_500; // 85% of actual collateral factor of protocol
 
-    IFraxLend internal immutable fraxLend;
+    IFraxlendPair internal immutable fraxlendPair;
     address public immutable borrowToken;
 
     // Destination Grow Pool for borrowed Token
@@ -29,7 +29,7 @@ contract FraxLendVesperXy is Strategy {
     // VSP token address
     address public immutable vsp;
 
-    // FraxLend constants
+    // Fraxlend constants
     uint256 internal immutable MAX_LTV;
     uint256 internal immutable LTV_PRECISION;
     uint256 internal immutable EXCHANGE_PRECISION;
@@ -44,27 +44,27 @@ contract FraxLendVesperXy is Strategy {
     constructor(
         address pool_,
         address swapper_,
-        address fraxLend_,
+        address fraxlendPair_,
         address frax_,
         address vPool_,
         address vsp_,
         string memory name_
-    ) Strategy(pool_, swapper_, fraxLend_) {
-        require(fraxLend_ != address(0), "frax-lend-address-is-null");
+    ) Strategy(pool_, swapper_, fraxlendPair_) {
+        require(fraxlendPair_ != address(0), "frax-lend-address-is-null");
         require(frax_ != address(0), "frax-address-is-null");
         require(vsp_ != address(0), "vsp-address-is-null");
         require(address(IVesperPool(vPool_).token()) == frax_, "invalid-grow-pool");
-        require(IFraxLend(fraxLend_).collateralContract() == address(collateralToken), "collateral-mismatch");
-        fraxLend = IFraxLend(fraxLend_);
+        require(IFraxlendPair(fraxlendPair_).collateralContract() == address(collateralToken), "collateral-mismatch");
+        fraxlendPair = IFraxlendPair(fraxlendPair_);
         borrowToken = frax_;
         vPool = IVesperPool(vPool_);
         vsp = vsp_;
         NAME = name_;
 
-        (uint256 _LTV_PRECISION, , , , uint256 _EXCHANGE_PRECISION, , , ) = fraxLend.getConstants();
+        (uint256 _LTV_PRECISION, , , , uint256 _EXCHANGE_PRECISION, , , ) = fraxlendPair.getConstants();
         LTV_PRECISION = _LTV_PRECISION;
         EXCHANGE_PRECISION = _EXCHANGE_PRECISION;
-        MAX_LTV = fraxLend.maxLTV();
+        MAX_LTV = fraxlendPair.maxLTV();
     }
 
     /// @notice Gets amount of borrowed token in strategy + borrowed tokens deposited in vPool
@@ -74,7 +74,7 @@ contract FraxLendVesperXy is Strategy {
 
     function isReservedToken(address token_) public view virtual override returns (bool) {
         return
-            token_ == address(fraxLend) ||
+            token_ == address(fraxlendPair) ||
             token_ == address(collateralToken) ||
             token_ == borrowToken ||
             token_ == address(vPool);
@@ -82,17 +82,17 @@ contract FraxLendVesperXy is Strategy {
 
     /// @notice Returns total collateral locked in the strategy
     function tvl() external view override returns (uint256) {
-        return fraxLend.userCollateralBalance(address(this)) + collateralToken.balanceOf(address(this));
+        return fraxlendPair.userCollateralBalance(address(this)) + collateralToken.balanceOf(address(this));
     }
 
     /// @dev Approve all required tokens
     function _approveToken(uint256 amount_) internal virtual override {
         super._approveToken(amount_);
         address _swapper = address(swapper);
-        collateralToken.safeApprove(address(fraxLend), amount_);
+        collateralToken.safeApprove(address(fraxlendPair), amount_);
         collateralToken.safeApprove(_swapper, amount_);
         IERC20(borrowToken).safeApprove(_swapper, amount_);
-        IERC20(borrowToken).safeApprove(address(fraxLend), amount_);
+        IERC20(borrowToken).safeApprove(address(fraxlendPair), amount_);
         IERC20(borrowToken).safeApprove(address(vPool), amount_);
         IERC20(vsp).safeApprove(_swapper, amount_);
     }
@@ -102,16 +102,16 @@ contract FraxLendVesperXy is Strategy {
      * @param newStrategy_ Address of new strategy.
      */
     function _beforeMigration(address newStrategy_) internal override {
-        require(IStrategy(newStrategy_).token() == address(fraxLend), "wrong-receipt-token");
+        require(IStrategy(newStrategy_).token() == address(fraxlendPair), "wrong-receipt-token");
         // Accrue and update interest
-        fraxLend.addInterest();
-        _repay(_borrowedFromFraxLend());
+        fraxlendPair.addInterest();
+        _repay(_borrowedFromFraxlend());
 
-        fraxLend.removeCollateral(fraxLend.userCollateralBalance(address(this)), address(this));
+        fraxlendPair.removeCollateral(fraxlendPair.userCollateralBalance(address(this)), address(this));
     }
 
-    function _borrowedFromFraxLend() internal view returns (uint256) {
-        return fraxLend.toBorrowAmount(fraxLend.userBorrowShares(address(this)), true);
+    function _borrowedFromFraxlend() internal view returns (uint256) {
+        return fraxlendPair.toBorrowAmount(fraxlendPair.userBorrowShares(address(this)), true);
     }
 
     /**
@@ -126,13 +126,13 @@ contract FraxLendVesperXy is Strategy {
         uint256 withdrawAmount_
     ) internal view returns (uint256 _borrowAmount, uint256 _repayAmount) {
         require(depositAmount_ == 0 || withdrawAmount_ == 0, "all-input-gt-zero");
-        uint256 _borrowed = _borrowedFromFraxLend();
+        uint256 _borrowed = _borrowedFromFraxlend();
         // If maximum borrow limit set to 0 then repay borrow
         if (maxBorrowLimit == 0) {
             return (0, _borrowed);
         }
 
-        uint256 _collateralSupplied = fraxLend.userCollateralBalance(address(this));
+        uint256 _collateralSupplied = fraxlendPair.userCollateralBalance(address(this));
 
         // In case of withdraw, withdrawAmount_ may be greater than _collateralSupplied
         uint256 _hypotheticalCollateral;
@@ -142,7 +142,7 @@ contract FraxLendVesperXy is Strategy {
             _hypotheticalCollateral = _collateralSupplied - withdrawAmount_;
         }
         // It is collateral:asset ratio. i.e. how much collateral to buy 1e18 asset
-        uint224 _exchangeRate = fraxLend.exchangeRateInfo().exchangeRate;
+        uint224 _exchangeRate = fraxlendPair.exchangeRateInfo().exchangeRate;
 
         // Max borrow limit in borrow token i.e. FRAX.
         uint256 _maxBorrowPossible = (_hypotheticalCollateral * MAX_LTV * EXCHANGE_PRECISION) /
@@ -191,20 +191,20 @@ contract FraxLendVesperXy is Strategy {
             // Read collateral balance again as repay() may change balance
             _collateralBalance = collateralToken.balanceOf(address(this));
             if (_collateralBalance > 0) {
-                fraxLend.addCollateral(_collateralBalance, address(this));
+                fraxlendPair.addCollateral(_collateralBalance, address(this));
             }
         } else if (_borrowAmount > 0) {
             // Happy path, mint more borrow more
             // borrowAsset will deposit collateral and then borrow FRAX
-            fraxLend.borrowAsset(_borrowAmount, _collateralBalance, address(this));
+            fraxlendPair.borrowAsset(_borrowAmount, _collateralBalance, address(this));
             // Deposit all borrow token, FRAX, we have.
             vPool.deposit(IERC20(borrowToken).balanceOf(address(this)));
         }
     }
 
     function _getAvailableLiquidity() internal view virtual returns (uint256) {
-        uint256 _totalAsset = fraxLend.totalAsset().amount;
-        uint256 _totalBorrow = fraxLend.totalBorrow().amount;
+        uint256 _totalAsset = fraxlendPair.totalAsset().amount;
+        uint256 _totalBorrow = fraxlendPair.totalBorrow().amount;
         return _totalAsset > _totalBorrow ? _totalAsset - _totalBorrow : 0;
     }
 
@@ -212,20 +212,20 @@ contract FraxLendVesperXy is Strategy {
         return (vPool.pricePerShare() * vPool.balanceOf(address(this))) / 1e18;
     }
 
-    /// @dev Deposit collateral aka X in FraxLend.
+    /// @dev Deposit collateral aka X in Fraxlend.
     function _mintX(uint256 _amount) internal virtual {
         if (_amount > 0) {
-            fraxLend.addCollateral(_amount, address(this));
+            fraxlendPair.addCollateral(_amount, address(this));
         }
     }
 
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         // Accrue and update interest
-        fraxLend.addInterest();
+        fraxlendPair.addInterest();
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
-        uint256 _yTokensBorrowed = _borrowedFromFraxLend();
+        uint256 _yTokensBorrowed = _borrowedFromFraxlend();
         uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
         uint256 _yTokensInProtocol = _getYTokensInProtocol();
         uint256 _totalYTokens = _yTokensHere + _yTokensInProtocol;
@@ -246,8 +246,8 @@ contract FraxLendVesperXy is Strategy {
         }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
-        uint256 _collateralInFraxLend = fraxLend.userCollateralBalance(address(this));
-        uint256 _totalCollateral = _collateralInFraxLend + _collateralHere;
+        uint256 _collateralInFraxlend = fraxlendPair.userCollateralBalance(address(this));
+        uint256 _totalCollateral = _collateralInFraxlend + _collateralHere;
 
         if (_totalCollateral > _totalDebt) {
             _profit = _totalCollateral - _totalDebt;
@@ -279,7 +279,7 @@ contract FraxLendVesperXy is Strategy {
             // To repay loan - convert all rewards to collateral, if asked, and redeem collateral(if needed).
             // This scenario is rare and if system works okay it will/might happen during final repay only.
             if (_repayAmount > _totalYTokens) {
-                uint256 _yTokensBorrowed = _borrowedFromFraxLend();
+                uint256 _yTokensBorrowed = _borrowedFromFraxlend();
                 // For example this is final repay and 100 blocks has passed since last withdraw/rebalance,
                 // _yTokensBorrowed is increasing due to interest. Now if _repayAmount > _borrowBalanceHere is true
                 // _yTokensBorrowed > _borrowBalanceHere is also true.
@@ -293,11 +293,11 @@ contract FraxLendVesperXy is Strategy {
         }
     }
 
-    /// @dev Repay Y to FraxLend. Withdraw Y from end protocol if applicable.
+    /// @dev Repay Y to Fraxlend. Withdraw Y from end protocol if applicable.
     function _repayY(uint256 amount_) internal virtual {
         _withdrawY(amount_);
-        uint256 _fraxShare = fraxLend.toBorrowShares(amount_, false);
-        fraxLend.repayAsset(_fraxShare, address(this));
+        uint256 _fraxShare = fraxlendPair.toBorrowShares(amount_, false);
+        fraxlendPair.repayAsset(_fraxShare, address(this));
     }
 
     /**
@@ -313,7 +313,7 @@ contract FraxLendVesperXy is Strategy {
             // some _from token or adjust expected output.
             if (_amountIn > _collateralHere) {
                 // Redeem some collateral, so that we have enough collateral to get expected output
-                fraxLend.removeCollateral(_amountIn - _collateralHere, address(this));
+                fraxlendPair.removeCollateral(_amountIn - _collateralHere, address(this));
             }
             swapper.swapExactOutput(address(collateralToken), borrowToken, shortOnBorrow_, _amountIn, address(this));
         }
@@ -321,16 +321,16 @@ contract FraxLendVesperXy is Strategy {
 
     function _withdrawHere(uint256 amount_) internal override {
         // Accrue and update interest
-        fraxLend.addInterest();
+        fraxlendPair.addInterest();
         (, uint256 _repayAmount) = _calculateBorrowPosition(0, amount_);
         _repay(_repayAmount);
 
-        // Get minimum of amount_ and collateral supplied and _available collateral in FraxLend
+        // Get minimum of amount_ and collateral supplied and _available collateral in Fraxlend
         uint256 _withdrawAmount = Math.min(
             amount_,
-            Math.min(fraxLend.userCollateralBalance(address(this)), fraxLend.totalCollateral())
+            Math.min(fraxlendPair.userCollateralBalance(address(this)), fraxlendPair.totalCollateral())
         );
-        fraxLend.removeCollateral(_withdrawAmount, address(this));
+        fraxlendPair.removeCollateral(_withdrawAmount, address(this));
     }
 
     function _withdrawY(uint256 amount_) internal virtual {
@@ -356,7 +356,7 @@ contract FraxLendVesperXy is Strategy {
      */
     function recoverBorrowToken(uint256 _amountToRecover) external onlyKeeper {
         uint256 _borrowBalanceHere = IERC20(borrowToken).balanceOf(address(this));
-        uint256 _borrow = _borrowedFromFraxLend();
+        uint256 _borrow = _borrowedFromFraxlend();
 
         if (_borrowBalanceHere > _borrow) {
             uint256 _extraBorrowBalance = _borrowBalanceHere - _borrow;
@@ -377,8 +377,8 @@ contract FraxLendVesperXy is Strategy {
      */
     function repayAll() external onlyKeeper {
         // Accrue and update interest
-        fraxLend.addInterest();
-        _repay(_borrowedFromFraxLend());
+        fraxlendPair.addInterest();
+        _repay(_borrowedFromFraxlend());
         minBorrowLimit = 0;
         maxBorrowLimit = 0;
     }

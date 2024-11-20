@@ -1449,54 +1449,54 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
-  FraxLend_CRV_FRAX: {
-    contract: 'FraxLend',
+  Fraxlend_CRV_FRAX: {
+    contract: 'Fraxlend',
     type: StrategyTypes.FRAX_LEND,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.CRV_FRAX,
-      strategyName: 'FraxLend_CRV_FRAX',
+      receiptToken: Address.Fraxlend.CRV_FRAX,
+      strategyName: 'Fraxlend_CRV_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
   Fraxlend_sfrxETH_FRAX: {
-    contract: 'FraxLendV3',
+    contract: 'FraxlendV3',
     type: StrategyTypes.FRAX_LEND,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.sfrxETH_FRAX,
+      receiptToken: Address.Fraxlend.sfrxETH_FRAX,
       strategyName: 'Fraxlend_sfrxETH_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
   },
 
-  FraxLend_Vesper_Xy_ETH_FRAX: {
-    contract: 'FraxLendVesperXy',
+  Fraxlend_Vesper_Xy_ETH_FRAX: {
+    contract: 'FraxlendVesperXy',
     type: StrategyTypes.FRAX_LEND_VESPER_XY,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.WETH_FRAX,
+      receiptToken: Address.Fraxlend.WETH_FRAX,
       borrowToken: Address.FRAX,
       vPool: Address.Vesper.vaFRAX,
       vsp: Address.Vesper.VSP,
-      strategyName: 'FraxLend_Vesper_Xy_ETH_FRAX',
+      strategyName: 'Fraxlend_Vesper_Xy_ETH_FRAX',
     },
     config: { ...config },
     setup: { ...setup },
   },
-  FraxLend_Vesper_Xy_WBTC_FRAX: {
-    contract: 'FraxLendVesperXy',
+  Fraxlend_Vesper_Xy_WBTC_FRAX: {
+    contract: 'FraxlendVesperXy',
     type: StrategyTypes.FRAX_LEND_VESPER_XY,
     constructorArgs: {
       swapper,
-      receiptToken: Address.FraxLend.WBTC_FRAX,
+      receiptToken: Address.Fraxlend.WBTC_FRAX,
       borrowToken: Address.FRAX,
       vPool: Address.Vesper.vaFRAX,
       vsp: Address.Vesper.VSP,
-      strategyName: 'FraxLend_Vesper_Xy_WBTC_FRAX',
+      strategyName: 'Fraxlend_Vesper_Xy_WBTC_FRAX',
     },
     config: { ...config },
     setup: { ...setup },

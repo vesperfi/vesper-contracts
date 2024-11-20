@@ -21,8 +21,8 @@ async function simulateVesperPoolProfit(strategy) {
   )
 }
 
-// FraxLend Vesper XY strategy specific tests
-function shouldBehaveLikeFraxLendVesperXyStrategy(index) {
+// Fraxlend Vesper XY strategy specific tests
+function shouldBehaveLikeFraxlendVesperXyStrategy(index) {
   let strategy, pool, collateralToken, fraxLend
   let user1, user2
 
@@ -52,13 +52,13 @@ function shouldBehaveLikeFraxLendVesperXyStrategy(index) {
     }
   }
 
-  describe('FraxLendVesperXyStrategy specific tests', function () {
+  describe('FraxlendVesperXyStrategy specific tests', function () {
     beforeEach(async function () {
       ;[, user1, user2] = this.users
       pool = this.pool
       strategy = this.strategies[index].instance
       collateralToken = this.collateralToken
-      fraxLend = await ethers.getContractAt('IFraxLend', await strategy.token())
+      fraxLend = await ethers.getContractAt('IFraxlendPair', await strategy.token())
       await fraxLend.addInterest()
     })
 
@@ -189,4 +189,4 @@ function shouldBehaveLikeFraxLendVesperXyStrategy(index) {
     }
   })
 }
-module.exports = { shouldBehaveLikeFraxLendVesperXyStrategy }
+module.exports = { shouldBehaveLikeFraxlendVesperXyStrategy }

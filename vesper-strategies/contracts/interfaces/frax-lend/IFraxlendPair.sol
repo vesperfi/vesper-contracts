@@ -6,7 +6,7 @@ import "vesper-pools/contracts/dependencies/openzeppelin/contracts/token/ERC20/I
 
 // solhint-disable var-name-mixedcase
 
-interface IFraxLend is IERC20 {
+interface IFraxlendPair is IERC20 {
     struct ExchangeRateInfo {
         uint32 lastTimestamp;
         uint224 exchangeRate; // collateral:asset ratio. i.e. how much collateral to buy 1e18 asset

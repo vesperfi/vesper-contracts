@@ -6,7 +6,7 @@ import "../Strategy.sol";
 import {IFraxlendPairV3 as IFraxlendPair} from "../../interfaces/frax-lend/IFraxlendPairV3.sol";
 
 /// @title This strategy will deposit FRAX as collateral token in Fraxlend and earn interest.
-contract FraxLendV3 is Strategy {
+contract FraxlendV3 is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase

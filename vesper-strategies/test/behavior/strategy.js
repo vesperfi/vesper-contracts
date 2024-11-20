@@ -20,7 +20,7 @@ const { shouldBehaveLikeAaveV3SommelierXY } = require('./aavev3-sommelier-xy')
 const { shouldBehaveLikeAlpacaStrategy } = require('./alpaca')
 const { shouldTestStargateRewards } = require('./stargate-rewards')
 const { shouldTestStargateV2Rewards } = require('./stargatev2-rewards')
-const { shouldBehaveLikeFraxLendVesperXyStrategy } = require('./frax-lend-vesper-xy')
+const { shouldBehaveLikeFraxlendVesperXyStrategy } = require('./frax-lend-vesper-xy')
 const { shouldBehaveLikeYearnStakingStrategy } = require('./yearn-staking')
 const { shouldBehaveLikeExtraFinanceStrategy } = require('./extra-finance')
 
@@ -48,7 +48,7 @@ function shouldBehaveLikeStrategy(index, type, strategyName) {
     [StrategyType.ALPACA]: shouldBehaveLikeAlpacaStrategy,
     [StrategyType.STARGATE]: shouldTestStargateRewards,
     [StrategyType.STARGATE_V2]: shouldTestStargateV2Rewards,
-    [StrategyType.FRAX_LEND_VESPER_XY]: shouldBehaveLikeFraxLendVesperXyStrategy,
+    [StrategyType.FRAX_LEND_VESPER_XY]: shouldBehaveLikeFraxlendVesperXyStrategy,
     [StrategyType.YEARN_STAKING]: shouldBehaveLikeYearnStakingStrategy,
     [StrategyType.EXTRA_FINANCE]: shouldBehaveLikeExtraFinanceStrategy,
   }
