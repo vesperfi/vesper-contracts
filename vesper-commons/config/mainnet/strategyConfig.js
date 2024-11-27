@@ -1633,6 +1633,18 @@ const StrategyConfig = {
     config,
     setup,
   },
+
+  EulerV2_Euler_Prime_USDC: {
+    contract: 'EulerV2',
+    type: StrategyTypes.EULER_V2,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.EulerV2.eUSDC2,
+      strategyName: 'EulerV2_Euler_Prime_USDC',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)

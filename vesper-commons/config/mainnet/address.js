@@ -238,6 +238,9 @@ const Address = {
     msETH: '0x64351fC9810aDAd17A690E4e1717Df5e7e085160',
     msUSD: '0xab5eB14c09D416F0aC63661E57EDB7AEcDb9BEfA',
   },
+  EulerV2: {
+    eUSDC2: '0x797DD80692c3b2dAdabCe8e30C07fDE5307D48a9',
+  },
 }
 
 module.exports = Object.freeze(Address)
