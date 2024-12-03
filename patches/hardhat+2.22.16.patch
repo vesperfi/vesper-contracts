@@ -1,8 +1,8 @@
 diff --git a/node_modules/hardhat/internal/artifacts.js b/node_modules/hardhat/internal/artifacts.js
-index 6526029..c1b2f62 100644
+index e80f954..0e0da5d 100644
 --- a/node_modules/hardhat/internal/artifacts.js
 +++ b/node_modules/hardhat/internal/artifacts.js
-@@ -341,6 +341,23 @@ class Artifacts {
+@@ -355,6 +355,24 @@ class Artifacts {
          this._cache?.artifactNameToArtifactPathCache.set(name, result);
          return result;
      }
@@ -23,10 +23,11 @@ index 6526029..c1b2f62 100644
 +        this._cache?.artifactNameToArtifactPathCache.set(name, result);
 +        return result;
 +    }
++
      _createBuildInfo(id, solcVersion, solcLongVersion, input, output) {
          return {
              id,
-@@ -564,6 +581,20 @@ Please replace "${contractName}" for the correct contract name wherever you are
+@@ -597,6 +615,20 @@ Please replace "${contractName}" for the correct contract name wherever you are
          }
          return matchingFiles[0];
      }
@@ -36,7 +37,7 @@ index 6526029..c1b2f62 100644
 +            return path.basename(file) === `${contractName}.json`;
 +        });
 +        if (matchingFiles.length === 0) {
-+           return this._handleWrongArtifactForContractName(contractName, files);
++            return this._handleWrongArtifactForContractName(contractName, files);
 +        }
 +        if (matchingFiles.length > 1) {
 +            const candidates = matchingFiles.map((file) => this._getFullyQualifiedNameFromPath(file));

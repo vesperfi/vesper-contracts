@@ -39,7 +39,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-require-path-exists": "^1.1.9",
-    "hardhat": "^2.12.3",
+    "hardhat": "^2.22.16",
     "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.11.21",
     "hardhat-log-remover": "^2.0.2",

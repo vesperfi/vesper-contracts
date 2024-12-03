@@ -35,6 +35,7 @@ const StrategyType = {
   MORPHO_VAULT: 'morphoVault',
   EXTRA_FINANCE: 'extraFinance',
   DUMMY: 'dummy',
+  EULER_V2: 'eulerV2',
 }
 
 module.exports = Object.freeze(StrategyType)
