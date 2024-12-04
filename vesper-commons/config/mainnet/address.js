@@ -232,6 +232,7 @@ const Address = {
       UsualBoostedUSDC: '0xd63070114470f685b75B74D60EEc7c1113d33a3D',
       MetronomeMsETH: '0x78B18E07dc43017fcEaabaD0751d6464c0F56b25',
       GrauntletUSDCCore: '0x8eB67A509616cd6A7c1B3c8C21D48FF57df3d458',
+      MetronomeMsUSD: '0x6859B34a9379122d25A9FA46f0882d434fee36c3',
     },
   },
   Metronome: {
