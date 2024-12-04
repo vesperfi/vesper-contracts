@@ -865,6 +865,9 @@
             "proxy": "0x4f531a9D63910877f5Ee9E81AA8bcE4c9A1013d7",
             "implementation": "0xD5fBA1680fdCca1dCc8363944fD2A65364C04FA9"
           }
+        },
+        "strategies": {
+          "Morpho_MetronomeMsUSD_Vault_msUSD": "0x984953160cD68dd09D20B7eFfd861a985a9b8152"
         }
       }
     },
