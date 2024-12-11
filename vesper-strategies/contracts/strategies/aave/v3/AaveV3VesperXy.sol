@@ -50,7 +50,7 @@ contract AaveV3VesperXy is AaveV3Xy {
         VesperRewards._claimAndSwapRewards(vPool, swapper, address(wrappedCollateral));
     }
 
-    /// @notice Borrowed Y balance deposited in Vesper Pool
+    /// @dev borrowToken balance here + borrowToken balance deposited in Vesper Pool
     function _getInvestedBorrowBalance() internal view virtual override returns (uint256) {
         return
             IERC20(borrowToken).balanceOf(address(this)) +
@@ -60,8 +60,11 @@ contract AaveV3VesperXy is AaveV3Xy {
     /// @notice Swap excess borrow for more wrappedCollateral when underlying vPool is making profits
     function _rebalanceBorrow(uint256 _excessBorrow) internal virtual override {
         if (_excessBorrow > 0) {
-            _withdrawFromVesperPool(_excessBorrow);
             uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
+            if (_borrowedHere < _excessBorrow) {
+                _withdrawFromVesperPool(_excessBorrow - _borrowedHere);
+                _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
+            }
             if (_borrowedHere > 0) {
                 _safeSwapExactInput(borrowToken, address(wrappedCollateral), _borrowedHere);
             }
@@ -74,7 +77,10 @@ contract AaveV3VesperXy is AaveV3Xy {
             uint256 _pricePerShare = vPool.pricePerShare();
             uint256 _shares = (_amount * 1e18) / _pricePerShare;
             _shares = _amount > ((_shares * _pricePerShare) / 1e18) ? _shares + 1 : _shares;
-            vPool.withdraw(Math.min(_shares, vPool.balanceOf(address(this))));
+            _shares = Math.min(_shares, vPool.balanceOf(address(this)));
+            if (_shares > 0) {
+                vPool.withdraw(_shares);
+            }
         }
     }
 }
