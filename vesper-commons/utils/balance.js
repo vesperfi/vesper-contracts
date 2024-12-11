@@ -87,6 +87,7 @@ const whales = {
     [Address.rETH]: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     [Address.cbETH]: '0x977b6fc5dE62598B08C85AC8Cf2b745874E8b78c',
     [Address.Metronome.msETH]: '0xa4c567c662349BeC3D0fB94C4e7f85bA95E208e4',
+    [Address.Metronome.msUSD]: '0xc3b19502F8c02be75F3f77fd673503520DEB51dD',
   },
   avalanche: {
     // Avalanche

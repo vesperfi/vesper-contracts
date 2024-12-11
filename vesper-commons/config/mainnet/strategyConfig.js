@@ -1645,6 +1645,18 @@ const StrategyConfig = {
     config,
     setup,
   },
+
+  Morpho_MetronomeMsUSD_Vault_msUSD: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.MetronomeMsUSD,
+      strategyName: 'Morpho_MetronomeMsUSD_Vault_msUSD',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
