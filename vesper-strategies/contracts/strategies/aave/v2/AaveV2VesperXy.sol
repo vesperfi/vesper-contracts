@@ -69,7 +69,8 @@ contract AaveV2VesperXy is AaveV2Xy {
                 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
             }
             if (_borrowedHere > 0) {
-                _safeSwapExactInput(borrowToken, address(collateralToken), _borrowedHere);
+                // Swap minimum of _excessBorrow and _borrowedHere for collateral
+                _safeSwapExactInput(borrowToken, address(collateralToken), Math.min(_excessBorrow, _borrowedHere));
             }
         }
     }

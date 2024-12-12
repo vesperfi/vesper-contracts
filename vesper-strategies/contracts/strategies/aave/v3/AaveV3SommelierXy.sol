@@ -54,7 +54,8 @@ contract AaveV3SommelierXy is AaveV3Xy, SommelierBase {
                 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
             }
             if (_borrowedHere > 0) {
-                _safeSwapExactInput(borrowToken, address(wrappedCollateral), _borrowedHere);
+                // Swap minimum of _excessBorrow and _borrowedHere for collateral
+                _safeSwapExactInput(borrowToken, address(wrappedCollateral), Math.min(_excessBorrow, _borrowedHere));
             }
         }
     }
