@@ -50,7 +50,7 @@ async function runValidation(input, safeAddress) {
   if (liveAdmin !== input.proxyAdmin) {
     result.newProxyAdmin = liveAdmin
     result.incorrectAdminInRelease = true
-    result.action = 'update release file with correct implementation'
+    result.action = 'update release file with correct proxyAdmin'
   }
 
   const owner = await getOwner(liveAdmin)

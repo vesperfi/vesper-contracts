@@ -857,11 +857,11 @@
       },
       "vamsusd": {
         "pool": {
-          "proxyAdmin": "0x9153F17Cf2339b97cc71400cec63c913Fa7066F8",
+          "proxyAdmin": "0xE647951B8e67247643Abd45b5aCB80096F561624",
           "proxy": "0x4C73F025a1947ec770327B9956Fc61f535F72C22",
           "implementation": "0x91f92F75E547Db066c39DEa4d4a8B45f4B8EDE4a",
           "poolAccountant": {
-            "proxyAdmin": "0xbbb56ac343aE8bbedc60cEd953834B4ad6Ab6e4B",
+            "proxyAdmin": "0xaCCa7cd8c908b6AcBc488c8990A22a6A41a4638D",
             "proxy": "0x4f531a9D63910877f5Ee9E81AA8bcE4c9A1013d7",
             "implementation": "0xD5fBA1680fdCca1dCc8363944fD2A65364C04FA9"
           }
