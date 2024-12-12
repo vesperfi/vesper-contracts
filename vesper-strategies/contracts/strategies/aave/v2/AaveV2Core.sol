@@ -95,7 +95,8 @@ abstract contract AaveV2Core {
             // Fetch and check again for next action.
             (_cooldownStart, _cooldownEnd, _unstakeEnd) = cooldownData();
             if (_canUnstake(_cooldownEnd, _unstakeEnd)) {
-                stkAAVE.redeem(address(this), type(uint256).max);
+                // stkAave V3 is casting uint256 into uint104 hence the usage of uint104
+                stkAAVE.redeem(address(this), type(uint104).max);
             } else if (_canStartCooldown(_cooldownStart, _unstakeEnd)) {
                 stkAAVE.cooldown();
             }

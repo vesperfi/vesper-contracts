@@ -217,14 +217,18 @@ abstract contract CompoundXyCore is Strategy {
         if (_yTokensBorrowed > _totalYTokens) {
             _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
         } else {
-            // When _yTokensInProtocol exceeds _yTokensBorrowed from Compound
-            // then we have profit from investing borrow tokens. _yTokensHere is profit.
-            if (_yTokensInProtocol > _yTokensBorrowed) {
-                _withdrawY(_yTokensInProtocol - _yTokensBorrowed);
-                _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
-            }
-            if (_yTokensHere > 0) {
-                _safeSwapExactInput(borrowToken, address(collateralToken), _yTokensHere);
+            // When _totalYTokens exceeds _yTokensBorrowed from Compound
+            // then we have profit from investing borrow tokens. _excessYToken is profit.
+            uint256 _excessYToken = _totalYTokens - _yTokensBorrowed;
+            if (_excessYToken > 0) {
+                if (_yTokensHere < _excessYToken) {
+                    _withdrawY(_excessYToken - _yTokensHere);
+                    _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+                }
+                if (_yTokensHere > 0) {
+                    // Swap minimum of _excessYToken and _yTokensHere for collateral
+                    _safeSwapExactInput(borrowToken, address(collateralToken), Math.min(_excessYToken, _yTokensHere));
+                }
             }
         }
 

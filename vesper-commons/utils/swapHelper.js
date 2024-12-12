@@ -369,6 +369,11 @@ function prepareSwapInfo(pairs) {
           )
         } else if (pair.tokenIn === Address.WETH || pair.tokenOut === Address.WETH) {
           path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+        } else {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WETH, 100, pair.tokenOut],
+          )
         }
         exchange = ExchangeType.UNISWAP_V3
       }
