@@ -21,7 +21,9 @@ abstract contract SommelierBase {
     }
 
     function _depositInSommelier(uint256 amount_) internal returns (uint256 shares_) {
-        shares_ = cellar.deposit(amount_, address(this));
+        if (cellar.previewDeposit(amount_) != 0) {
+            shares_ = cellar.deposit(amount_, address(this));
+        }
     }
 
     function _getAssetsInSommelier() internal view returns (uint256) {

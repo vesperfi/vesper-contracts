@@ -31,6 +31,13 @@ interface ICellar is IERC20 {
     function userShareLockStartTime(address user) external view returns (uint256 lockTime);
 
     /**
+     * @notice Simulate the effects of depositing assets at the current block, given current on-chain conditions.
+     * @param assets amount of assets to deposit
+     * @return shares that will be minted
+     */
+    function previewDeposit(uint256 assets) external view returns (uint256 shares);
+
+    /**
      * @notice Deposits assets into the cellar, and returns shares to receiver.
      * @param assets amount of assets deposited by user.
      * @param receiver address to receive the shares.
