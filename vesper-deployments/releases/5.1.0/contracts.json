@@ -162,7 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
-          "AaveV3_Sommelier_Xy_STETH_WETH": "0xCdBe4058eEC5FFf8461D43eC0aeb0b753aeC2071",
+          "AaveV3_Sommelier_Xy_STETH_WETH": "0x0650422Ef55BE3Fe99aCdBb50A33203a741bFD89",
           "AaveV3_Vesper_Xy_STETH_USDC": "0x0Fe52AF18c51198037D5a21fd1e19AA4B31D8e70",
           "Maker_Dummy_STETH": "0x8F454223C6c59df903812a0C0d9375eDb6089d5F",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
@@ -222,7 +222,7 @@
           "implementation": "0xe583A2e073b5CC3853fAda6E33fC2F6F4e29a0bB"
         },
         "strategies": {
-          "AaveV3_Sommelier_Xy_WBTC_WETH": "0x38Cc6584f2Ead1Ad988637Fd3721389806ef2992",
+          "AaveV3_Sommelier_Xy_WBTC_WETH": "0x7764e93483A4cC1A9EC28B6b48e2528ec5dbAD21",
           "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
@@ -793,6 +793,7 @@
           "implementation": "0xEbF4c7e909157DB518475B8d3b073d54f8a2023d"
         },
         "strategies": {
+          "AaveV3_Sommelier_Xy_RETH_WETH": "0x69eA006F1F6031398EeFf46eeb44b8b15C117F2E",
           "AaveV3_Vesper_Xy_RETH_USDC": "0x58f2C832BF1f172B5Fb8AC3083ed9D65bf4C7c89",
           "Maker_Vesper_RETH": "0xd08CFE37f44f2f9AFda5F8788cb856C63EA7c078"
         }
@@ -814,6 +815,7 @@
           "implementation": "0x90bb3E3AA5Fa88f0a83Dcb9485f65D2592f4307E"
         },
         "strategies": {
+          "AaveV3_Sommelier_Xy_CBETH_WETH": "0xaD2731923eA8b65c2f72a82B924C955Bc97c501E",
           "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
           "AaveV3_Vesper_Xy_CBETH_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
           "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
@@ -1180,8 +1182,8 @@
           "implementation": "0x2Afe484dcc386edBB1275dd34559df948d3fa78B"
         },
         "strategies": {
-          "AaveV3_Vesper_Xy_wstETH_ETH": "0xA3B31FA31a0Ab32e0F1d6B92fcEfEa50089Dd4F5",
-          "AaveV3_Vesper_Xy_wstETH_USDC": "0xd9636c07CC1c90216e75A6237cB3d824aFf00b5F",
+          "AaveV3_Vesper_Xy_wstETH_ETH": "0x839c3e73bbb8a0117c1603F1ea04e935be60eed6",
+          "AaveV3_Vesper_Xy_wstETH_USDC": "0x5D3385a0359717CFe130c1574D55D1f426dA3C62",
           "Sonne_Leverage_wstETH": "0xA7F92Bdd0c468d91861445eB30446a3700fC94CA",
           "Sonne_Vesper_Xy_wstETH_USDC": "0x4Fd49322cCc93078baf8011B70aBc58FfE1A181B"
         }
