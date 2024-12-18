@@ -11,16 +11,18 @@ import "../../Strategy.sol";
 // solhint-disable no-empty-blocks
 
 /// @title Deposit Collateral in Aave and earn interest by depositing borrowed token in a Vesper Pool.
-contract AaveV3Xy is Strategy {
+abstract contract AaveV3Xy is Strategy {
     using SafeERC20 for IERC20;
 
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.1.1";
+    string public constant VERSION = "5.1.2";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
     uint256 public maxBorrowLimit = 8_500; // 85% of actual collateral factor of protocol
+
+    uint256 public slippage = 300; // 3%
 
     PoolAddressesProvider public immutable aaveAddressProvider;
     address public borrowToken;
@@ -35,6 +37,8 @@ contract AaveV3Xy is Strategy {
         uint256 previousMaxBorrowLimit,
         uint256 newMaxBorrowLimit
     );
+
+    event UpdatedSlippage(uint256 previousSlippage, uint256 newSlippage);
 
     constructor(
         address _pool,
@@ -75,7 +79,7 @@ contract AaveV3Xy is Strategy {
     }
 
     /// @notice After borrowing Y Hook
-    function _afterBorrowY(uint256 _amount) internal virtual {}
+    function _afterBorrowY(uint256 _amount) internal virtual;
 
     /// @notice Approve all required tokens
     function _approveToken(uint256 _amount) internal virtual override {
@@ -85,16 +89,6 @@ contract AaveV3Xy is Strategy {
         wrappedCollateral.safeApprove(_swapper, _amount);
         IERC20(borrowToken).safeApprove(aaveAddressProvider.getPool(), _amount);
         IERC20(borrowToken).safeApprove(_swapper, _amount);
-        try AToken(receiptToken).getIncentivesController() returns (address _aaveIncentivesController) {
-            address[] memory _rewardTokens = AaveIncentivesController(_aaveIncentivesController).getRewardsList();
-            for (uint256 i; i < _rewardTokens.length; ++i) {
-                // WrappedCollateral and borrowToken already approved swapper and hence this check.
-                if (_rewardTokens[i] != address(wrappedCollateral) && _rewardTokens[i] != borrowToken) {
-                    IERC20(_rewardTokens[i]).safeApprove(_swapper, _amount);
-                }
-            }
-            //solhint-disable no-empty-blocks
-        } catch {}
     }
 
     /**
@@ -110,7 +104,7 @@ contract AaveV3Xy is Strategy {
     }
 
     /// @notice Before repaying Y Hook
-    function _beforeRepayY(uint256 _amount) internal virtual {}
+    function _beforeRepayY(uint256 _amount) internal virtual;
 
     /**
      * @notice Calculate borrow and repay amount based on current collateral and new deposit/withdraw amount.
@@ -140,9 +134,10 @@ contract AaveV3Xy is Strategy {
             return (0, _borrowed);
         }
         AaveOracle _aaveOracle = AaveOracle(aaveAddressProvider.getPriceOracle());
-
-        uint256 _borrowTokenPrice = _aaveOracle.getAssetPrice(borrowToken);
-        uint256 _collateralTokenPrice = _aaveOracle.getAssetPrice(address(wrappedCollateral));
+        address _borrowToken = borrowToken;
+        address _wrappedCollateral = address(wrappedCollateral);
+        uint256 _borrowTokenPrice = _aaveOracle.getAssetPrice(_borrowToken);
+        uint256 _collateralTokenPrice = _aaveOracle.getAssetPrice(_wrappedCollateral);
         if (_borrowTokenPrice == 0 || _collateralTokenPrice == 0) {
             // Oracle problem. Lets payback all
             return (0, _borrowed);
@@ -154,10 +149,10 @@ contract AaveV3Xy is Strategy {
 
         // Collateral in base currency based on oracle price and cf;
         uint256 _actualCollateralForBorrow = (_hypotheticalCollateral * _collateralFactor * _collateralTokenPrice) /
-            (MAX_BPS * (10 ** IERC20Metadata(address(wrappedCollateral)).decimals()));
+            (MAX_BPS * (10 ** IERC20Metadata(_wrappedCollateral).decimals()));
         // Calculate max borrow possible in borrow token number
-        uint256 _maxBorrowPossible = (_actualCollateralForBorrow *
-            (10 ** IERC20Metadata(address(borrowToken)).decimals())) / _borrowTokenPrice;
+        uint256 _maxBorrowPossible = (_actualCollateralForBorrow * (10 ** IERC20Metadata(_borrowToken).decimals())) /
+            _borrowTokenPrice;
         if (_maxBorrowPossible == 0) {
             return (0, _borrowed);
         }
@@ -173,7 +168,7 @@ contract AaveV3Xy is Strategy {
             _repayAmount = _borrowed - _borrowLowerBound;
         } else if (_borrowLowerBound > _borrowed) {
             _borrowAmount = _borrowLowerBound - _borrowed;
-            uint256 _availableLiquidity = IERC20(borrowToken).balanceOf(aBorrowToken);
+            uint256 _availableLiquidity = IERC20(_borrowToken).balanceOf(aBorrowToken);
             if (_borrowAmount > _availableLiquidity) {
                 _borrowAmount = _availableLiquidity;
             }
@@ -193,9 +188,15 @@ contract AaveV3Xy is Strategy {
     function _claimAndSwapRewards() internal virtual override {
         (address[] memory _tokens, uint256[] memory _amounts) = AaveV3Incentive._claimRewards(receiptToken);
         uint256 _length = _tokens.length;
+        address _wrappedCollateral = address(wrappedCollateral);
         for (uint256 i; i < _length; ++i) {
-            if (_amounts[i] > 0 && _tokens[i] != address(wrappedCollateral)) {
-                _safeSwapExactInput(_tokens[i], address(wrappedCollateral), _amounts[i]);
+            if (_amounts[i] > 0 && _tokens[i] != _wrappedCollateral) {
+                // borrow token already has approval
+                if (_tokens[i] != borrowToken) {
+                    IERC20(_tokens[i]).safeApprove(address(swapper), 0);
+                    IERC20(_tokens[i]).safeApprove(address(swapper), _amounts[i]);
+                }
+                _safeSwapExactInput(_tokens[i], _wrappedCollateral, _amounts[i]);
             }
         }
     }
@@ -240,10 +241,10 @@ contract AaveV3Xy is Strategy {
 
         // _borrow increases every block. Convert collateral to borrowToken.
         if (_borrowed > _investedBorrowBalance) {
+            // Loss making scenario. Convert collateral to borrowToken to repay loss
             _swapToBorrowToken(_borrowed - _investedBorrowBalance, _aaveLendingPool);
         } else {
-            // When _investedBorrowBalance exceeds _borrow balance from Aave
-            // Customize this hook to handle the excess borrowToken for profit
+            // Swap extra borrow token to collateral token and report profit
             _rebalanceBorrow(_investedBorrowBalance - _borrowed);
         }
         uint256 _collateralHere = _getCollateralHere();
@@ -301,8 +302,48 @@ contract AaveV3Xy is Strategy {
         }
     }
 
-    /// @notice Swap excess borrow for more collateral hook
-    function _rebalanceBorrow(uint256 _excessBorrow) internal virtual {}
+    /**
+     * @notice get quote for token price in terms of other token.
+     * @param tokenIn_ tokenIn
+     * @param tokenOut_ tokenOut
+     * @param amountIn_ amount of tokenIn_
+     * @return _amountOut amount of tokenOut_ for amountIn_ of tokenIn_
+     */
+    function _quote(
+        address tokenIn_,
+        address tokenOut_,
+        uint256 amountIn_
+    ) internal view virtual returns (uint256 _amountOut) {
+        AaveOracle _aaveOracle = AaveOracle(aaveAddressProvider.getPriceOracle());
+        // Aave oracle prices are in WETH. Price is in 18 decimal.
+        uint256 _tokenInPrice = _aaveOracle.getAssetPrice(tokenIn_);
+        uint256 _tokenOutPrice = _aaveOracle.getAssetPrice(tokenOut_);
+        require(_tokenInPrice > 0 && _tokenOutPrice > 0, "price-error");
+        _amountOut =
+            (((_tokenInPrice * amountIn_) / 10 ** IERC20Metadata(tokenIn_).decimals()) *
+                (10 ** IERC20Metadata(tokenOut_).decimals())) /
+            _tokenOutPrice;
+    }
+
+    /// @notice Swap earned borrow token for collateral and report it as profits
+    function _rebalanceBorrow(uint256 _excessBorrow) internal {
+        address _borrowToken = borrowToken;
+        address _wrappedCollateral = address(wrappedCollateral);
+        if (_excessBorrow > 0) {
+            uint256 _borrowedHere = IERC20(_borrowToken).balanceOf(address(this));
+            if (_excessBorrow > _borrowedHere) {
+                _withdrawY(_excessBorrow - _borrowedHere);
+                _borrowedHere = IERC20(_borrowToken).balanceOf(address(this));
+            }
+            if (_borrowedHere > 0) {
+                // Swap minimum of _excessBorrow and _borrowedHere for collateral
+                uint256 _amountIn = Math.min(_excessBorrow, _borrowedHere);
+                uint256 _expectedAmountOut = _quote(_borrowToken, _wrappedCollateral, _amountIn);
+                uint256 _minAmountOut = (_expectedAmountOut * (MAX_BPS - slippage)) / MAX_BPS;
+                swapper.swapExactInput(_borrowToken, _wrappedCollateral, _amountIn, _minAmountOut, address(this));
+            }
+        }
+    }
 
     function _repayY(uint256 _amount, AaveLendingPool _aaveLendingPool) internal virtual {
         _beforeRepayY(_amount);
@@ -311,23 +352,28 @@ contract AaveV3Xy is Strategy {
 
     /**
      * @dev Swap collateral to borrow token.
-     * @param _shortOnBorrow Expected output of this swap
+     * @param _amountOut Expected output of this swap
+     * @param _aaveLendingPool Aave lending pool instance
      */
-    function _swapToBorrowToken(uint256 _shortOnBorrow, AaveLendingPool _aaveLendingPool) internal {
+    function _swapToBorrowToken(uint256 _amountOut, AaveLendingPool _aaveLendingPool) internal {
+        address _borrowToken = borrowToken;
+        address _wrappedCollateral = address(wrappedCollateral);
         // Looking for _amountIn using fixed output amount
-        uint256 _amountIn = swapper.getAmountIn(address(wrappedCollateral), borrowToken, _shortOnBorrow);
-        if (_amountIn > 0) {
+        uint256 _expectedAmountIn = _quote(_borrowToken, _wrappedCollateral, _amountOut);
+
+        if (_expectedAmountIn > 0) {
+            uint256 _maxAmountIn = (_expectedAmountIn * (MAX_BPS + slippage)) / MAX_BPS;
             // Not using unwrapped balance here as those can be used in rebalance reporting via getCollateralHere
-            uint256 _collateralHere = wrappedCollateral.balanceOf(address(this));
-            if (_amountIn > _collateralHere) {
+            uint256 _collateralHere = IERC20(_wrappedCollateral).balanceOf(address(this));
+            if (_maxAmountIn > _collateralHere) {
                 // Withdraw some collateral from Aave so that we have enough collateral to get expected output
-                uint256 _amount = _amountIn - _collateralHere;
+                uint256 _amount = _maxAmountIn - _collateralHere;
                 require(
-                    _aaveLendingPool.withdraw(address(wrappedCollateral), _amount, address(this)) == _amount,
+                    _aaveLendingPool.withdraw(_wrappedCollateral, _amount, address(this)) == _amount,
                     Errors.INCORRECT_WITHDRAW_AMOUNT
                 );
             }
-            swapper.swapExactOutput(address(wrappedCollateral), borrowToken, _shortOnBorrow, _amountIn, address(this));
+            swapper.swapExactOutput(_wrappedCollateral, _borrowToken, _amountOut, _maxAmountIn, address(this));
         }
     }
 
@@ -338,6 +384,8 @@ contract AaveV3Xy is Strategy {
     function _wrap(uint256 unwrappedAmount_) internal virtual returns (uint256) {
         return unwrappedAmount_;
     }
+
+    function _withdrawY(uint256 _amount) internal virtual;
 
     /// @dev If pool supports unwrapped token(stETH) then input and output both are unwrapped token amount.
     function _withdrawHere(uint256 _requireAmount) internal override {
@@ -399,5 +447,12 @@ contract AaveV3Xy is Strategy {
         emit UpdatedBorrowLimit(minBorrowLimit, _minBorrowLimit, maxBorrowLimit, _maxBorrowLimit);
         minBorrowLimit = _minBorrowLimit;
         maxBorrowLimit = _maxBorrowLimit;
+    }
+
+    function updateSlippage(uint256 _newSlippage) external onlyGovernor {
+        require(_newSlippage <= MAX_BPS, "invalid-slippage"); // 100%
+        require(_newSlippage != slippage, "same-slippage");
+        emit UpdatedSlippage(slippage, _newSlippage);
+        slippage = _newSlippage;
     }
 }

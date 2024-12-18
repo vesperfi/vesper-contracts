@@ -40,7 +40,7 @@ contract AaveV3VesperXy is AaveV3Xy {
 
     /// @notice Before repaying Y, withdraw it from Vesper Pool
     function _beforeRepayY(uint256 _amount) internal virtual override {
-        _withdrawFromVesperPool(_amount);
+        _withdrawY(_amount);
     }
 
     /// @dev Claim all rewards and convert to collateral.
@@ -57,23 +57,8 @@ contract AaveV3VesperXy is AaveV3Xy {
             ((vPool.pricePerShare() * vPool.balanceOf(address(this))) / 1e18);
     }
 
-    /// @notice Swap excess borrow for more wrappedCollateral when underlying vPool is making profits
-    function _rebalanceBorrow(uint256 _excessBorrow) internal virtual override {
-        if (_excessBorrow > 0) {
-            uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
-            if (_borrowedHere < _excessBorrow) {
-                _withdrawFromVesperPool(_excessBorrow - _borrowedHere);
-                _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
-            }
-            if (_borrowedHere > 0) {
-                // Swap minimum of _excessBorrow and _borrowedHere for collateral
-                _safeSwapExactInput(borrowToken, address(wrappedCollateral), Math.min(_excessBorrow, _borrowedHere));
-            }
-        }
-    }
-
     /// @notice Withdraw _shares proportional to collateral _amount from vPool
-    function _withdrawFromVesperPool(uint256 _amount) internal {
+    function _withdrawY(uint256 _amount) internal virtual override {
         if (_amount > 0) {
             uint256 _pricePerShare = vPool.pricePerShare();
             uint256 _shares = (_amount * 1e18) / _pricePerShare;

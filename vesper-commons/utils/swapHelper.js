@@ -234,23 +234,33 @@ function prepareSwapInfo(pairs) {
           )
         }
       } else if (pair.tokenIn === Address.rETH || pair.tokenOut === Address.rETH) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
+        if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 500, pair.tokenOut])
+          exchange = ExchangeType.UNISWAP_V3
+        } else {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
+          )
+          exchange = ExchangeType.UNISWAP_V3
+        }
       } else if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address', 'uint24', 'address'],
-          [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
-        )
-        exchange = ExchangeType.UNISWAP_V3
+        if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 500, pair.tokenOut])
+          exchange = ExchangeType.UNISWAP_V3
+        } else {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 500, pair.tokenOut],
+          )
+          exchange = ExchangeType.UNISWAP_V3
+        }
       } else if (pair.tokenIn === Address.wstETH || pair.tokenOut === Address.wstETH) {
         if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
           path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
           exchange = ExchangeType.UNISWAP_V3
         } else if (pair.tokenIn === Address.USDC || pair.tokenOut === Address.USDC) {
-          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 3000, pair.tokenOut])
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 500, pair.tokenOut])
           exchange = ExchangeType.UNISWAP_V3
         } // else do nothing
       }
@@ -273,18 +283,33 @@ function prepareSwapInfo(pairs) {
           stable = [false, false]
         }
         exchange = ExchangeType.VELODROME
-      } else if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
-        path = ethers.utils.solidityPack(
-          ['address', 'uint24', 'address'],
-          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
-        )
-        exchange = ExchangeType.UNISWAP_V3
       } else if (pair.tokenIn === Address.Stargate.STG) {
         if (pair.tokenOut === Address.WETH) {
           path = [pair.tokenIn, Address.USDCn, pair.tokenOut]
           stable = [false, false]
         }
         exchange = ExchangeType.VELODROME
+      } else if (pair.tokenIn === Address.wstETH || pair.tokenOut === Address.wstETH) {
+        if (pair.tokenIn === Address.USDCe || pair.tokenOut === Address.USDCe) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 100, pair.tokenOut],
+          )
+        } else if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 100, pair.tokenOut])
+        } else {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 500, Address.WRAPPED_NATIVE_TOKEN, 100, pair.tokenOut],
+          )
+        }
+        exchange = ExchangeType.UNISWAP_V3
+      } else if (pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+        path = ethers.utils.solidityPack(
+          ['address', 'uint24', 'address'],
+          [pair.tokenIn, 10000, Address.WRAPPED_NATIVE_TOKEN],
+        )
+        exchange = ExchangeType.UNISWAP_V3
       } else {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],
@@ -350,7 +375,12 @@ function prepareSwapInfo(pairs) {
       }
 
       if (pair.tokenIn === Address.cbETH || pair.tokenOut === Address.cbETH) {
-        if (pair.tokenIn === Address.USDC || pair.tokenOut === Address.USDC) {
+        if (pair.tokenIn === Address.cbETH && pair.tokenOut === Address.USDC) {
+          path = ethers.utils.solidityPack(
+            ['address', 'uint24', 'address', 'uint24', 'address'],
+            [pair.tokenIn, 100, Address.WETH, 500, pair.tokenOut],
+          )
+        } else if (pair.tokenIn === Address.USDC && pair.tokenOut === Address.cbETH) {
           path = ethers.utils.solidityPack(
             ['address', 'uint24', 'address', 'uint24', 'address'],
             [pair.tokenIn, 500, Address.WETH, 100, pair.tokenOut],

@@ -37,26 +37,16 @@ contract AaveV3SommelierXy is AaveV3Xy, SommelierBase {
     /// @dev Before repaying Y, withdraw it from Sommelier vault
 
     function _beforeRepayY(uint256 _amount) internal virtual override {
+        _withdrawY(_amount);
+    }
+
+    /// @notice Withdraw _shares proportional to collateral _amount from vPool
+    function _withdrawY(uint256 _amount) internal virtual override {
         _withdrawFromSommelier(_amount);
     }
 
     /// @dev borrowToken balance here + borrowToken balance deposited in Sommelier vault
     function _getInvestedBorrowBalance() internal view virtual override returns (uint256) {
         return IERC20(borrowToken).balanceOf(address(this)) + _getAssetsInSommelier();
-    }
-
-    /// @dev Swap excess borrow for more collateral when underlying Sommelier vault is making profits
-    function _rebalanceBorrow(uint256 _excessBorrow) internal virtual override {
-        if (_excessBorrow > 0) {
-            uint256 _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
-            if (_borrowedHere < _excessBorrow) {
-                _withdrawFromSommelier(_excessBorrow - _borrowedHere);
-                _borrowedHere = IERC20(borrowToken).balanceOf(address(this));
-            }
-            if (_borrowedHere > 0) {
-                // Swap minimum of _excessBorrow and _borrowedHere for collateral
-                _safeSwapExactInput(borrowToken, address(wrappedCollateral), Math.min(_excessBorrow, _borrowedHere));
-            }
-        }
     }
 }
