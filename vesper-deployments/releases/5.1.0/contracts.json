@@ -162,7 +162,7 @@
         },
         "strategies": {
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
-          "AaveV3_Sommelier_Xy_STETH_WETH": "0x0650422Ef55BE3Fe99aCdBb50A33203a741bFD89",
+          "AaveV3_Sommelier_Xy_STETH_WETH": "0xeC61d2483fd2D01C857523d19513c77cd888050E",
           "AaveV3_Vesper_Xy_STETH_USDC": "0x0Fe52AF18c51198037D5a21fd1e19AA4B31D8e70",
           "Maker_Dummy_STETH": "0x8F454223C6c59df903812a0C0d9375eDb6089d5F",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
@@ -186,7 +186,7 @@
         },
         "strategies": {
           "AaveV2_Vesper_Xy_ETH_DAI": "0x25496AfB6a732d266FB5343A860ACb931e54a109",
-          "AaveV3_Vesper_Xy_ETH_DAI": "0xaB1A2802F0Ba6F958009DE8739250e04BAE67E3b",
+          "AaveV3_Vesper_Xy_ETH_DAI": "0x666C80fEcA6Fcd371B0535A9846E2d223CbF1d10",
           "AlphaLendStrategyETH": "0xeCe0f32840280aD0069Dd89Ad97Ad6dF1bB0fF2A",
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
@@ -222,7 +222,7 @@
           "implementation": "0xe583A2e073b5CC3853fAda6E33fC2F6F4e29a0bB"
         },
         "strategies": {
-          "AaveV3_Sommelier_Xy_WBTC_WETH": "0x7764e93483A4cC1A9EC28B6b48e2528ec5dbAD21",
+          "AaveV3_Sommelier_Xy_WBTC_WETH": "0x66605031cA196b753490d57bF5A16Cbd397DCBc6",
           "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
@@ -815,7 +815,7 @@
           "implementation": "0x90bb3E3AA5Fa88f0a83Dcb9485f65D2592f4307E"
         },
         "strategies": {
-          "AaveV3_Sommelier_Xy_CBETH_WETH": "0xaD2731923eA8b65c2f72a82B924C955Bc97c501E",
+          "AaveV3_Sommelier_Xy_CBETH_WETH": "0x02AEdB3c0C402Ee493FEbB7e887644D935910aC4",
           "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
           "AaveV3_Vesper_Xy_CBETH_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
           "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
