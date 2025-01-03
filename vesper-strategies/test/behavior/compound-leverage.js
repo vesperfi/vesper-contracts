@@ -49,15 +49,6 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
     if (getChain() === 'mainnet' || getChain() === 'optimism') {
       const comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
       return comptroller.compAccrued(strategy.address)
-    } else if (chain === 'avalanche') {
-      // avalanche
-      let rewardDistributorAddress = await strategy.comptroller()
-      if ((await strategy.NAME()).includes('TraderJoe')) {
-        const comptroller = await ethers.getContractAt('ComptrollerMultiReward', await strategy.comptroller())
-        rewardDistributorAddress = await comptroller.rewardDistributor()
-      }
-      const rewardDistributor = await ethers.getContractAt('IRewardDistributor', rewardDistributorAddress)
-      outcome = rewardDistributor.rewardAccrued(0, strategy.address)
     }
     return outcome
   }
@@ -258,7 +249,7 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
     it('Should liquidate rewardToken when claimed by external source', async function () {
       const comptroller = await strategy.comptroller()
       const rewardToken = await ethers.getContractAt('IERC20', strategy.rewardToken())
-      // using bigger amount for avalanche to generate significant rewards for wbtc pool
+      // using bigger amount for other chains to generate significant rewards for wbtc pool
       const amount = chain === 'mainnet' ? 20 : 500
       await deposit(pool, collateralToken, amount, user2)
       await deposit(pool, collateralToken, 10, user1)
@@ -277,14 +268,6 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
       if (chain === 'mainnet' || chain === 'optimism') {
         const comptrollerInstance = await ethers.getContractAt('Comptroller', comptroller)
         await comptrollerInstance.connect(user2).claimComp(strategy.address, [token.address])
-      } else if (chain === 'avalanche') {
-        // avalanche case
-        const comptrollerInstance = await ethers.getContractAt('ComptrollerMultiReward', comptroller)
-        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](0, strategy.address)
-        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](1, strategy.address) // AVAX
-        const avaxBalance = await ethers.provider.getBalance(strategy.address)
-        // Not all platform offers AVAX rewards hence the check with gte
-        expect(avaxBalance, 'Avax balance is wrong').to.gte('0')
       }
       const afterClaim = await rewardToken.balanceOf(strategy.address)
       expect(afterClaim).to.gt('0', 'rewardToken balance should be > 0')
@@ -295,10 +278,6 @@ function shouldBehaveLikeCompoundLeverageStrategy(strategyIndex) {
 
       const rewardTokenBalance = await rewardToken.balanceOf(strategy.address)
       expect(rewardTokenBalance).to.equal('0', 'rewardToken balance should be 0 on rebalance')
-      if (chain === 'avalanche') {
-        const avaxBalance = await ethers.provider.getBalance(strategy.address)
-        expect(avaxBalance, 'Avax balance should be zero').to.eq('0')
-      }
     })
 
     it('Should liquidate optional rewards too', async function () {

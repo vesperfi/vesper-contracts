@@ -109,7 +109,7 @@ function shouldBehaveLikeCrvStrategy(strategyIndex) {
 
     it('Should claim rewards(may include CRV)', async function () {
       // Avalanche tests are not claiming rewards properly hence skipping tests for now
-      if (isConvex || getChain() === 'avalanche') {
+      if (isConvex) {
         // This scenario only applies to standard Curve strategies
         return
       }

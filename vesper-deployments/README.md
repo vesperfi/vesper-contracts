@@ -20,7 +20,7 @@ Deployment will be done via custom `hardhat task deploy-core-contracts` which be
 * Deploy Vesper pool
   1. Add pool configuration in `vesper-commons/config/mainnet/poolConfig.js` file.
      - Some default config for setup and rewards are already defined at top of file, override them as needed.
-     - Replace mainnet in `vesper-commons/config/mainnet/poolConfig.js` with arbitrum/avalanche/polygon as needed.
+     - Replace mainnet in `vesper-commons/config/mainnet/poolConfig.js` with base/optimism as needed.
 
    Example configuration for `VDAI`
     ```js
@@ -36,9 +36,9 @@ Deployment will be done via custom `hardhat task deploy-core-contracts` which be
   ```bash
    npm run deploy -- --pool VDAI --network localhost --deploy-params '{"tags": "deploy-vPool"}'
   ```
-  - To deploy pool on localhost and polygon as target chain, run below command 
+  - To deploy pool on localhost and base as target chain, run below command 
   ```bash 
-  npm run deploy -- --pool VDAI --network localhost --deploy-params '{"tags": "deploy-vPool"}' --target-chain polygon
+  npm run deploy -- --pool VDAI --network localhost --deploy-params '{"tags": "deploy-vPool"}' --target-chain base
   ```
 
 * Deploy pool with release (preferred)
@@ -82,10 +82,10 @@ Deployment will be done via custom `hardhat task deploy-core-contracts` which be
 
 * Deploy `upgrader` contracts 
   mandatory param `name`, supported values : `PoolAccountantUpgrader`, `PoolRewardsUpgrader`, `VPoolUpgrader`
-  optional param `--target-chain`, values :  `polygon`, `mainnet`, `avalanche`, `arbitrium` 
+  optional param `--target-chain`, values :  `base`, `mainnet`, `optimism` 
   ```bash
   npm run deploy-upgrader -- --name PoolAccountantUpgrader --network localhost
-  npm run deploy-upgrader -- --name PoolRewardsUpgrader --network localhost --target-chain polygon
+  npm run deploy-upgrader -- --name PoolRewardsUpgrader --network localhost --target-chain base
   ```
 
 ## Verify

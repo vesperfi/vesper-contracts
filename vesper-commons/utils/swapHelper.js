@@ -176,17 +176,7 @@ async function setupRoutingsInOldSwapper(swapperAddress, swapInfoList) {
 
   const caller = await unlock(governor)
 
-  let defaultExchange
-  switch (chain) {
-    case 'avalanche':
-      defaultExchange = ExchangeType.TRADERJOE
-      break
-    case 'bsc':
-      defaultExchange = ExchangeType.PANCAKE_SWAP
-      break
-    default:
-      defaultExchange = ExchangeType.UNISWAP_V2
-  }
+  const defaultExchange = ExchangeType.UNISWAP_V2
 
   for (let swapInfo of swapInfoList) {
     // Assign default
@@ -317,7 +307,7 @@ function prepareSwapInfo(pairs) {
         )
         exchange = ExchangeType.UNISWAP_V3
       }
-    } else if (chain !== 'bsc' && chain !== 'base') {
+    } else if (chain !== 'base') {
       if (pair.tokenIn === Address.Curve.CRV && pair.tokenOut === Address.USDC) {
         path = ethers.utils.solidityPack(
           ['address', 'uint24', 'address', 'uint24', 'address'],

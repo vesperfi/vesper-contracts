@@ -19,9 +19,6 @@ function resolveChainId() {
   if (NODE_URL.includes('eth.connect')) {
     return 1
   }
-  if (NODE_URL.includes('avax')) {
-    return 43114
-  }
   if (NODE_URL.includes('base-mainnet')) {
     return 8453
   }
@@ -59,24 +56,6 @@ module.exports = {
       url,
       chainId: 5,
       gas: 12000000,
-      accounts,
-    },
-    polygon: {
-      url,
-      chainId: 137,
-      gas: 11700000,
-      accounts,
-    },
-    avalanche: {
-      url,
-      chainId: 43114,
-      gas: 8000000,
-      accounts,
-    },
-    bsc: {
-      url: process.env.NODE_URL,
-      chainId: 56,
-      gas: 8000000,
       accounts,
     },
     optimism: {
