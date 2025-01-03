@@ -9,7 +9,7 @@ import "../../interfaces/compound/ICompound.sol";
 /// @title This strategy will deposit collateral token in Compound and based on position it will borrow
 /// another token. Supply X borrow Y and keep borrowed amount here. It does handle rewards and handle
 /// wrap/unwrap of WETH as ETH is required to interact with Compound.
-contract CompoundXy is CompoundXyCore {
+abstract contract CompoundXy is CompoundXyCore {
     using SafeERC20 for IERC20;
 
     address public immutable rewardToken;

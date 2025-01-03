@@ -11,15 +11,16 @@ import "../../../interfaces/compound/ICompoundV3.sol";
 /// @title This strategy will deposit collateral token in Compound V3 and based on position it will
 /// borrow based token. Supply X borrow Y and keep borrowed amount here.
 /// It does not handle ETH as collateral
-contract CompoundV3Xy is Strategy {
+abstract contract CompoundV3Xy is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.1.0";
+    string public constant VERSION = "5.1.2";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
     uint256 public maxBorrowLimit = 8_500; // 85% of actual collateral factor of protocol
+    uint256 public slippage = 300; // 3%
 
     IRewards public immutable compRewards;
     address public immutable rewardToken;
@@ -32,6 +33,7 @@ contract CompoundV3Xy is Strategy {
         uint256 previousMaxBorrowLimit,
         uint256 newMaxBorrowLimit
     );
+    event UpdatedSlippage(uint256 previousSlippage, uint256 newSlippage);
 
     constructor(
         address pool_,
@@ -65,7 +67,7 @@ contract CompoundV3Xy is Strategy {
     }
 
     /// @dev Hook that executes after collateral borrow.
-    function _afterBorrowY(uint256 amount_) internal virtual {}
+    function _afterBorrowY(uint256 amount_) internal virtual;
 
     /// @notice Approve all required tokens
     function _approveToken(uint256 amount_) internal virtual override {
@@ -79,7 +81,7 @@ contract CompoundV3Xy is Strategy {
     }
 
     /**
-     * @notice Claim rewardToken and transfer to new strategy
+     * @dev Do not claim rewardToken during migration.
      * @param newStrategy_ Address of new strategy.
      */
     function _beforeMigration(address newStrategy_) internal override {
@@ -195,7 +197,7 @@ contract CompoundV3Xy is Strategy {
         return _totalSupply > _totalBorrow ? _totalSupply - _totalBorrow : 0;
     }
 
-    function _getYTokensInProtocol() internal view virtual returns (uint256) {}
+    function _getYTokensInProtocol() internal view virtual returns (uint256);
 
     /// @dev Deposit collateral aka X in Compound. Override to handle ETH
     function _mintX(uint256 _amount) internal virtual {
@@ -204,28 +206,40 @@ contract CompoundV3Xy is Strategy {
         }
     }
 
+    function _getPriceFeed(address token_) internal view virtual returns (address) {
+        return token_ == borrowToken ? comet.baseTokenPriceFeed() : comet.getAssetInfoByAddress(token_).priceFeed;
+    }
+
+    /**
+     * @dev Get quote for token price in terms of other token.
+     * @param tokenIn_ tokenIn
+     * @param tokenOut_ tokenOut
+     * @param amountIn_ amount of tokenIn_
+     * @return amountOut of tokenOut_ for amountIn_ of tokenIn_
+     */
+    function _quote(address tokenIn_, address tokenOut_, uint256 amountIn_) internal view virtual returns (uint256) {
+        uint256 _tokenInPrice = comet.getPrice(_getPriceFeed(tokenIn_));
+        uint256 _tokenOutPrice = comet.getPrice(_getPriceFeed(tokenOut_));
+        require(_tokenInPrice > 0 && _tokenOutPrice > 0, "price-error");
+        return ((_tokenInPrice * amountIn_ * (10 ** IERC20Metadata(tokenOut_).decimals())) /
+            (10 ** IERC20Metadata(tokenIn_).decimals() * _tokenOutPrice));
+    }
+
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
 
         uint256 _yTokensBorrowed = comet.borrowBalanceOf(address(this));
-        uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
         uint256 _yTokensInProtocol = _getYTokensInProtocol();
-        uint256 _totalYTokens = _yTokensHere + _yTokensInProtocol;
+        uint256 _totalYTokens = IERC20(borrowToken).balanceOf(address(this)) + _yTokensInProtocol;
 
         // _borrow increases every block. Convert collateral to borrowToken.
         if (_yTokensBorrowed > _totalYTokens) {
             _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
         } else {
-            // When _yTokensInProtocol exceeds _yTokensBorrowed from Compound
-            // then we have profit from investing borrow tokens. _yTokensHere is profit.
-            if (_yTokensInProtocol > _yTokensBorrowed) {
-                _withdrawY(_yTokensInProtocol - _yTokensBorrowed);
-                _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
-            }
-            if (_yTokensHere > 0) {
-                _safeSwapExactInput(borrowToken, address(collateralToken), _yTokensHere);
-            }
+            // When _totalYTokens exceeds _yTokensBorrowed from Compound
+            // then we have profit from investing borrow tokens.
+            _rebalanceBorrow(_totalYTokens - _yTokensBorrowed);
         }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
@@ -252,6 +266,25 @@ contract CompoundV3Xy is Strategy {
 
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
+    }
+
+    /// @dev excessYTokens_ are profit, swap these for collateral.
+    function _rebalanceBorrow(uint256 excessYTokens_) internal {
+        if (excessYTokens_ > 0) {
+            uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+            if (excessYTokens_ > _yTokensHere) {
+                _withdrawY(excessYTokens_ - _yTokensHere);
+                _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+            }
+            if (_yTokensHere > 0) {
+                // Swap minimum of excessYTokens_ and _yTokensHere for collateral
+                uint256 _amountIn = Math.min(excessYTokens_, _yTokensHere);
+                // Get quote for _amountIn of borrowToken to collateralToken
+                uint256 _expectedAmountOut = _quote(borrowToken, address(collateralToken), _amountIn);
+                uint256 _minAmountOut = (_expectedAmountOut * (MAX_BPS - slippage)) / MAX_BPS;
+                swapper.swapExactInput(borrowToken, address(collateralToken), _amountIn, _minAmountOut, address(this));
+            }
+        }
     }
 
     /**
@@ -294,21 +327,22 @@ contract CompoundV3Xy is Strategy {
     }
 
     /**
-     * @dev Swap given token to borrowToken
-     * @param shortOnBorrow_ Expected output of this swap
+     * @dev Swap collateral to borrowToken
+     * @param amountOut_ Expected output of this swap
      */
-    function _swapToBorrowToken(uint256 shortOnBorrow_) internal {
+    function _swapToBorrowToken(uint256 amountOut_) internal {
         // Looking for _amountIn using fixed output amount
-        uint256 _amountIn = swapper.getAmountIn(address(collateralToken), borrowToken, shortOnBorrow_);
-        if (_amountIn > 0) {
+        // Get quote for _amountOut of borrowToken to collateralToken
+        uint256 _expectedAmountIn = _quote(borrowToken, address(collateralToken), amountOut_);
+        if (_expectedAmountIn > 0) {
+            uint256 _maxAmountIn = (_expectedAmountIn * (MAX_BPS + slippage)) / MAX_BPS;
             uint256 _collateralHere = collateralToken.balanceOf(address(this));
-            // If we do not have enough _from token to get expected output, either get
-            // some _from token or adjust expected output.
-            if (_amountIn > _collateralHere) {
-                // Redeem some collateral, so that we have enough collateral to get expected output
-                comet.withdraw(address(collateralToken), _amountIn - _collateralHere);
+            // If we do not have enough collateral, withdraw from Compound.
+            if (_maxAmountIn > _collateralHere) {
+                // Withdraw some collateral, so that we have enough collateral to get expected output
+                comet.withdraw(address(collateralToken), _maxAmountIn - _collateralHere);
             }
-            swapper.swapExactOutput(address(collateralToken), borrowToken, shortOnBorrow_, _amountIn, address(this));
+            swapper.swapExactOutput(address(collateralToken), borrowToken, amountOut_, _maxAmountIn, address(this));
         }
     }
 
@@ -328,7 +362,7 @@ contract CompoundV3Xy is Strategy {
         comet.withdraw(address(collateralToken), _withdrawAmount);
     }
 
-    function _withdrawY(uint256 _amount) internal virtual {}
+    function _withdrawY(uint256 _amount) internal virtual;
 
     /************************************************************************************************
      *                          Governor/admin/keeper function                                      *
@@ -384,5 +418,15 @@ contract CompoundV3Xy is Strategy {
         // To avoid liquidation due to price variations maxBorrowLimit is a collateral factor that is less than actual collateral factor of protocol
         minBorrowLimit = _minBorrowLimit;
         maxBorrowLimit = _maxBorrowLimit;
+    }
+
+    /**
+     * @notice Update slippage for swap
+     * @param _newSlippage New slippage value in BPS
+     */
+    function updateSlippage(uint256 _newSlippage) external onlyGovernor {
+        require(_newSlippage <= MAX_BPS, "invalid-slippage"); // 100%
+        emit UpdatedSlippage(slippage, _newSlippage);
+        slippage = _newSlippage;
     }
 }
