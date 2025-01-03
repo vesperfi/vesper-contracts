@@ -17,14 +17,8 @@ function resolveChainId() {
   if (['eth.connect', 'eth.mainnet', 'mainnet.infura'].some(v => nodeUrl.includes(v))) {
     return { chainId: 1, deploy: ['deploy/mainnet'] }
   }
-  if (nodeUrl.includes('avax')) {
-    return { chainId: 43114, deploy: ['deploy/avalanche'] }
-  }
   if (['optimism', 'opt'].some(v => nodeUrl.includes(v))) {
     return { chainId: 10, deploy: ['deploy/optimism'] }
-  }
-  if (nodeUrl.includes('polygon')) {
-    return { chainId: 137, deploy: ['deploy/polygon'] }
   }
 
   return 31337
@@ -59,27 +53,6 @@ module.exports = {
       url,
       chainId: 1,
       gas: 6700000,
-      accounts,
-      deploy,
-    },
-    polygon: {
-      url,
-      chainId: 137,
-      gas: 11700000,
-      accounts,
-      deploy,
-    },
-    avalanche: {
-      url,
-      chainId: 43114,
-      gas: 8000000,
-      accounts,
-      deploy,
-    },
-    bsc: {
-      url,
-      chainId: 56,
-      gas: 8000000,
       accounts,
       deploy,
     },

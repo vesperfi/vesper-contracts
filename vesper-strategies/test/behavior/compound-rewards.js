@@ -18,15 +18,6 @@ function shouldTestCompoundRewards(strategyIndex) {
     if (getChain() === 'mainnet') {
       const comptroller = await ethers.getContractAt('Comptroller', await strategy.comptroller())
       return comptroller.compAccrued(strategy.address)
-    } else if (chain === 'avalanche') {
-      // avalanche
-      let rewardDistributorAddress = await strategy.comptroller()
-      if ((await strategy.NAME()).includes('TraderJoe')) {
-        const comptroller = await ethers.getContractAt('ComptrollerMultiReward', await strategy.comptroller())
-        rewardDistributorAddress = await comptroller.rewardDistributor()
-      }
-      const rewardDistributor = await ethers.getContractAt('IRewardDistributor', rewardDistributorAddress)
-      outcome = rewardDistributor.rewardAccrued(0, strategy.address)
     }
     return outcome
   }
@@ -69,7 +60,7 @@ function shouldTestCompoundRewards(strategyIndex) {
     it('Should liquidate rewardToken when claimed by external source', async function () {
       const comptroller = await strategy.comptroller()
       const rewardToken = await ethers.getContractAt('IERC20', strategy.rewardToken())
-      // using bigger amount for avalanche
+      // using bigger amount for other chains
       const amount = chain === 'mainnet' ? 20 : 500
       await deposit(pool, collateralToken, amount, user2)
       await deposit(pool, collateralToken, amount, user1)
@@ -92,17 +83,6 @@ function shouldTestCompoundRewards(strategyIndex) {
       if (chain === 'mainnet' || chain === 'optimism') {
         const comptrollerInstance = await ethers.getContractAt('Comptroller', comptroller)
         await comptrollerInstance.connect(user2).claimComp(strategy.address, [token.address])
-      } else if (chain === 'avalanche') {
-        // avalanche case
-        const comptrollerInstance = await ethers.getContractAt('ComptrollerMultiReward', comptroller)
-        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](0, strategy.address)
-        await comptrollerInstance.connect(user2)['claimReward(uint8,address)'](1, strategy.address) // AVAX
-        const avaxBalance = await ethers.provider.getBalance(strategy.address)
-        // Not all platform offers AVAX rewards hence the check with gte
-        expect(avaxBalance, 'Avax balance is wrong').to.gte('0')
-      } else if (chain == 'bsc') {
-        const comptrollerInstance = await ethers.getContractAt('VenusComptroller', comptroller)
-        await comptrollerInstance.connect(user2).claimVenus(strategy.address, [token.address])
       }
       const afterClaim = await rewardToken.balanceOf(strategy.address)
       expect(afterClaim).to.gt('0', 'rewardToken balance should be > 0')
@@ -111,11 +91,6 @@ function shouldTestCompoundRewards(strategyIndex) {
       // Rewards may not be enough to get even 1 wei amountOut
       const amountOut = await strategy.callStatic.claimAndSwapRewards(0)
       await strategy.claimAndSwapRewards(amountOut)
-
-      if (chain === 'avalanche') {
-        const avaxBalance = await ethers.provider.getBalance(strategy.address)
-        expect(avaxBalance, 'Avax balance should be zero').to.eq('0')
-      }
     })
   })
 }

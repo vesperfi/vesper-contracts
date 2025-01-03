@@ -2,10 +2,7 @@
 
 const hre = require('hardhat')
 const Address = require('../config/mainnet/address')
-const AvalancheAddress = require('../config/avalanche/address')
-const PolygonAddress = require('../config/polygon/address')
 const OptimismAddress = require('../config/optimism/address')
-const BscAddress = require('../config/bsc/address')
 const BaseAddress = require('../config/base/address')
 const ethers = hre.ethers
 const helpers = require('@nomicfoundation/hardhat-network-helpers')
@@ -44,26 +41,6 @@ const slots = {
     [Address.Vesper.vaLINK]: 0,
     [Address.Vesper.vaWBTC]: 0,
   },
-  avalanche: {
-    // Avalanche addresses
-    [AvalancheAddress.DAIe]: 0,
-    [AvalancheAddress.USDC]: 9,
-    [AvalancheAddress.USDCe]: 0,
-    [AvalancheAddress.WBTCe]: 0,
-    [AvalancheAddress.WETHe]: 0,
-    [AvalancheAddress.WRAPPED_NATIVE_TOKEN]: 3, // WAVAX
-    [AvalancheAddress.Benqi.QI]: 1,
-    [AvalancheAddress.Vesper.VSP]: 2,
-  },
-  polygon: {
-    // Polygon addresses
-    [PolygonAddress.DAI]: 0,
-    [PolygonAddress.USDC]: 0,
-    [PolygonAddress.USDT]: 0,
-    [PolygonAddress.WBTC]: 0,
-    [PolygonAddress.WETH]: 0,
-    [PolygonAddress.WRAPPED_NATIVE_TOKEN]: 3, // WMATIC
-  },
   optimism: {
     // Optimism addresses
     [OptimismAddress.WRAPPED_NATIVE_TOKEN]: 3, // WETH
@@ -88,18 +65,6 @@ const whales = {
     [Address.cbETH]: '0x977b6fc5dE62598B08C85AC8Cf2b745874E8b78c',
     [Address.Metronome.msETH]: '0xa4c567c662349BeC3D0fB94C4e7f85bA95E208e4',
     [Address.Metronome.msUSD]: '0xc3b19502F8c02be75F3f77fd673503520DEB51dD',
-  },
-  avalanche: {
-    // Avalanche
-    [AvalancheAddress.Curve.CRV]: '0xabc000d88f23bb45525e447528dbf656a9d55bf5',
-    [AvalancheAddress.Stargate.STG]: '0x2B065946d41ADf43BBc3BaF8118ae94Ed19D7A40',
-  },
-  bsc: {
-    // BSC
-    [BscAddress.BUSD]: '0x0000000000000000000000000000000000001004',
-    [BscAddress.WBNB]: '0x0ed7e52944161450477ee417de9cd3a859b14fd0',
-    [BscAddress.Alpaca.ALPACA]: '0xb7d85ab25b9d478961face285fa3d8aaecad24a9',
-    [BscAddress.Stargate.STG]: '0x6e690075eedBC52244Dd4822D9F7887d4f27442F',
   },
   optimism: {
     // Optimism

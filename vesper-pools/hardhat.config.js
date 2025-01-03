@@ -39,24 +39,6 @@ module.exports = {
       gas: 12000000,
       accounts: { mnemonic: process.env.MNEMONIC || junk },
     },
-    polygon: {
-      url: process.env.NODE_URL,
-      chainId: 137,
-      gas: 11700000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
-    },
-    avalanche: {
-      url: process.env.NODE_URL,
-      chainId: 43114,
-      gas: 8000000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
-    },
-    bsc: {
-      url: process.env.NODE_URL,
-      chainId: 56,
-      gas: 8000000,
-      accounts: { mnemonic: process.env.MNEMONIC || junk },
-    },
     optimism: {
       url: process.env.NODE_URL,
       chainId: 10,

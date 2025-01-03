@@ -70,11 +70,6 @@ async function configureOracles(strategies) {
 
         // Ensure alUSD oracle is updated
         await alUsdOracle.update()
-      } else if (chain === 'avalanche') {
-        const btcPeggedOracle = await ethers.getContractAt(btcPeggedOracleABI, Address.Vesper.BtcPeggedOracle)
-        // Accepts outdated prices due to time travels
-        await stableCoinProvider.connect(governor).updateDefaultStalePeriod(MAX_UINT)
-        await btcPeggedOracle.connect(governor).updateDefaultStalePeriod(MAX_UINT)
       }
 
       // Setup is needed just once

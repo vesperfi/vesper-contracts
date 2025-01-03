@@ -167,7 +167,7 @@ function shouldBehaveLikeFraxlendVesperXyStrategy(index) {
       expect(data._profit).gt(0)
     })
 
-    if (getChain() == 'mainnet' || getChain() == 'avalanche') {
+    if (getChain() == 'mainnet') {
       // Skipping test as there is no VSP rewards in vaFRAX pool.
       // eslint-disable-next-line mocha/no-skipped-tests
       it.skip('Should claim and swap VSP for collateral', async function () {
