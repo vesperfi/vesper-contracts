@@ -368,40 +368,6 @@ abstract contract CompoundV3Xy is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
     /**
-     * @notice Recover extra borrow tokens from strategy
-     * @dev If we get liquidation in Compound, we will have borrowToken sitting in strategy.
-     * This function allows to recover idle borrow token amount.
-     * @param _amountToRecover Amount of borrow token we want to recover in 1 call.
-     *      Set it 0 to recover all available borrow tokens
-     */
-    function recoverBorrowToken(uint256 _amountToRecover) external onlyKeeper {
-        uint256 _borrowBalanceHere = IERC20(borrowToken).balanceOf(address(this));
-        uint256 _borrowInCompound = comet.borrowBalanceOf(address(this));
-
-        if (_borrowBalanceHere > _borrowInCompound) {
-            uint256 _extraBorrowBalance = _borrowBalanceHere - _borrowInCompound;
-            uint256 _recoveryAmount = (_amountToRecover > 0 && _extraBorrowBalance > _amountToRecover)
-                ? _amountToRecover
-                : _extraBorrowBalance;
-            // Do swap and transfer
-            uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-            _safeSwapExactInput(borrowToken, address(collateralToken), _recoveryAmount);
-            collateralToken.safeTransfer(pool, collateralToken.balanceOf(address(this)) - _collateralBefore);
-        }
-    }
-
-    /**
-     * @notice Repay all borrow amount and set min borrow limit to 0.
-     * @dev This action usually done when loss is detected in strategy.
-     * @dev 0 borrow limit make sure that any future rebalance do not borrow again.
-     */
-    function repayAll() external onlyKeeper {
-        _repay(comet.borrowBalanceOf(address(this)), true);
-        minBorrowLimit = 0;
-        maxBorrowLimit = 0;
-    }
-
-    /**
      * @notice Update upper and lower borrow limit. Usually maxBorrowLimit < 100% of actual collateral factor of protocol.
      * @dev It is possible to set 0 as _minBorrowLimit to not borrow anything
      * @param _minBorrowLimit It is % of actual collateral factor of protocol
