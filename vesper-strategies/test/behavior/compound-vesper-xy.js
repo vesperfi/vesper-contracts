@@ -137,19 +137,20 @@ function shouldBehaveLikeCompoundVesperXyStrategy(index) {
       expect(borrowAfter).to.be.lt(borrowBefore, 'Borrow amount after withdraw should be less')
     })
 
-    it('Should repayAll and reset minBorrowLimit via governor', async function () {
-      await deposit(pool, collateralToken, 50, user2)
-      await strategy.rebalance()
-      let borrowDebtBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
-      expect(borrowDebtBalance).to.be.gt(0, 'Borrow debt should be > 0')
+    // repayAll is removed from CompoundXyStrategy due to file size issue
+    // it('Should repayAll and reset minBorrowLimit via governor', async function () {
+    //   await deposit(pool, collateralToken, 50, user2)
+    //   await strategy.rebalance()
+    //   let borrowDebtBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+    //   expect(borrowDebtBalance).to.be.gt(0, 'Borrow debt should be > 0')
 
-      await strategy.repayAll()
+    //   await strategy.repayAll()
 
-      borrowDebtBalance = await await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
-      expect(borrowDebtBalance).to.be.eq(0, 'Borrow debt should be = 0')
-      const newMinBorrowLimit = await strategy.minBorrowLimit()
-      expect(newMinBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
-    })
+    //   borrowDebtBalance = await await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+    //   expect(borrowDebtBalance).to.be.eq(0, 'Borrow debt should be = 0')
+    //   const newMinBorrowLimit = await strategy.minBorrowLimit()
+    //   expect(newMinBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
+    // })
 
     it('Should update borrow limit', async function () {
       await deposit(pool, collateralToken, 10, user1)

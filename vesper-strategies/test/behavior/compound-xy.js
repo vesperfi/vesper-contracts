@@ -5,7 +5,7 @@ const { ethers } = require('hardhat')
 const { getStrategyToken } = require('vesper-commons/utils/setup')
 const { deposit } = require('vesper-commons/utils/poolOps')
 const { mine } = require('@nomicfoundation/hardhat-network-helpers')
-const { adjustBalance } = require('vesper-commons/utils/balance')
+// const { adjustBalance } = require('vesper-commons/utils/balance')
 const { BigNumber } = require('ethers')
 const { shouldTestCompoundRewards } = require('./compound-rewards')
 
@@ -95,19 +95,20 @@ function shouldBehaveLikeCompoundXyStrategy(index) {
     })
 
     context('Governor function', function () {
-      it('Should repayAll and reset maxBorrowLimit via governor', async function () {
-        await deposit(pool, collateralToken, 50, user2)
-        await strategy.connect(governor).rebalance()
-        let borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
-        expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
+      // repayAll() is removed from CompoundXyStrategy due to file size issue
+      // it('Should repayAll and reset maxBorrowLimit via governor', async function () {
+      //   await deposit(pool, collateralToken, 50, user2)
+      //   await strategy.connect(governor).rebalance()
+      //   let borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      //   expect(borrowBalance).to.be.gt(0, 'Borrow token balance should be > 0')
 
-        await strategy.connect(governor).repayAll()
+      //   await strategy.connect(governor).repayAll()
 
-        borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
-        expect(borrowBalance).to.be.eq(0, 'Borrow token balance should be = 0')
-        const newMaxBorrowLimit = await strategy.maxBorrowLimit()
-        expect(newMaxBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
-      })
+      //   borrowBalance = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
+      //   expect(borrowBalance).to.be.eq(0, 'Borrow token balance should be = 0')
+      //   const newMaxBorrowLimit = await strategy.maxBorrowLimit()
+      //   expect(newMaxBorrowLimit).to.be.eq(0, 'minBorrowRatio should be 0')
+      // })
       it('Should update borrow limit', async function () {
         await deposit(pool, collateralToken, 100, user1)
         await strategy.connect(governor).rebalance()
@@ -134,18 +135,19 @@ function shouldBehaveLikeCompoundXyStrategy(index) {
         const borrowAfter = await borrowCToken.callStatic.borrowBalanceCurrent(strategy.address)
         expect(borrowAfter).to.be.eq(0, 'Borrow amount should be = 0')
       })
-      it('Should recover extra borrow tokens', async function () {
-        await deposit(pool, collateralToken, 10, user1)
-        await strategy.connect(governor).rebalance()
-        const tokensHere = await pool.tokensHere()
-        const borrowBalance = await borrowToken.balanceOf(strategy.address)
-        await adjustBalance(borrowToken.address, strategy.address, borrowBalance.mul(11).div(10))
-        const updatedBorrowBalance = await borrowToken.balanceOf(strategy.address)
-        expect(updatedBorrowBalance).to.gt(borrowBalance, 'Borrow balance should increase')
-        await strategy.connect(governor).recoverBorrowToken(0)
-        const newTokensHere = await pool.tokensHere()
-        expect(newTokensHere).to.gt(tokensHere, 'Recover borrow token failed')
-      })
+      // recoverBorrowToken() is removed from CompoundXyStrategy due to file size issue
+      // it('Should recover extra borrow tokens', async function () {
+      //   await deposit(pool, collateralToken, 10, user1)
+      //   await strategy.connect(governor).rebalance()
+      //   const tokensHere = await pool.tokensHere()
+      //   const borrowBalance = await borrowToken.balanceOf(strategy.address)
+      //   await adjustBalance(borrowToken.address, strategy.address, borrowBalance.mul(11).div(10))
+      //   const updatedBorrowBalance = await borrowToken.balanceOf(strategy.address)
+      //   expect(updatedBorrowBalance).to.gt(borrowBalance, 'Borrow balance should increase')
+      //   await strategy.connect(governor).recoverBorrowToken(0)
+      //   const newTokensHere = await pool.tokensHere()
+      //   expect(newTokensHere).to.gt(tokensHere, 'Recover borrow token failed')
+      // })
     })
 
     context('Calculate APY', function () {

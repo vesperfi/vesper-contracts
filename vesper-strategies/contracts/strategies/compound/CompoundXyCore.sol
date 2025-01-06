@@ -15,12 +15,13 @@ abstract contract CompoundXyCore is Strategy {
     using SafeERC20 for IERC20;
     // solhint-disable-next-line var-name-mixedcase
     string public NAME;
-    string public constant VERSION = "5.1.0";
+    string public constant VERSION = "5.1.2";
 
     uint256 internal constant MAX_BPS = 10_000; //100%
     uint32 internal constant TWAP_PERIOD = 3_600;
     uint256 public minBorrowLimit = 7_000; // 70% of actual collateral factor of protocol
     uint256 public maxBorrowLimit = 8_500; // 85% of actual collateral factor of protocol
+    uint256 public slippage = 300; // 3%
     address public borrowToken;
 
     Comptroller public comptroller;
@@ -34,6 +35,7 @@ abstract contract CompoundXyCore is Strategy {
         uint256 previousMaxBorrowLimit,
         uint256 newMaxBorrowLimit
     );
+    event UpdatedSlippage(uint256 previousSlippage, uint256 newSlippage);
 
     constructor(
         address _pool,
@@ -83,7 +85,7 @@ abstract contract CompoundXyCore is Strategy {
     }
 
     /**
-     * @notice Claim rewardToken and transfer to new strategy
+     * @dev Do not claim rewardToken.
      * @param _newStrategy Address of new strategy.
      */
     function _beforeMigration(address _newStrategy) internal override {
@@ -136,8 +138,6 @@ abstract contract CompoundXyCore is Strategy {
         Oracle _oracle = Oracle(comptroller.oracle());
 
         // Compound "UnderlyingPrice" decimal = (30 + 6 - tokenDecimal)
-        // Rari "UnderlyingPrice" decimal = (30 + 6 - tokenDecimal)
-        // Iron "UnderlyingPrice" decimal = (18 + 8 - tokenDecimal)
         uint256 _collateralTokenPrice = _oracle.getUnderlyingPrice(address(supplyCToken));
         uint256 _borrowTokenPrice = _oracle.getUnderlyingPrice(address(borrowCToken));
         // Max borrow limit in borrow token
@@ -204,6 +204,22 @@ abstract contract CompoundXyCore is Strategy {
         }
     }
 
+    /**
+     * @dev Get quote for token price in terms of other token.
+     * @param cTokenIn_ cToken address corresponds to tokenIn
+     * @param cTokenOut_ cToken address corresponds to tokenOut
+     * @param amountIn_ amount of tokenIn_
+     * @return amountOut of tokenOut_ for amountIn_ of tokenIn_
+     */
+    function _quote(CToken cTokenIn_, CToken cTokenOut_, uint256 amountIn_) internal view virtual returns (uint256) {
+        Oracle _oracle = Oracle(comptroller.oracle());
+        // Compound "UnderlyingPrice" decimal = (36 - tokenDecimal)
+        uint256 _tokenInPrice = _oracle.getUnderlyingPrice(address(cTokenIn_));
+        uint256 _tokenOutPrice = _oracle.getUnderlyingPrice(address(cTokenOut_));
+        require(_tokenInPrice > 0 && _tokenOutPrice > 0, "price-error");
+        return (_tokenInPrice * amountIn_) / _tokenOutPrice;
+    }
+
     function _rebalance() internal override returns (uint256 _profit, uint256 _loss, uint256 _payback) {
         uint256 _excessDebt = IVesperPool(pool).excessDebt(address(this));
         uint256 _totalDebt = IVesperPool(pool).totalDebtOf(address(this));
@@ -218,18 +234,8 @@ abstract contract CompoundXyCore is Strategy {
             _swapToBorrowToken(_yTokensBorrowed - _totalYTokens);
         } else {
             // When _totalYTokens exceeds _yTokensBorrowed from Compound
-            // then we have profit from investing borrow tokens. _excessYToken is profit.
-            uint256 _excessYToken = _totalYTokens - _yTokensBorrowed;
-            if (_excessYToken > 0) {
-                if (_yTokensHere < _excessYToken) {
-                    _withdrawY(_excessYToken - _yTokensHere);
-                    _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
-                }
-                if (_yTokensHere > 0) {
-                    // Swap minimum of _excessYToken and _yTokensHere for collateral
-                    _safeSwapExactInput(borrowToken, address(collateralToken), Math.min(_excessYToken, _yTokensHere));
-                }
-            }
+            // then we have profit from investing borrow tokens.
+            _rebalanceBorrow(_totalYTokens - _yTokensBorrowed);
         }
 
         uint256 _collateralHere = collateralToken.balanceOf(address(this));
@@ -256,6 +262,25 @@ abstract contract CompoundXyCore is Strategy {
 
         IVesperPool(pool).reportEarning(_profit, _loss, _payback);
         _deposit();
+    }
+
+    /// @dev excessYTokens_ are profit, swap these for collateral.
+    function _rebalanceBorrow(uint256 excessYTokens_) internal {
+        if (excessYTokens_ > 0) {
+            uint256 _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+            if (excessYTokens_ > _yTokensHere) {
+                _withdrawY(excessYTokens_ - _yTokensHere);
+                _yTokensHere = IERC20(borrowToken).balanceOf(address(this));
+            }
+            if (_yTokensHere > 0) {
+                // Swap minimum of excessYTokens_ and _yTokensHere for collateral
+                uint256 _amountIn = Math.min(excessYTokens_, _yTokensHere);
+                // Get quote for _amountIn of borrowToken to collateralToken
+                uint256 _expectedAmountOut = _quote(borrowCToken, supplyCToken, _amountIn);
+                uint256 _minAmountOut = (_expectedAmountOut * (MAX_BPS - slippage)) / MAX_BPS;
+                swapper.swapExactInput(borrowToken, address(collateralToken), _amountIn, _minAmountOut, address(this));
+            }
+        }
     }
 
     /// @dev Withdraw collateral aka X from Compound. Override to handle ETH
@@ -303,21 +328,22 @@ abstract contract CompoundXyCore is Strategy {
     }
 
     /**
-     * @dev Swap given token to borrowToken
-     * @param _shortOnBorrow Expected output of this swap
+     * @dev Swap collateral to borrowToken
+     * @param amountOut_ Expected output of this swap
      */
-    function _swapToBorrowToken(uint256 _shortOnBorrow) internal {
+    function _swapToBorrowToken(uint256 amountOut_) internal {
         // Looking for _amountIn using fixed output amount
-        uint256 _amountIn = swapper.getAmountIn(address(collateralToken), borrowToken, _shortOnBorrow);
-        if (_amountIn > 0) {
+        // Get quote for amountOut_ of borrowToken to collateralToken
+        uint256 _expectedAmountIn = _quote(borrowCToken, supplyCToken, amountOut_);
+        if (_expectedAmountIn > 0) {
+            uint256 _maxAmountIn = (_expectedAmountIn * (MAX_BPS + slippage)) / MAX_BPS;
             uint256 _collateralHere = collateralToken.balanceOf(address(this));
-            // If we do not have enough _from token to get expected output, either get
-            // some _from token or adjust expected output.
-            if (_amountIn > _collateralHere) {
+            // If we do not have enough collateral then redeem from protocol.
+            if (_maxAmountIn > _collateralHere) {
                 // Redeem some collateral, so that we have enough collateral to get expected output
-                _redeemX(_amountIn - _collateralHere);
+                _redeemX(_maxAmountIn - _collateralHere);
             }
-            swapper.swapExactOutput(address(collateralToken), borrowToken, _shortOnBorrow, _amountIn, address(this));
+            swapper.swapExactOutput(address(collateralToken), borrowToken, amountOut_, _maxAmountIn, address(this));
         }
     }
 
@@ -343,40 +369,6 @@ abstract contract CompoundXyCore is Strategy {
      *                          Governor/admin/keeper function                                      *
      ***********************************************************************************************/
     /**
-     * @notice Recover extra borrow tokens from strategy
-     * @dev If we get liquidation in Compound, we will have borrowToken sitting in strategy.
-     * This function allows to recover idle borrow token amount.
-     * @param _amountToRecover Amount of borrow token we want to recover in 1 call.
-     *      Set it 0 to recover all available borrow tokens
-     */
-    function recoverBorrowToken(uint256 _amountToRecover) external onlyKeeper {
-        uint256 _borrowBalanceHere = IERC20(borrowToken).balanceOf(address(this));
-        uint256 _borrowInCompound = borrowCToken.borrowBalanceStored(address(this));
-
-        if (_borrowBalanceHere > _borrowInCompound) {
-            uint256 _extraBorrowBalance = _borrowBalanceHere - _borrowInCompound;
-            uint256 _recoveryAmount = (_amountToRecover > 0 && _extraBorrowBalance > _amountToRecover)
-                ? _amountToRecover
-                : _extraBorrowBalance;
-            // Do swap and transfer
-            uint256 _collateralBefore = collateralToken.balanceOf(address(this));
-            _safeSwapExactInput(borrowToken, address(collateralToken), _recoveryAmount);
-            collateralToken.transfer(pool, collateralToken.balanceOf(address(this)) - _collateralBefore);
-        }
-    }
-
-    /**
-     * @notice Repay all borrow amount and set min borrow limit to 0.
-     * @dev This action usually done when loss is detected in strategy.
-     * @dev 0 borrow limit make sure that any future rebalance do not borrow again.
-     */
-    function repayAll() external onlyKeeper {
-        _repay(borrowCToken.borrowBalanceCurrent(address(this)), true);
-        minBorrowLimit = 0;
-        maxBorrowLimit = 0;
-    }
-
-    /**
      * @notice Update upper and lower borrow limit. Usually maxBorrowLimit < 100% of actual collateral factor of protocol.
      * @dev It is possible to set 0 as _minBorrowLimit to not borrow anything
      * @param _minBorrowLimit It is % of actual collateral factor of protocol
@@ -393,5 +385,15 @@ abstract contract CompoundXyCore is Strategy {
         // To avoid liquidation due to price variations maxBorrowLimit is a collateral factor that is less than actual collateral factor of protocol
         minBorrowLimit = _minBorrowLimit;
         maxBorrowLimit = _maxBorrowLimit;
+    }
+
+    /**
+     * @notice Update slippage for swap
+     * @param _newSlippage New slippage value in BPS
+     */
+    function updateSlippage(uint256 _newSlippage) external onlyGovernor {
+        require(_newSlippage <= MAX_BPS, "invalid-slippage"); // 100%
+        emit UpdatedSlippage(slippage, _newSlippage);
+        slippage = _newSlippage;
     }
 }
