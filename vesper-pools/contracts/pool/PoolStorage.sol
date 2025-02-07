@@ -37,3 +37,7 @@ abstract contract PoolStorageV3 is PoolStorageV2 {
     /// @dev Do not set it to 0 as deposit() is checking if amount >= limit
     uint256 public minDepositLimit = 1;
 }
+
+abstract contract PoolStorageV4 is PoolStorageV3 {
+    EnumerableSet.AddressSet internal _strategyBlacklist; // List of blacklisted strategies
+}

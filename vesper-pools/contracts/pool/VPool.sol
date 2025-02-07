@@ -16,7 +16,7 @@ import "vesper-commons/contracts/interfaces/vesper/IStrategy.sol";
 
 /// @title Holding pool share token
 // solhint-disable no-empty-blocks
-contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, ReentrancyGuard, PoolStorageV3 {
+contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, ReentrancyGuard, PoolStorageV4 {
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
@@ -178,6 +178,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      */
     function reportEarning(uint256 profit_, uint256 loss_, uint256 payback_) external {
         address _strategy = _msgSender();
+        require(!_strategyBlacklist.contains(_strategy), Errors.BLACKLISTED_STRATEGY);
         // Calculate universal fee
         if (profit_ > 0) {
             (, , , uint256 _lastRebalanceAt, uint256 _totalDebt, , , , ) = IPoolAccountant(poolAccountant).strategy(
@@ -416,7 +417,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
             uint256 _amountNeeded = amount_ - _totalAmountWithdrawn;
             address _strategy = _withdrawQueue[i];
             _debt = IPoolAccountant(poolAccountant).totalDebtOf(_strategy);
-            if (_debt == 0) {
+            if (_debt == 0 || _strategyBlacklist.contains(_strategy)) {
                 continue;
             }
             if (_amountNeeded > _debt) {
@@ -576,6 +577,18 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
      */
     function removeMaintainer(address maintainerAddress_) external onlyKeeper {
         require(_maintainers.remove(maintainerAddress_), Errors.REMOVE_FROM_LIST_FAILED);
+    }
+
+    function addStrategyIntoBlacklist(address strategy_) external onlyGovernor {
+        require(_strategyBlacklist.add(strategy_), Errors.ADD_IN_LIST_FAILED);
+    }
+
+    function removeStrategyFromBlacklist(address strategy_) external onlyGovernor {
+        require(_strategyBlacklist.remove(strategy_), Errors.REMOVE_FROM_LIST_FAILED);
+    }
+
+    function blacklistedStrategies() external view returns (address[] memory) {
+        return _strategyBlacklist.values();
     }
 
     ///////////////////////////////////////////////////////////////////////////
