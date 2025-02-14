@@ -35,4 +35,5 @@ library Errors {
     string public constant NO_MARKET_ID_FOUND = "30"; // dydx flash loan no marketId found for token
     string public constant SAME_AS_PREVIOUS = "31"; // Input should not be same as previous value.
     string public constant INVALID_INPUT = "32"; // Generic invalid input error code
+    string public constant BLACKLISTED_STRATEGY = "33"; // Strategy is blacklisted
 }
