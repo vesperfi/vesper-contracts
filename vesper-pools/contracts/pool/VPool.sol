@@ -20,7 +20,7 @@ contract VPool is Initializable, PoolERC20Permit, Governable, Pausable, Reentran
     using SafeERC20 for IERC20;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    string public constant VERSION = "5.1.0";
+    string public constant VERSION = "5.1.1";
 
     uint256 public constant MAX_BPS = 10_000;
     // For simplicity we are assuming 365 days as 1 year

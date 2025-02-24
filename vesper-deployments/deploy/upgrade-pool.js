@@ -66,7 +66,7 @@ async function deployUpgraderIfNeeded(hre, upgraderName, existingUpgraderAddress
 
 /* eslint-disable complexity */
 async function safeUpgrade(hre, deployer, contract, params = []) {
-  const { deployments, targetChain } = hre
+  const { deployments, targetChain, run } = hre
   const { deploy, execute } = deployments
   let upgraderName = `${contract}Upgrader`
   if (contract === 'VETH') {
@@ -103,6 +103,11 @@ async function safeUpgrade(hre, deployer, contract, params = []) {
       log: true,
       args: params,
     })
+    await run('verify', {
+      address: deployedImpl.address,
+      constructorArgsParams: params.map(val => val.toString()),
+      noCompile: true,
+    })
     // Add implementation address in hre
     hre.implementations[contract] = deployedImpl.address
   }
@@ -133,7 +138,11 @@ const deployFunction = async function (hre) {
   let txs = await safeUpgrade(hre, deployer, PoolAccountant)
   txnsToPropose.push(...txs)
   await sleep(hre.network.name, 5000)
-  txs = await safeUpgrade(hre, deployer, poolConfig.contractName, ['Vesper Pool', 'vPool', address.ZERO])
+  txs = await safeUpgrade(hre, deployer, poolConfig.contractName, [
+    'Vesper Pool',
+    'vPool',
+    ethers.constants.AddressZero,
+  ])
   txnsToPropose.push(...txs)
   if (txnsToPropose.length > 0) {
     await proposeMultiTxn(address.MultiSig.safe, targetChain, deployer, multisigNonce, txnsToPropose)
