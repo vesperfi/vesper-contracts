@@ -1169,7 +1169,7 @@
         "pool": {
           "proxyAdmin": "0xd2a4Ba582dC9fAbF3293C2C46e0aFD6C4B5719b1",
           "proxy": "0xdd63ae655b388Cd782681b7821Be37fdB6d0E78d",
-          "implementation": "0x5c39Cd35889247D30090eF004d05580356791183",
+          "implementation": "0xfFA0075c8FB1F9Da17FbE8CCF5753c0C9071B53E",
           "poolAccountant": {
             "proxyAdmin": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
             "proxy": "0xaDcE6FDdD868E865E4D56000832791fdeb29eeda",
