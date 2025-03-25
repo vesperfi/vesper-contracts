@@ -225,6 +225,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_CBETH_WETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_WETH',
+    },
+    config,
+    setup,
+  },
+
   AaveV3_Sommelier_Xy_CBETH_WETH: {
     contract: 'AaveV3SommelierXy',
     type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
