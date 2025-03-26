@@ -1702,6 +1702,18 @@ const StrategyConfig = {
     config,
     setup,
   },
+
+  Morpho_IndexCoopHyETH_Vault_ETH: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.IndexCoopHyETH,
+      strategyName: 'Morpho_IndexCoopHyETH_Vault_ETH',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
