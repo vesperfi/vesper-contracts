@@ -316,6 +316,20 @@ const StrategyConfig = {
     config,
     setup,
   },
+
+  CompoundV3_ETH: {
+    contract: 'CompoundV3',
+    type: StrategyTypes.COMPOUNDV3,
+    constructorArgs: {
+      swapper,
+      compRewards: Address.CompoundV3.Rewards,
+      rewardToken: Address.CompoundV3.COMP,
+      comet: Address.CompoundV3.cWETHv3,
+      strategyName: 'CompoundV3_ETH',
+    },
+    config,
+    setup,
+  },
 }
 
 module.exports = Object.freeze(StrategyConfig)
