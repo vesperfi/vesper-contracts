@@ -253,6 +253,11 @@ function prepareSwapInfo(pairs) {
           path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 500, pair.tokenOut])
           exchange = ExchangeType.UNISWAP_V3
         } // else do nothing
+      } else if (pair.tokenIn === Address.WBTC || pair.tokenOut === Address.WBTC) {
+        if (pair.tokenIn === Address.WRAPPED_NATIVE_TOKEN || pair.tokenOut === Address.WRAPPED_NATIVE_TOKEN) {
+          path = ethers.utils.solidityPack(['address', 'uint24', 'address'], [pair.tokenIn, 500, pair.tokenOut])
+          exchange = ExchangeType.UNISWAP_V3
+        }
       }
     } else if (chain == 'optimism') {
       if (pair.tokenIn === Address.Sonne.SONNE || pair.tokenIn === Address.ExtraFinance.EXTRA) {

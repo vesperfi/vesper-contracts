@@ -345,6 +345,21 @@ const StrategyConfig = {
     setup,
   },
 
+  AaveV3_Vesper_Xy_WBTC_WETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthWBTC,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_WBTC_WETH',
+    },
+    config,
+    setup,
+  },
+
   // Aave V1 strategy
   AaveV1StrategyUSDC: {
     contract: 'AaveV1Strategy',
