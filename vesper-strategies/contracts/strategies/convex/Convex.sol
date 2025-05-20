@@ -68,6 +68,16 @@ contract Convex is CurveBase {
         return (address(0), 0);
     }
 
+    function _getRewardToken(uint256 index_) private view returns (address) {
+        address _rewardToken = Rewards(cvxCrvRewards.extraRewards(index_)).rewardToken();
+        // Convex has some token wrappers which aren't ERC20 tokens but has a token function.
+        // Checking allowance will revert if the token is not an ERC20 token.
+        try IERC20(_rewardToken).allowance(address(this), address(swapper)) {} catch {
+            _rewardToken = IStashTokenWrapper(_rewardToken).token();
+        }
+        return _rewardToken;
+    }
+
     /**
      * @notice Add reward tokens
      * The Convex pools have CRV and CVX as base rewards and may have others tokens as extra rewards
@@ -79,8 +89,8 @@ contract Convex is CurveBase {
         uint256 _length = cvxCrvRewards.extraRewardsLength();
 
         for (uint256 i; i < _length; i++) {
-            address _rewardToken = Rewards(cvxCrvRewards.extraRewards(i)).rewardToken();
-            // Some pool has CVX as extra rewards but other do not. CVX still reward token
+            address _rewardToken = _getRewardToken(i);
+            // CRV and CVX are default rewardTokens and should not be counted again
             if (_rewardToken != CRV && _rewardToken != CVX) {
                 _extraRewardCount++;
             }
@@ -92,7 +102,7 @@ contract Convex is CurveBase {
         uint256 _nextIdx = 2;
 
         for (uint256 i; i < _length; i++) {
-            address _rewardToken = Rewards(cvxCrvRewards.extraRewards(i)).rewardToken();
+            address _rewardToken = _getRewardToken(i);
             // CRV and CVX already added in array
             if (_rewardToken != CRV && _rewardToken != CVX) {
                 _rewardTokens[_nextIdx++] = _rewardToken;

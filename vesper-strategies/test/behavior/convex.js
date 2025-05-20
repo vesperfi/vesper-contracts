@@ -60,12 +60,21 @@ function shouldBehaveLikeConvexStrategy(strategyIndex) {
       const extraRewardsLength = (await rewards.extraRewardsLength()).toNumber()
       for (let i = 0; i < extraRewardsLength; ++i) {
         const extraReward = await ethers.getContractAt('Rewards', await rewards.extraRewards(i))
-        const extraRewardToken = await extraReward.rewardToken()
+        let extraRewardToken = await extraReward.rewardToken()
+
+        try {
+          const rewardTokenContract = await ethers.getContractAt('IERC20', extraRewardToken)
+          await rewardTokenContract.allowance(extraReward.address, extraRewardToken)
+        } catch (ex) {
+          // sometimes rewardToken() returns a wrapper which is not ERC20 and hence checking allowance.
+          // if allowance fails then it is a wrapper.
+          extraRewardToken = await (await ethers.getContractAt('IStashTokenWrapper', extraRewardToken)).token()
+        }
         if (extraRewardToken !== CRV && extraRewardToken !== CVX) {
-          expected.push(await strategy.rewardTokens(i + 2))
+          expected.push(extraRewardToken)
         }
       }
-      for (let i = 0; i < expect.length; ++i) {
+      for (let i = 0; i < expected.length; ++i) {
         expect(await strategy.rewardTokens(i)).eq(expected[i])
       }
     })
