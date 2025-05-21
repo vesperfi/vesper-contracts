@@ -192,6 +192,7 @@
           "CompoundLeverageStrategyETH": "0xFA4b6B138892E0005e9D385D6D4EcD35a9cC68dd",
           "Compound_Vesper_Xy_ETH_DAI": "0x5c17f04D95a593BBd8b1E553F40Cb3Ca5655dd22",
           "Compound_Xy_ETH_DAI": "0xaF3F68C2f40b625Ef301B3fd0C39E013628ea59B",
+          "Convex_ynETHx_WETH": "0xB6101791B7E6c07B78F6CD37c7D1503EBffA0b4B",
           "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
           "Euler_Vesper_Xy_ETH_DAI": "0x46667F3771514E7D76c3948AcAD6DdA378db63f5",
           "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
