@@ -33,7 +33,7 @@ abstract contract CurveBase is Strategy {
         DYNAMIC_ARRAYED_POOL
     }
 
-    string public constant VERSION = "5.2.0";
+    string public constant VERSION = "5.2.1";
     uint256 internal constant MAX_BPS = 10_000;
     ITokenMinter public constant CRV_MINTER = ITokenMinter(0xd061D61a4d941c39E5453435B6345Dc261C2fcE0); // This contract only exists on mainnet
     ILiquidityGaugeFactory public constant GAUGE_FACTORY =
@@ -307,11 +307,18 @@ abstract contract CurveBase is Strategy {
     function _depositToDynamicArrayedPool(uint256 coinAmountIn_, uint256 lpAmountOutMin_, bool useEth_) private {
         uint256[] memory _depositAmounts = new uint256[](8);
         _depositAmounts[collateralIdx] = coinAmountIn_;
-        IDynamicArrayedDepositZap(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
-            crvPool,
-            _depositAmounts,
-            lpAmountOutMin_
-        );
+        if (depositZap != address(0)) {
+            IDynamicArrayedDepositZap(depositZap).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+                crvPool,
+                _depositAmounts,
+                lpAmountOutMin_
+            );
+        } else {
+            IDynamicArrayedDeposit(crvPool).add_liquidity{value: useEth_ ? coinAmountIn_ : 0}(
+                _depositAmounts,
+                lpAmountOutMin_
+            );
+        }
     }
 
     function _generateReport() internal virtual returns (uint256 _profit, uint256 _loss, uint256 _payback) {
@@ -368,7 +375,10 @@ abstract contract CurveBase is Strategy {
             return IDepositZap(depositZap).calc_withdraw_one_coin(address(crvLp), amountIn_, toIdx_);
         }
         if (curvePoolType == PoolType.DYNAMIC_ARRAYED_POOL) {
-            return IDepositZap(depositZap).calc_withdraw_one_coin(crvPool, amountIn_, toIdx_);
+            if (depositZap != address(0)) {
+                return IDepositZap(depositZap).calc_withdraw_one_coin(crvPool, amountIn_, toIdx_);
+            }
+            return IDynamicArrayedDeposit(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
         }
 
         return IStableSwap(crvPool).calc_withdraw_one_coin(amountIn_, toIdx_);
@@ -468,7 +478,11 @@ abstract contract CurveBase is Strategy {
     }
 
     function _withdrawFromDynamicArrayedPool(uint256 lpAmount_, uint256 minAmountOut_, int128 i_) private {
-        IDynamicArrayedDepositZap(depositZap).remove_liquidity_one_coin(crvPool, lpAmount_, i_, minAmountOut_);
+        if (depositZap != address(0)) {
+            IDynamicArrayedDepositZap(depositZap).remove_liquidity_one_coin(crvPool, lpAmount_, i_, minAmountOut_);
+        } else {
+            IDynamicArrayedDeposit(crvPool).remove_liquidity_one_coin(lpAmount_, i_, minAmountOut_);
+        }
     }
 
     function _withdrawHere(uint256 coinAmountOut_) internal override {

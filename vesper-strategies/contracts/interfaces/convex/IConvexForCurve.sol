@@ -78,3 +78,7 @@ interface Rewards {
 
     function queuedRewards() external view returns (uint256);
 }
+
+interface IStashTokenWrapper {
+    function token() external view returns (address);
+}
