@@ -233,6 +233,7 @@ const Address = {
       MetronomeMsETH: '0x78B18E07dc43017fcEaabaD0751d6464c0F56b25',
       GrauntletUSDCCore: '0x8eB67A509616cd6A7c1B3c8C21D48FF57df3d458',
       MetronomeMsUSD: '0x6859B34a9379122d25A9FA46f0882d434fee36c3',
+      IndexCoopHyETH: '0x701907283a57FF77E255C3f1aAD790466B8CE4ef',
     },
   },
   Metronome: {

@@ -225,6 +225,21 @@ const StrategyConfig = {
     setup: { ...setup },
   },
 
+  AaveV3_Vesper_Xy_CBETH_WETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.acbETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_CBETH_WETH',
+    },
+    config,
+    setup,
+  },
+
   AaveV3_Sommelier_Xy_CBETH_WETH: {
     contract: 'AaveV3SommelierXy',
     type: StrategyTypes.AAVE_V3_SOMMELIER_XY,
@@ -313,6 +328,36 @@ const StrategyConfig = {
     },
     config: { ...config }, // Shallow copy
     setup: { ...setup },
+  },
+
+  AaveV3_Vesper_Xy_STETH_WETH: {
+    contract: 'AaveV3VesperStETH',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthwstETH,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_STETH_WETH',
+    },
+    config,
+    setup,
+  },
+
+  AaveV3_Vesper_Xy_WBTC_WETH: {
+    contract: 'AaveV3VesperXy',
+    type: StrategyTypes.AAVE_V3_VESPER_XY,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Aave.V3.aEthWBTC,
+      borrowToken: Address.WETH,
+      aaveAddressProvider: Address.Aave.V3.AddressProvider,
+      vPool: Address.Vesper.vaETH,
+      strategyName: 'AaveV3_Vesper_Xy_WBTC_WETH',
+    },
+    config,
+    setup,
   },
 
   // Aave V1 strategy
@@ -1653,6 +1698,18 @@ const StrategyConfig = {
       swapper,
       receiptToken: Address.Morpho.vault.MetronomeMsUSD,
       strategyName: 'Morpho_MetronomeMsUSD_Vault_msUSD',
+    },
+    config,
+    setup,
+  },
+
+  Morpho_IndexCoopHyETH_Vault_ETH: {
+    contract: 'MorphoVault',
+    type: StrategyTypes.MORPHO_VAULT,
+    constructorArgs: {
+      swapper,
+      receiptToken: Address.Morpho.vault.IndexCoopHyETH,
+      strategyName: 'Morpho_IndexCoopHyETH_Vault_ETH',
     },
     config,
     setup,

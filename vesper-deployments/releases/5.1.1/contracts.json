@@ -164,6 +164,7 @@
           "Aave-Vesper-STETH-DAI": "0xe27Da5cb6B63c25126452aCDe5D876dc80268B7A",
           "AaveV3_Sommelier_Xy_STETH_WETH": "0xeC61d2483fd2D01C857523d19513c77cd888050E",
           "AaveV3_Vesper_Xy_STETH_USDC": "0x0Fe52AF18c51198037D5a21fd1e19AA4B31D8e70",
+          "AaveV3_Vesper_Xy_STETH_WETH": "0x57c3B6630dD22729372940d44eA3cBe9aD49DbC6",
           "Maker_Dummy_STETH": "0x8F454223C6c59df903812a0C0d9375eDb6089d5F",
           "Maker_Vesper_STETH": "0xf1543e97c79B3581a2eD60184f5dac840eFB20f5"
         }
@@ -194,6 +195,7 @@
           "Euler_ETH": "0x67bE8549cc27f0E10dD5925191354F7aefcC1165",
           "Euler_Vesper_Xy_ETH_DAI": "0x46667F3771514E7D76c3948AcAD6DdA378db63f5",
           "InverseCompoundLeverageStrategyETH": "0x3A41aD519a248a5682da0FaC424F74350C0e3017",
+          "Morpho_IndexCoopHyETH_Vault_ETH": "0x363A208F109493942fE4a20d42190301Eb91b09a",
           "RariFuseStrategy": "0x4769f18ba364658bf98Bf74606ef2f8cfB17D425",
           "RariFuseStrategyETH": "0x67893865686C22f0a243114B0893De65117d2f3b",
           "Sommelier_ETH": "0xD3fF8D8C28e6ef5D6c59E540F98893403d7aA514",
@@ -223,6 +225,7 @@
         },
         "strategies": {
           "AaveV3_Sommelier_Xy_WBTC_WETH": "0x66605031cA196b753490d57bF5A16Cbd397DCBc6",
+          "AaveV3_Vesper_Xy_WBTC_WETH": "0x97fB0C41A948c4E83f499d3df70d31fF911b998D",
           "CompoundLeverageStrategyWBTC": "0xBE699fE81a8a4edb135e47BB5885A51FC58F0C39",
           "Compound_Vesper_Xy_WBTC_DAI": "0x591bB5262e266c008381e59456bD01A26CBaA83F",
           "ConvexSBTCStrategyWBTC": "0x43CeCF2e018FEE7EE94410f85FcefeD2a3843ef2",
@@ -818,6 +821,7 @@
           "AaveV3_Sommelier_Xy_CBETH_WETH": "0x02AEdB3c0C402Ee493FEbB7e887644D935910aC4",
           "AaveV3_Vesper_Xy_CBETH_DAI": "0xe29F72C3Ebf6DB89a7D25C25809aB8e03d42FE7C",
           "AaveV3_Vesper_Xy_CBETH_USDC": "0x64Ef984FDaA7D13d71AaDeEe50E5826a69B33c76",
+          "AaveV3_Vesper_Xy_CBETH_WETH": "0xEbeCacc37804F60743dF5Cca7299c0dC4827495e",
           "Euler_Vesper_Xy_CBETH_USDC": "0x2B5DE50A1DB84DD2DC66146Cd513d2688394b609"
         }
       },
@@ -1102,6 +1106,7 @@
         },
         "strategies": {
           "AaveV3_Vesper_Xy_ETH_USDC": "0x5cd23c6fCC61fa33Fc36ABCf696129A85a99DB31",
+          "CompoundV3_ETH": "0x3e988f7a7730407E2B09E4F05c23312B331B946e",
           "Curve_sETH_ETH": "0x7f29188Ef5fB39E11da6c131BeDa2c3ca9475c58",
           "Curve_wstETH_ETH": "0x6aFf1846413Bf15a8D7E72C799b96Bf37E424b13",
           "ExtraFinance_ETH": "0xD5c6273D6DF55d3a8B75239f724D4A6661cB93CA",
