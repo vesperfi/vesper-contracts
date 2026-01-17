@@ -39,6 +39,9 @@ abstract contract PoolRewardsStorage is IPoolRewards {
 
     /// RewardToken => User => Rewards earned till last reward update
     mapping(address => mapping(address => uint256)) public rewards;
+
+    // User => Address rewards are delegated to
+    mapping(address => address) public rewardsDelegate;
 }
 
 /// @title Distribute rewards based on vesper pool balance and supply
@@ -178,7 +181,11 @@ contract PoolRewards is Initializable, ReentrancyGuard, PoolRewardsStorage {
         // Mark reward as claimed
         rewards[rewardToken_][account_] = 0;
         // Transfer reward
-        IERC20(rewardToken_).safeTransfer(account_, reward_);
+        if (rewardsDelegate[account_] != address(0)) {
+            IERC20(rewardToken_).safeTransfer(rewardsDelegate[account_], reward_);
+        } else {
+            IERC20(rewardToken_).safeTransfer(account_, reward_);
+        }
     }
 
     // There are scenarios when extending contract will override external methods and
@@ -286,5 +293,12 @@ contract PoolRewards is Initializable, ReentrancyGuard, PoolRewardsStorage {
         uint256 rewardDuration_
     ) external virtual override onlyAuthorized {
         _notifyRewardAmount(rewardToken_, rewardAmount_, rewardDuration_, IERC20(pool).totalSupply());
+    }
+
+    function setRewardsDelegate(address user_, address delegate_) external onlyAuthorized {
+        require(user_ != delegate_, "rewards-delegate-is-user");
+        require(rewardsDelegate[user_] != delegate_, "rewards-delegate-already-set");
+        emit RewardsDelegateSet(user_, delegate_);
+        rewardsDelegate[user_] = delegate_;
     }
 }

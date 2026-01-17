@@ -9,6 +9,8 @@ interface IPoolRewards {
     event RewardPaid(address indexed user, address indexed rewardToken, uint256 reward);
     /// Emitted after adding new rewards token into rewardTokens array
     event RewardTokenAdded(address indexed rewardToken, address[] existingRewardTokens);
+    /// Emitted after setting the reward delegate for a user
+    event RewardsDelegateSet(address indexed user, address indexed delegate);
 
     function claimReward(address) external;
 
